@@ -3,7 +3,7 @@ dependencies:
   debug: 4.2.0
   express: 4.17.1
   lodash: 4.17.19
-  p5: 1.0.0
+  p5: 1.1.9
   simple-peer: 9.7.2
   socket.io: 2.3.0
   socket.io-client: 2.3.0
@@ -1666,10 +1666,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-UM+GFjZeh+Ax4ppeyTOaPaRyX6I=
-  /p5/1.0.0:
+  /p5/1.1.9:
     dev: false
     resolution:
-      integrity: sha512-SYYc6NSHA/mMoF00SdI39FmhifMWl0B74/Bg3T793v+KOAWgXsBfr7snv9cjHFqpcmjtJMuZSOoA55qAETCu1w==
+      integrity: sha512-gU+UBEAXLGt3RQFzTtsKijF+eBidweIqRrg51AniuLG8LKHzylrB5ilIOzyDgcR1/hWt6danWPArjaVtXHWfWg==
   /pako/1.0.11:
     dev: false
     resolution:
@@ -2486,7 +2486,7 @@ specifiers:
   debug: ^4.2.0
   express: ^4.17.1
   lodash: ^4.17.19
-  p5: ^1.0.0
+  p5: ^1.1.7
   simple-peer: ^9.7.2
   socket.io: ^2.3.0
   socket.io-client: ^2.3.0

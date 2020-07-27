@@ -1,72 +1,109 @@
+// Exports node modules
 const P2P = require("simple-peer");
 const io = require("socket.io-client");
 const p5 = require("p5");
-const debug = require("debug")("client");
-const socket = io.connect();
-let peers = {};
-const useTrickle = true;
+const socket = io.connect(); // Manually opens the socket
 
-// select HTML elements
-let messageDiv = document.querySelector("#_messageDiv"); // past messages go here
-let messageInput = document.querySelector("#_messageInput"); // text input for message
-let sendBtn = document.querySelector("#_sendBtn"); // send button
-
+// Simple Peer
 let peer;
+let peers = {};
 
-socket.on("connect", function() {
-  // announce to the chatroom
-  let connectedMsg = `Connected to signalling server`;
-  addMessage(connectedMsg);
+// HTML elements
+let messageDiv; // where all messages display
+let messageInput; // text field to type message
+let sendBtn; // button to send message
 
-  // print your peer ID in the console
-  console.log(`your peer ID is ${socket.id}`); //what's the difference beween socket.id and peerId?
+let incomingMsg;
+let outgoingMsg;
+
+// P5.JS
+module.exports = new p5(function() {
+  this.setup = function setup() {
+    console.log("p5 is working");
+    messageUI();
+
+    // SOCKET.IO + SIMPLE PEER
+
+    // Connects to the Node signaling server
+    socket.on("connect", function() {
+      // System broadcast
+      let connectedMsg = `Connected to the signalling server`;
+      addMessage(connectedMsg);
+      
+      // print your peer ID in the console
+      console.log(`${connectedMsg}, your peer ID is ${socket.id}`);
+    });
+
+    socket.on("peer", function(data) {
+      let peerId = data.peerId;
+
+      // More API options here https://github.com/feross/simple-peer#peer--new-peeropts
+      peer = new P2P({
+        initiator: data.initiator,
+        trickle: true
+      });
+
+      // System broadcast
+      let newPeerMsg = `You're available one the signal server but you have not been paired`;
+      addMessage(newPeerMsg);
+      console.log(`${newPeerMsg} Peer ID: ${peerId}`);
+
+      socket.on("signal", function(data) {
+        if (data.peerId == peerId) {
+          console.log(
+            "Received signalling data",
+            data,
+            "from Peer ID:",
+            peerId
+          );
+          peer.signal(data.signal);
+        }
+      });
+
+      peer.on("signal", function(data) {
+        // Fired when the peer wants to send signaling data to the remote peer
+        socket.emit("signal", {
+          signal: data,
+          peerId: peerId
+        });
+      });
+
+      peer.on("error", function(e) {
+        let errorMsg = `Error sending connection to peer: ${peerId}, ${e}`
+        addMessage(errorMsg);
+        console.log(errorMsg);
+      });
+
+      peer.on("connect", function() {
+        // System broadcast
+        let connectedPeerMsg = `Peer connection established. Say something.`;
+        addMessage(connectedPeerMsg);
+        console.log(`${connectedPeerMsg}`);
+      });
+
+      peer.on("data", function(data) {
+        // converts received data from Unit8Array to string
+        incomingMsg = data.toString();
+        
+        // insert msg into the chatroom
+        addMessage(incomingMsg);
+
+        console.log(`Recieved data from peer: ${incomingMsg}`);
+      });
+
+      peers[peerId] = peer;
+
+      console.log(peers);
+    });
+  };
+  this.draw = function draw() {};
 });
 
-socket.on("peer", function(data) {
-  let peerId = data.peerId;
-  peer = new P2P({ initiator: data.initiator, trickle: useTrickle });
-
-  // announce to the chatroom
-  let newPeerMsg = `You're ready to be discovered by other peers`;
-  addMessage(newPeerMsg);
-  console.log(`Peer ID: ${peerId}`);
-
-  socket.on("signal", function(data) {
-    if (data.peerId == peerId) {
-      console.log("Received signalling data", data, "from Peer ID:", peerId);
-      peer.signal(data.signal);
-    }
-  });
-
-  peer.on("signal", function(data) {
-    // console.log("Advertising signalling data", data, "to Peer ID:", peerId);
-    socket.emit("signal", {
-      signal: data,
-      peerId: peerId
-    });
-  });
-
-  peer.on("error", function(e) {
-    console.log("Error sending connection to peer %s:", peerId, e);
-  });
-
-  peer.on("connect", function() {
-    // announce to the chatroom
-    let connectedPeerMsg = `Peer connection established`;
-    addMessage(connectedPeerMsg);
-    console.log("Peer connection established");
-  });
-
-  peer.on("data", function(data) {
-    let incomingMsg = data.toString(); // converts data from Unit8Array to string
-
-    // insert message to the chatroom
-    addMessage(incomingMsg);
-
-    console.log("Recieved data from peer:" + incomingMsg);
-  });
-
-  peers[peerId] = peer;
+function messageUI() {
+  // select HTML elements
+  messageDiv = document.querySelector("#_messageDiv"); // past messages go here
+  messageInput = document.querySelector("#_messageInput"); // text input for message
+  sendBtn = document.querySelector("#_sendBtn"); // send button
 
   // set events for sending message > trigger the sendMessage() function
   // -> for when button is blicked
@@ -78,40 +115,38 @@ socket.on("peer", function(data) {
       return false;
     }
   });
-});
+}
 
 function sendMessage() {
   // triggers when button or enter key is pressed
 
   // set text be value of input field
-  let outgoingMsg = messageInput.value;
+  outgoingMsg = messageInput.value;
 
-  // send the message to peer
-  if (peer) {
-    peer.send(outgoingMsg);
-  } else {
-    addMessage(`No peer has joined yet :-/`);
-  }
+  // Send text/binary data to the remote peer. https://github.com/feross/simple-peer#peersenddata
+  peer.send(outgoingMsg);
 
   console.log(`sending message: ${outgoingMsg}`); // note: using template literal string: ${variable} inside backticks
 
-  // insert message to the chatroom
+  // insert msg into the chatroom
   addMessage(outgoingMsg);
 
   // clear input field
   messageInput.value = "";
-
-  // auto-scroll message container
-  messageDiv.scrollTop = messageDiv.scrollHeight - messageDiv.clientHeight;
 }
 
 function addMessage(data) {
+  let today = new Date();
+  let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  
   // add HTML to end of messageDiv
   // the message is wrapped in a div with class "message" so it can be styled in CSS
   messageDiv.insertAdjacentHTML(
     "beforeend",
     `<div class="message">
-        <p>${data}</p>
+        <p>${time} ${data}</p>
     </div>`
   );
+  // auto-scroll message container
+  messageDiv.scrollTop = messageDiv.scrollHeight - messageDiv.clientHeight;
 }
