@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="style.css" />
-  </head>
-  
-  <body>
+</head>
+
+<body>
     <div class="chatbox">
-      <div class="messageDiv" id="_messageDiv"></div>
-      <div class="sendMessageDiv">
-        <input
-          type="text"
-          id="_messageInput"
-          name="text"
-          placeholder="type message here"
-          size="50"
-        />
-        <button type="button" id="_sendBtn" name="">send</button>
-      </div>
+        <div class="messageDiv" id="_messageDiv"></div>
+        <div class="sendMessageDiv">
+            <input type="text" id="_messageInput" name="text" placeholder="p2p message here" size="50" />
+            <button type="button" id="_sendBtn" name="">send</button>
+        </div>
+
+        <div class="sendMessageDiv">
+            <input type="text" id="_publicMsgInput" name="text" placeholder="archival message here" size="50" />
+            <button type="button" id="_publicSendBtn" name="">send</button>
+        </div>
     </div>
+
     <script src="/js/bundle.js"></script>
-  </body>
+</body>
+
 </html>
