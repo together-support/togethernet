@@ -78,8 +78,8 @@ io.on('connection', function(socket1) {
         });
     });
 
+    // broadcast public messages to everyone
     socket1.on('public message', function(data) {
-        // we tell the client to execute 'new message'
         socket1.broadcast.emit('public message', {
             msg: data
         });

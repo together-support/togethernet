@@ -4,7 +4,7 @@ const io = require("socket.io-client");
 const p5 = require("p5");
 const socket = io.connect(); // Manually opens the socket
 
-const url = "http://localhost:3000";
+const url = "https://togethernet-p2p-template.herokuapp.com";
 const archive = "/archive";
 
 // Simple Peer
@@ -194,11 +194,13 @@ function addPrivateMsg(data) {
     let today = new Date();
     let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
+    privateMsgIndex++;
+
     // add HTML to end of privateMsg
     // the message is wrapped in a div with class "message" so it can be styled in CSS
     privateMsg.insertAdjacentHTML(
         "beforeend",
-        `<div class="message">
+        `<div id="message${privateMsgIndex}">
       <p>${data}</p>
   </div>`
     );
@@ -210,6 +212,18 @@ function addPrivateMsg(data) {
         $('#_privacyToggle').css('border', '1px solid red');
     } else {
         $('#_privacyToggle').css('border', '1px solid black');
+    }
+
+    // let askingConsent = {
+    //     privateMsgIndex = i,
+    //     notification = true
+    // }
+    for (let i = 0; i < privateMsgIndex; i++) {
+        $(`#message${i}`).click(function() {
+            $(`#message${i}`).slideUp();
+            peer.send(askingConsent); // install Buffer to send more comlex data
+            console.log(`#message${i} has been clicked`);
+        });
     }
 }
 
@@ -260,3 +274,9 @@ function addPublicMsg(data) {
         $('#_privacyToggle').css('border', '1px solid black');
     }
 }
+
+/*
+<div class="message3">
+      <p>Peer connection established. Say something.</p>
+  </div>
+  */
