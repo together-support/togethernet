@@ -4,7 +4,7 @@ const io = require("socket.io-client");
 const p5 = require("p5");
 const socket = io.connect(); // Manually opens the socket
 
-const url = "https://togethernet-p2p-template.herokuapp.com";
+const url = "http://localhost:3000";
 const archive = "/archive";
 
 // Simple Peer
@@ -119,6 +119,14 @@ module.exports = new p5(function() {
 
             console.log(peers);
         });
+
+        // SOCKET.IO + ARCHIVAL
+        // Whenever the server emits 'new message', update the chat body
+        socket.on('public message', (data) => {
+            incomingPublicMsg = JSON.stringify(data.msg);
+            addPublicMsg(incomingPublicMsg.replace(/\"/g, ""));
+            console.log("receiving message from the remote client" + incomingPublicMsg.replace(/\"/g, ""));
+        });
     };
     this.draw = function draw() {};
 });
@@ -163,6 +171,9 @@ function sendMessage() {
         }
         // send public message
         else if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == false) {
+            // tell server to execute 'new message' and send along one parameter
+            socket.emit('public message', outgoingMsg);
+            archivePublicMsg(outgoingMsg);
             addPublicMsg(outgoingMsg);
         }
         // send private message
@@ -188,18 +199,25 @@ function addPrivateMsg(data) {
     privateMsg.insertAdjacentHTML(
         "beforeend",
         `<div class="message">
-      <p>${time} ${data}</p>
+      <p>${data}</p>
   </div>`
     );
     // auto-scroll message container
     privateMsg.scrollTop = privateMsg.scrollHeight - privateMsg.clientHeight;
+
+    // if user is in the other chat mode, send notification
+    if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == false) {
+        $('#_privacyToggle').css('border', '1px solid red');
+    } else {
+        $('#_privacyToggle').css('border', '1px solid black');
+    }
 }
 
-function addPublicMsg(outgoingPublicMsg) {
+function archivePublicMsg(data) {
 
     let outgoingPublicJson = {
         author: name,
-        msg: outgoingPublicMsg
+        msg: data
     }
 
     // send msg to archive/
@@ -214,7 +232,9 @@ function addPublicMsg(outgoingPublicMsg) {
     }).then((data) => {
         console.log(data);
     }); // posting url, object, 
+}
 
+function addPublicMsg(data) {
     let today = new Date();
     let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
@@ -225,70 +245,18 @@ function addPublicMsg(outgoingPublicMsg) {
     publicMsg.insertAdjacentHTML(
         "beforeend",
         `<div id="message${publicMsgIndex}">
-      <p>${time} ${outgoingPublicMsg}</p>
+      <p>${data}</p>
   </div>`
     );
 
     console.log(publicMsgIndex);
     // auto-scroll message container
     publicMsg.scrollTop = publicMsg.scrollHeight - publicMsg.clientHeight;
+
+    // if user is in the other chat mode, send notification
+    if ($('.publicMsg').is(':visible') == false && $('.privateMsg').is(':visible') == true) {
+        $('#_privacyToggle').css('border', '1px solid red');
+    } else {
+        $('#_privacyToggle').css('border', '1px solid black');
+    }
 }
-
-// function sendPrivateMsg() {
-//     // set text be value of input field
-//     outgoingMsg = messageInput.value;
-
-//     // Send text/binary data to the remote peer. https://github.com/feross/simple-peer#peersenddata
-//     peer.send(outgoingMsg);
-
-//     console.log(`sending message: ${outgoingMsg}`); // note: using template literal string: ${variable} inside backticks
-
-//     // insert msg into the chatroom
-//     addMessage(outgoingMsg);
-
-//     // clear input field
-//     messageInput.value = "";
-// }
-
-// function sendPublicMsg() {
-//     outgoingPublicMsg = publicMsgInput.value;
-//     let outgoingPublicJson = {
-//         author: name,
-//         msg: outgoingPublicMsg
-//     }
-
-//     // send msg to archive/
-//     fetch(url + archive, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(outgoingPublicJson)
-//     }).then((res) => {
-//         return res.text();
-//     }).then((data) => {
-//         console.log(data);
-//     }); // posting url, object, 
-
-//     // insert msg into the chatroom
-//     addMessage(outgoingPublicMsg);
-
-//     // clear input field
-//     publicMsgInput.value = "";
-// }
-
-// function addMessage(data) {
-//     let today = new Date();
-//     let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-
-//     // add HTML to end of privateMsg
-//     // the message is wrapped in a div with class "message" so it can be styled in CSS
-//     privateMsg.insertAdjacentHTML(
-//         "beforeend",
-//         `<div class="message">
-//         <p>${time} ${data}</p>
-//     </div>`
-//     );
-//     // auto-scroll message container
-//     privateMsg.scrollTop = privateMsg.scrollHeight - privateMsg.clientHeight;
-// }

@@ -41,6 +41,8 @@
                 $("#privacyToggleIcon").toggleClass(
                     "fas fa-upload fas fa-people-arrows"
                 );
+                // reset toggle button styling
+                $('#_privacyToggle').css('border', '1px solid black');
 
                 if (
                     $(".publicMsg").is(":visible") == false ||

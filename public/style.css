@@ -135,6 +135,10 @@ p {
     font-size: 20px;
 }
 
+#_privacyToggle {
+    border: 1px solid black;
+}
+
 .btn:hover {
     cursor: pointer;
 }

@@ -9,6 +9,8 @@ const app = express();
 const bodyParser = require('body-parser');
 let server = http.Server(app);
 var io = require('socket.io')(server);
+let port = process.env.PORT || '3000';
+let numUsers = 0;
 
 var DEFAULT_PEER_COUNT = 5;
 // http://expressjs.com/en/starter/static-files.html
@@ -16,7 +18,7 @@ app.use(express.static("public")); // use public folder as the location
 app.use(bodyParser.json());
 app.get('/js/bundle.js', browserify(['debug', 'lodash', 'socket.io-client', 'simple-peer', 'p5', { './client.js': { run: true } }]));
 
-// ARCHIVAL
+// ARCHIVAL - POSTGRES
 // creating the connection
 const pool = new Pool({ // the waiter 
     user: 'qgxlqacu',
@@ -27,13 +29,9 @@ const pool = new Pool({ // the waiter
 });
 
 app.post('/archive', (req, res) => { //request, response // app.post activates when something is posted to /archive
-
     const author = req.body.author;
     const outgoingPublicMsg = req.body.msg;
-
-    console.log(author, outgoingPublicMsg);
     // res.send(`sent: ${outgoingPublicMsg}`);
-
     const outgoingQuery = {
         text: "INSERT INTO archive(author, msg) VALUES($1,$2)",
         values: [author, outgoingPublicMsg]
@@ -47,38 +45,46 @@ app.get('/archive', (req, res) => {
     res.send('got archive');
 });
 
-// P2P
-io.on('connection', function(socket) {
-    debug('Connection with ID:', socket.id);
+// SOCKET COMMUNICATIONS
+io.on('connection', function(socket1) {
+    let addUser = false;
+    debug('Connection with ID:', socket1.id);
     console.log('Connected to node server');
     var peersToAdvertise = _.chain(io.sockets.connected)
         .values()
-        .without(socket)
+        .without(socket1)
         .sampleSize(DEFAULT_PEER_COUNT)
         .value();
     debug('advertising peers', _.map(peersToAdvertise, 'id'));
     peersToAdvertise.forEach(function(socket2) {
-        debug('Advertising peer %s to %s', socket.id, socket2.id);
+        debug('Advertising peer %s to %s', socket1.id, socket2.id);
         socket2.emit('peer', {
-            peerId: socket.id,
+            peerId: socket1.id,
             initiator: true
         });
-        socket.emit('peer', {
+        socket1.emit('peer', {
             peerId: socket2.id,
             initiator: false
         });
     });
 
-    socket.on('signal', function(data) {
+    socket1.on('signal', function(data) {
         var socket2 = io.sockets.connected[data.peerId];
         if (!socket2) { return; }
-        debug('Proxying signal from peer %s to %s', socket.id, socket2.id);
-
+        debug('Proxying signal from peer %s to %s', socket1.id, socket2.id);
         socket2.emit('signal', {
             signal: data.signal,
-            peerId: socket.id
+            peerId: socket1.id
         });
+    });
+
+    socket1.on('public message', function(data) {
+        // we tell the client to execute 'new message'
+        socket1.broadcast.emit('public message', {
+            msg: data
+        });
+        console.log("msg received from socket: " + data);
     });
 });
 
-server.listen(process.env.PORT || '3000');
+server.listen(port);
