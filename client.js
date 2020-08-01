@@ -158,6 +158,8 @@ function sendPublicMsg() {
     let outgoingPublicJson = {
         msg: outgoingPublicMsg
     }
+
+    // send msg to archive/
     fetch(url + archive, {
         method: 'POST',
         headers: {
@@ -169,7 +171,14 @@ function sendPublicMsg() {
     }).then((data) => {
         console.log(data);
     }); // posting url, object, 
+
     console.log(`sending public msg: ${outgoingPublicMsg}`);
+
+    // insert msg into the chatroom
+    addMessage(outgoingPublicMsg);
+
+    // clear input field
+    publicMsgInput.value = "";
 }
 
 function addMessage(data) {
