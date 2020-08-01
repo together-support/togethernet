@@ -12,6 +12,7 @@ let peer;
 let peers = {};
 
 // HTML elements
+let name = 'anonymous';
 let messageDiv; // where all messages display
 let messageInput; // text field to type message
 let sendBtn; // button to send message
@@ -116,7 +117,7 @@ function messageUI() {
 
     // set events for sending message > trigger the sendMessage() function
     // -> for when button is blicked
-    sendBtn.addEventListener("click", sendMessage);
+    sendBtn.addEventListener("click", sendPrivateMsg);
     // -> for when "enter" is pressed in input field
     messageInput.addEventListener("keyup", function(event) {
         if (event.keyCode === 13) {
@@ -135,9 +136,7 @@ function messageUI() {
     });
 }
 
-function sendMessage() {
-    // triggers when button or enter key is pressed
-
+function sendPrivateMsg() {
     // set text be value of input field
     outgoingMsg = messageInput.value;
 
@@ -156,6 +155,7 @@ function sendMessage() {
 function sendPublicMsg() {
     outgoingPublicMsg = publicMsgInput.value;
     let outgoingPublicJson = {
+        author: name,
         msg: outgoingPublicMsg
     }
 
@@ -171,8 +171,6 @@ function sendPublicMsg() {
     }).then((data) => {
         console.log(data);
     }); // posting url, object, 
-
-    console.log(`sending public msg: ${outgoingPublicMsg}`);
 
     // insert msg into the chatroom
     addMessage(outgoingPublicMsg);
