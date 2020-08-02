@@ -32,7 +32,8 @@ app.post('/archive', (req, res) => { //request, response // app.post activates w
     const author = req.body.author;
     const outgoingPublicMsg = req.body.msg;
     // res.send(`sent: ${outgoingPublicMsg}`);
-    const outgoingQuery = {
+    console.log(author, outgoingPublicMsg);
+    let outgoingQuery = {
         text: "INSERT INTO archive(author, msg) VALUES($1,$2)",
         values: [author, outgoingPublicMsg]
     }

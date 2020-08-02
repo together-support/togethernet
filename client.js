@@ -4,7 +4,8 @@ const io = require("socket.io-client");
 const p5 = require("p5");
 const socket = io.connect(); // Manually opens the socket
 
-const url = "https://togethernet-p2p-template.herokuapp.com";
+// const url = "https://togethernet-p2p-template.herokuapp.com";
+const url = "http://localhost:3000";
 const archive = "/archive";
 
 // Simple Peer
@@ -162,24 +163,24 @@ function sendMessage() {
     }
 
     if (messageInput.value != '') {
-        outgoingMsg = `${name}: ${messageInput.value}`;
+        outgoingMsg = `${messageInput.value}`;
         // send private message
         if ($('.privateMsg').is(':visible') == true && $('.publicMsg').is(':visible') == false) {
             // Send text/binary data to the remote peer. https://github.com/feross/simple-peer#peersenddata
-            peer.send(outgoingMsg);
-            addPrivateMsg(outgoingMsg);
+            peer.send(`${name}: ${outgoingMsg}`);
+            addPrivateMsg(`${name}: ${outgoingMsg}`);
         }
         // send public message
         else if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == false) {
             // tell server to execute 'new message' and send along one parameter
-            socket.emit('public message', outgoingMsg);
+            socket.emit('public message', `${name}: ${outgoingMsg}`);
             archivePublicMsg(outgoingMsg);
-            addPublicMsg(outgoingMsg);
+            addPublicMsg(`${name}: ${outgoingMsg}`);
         }
         // send private message
         else if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == true) {
-            peer.send(outgoingMsg);
-            addPrivateMsg(outgoingMsg);
+            peer.send(`${name}: ${outgoingMsg}`);
+            addPrivateMsg(`${name}: ${outgoingMsg}`);
         }
         console.log(`sending message: ${outgoingMsg}`); // note: using template literal string: ${variable} inside backticks
         // clear input field
@@ -234,6 +235,8 @@ function archivePublicMsg(data) {
         msg: data
     }
 
+    console.log(outgoingPublicJson);
+
     // send msg to archive/
     fetch(url + archive, {
         method: 'POST',
@@ -263,7 +266,6 @@ function addPublicMsg(data) {
   </div>`
     );
 
-    console.log(publicMsgIndex);
     // auto-scroll message container
     publicMsg.scrollTop = publicMsg.scrollHeight - publicMsg.clientHeight;
 
