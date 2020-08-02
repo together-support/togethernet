@@ -4,8 +4,8 @@ const io = require("socket.io-client");
 const p5 = require("p5");
 const socket = io.connect(); // Manually opens the socket
 
-// const url = "https://togethernet-p2p-template.herokuapp.com";
-const url = "http://localhost:3000";
+const url = "https://togethernet-p2p-template.herokuapp.com";
+// const url = "http://localhost:3000";
 const archive = "/archive";
 
 // Simple Peer
