@@ -37,7 +37,7 @@ module.exports = new p5(function() {
         // Connects to the Node signaling server
         socket.on("connect", function() {
             // System broadcast
-            let connectedMsg = `Connected to the signalling server`;
+            let connectedMsg = `Connected to the server`;
             addPrivateMsg(connectedMsg);
 
             // print your peer ID in the console
@@ -70,7 +70,6 @@ module.exports = new p5(function() {
 
             // System broadcast
             let newPeerMsg = `You're available one the signal server but you have not been paired`;
-            addPrivateMsg(newPeerMsg);
             console.log(`${newPeerMsg} Peer ID: ${peerId}`);
 
             socket.on("signal", function(data) {
@@ -94,14 +93,14 @@ module.exports = new p5(function() {
             });
 
             peer.on("error", function(e) {
-                let errorMsg = `Oops, something went wrong. Try refreshing the page.`
+                let errorMsg = `Something went wrong. Try refreshing the page`
                 addPrivateMsg(errorMsg);
                 console.log(`Error sending connection to peer: ${peerId}, ${e}`);
             });
 
             peer.on("connect", function() {
                 // System broadcast
-                let connectedPeerMsg = `Peer connection established. Say something.`;
+                let connectedPeerMsg = `You're connected to a peer. Say something`;
                 addPrivateMsg(connectedPeerMsg);
                 console.log(`${connectedPeerMsg}`);
             });
