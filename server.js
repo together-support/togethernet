@@ -29,7 +29,7 @@ const pool = new Pool({ // the waiter
 });
 
 app.post('/archive', (req, res) => { //request, response // app.post activates when something is posted to /archive
-    const author = req.body.author;
+    const author = req.body.name;
     const outgoingPublicMsg = req.body.msg;
     // res.send(`sent: ${outgoingPublicMsg}`);
     console.log(author, outgoingPublicMsg);
@@ -82,9 +82,9 @@ io.on('connection', function(socket1) {
     // broadcast public messages to everyone
     socket1.on('public message', function(data) {
         socket1.broadcast.emit('public message', {
-            msg: data
+            name: data.name,
+            msg: data.outgoingMsg
         });
-        console.log("msg received from socket: " + data);
     });
 });
 

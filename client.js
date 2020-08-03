@@ -13,9 +13,6 @@ let peer;
 let peers = {};
 
 // HTML elements
-let name = 'Peer';
-let privateName;
-let privateStamp;
 let privateMsg;
 let publicMsg;
 let messageInput; // text field to type message
@@ -39,7 +36,7 @@ module.exports = new p5(function() {
         // Connects to the Node signaling server
         socket.on("connect", function() {
             // System broadcast
-            let connectedMsg = `Connected to the server`;
+            let connectedMsg = `Searching for peers...`;
             addSystemMsg(connectedMsg);
 
             // print your peer ID in the console
@@ -101,7 +98,7 @@ module.exports = new p5(function() {
 
             peer.on("connect", function() {
                 // System broadcast
-                let connectedPeerMsg = `You're connected to a peer. Say something`;
+                let connectedPeerMsg = `Peer connection established. You're now ready to chat in the p2p mode`;
                 addSystemMsg(connectedPeerMsg);
                 console.log(`${connectedPeerMsg}`);
             });
@@ -125,9 +122,9 @@ module.exports = new p5(function() {
         // SOCKET.IO + ARCHIVAL
         // Whenever the server emits 'new message', update the chat body
         socket.on('public message', (data) => {
-            incomingPublicMsg = JSON.stringify(data.msg);
-            addPublicMsg(incomingPublicMsg.replace(/\"/g, ""));
-            console.log("receiving message from the remote client" + incomingPublicMsg.replace(/\"/g, ""));
+            const clientName = data.name;
+            incomingPublicMsg = data.msg;
+            addPublicMsg(clientName, incomingPublicMsg);
         });
     };
     this.draw = function draw() {};
@@ -135,8 +132,6 @@ module.exports = new p5(function() {
 
 function messageUI() {
     // private msg HTML elements
-    privateName = document.querySelector("#_privateName"); // private stamps go here
-    privateStamp = document.querySelector("#_privateStamp"); // private stamps go here
     privateMsg = document.querySelector("#_privateMsg"); // private messages go here
     publicMsg = document.querySelector("#_publicMsg"); // public messages go here
     messageInput = document.querySelector("#_messageInput"); // text input for message
@@ -161,6 +156,8 @@ function messageUI() {
 
 function sendMessage() {
 
+    let name = 'Anonymous';
+
     if (nameInput.value != '') {
         name = nameInput.value;
     }
@@ -169,21 +166,22 @@ function sendMessage() {
         outgoingMsg = messageInput.value;
         // send private message
         if ($('.privateMsg').is(':visible') == true && $('.publicMsg').is(':visible') == false) {
-            // Send text/binary data to the remote peer. https://github.com/feross/simple-peer#peersenddata
             peer.send([name, outgoingMsg]);
             addPrivateMsg(name, outgoingMsg);
         }
         // send public message
         else if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == false) {
-            // tell server to execute 'new message' and send along one parameter
-            socket.emit('public message', `${name}: ${outgoingMsg}`);
-            archivePublicMsg(outgoingMsg);
-            addPublicMsg(`${name}: ${outgoingMsg}`);
+            socket.emit('public message', {
+                name: name,
+                outgoingMsg: outgoingMsg
+            });
+            archivePublicMsg(name, outgoingMsg);
+            addPublicMsg(name, outgoingMsg);
         }
         // send private message
         else if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == true) {
-            peer.send(`${name}: ${outgoingMsg}`);
-            addPrivateMsg(`${name}: ${outgoingMsg}`);
+            peer.send([name, outgoingMsg]);
+            addPrivateMsg(name, outgoingMsg);
         }
         console.log(`sending message: ${outgoingMsg}`); // note: using template literal string: ${variable} inside backticks
         // clear input field
@@ -248,11 +246,11 @@ function addPrivateMsg(name, outgoingMsg) {
     }
 }
 
-function archivePublicMsg(data) {
+function archivePublicMsg(name, outgoingMsg) {
 
     let outgoingPublicJson = {
-        author: name,
-        msg: data
+        name: name,
+        msg: outgoingMsg
     }
 
     console.log(outgoingPublicJson);
@@ -271,7 +269,7 @@ function archivePublicMsg(data) {
     }); // posting url, object, 
 }
 
-function addPublicMsg(data) {
+function addPublicMsg(name, outgoingMsg) {
     let today = new Date();
     let time = today.getHours() + ":" + today.getMinutes();
 
@@ -281,9 +279,17 @@ function addPublicMsg(data) {
     // the message is wrapped in a div with class "message" so it can be styled in CSS
     publicMsg.insertAdjacentHTML(
         "beforeend",
-        `<div id="message${publicMsgIndex}">
-      <p>${data}</p>
-  </div>`
+        `<div class="row">
+        <div id="_privateName">
+        <p>${name}</p>
+        </div>
+        <div id="_privateStamp">
+        <p>${time}</p>
+        </div>
+        </div>
+        <div class="message" id="message${publicMsgIndex}">
+        <p>${outgoingMsg}</p>
+        </div>`
     );
 
     // auto-scroll message container
