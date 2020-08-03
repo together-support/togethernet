@@ -12,6 +12,7 @@ body {
 }
 
 p {
+    display: flex;
     font: 14px 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace;
 }
 
@@ -89,7 +90,9 @@ p {
 
 .message {
     display: flex;
-    padding: 5px 10px;
+    padding-bottom: 8pt;
+    padding-left: 10pt;
+    padding-right: 10pt;
 }
 
 .privateMsg {
@@ -158,5 +161,36 @@ p {
     flex-grow: 1;
     padding: 5px;
     background-color: black;
+    color: greenyellow;
+}
+
+#_privateName {
+    display: flex;
+    padding-bottom: 4pt;
+    padding-left: 10pt;
+    order: 1;
+}
+
+#_privateName p {
+    font-weight: bold;
+}
+
+#_privateStamp {
+    display: flex;
+    padding-bottom: 4pt;
+    padding-left: 10pt;
+    order: 2;
+}
+
+#_privateStamp p {
+    color: grey;
+}
+
+#_privateMsg {
+    display: flex;
+    order: 3;
+}
+
+#systemMsg p {
     color: greenyellow;
 }

@@ -13,7 +13,9 @@ let peer;
 let peers = {};
 
 // HTML elements
-let name = 'anonymous';
+let name = 'Peer';
+let privateName;
+let privateStamp;
 let privateMsg;
 let publicMsg;
 let messageInput; // text field to type message
@@ -38,7 +40,7 @@ module.exports = new p5(function() {
         socket.on("connect", function() {
             // System broadcast
             let connectedMsg = `Connected to the server`;
-            addPrivateMsg(connectedMsg);
+            addSystemMsg(connectedMsg);
 
             // print your peer ID in the console
             console.log(`${connectedMsg}, your peer ID is ${socket.id}`);
@@ -47,7 +49,6 @@ module.exports = new p5(function() {
         socket.on("peer", function(data) {
             let peerId = data.peerId;
 
-            // More API options here https://github.com/feross/simple-peer#peer--new-peeropts
             peer = new P2P({
                 initiator: data.initiator,
                 // reconnectTimer: 3000,
@@ -94,14 +95,14 @@ module.exports = new p5(function() {
 
             peer.on("error", function(e) {
                 let errorMsg = `Something went wrong. Try refreshing the page`
-                addPrivateMsg(errorMsg);
+                addSystemMsg(errorMsg);
                 console.log(`Error sending connection to peer: ${peerId}, ${e}`);
             });
 
             peer.on("connect", function() {
                 // System broadcast
                 let connectedPeerMsg = `You're connected to a peer. Say something`;
-                addPrivateMsg(connectedPeerMsg);
+                addSystemMsg(connectedPeerMsg);
                 console.log(`${connectedPeerMsg}`);
             });
 
@@ -109,10 +110,11 @@ module.exports = new p5(function() {
                 // converts received data from Unit8Array to string
                 incomingMsg = data.toString();
 
-                // insert msg into the chatroom
-                addPrivateMsg(incomingMsg);
+                // separate name and msg apart
+                let splitMsg = incomingMsg.split(',');
 
-                console.log(`Recieved data from peer: ${incomingMsg}`);
+                // insert msg into the chatroom
+                addPrivateMsg(splitMsg[0], splitMsg[1]);
             });
 
             peers[peerId] = peer;
@@ -133,7 +135,9 @@ module.exports = new p5(function() {
 
 function messageUI() {
     // private msg HTML elements
-    privateMsg = document.querySelector("#_privateMsg"); // past messages go here
+    privateName = document.querySelector("#_privateName"); // private stamps go here
+    privateStamp = document.querySelector("#_privateStamp"); // private stamps go here
+    privateMsg = document.querySelector("#_privateMsg"); // private messages go here
     publicMsg = document.querySelector("#_publicMsg"); // public messages go here
     messageInput = document.querySelector("#_messageInput"); // text input for message
     sendBtn = document.querySelector("#_sendBtn"); // send button
@@ -162,12 +166,12 @@ function sendMessage() {
     }
 
     if (messageInput.value != '') {
-        outgoingMsg = `${messageInput.value}`;
+        outgoingMsg = messageInput.value;
         // send private message
         if ($('.privateMsg').is(':visible') == true && $('.publicMsg').is(':visible') == false) {
             // Send text/binary data to the remote peer. https://github.com/feross/simple-peer#peersenddata
-            peer.send(`${name}: ${outgoingMsg}`);
-            addPrivateMsg(`${name}: ${outgoingMsg}`);
+            peer.send([name, outgoingMsg]);
+            addPrivateMsg(name, outgoingMsg);
         }
         // send public message
         else if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == false) {
@@ -189,20 +193,37 @@ function sendMessage() {
     }
 }
 
-function addPrivateMsg(data) {
+function addSystemMsg(systemMsg) {
+    privateMsg.insertAdjacentHTML(
+        "beforeend",
+        `<div class="message" id="systemMsg">
+        <p>${systemMsg}</p>
+        </div>`
+    );
+    // auto-scroll message container
+    privateMsg.scrollTop = privateMsg.scrollHeight - privateMsg.clientHeight;
+}
+
+function addPrivateMsg(name, outgoingMsg) {
 
     let today = new Date();
-    let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    let time = today.getHours() + ":" + today.getMinutes();
 
     privateMsgIndex++;
 
-    // add HTML to end of privateMsg
-    // the message is wrapped in a div with class "message" so it can be styled in CSS
     privateMsg.insertAdjacentHTML(
         "beforeend",
-        `<div id="message${privateMsgIndex}">
-      <p>${data}</p>
-  </div>`
+        `<div class="row">
+        <div id="_privateName">
+        <p>${name}</p>
+        </div>
+        <div id="_privateStamp">
+        <p>${time}</p>
+        </div>
+        </div>
+        <div class="message" id="message${privateMsgIndex}">
+        <p>${outgoingMsg}</p>
+        </div>`
     );
     // auto-scroll message container
     privateMsg.scrollTop = privateMsg.scrollHeight - privateMsg.clientHeight;
@@ -252,7 +273,7 @@ function archivePublicMsg(data) {
 
 function addPublicMsg(data) {
     let today = new Date();
-    let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    let time = today.getHours() + ":" + today.getMinutes();
 
     publicMsgIndex++;
 
@@ -275,9 +296,3 @@ function addPublicMsg(data) {
         $('#_privacyToggle').css('border', '1px solid black');
     }
 }
-
-/*
-<div class="message3">
-      <p>Peer connection established. Say something.</p>
-  </div>
-  */
