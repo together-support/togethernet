@@ -1,16 +1,19 @@
 // Exports node modules
-const P2P = require("simple-peer");
+const Peer = require("simple-peer");
 const io = require("socket.io-client");
 const p5 = require("p5");
 const socket = io.connect(); // Manually opens the socket
+// const { makeConnectionList } = require('./connection');
 
-const url = "https://togethernet-p2p-template.herokuapp.com";
-// const url = "http://localhost:3000";
+// const url = "https://togethernet-p2p-template.herokuapp.com";
+const url = "http://localhost:3000";
 const archive = "/archive";
 
 // Simple Peer
 let peer;
-let peers = {};
+let peers = [];
+// let peers = {};
+let peerArray = [];
 
 // HTML elements
 let privateMsg;
@@ -44,9 +47,12 @@ module.exports = new p5(function() {
         });
 
         socket.on("peer", function(data) {
+
             let peerId = data.peerId;
 
-            peer = new P2P({
+            // console.log(data.peerId, data.initiator);
+
+            peer = new Peer({
                 initiator: data.initiator,
                 // reconnectTimer: 3000,
                 // iceTransportPolicy: 'relay',
@@ -66,57 +72,59 @@ module.exports = new p5(function() {
                     // }
             });
 
-            // System broadcast
-            let newPeerMsg = `You're available one the signal server but you have not been paired`;
-            console.log(`${newPeerMsg} Peer ID: ${peerId}`);
+            console.log(peer);
 
-            socket.on("signal", function(data) {
-                if (data.peerId == peerId) {
-                    console.log(
-                        "Received signalling data",
-                        data,
-                        "from Peer ID:",
-                        peerId
-                    );
-                    peer.signal(data.signal);
-                }
-            });
+            // // System broadcast
+            // let newPeerMsg = `You're available on the signal server but you have not been paired`;
+            // console.log(`${newPeerMsg} Peer ID: ${data.peerId}`);
 
-            peer.on("signal", function(data) {
-                // Fired when the peer wants to send signaling data to the remote peer
-                socket.emit("signal", {
-                    signal: data,
-                    peerId: peerId
-                });
-            });
+            // socket.on("signal", function(data) {
+            //     if (data.peerId == peerId) {
+            //         console.log(
+            //             "Received signalling data",
+            //             data,
+            //             "from Peer ID:",
+            //             peerId
+            //         );
+            //         peer.signal(data.signal);
+            //     }
+            // });
 
-            peer.on("error", function(e) {
-                let errorMsg = `Something went wrong. Try refreshing the page`
-                addSystemMsg(errorMsg);
-                console.log(`Error sending connection to peer: ${peerId}, ${e}`);
-            });
+            // peer.on("signal", function(data) {
+            //     // Fired when the peer wants to send signaling data to the remote peer
+            //     socket.emit("signal", {
+            //         signal: data,
+            //         peerId: peerId
+            //     });
+            // });
 
-            peer.on("connect", function() {
-                // System broadcast
-                let connectedPeerMsg = `Peer connection established. You're now ready to chat in the p2p mode`;
-                addSystemMsg(connectedPeerMsg);
-                console.log(`${connectedPeerMsg}`);
-            });
+            // peer.on("error", function(e) {
+            //     let errorMsg = `Something went wrong. Try refreshing the page`
+            //     addSystemMsg(errorMsg);
+            //     console.log(`Error sending connection to peer: ${peerId}, ${e}`);
+            // });
 
-            peer.on("data", function(data) {
-                // converts received data from Unit8Array to string
-                incomingMsg = data.toString();
+            // peer.on("connect", function() {
+            //     // System broadcast
+            //     let connectedPeerMsg = `Peer connection established. You're now ready to chat in the p2p mode`;
+            //     addSystemMsg(connectedPeerMsg);
+            //     console.log(`${connectedPeerMsg}`);
+            // });
 
-                // separate name and msg apart
-                let splitMsg = incomingMsg.split(',');
+            // peer.on("data", function(data) {
+            //     // converts received data from Unit8Array to string
+            //     incomingMsg = data.toString();
 
-                // insert msg into the chatroom
-                addPrivateMsg(splitMsg[0], splitMsg[1]);
-            });
+            //     // separate name and msg apart
+            //     let splitMsg = incomingMsg.split(',');
 
-            peers[peerId] = peer;
+            //     // insert msg into the chatroom
+            //     addPrivateMsg(splitMsg[0], splitMsg[1]);
+            // });
 
-            console.log(peers);
+            // peers[peerId] = peer;
+
+            // console.log(peers);
         });
 
         // SOCKET.IO + ARCHIVAL

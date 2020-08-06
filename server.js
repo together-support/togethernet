@@ -4,6 +4,7 @@ let browserify = require('browserify-middleware');
 let debug = require('debug')('server');
 const express = require("express");
 const { Pool, Client } = require('pg'); // https://node-postgres.com/features/connecting
+const { makeConnectionList } = require('./connection');
 
 const app = express();
 const bodyParser = require('body-parser');
@@ -46,6 +47,8 @@ app.get('/archive', (req, res) => {
     res.send('got archive');
 });
 
+let peerArray = [];
+
 // SOCKET COMMUNICATIONS
 io.on('connection', function(socket1) {
     let addUser = false;
@@ -57,27 +60,47 @@ io.on('connection', function(socket1) {
         .sampleSize(DEFAULT_PEER_COUNT)
         .value();
     debug('advertising peers', _.map(peersToAdvertise, 'id'));
+
+    peerArray.push(socket1.id);
+
+    // console.log(peerArray);
+
+    let connectionList = makeConnectionList(peerArray);
+
+    console.log(connectionList);
+
+    console.log(peersToAdvertise, io.sockets.connected);
+
     peersToAdvertise.forEach(function(socket2) {
-        debug('Advertising peer %s to %s', socket1.id, socket2.id);
-        socket2.emit('peer', {
-            peerId: socket1.id,
-            initiator: true
-        });
-        socket1.emit('peer', {
-            peerId: socket2.id,
-            initiator: false
-        });
+        for (let i = 0; i < connectionList.length; i++) {
+            console.log('Advertising peer %s to %s', connectionList[i][0], connectionList[i][1]);
+
+            socket2.emit('peer', {
+                peerId: connectionList[i][0],
+                initiator: true
+            });
+            socket1.emit('peer', {
+                peerId: connectionList[i][1],
+                initiator: false
+            });
+        }
+        console.log("run");
     });
 
-    socket1.on('signal', function(data) {
-        var socket2 = io.sockets.connected[data.peerId];
-        if (!socket2) { return; }
-        debug('Proxying signal from peer %s to %s', socket1.id, socket2.id);
-        socket2.emit('signal', {
-            signal: data.signal,
-            peerId: socket1.id
-        });
-    });
+
+    // socket1.on('signal', function(data) {
+    //     console.log(data.peerId, data.initiator);
+    //     var socket2 = io.sockets.connected[data.peerId];
+    //     if (!socket2) { return; }
+    //     for (let i = 0; i < connectionList.length; i++) {
+    //         console.log('Proxying signal from peer %s to %s', connectionList[i][0], connectionList[i][1]);
+    //         socket2.emit('signal', {
+    //             signal: data.signal,
+    //             peerId: connectionList[i][0]
+    //         });
+    //         console.log(socket2.connected);
+    //     }
+    // });
 
     // broadcast public messages to everyone
     socket1.on('public message', function(data) {
