@@ -31,7 +31,6 @@ const pool = new Pool({ // the waiter
 app.post('/archive', (req, res) => { //request, response // app.post activates when something is posted to /archive
     const author = req.body.name;
     const outgoingPublicMsg = req.body.msg;
-    // res.send(`sent: ${outgoingPublicMsg}`);
     console.log(author, outgoingPublicMsg);
     let outgoingQuery = {
         text: "INSERT INTO archive(author, msg) VALUES($1,$2)",
@@ -46,42 +45,53 @@ app.get('/archive', (req, res) => {
     res.send('got archive');
 });
 
-// SOCKET COMMUNICATIONS
-io.on('connection', function(socket1) {
-    let addUser = false;
-    debug('Connection with ID:', socket1.id);
-    console.log('Connected to node server');
-    var peersToAdvertise = _.chain(io.sockets.connected)
-        .values()
-        .without(socket1)
-        .sampleSize(DEFAULT_PEER_COUNT)
-        .value();
-    debug('advertising peers', _.map(peersToAdvertise, 'id'));
-    peersToAdvertise.forEach(function(socket2) {
-        debug('Advertising peer %s to %s', socket1.id, socket2.id);
-        socket2.emit('peer', {
-            peerId: socket1.id,
-            initiator: true
-        });
-        socket1.emit('peer', {
-            peerId: socket2.id,
-            initiator: false
-        });
-    });
+app.get('/sockets', (req, res)=>{
+  // returns list of current socket ids
+  console.log(io.sockets.connected);
+  return res.json(Object.keys(io.sockets.connected));
+})
 
-    socket1.on('signal', function(data) {
-        var socket2 = io.sockets.connected[data.peerId];
-        if (!socket2) { return; }
-        debug('Proxying signal from peer %s to %s', socket1.id, socket2.id);
-        socket2.emit('signal', {
-            signal: data.signal,
-            peerId: socket1.id
-        });
+// SOCKET COMMUNICATIONS
+/*
+ * imagine we have two users, A and B
+ * A connects to the server, which triggers a 'connection' event and registers A with socket.io
+ * B connects to the server, which triggers a 'connection' event and registers B with socket.io
+ * when B connects, it sees that A is also connected.
+ * B sends a peer event to A
+ * B sends a signal to A
+ * A sends a signal to B
+ * A and B are now connected
+ *
+ */
+
+io.on('connection', function(socket) {
+  console.log("============================connection=====================")
+  console.log(socket.id, 'has connected');
+  const existingSockets = Object.values(io.sockets.connected).filter(item=>item.id !== socket.id);
+  //connect to existing peers
+  existingSockets.forEach(targetSocket =>{
+    console.log(`peer event from ${socket.id} to ${targetSocket.id}`);
+    socket.emit('peer', {peerId: targetSocket.id, initiator: true});
+    targetSocket.emit('peer', {peerId: socket.id, initiator: false});
+  })
+
+    socket.on('signal', function(data) {
+      console.log("============================signal=====================")
+      const existingSockets = Object.values(io.sockets.connected).filter(item=>item.id !== socket.id);
+      existingSockets.forEach(targetSocket =>{
+        console.log('emitting signal from', socket.id, "to", targetSocket.id);
+        targetSocket.emit('signal', {
+          signal: data.signal,
+          peerId: socket.id
+        })
+      })
     });
 
     // broadcast public messages to everyone
-    socket1.on('public message', function(data) {
-        socket1.broadcast.emit('public message', {
+    // i don't think this currently does anything
+    socket.on('public message', function(data) {
+      console.log('emitting public message to', data.name);
+        socket.broadcast.emit('public message', {
             name: data.name,
             msg: data.outgoingMsg
         });

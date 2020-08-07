@@ -35,6 +35,7 @@ module.exports = new p5(function() {
         // SOCKET.IO + SIMPLE PEER
         // Connects to the Node signaling server
         socket.on("connect", function() {
+          console.log('===============connect event=========================')
             // System broadcast
             let connectedMsg = `Searching for peers...`;
             addSystemMsg(connectedMsg);
@@ -44,6 +45,7 @@ module.exports = new p5(function() {
         });
 
         socket.on("peer", function(data) {
+          console.log('===============socket peer event=========================')
             let peerId = data.peerId;
 
             peer = new P2P({
@@ -71,6 +73,7 @@ module.exports = new p5(function() {
             console.log(`${newPeerMsg} Peer ID: ${peerId}`);
 
             socket.on("signal", function(data) {
+          console.log('===============socket signal event=========================')
                 if (data.peerId == peerId) {
                     console.log(
                         "Received signalling data",
@@ -78,12 +81,15 @@ module.exports = new p5(function() {
                         "from Peer ID:",
                         peerId
                     );
+                  console.log('sending peer signal')
                     peer.signal(data.signal);
                 }
             });
 
             peer.on("signal", function(data) {
+          console.log('===============peer signal event=========================')
                 // Fired when the peer wants to send signaling data to the remote peer
+              console.log('sending socket signal')
                 socket.emit("signal", {
                     signal: data,
                     peerId: peerId
@@ -91,12 +97,14 @@ module.exports = new p5(function() {
             });
 
             peer.on("error", function(e) {
+          console.log('===============peer error event=========================')
                 let errorMsg = `Something went wrong. Try refreshing the page`
                 addSystemMsg(errorMsg);
                 console.log(`Error sending connection to peer: ${peerId}, ${e}`);
             });
 
             peer.on("connect", function() {
+          console.log('===============peer connect event=========================')
                 // System broadcast
                 let connectedPeerMsg = `Peer connection established. You're now ready to chat in the p2p mode`;
                 addSystemMsg(connectedPeerMsg);
@@ -122,6 +130,7 @@ module.exports = new p5(function() {
         // SOCKET.IO + ARCHIVAL
         // Whenever the server emits 'new message', update the chat body
         socket.on('public message', (data) => {
+          console.log('===============socket public message event=========================')
             const clientName = data.name;
             incomingPublicMsg = data.msg;
             addPublicMsg(clientName, incomingPublicMsg);
