@@ -61,29 +61,42 @@ app.get('/sockets', (req, res)=>{
  * B sends a signal to A
  * A sends a signal to B
  * A and B are now connected
+ * p2p means they don't actually rely on the ws implementation here except for handshake
  *
+ *  when C connects, C signals to A and B
+ *  right now C signals to A and B again instead of A and B responding to C
  */
 
 io.on('connection', function(socket) {
   console.log("============================connection=====================")
   console.log(socket.id, 'has connected');
-  const existingSockets = Object.values(io.sockets.connected).filter(item=>item.id !== socket.id);
+  let existingSockets = Object.values(io.sockets.connected).filter(item=>item.id !== socket.id);
+  console.log('existingSockets is', existingSockets.map(socket=>socket.id))
+  console.log('and should not include', socket.id)
   //connect to existing peers
   existingSockets.forEach(targetSocket =>{
-    console.log(`peer event from ${socket.id} to ${targetSocket.id}`);
+    console.log(`peer event to ${socket.id} (initiator) and ${targetSocket.id} (receiver)`);
     socket.emit('peer', {peerId: targetSocket.id, initiator: true});
     targetSocket.emit('peer', {peerId: socket.id, initiator: false});
   })
 
     socket.on('signal', function(data) {
       console.log("============================signal=====================")
-      const existingSockets = Object.values(io.sockets.connected).filter(item=>item.id !== socket.id);
-      existingSockets.forEach(targetSocket =>{
-        console.log('emitting signal from', socket.id, "to", targetSocket.id);
-        targetSocket.emit('signal', {
+      //updates existing socket list
+      existingSockets = Object.values(io.sockets.connected).filter(item=>item.id !== socket.id);
+      console.log('existingSockets is', existingSockets.map(socket=>socket.id))
+      console.log('and should not include', socket.id)
+
+      //fix later! should only send to one client at a time instead of all
+      //where did it come from
+      //where is it going?
+      //io.sockets.connected[data.peerId]
+      console.log('is data.peerId in io.sockets.connected?', data.peerId)
+      console.log(Object.keys(io.sockets.connected))
+      io.sockets.connected[data.peerId].emit(
+        'signal', {
           signal: data.signal,
           peerId: socket.id
-        })
       })
     });
 
