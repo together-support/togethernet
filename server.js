@@ -4,6 +4,7 @@ let browserify = require('browserify-middleware');
 let debug = require('debug')('server');
 const express = require("express");
 const { Pool, Client } = require('pg'); // https://node-postgres.com/features/connecting
+const { makeConnectionList } = require('./connection');
 
 const app = express();
 const bodyParser = require('body-parser');
@@ -99,6 +100,21 @@ io.on('connection', function(socket) {
           peerId: socket.id
       })
     });
+
+
+    // socket1.on('signal', function(data) {
+    //     console.log(data.peerId, data.initiator);
+    //     var socket2 = io.sockets.connected[data.peerId];
+    //     if (!socket2) { return; }
+    //     for (let i = 0; i < connectionList.length; i++) {
+    //         console.log('Proxying signal from peer %s to %s', connectionList[i][0], connectionList[i][1]);
+    //         socket2.emit('signal', {
+    //             signal: data.signal,
+    //             peerId: connectionList[i][0]
+    //         });
+    //         console.log(socket2.connected);
+    //     }
+    // });
 
     // broadcast public messages to everyone
     // i don't think this currently does anything
