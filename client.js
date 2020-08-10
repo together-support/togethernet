@@ -121,11 +121,9 @@ module.exports = new p5(function() {
 
             //maintain global list of peers
             peers[peerId] = peer;
-          /*
             peer.on('close', ()=>{
               delete peers[peerId];
             })
-            */
 
             // System broadcast
             let newPeerMsg = `You're available on the signal server but you have not been paired`;
@@ -159,8 +157,8 @@ module.exports = new p5(function() {
 
 
             peer.on("error", function(e) {
-            console.log('===============peer error event=========================')
-                let errorMsg = `Something went wrong. Try refreshing the page`
+                delete peers[peerId];
+                let errorMsg = `Error connecting to peer. Please wait or refresh the page`
                 addSystemMsg(errorMsg);
                 console.log(`Error sending connection to peer: ${peerId}, ${e}`);
             });
