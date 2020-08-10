@@ -98,7 +98,7 @@ module.exports = new p5(function() {
 
             console.log('data.initiator', data.initiator);
             // opens up possibility for a connection/configuration
-            const peer = new P2P({
+            const peer = new Peer({
                 initiator: data.initiator,
                 // reconnectTimer: 3000,
                 // iceTransportPolicy: 'relay',
