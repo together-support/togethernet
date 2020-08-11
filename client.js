@@ -159,11 +159,9 @@ module.exports = new p5(function() {
 
                 if(incomingMsg.type === 'read'){
                   messageTracker.processReceipt(incomingMsg);
-                  const messageState = messageTracker.getMessageState(incomingMsg.id);
-                  console.log(messageState);
-                  console.log(messageTracker);
-                  console.log(`attempted send to ${messageState.expectedRecipients}. ${messageState.actualRecipients} received messages`)
-                  if(messageState.expectedRecipients  === messageState.actualRecipients){
+                  const messageState = messageTracker.getReceivedState(incomingMsg.id);
+                  console.log('status of our message is', messageState);
+                  if(messageState.missedRecipients.length === 0){
                     markRead(incomingMsg.id);
                   }
                 }else{
@@ -223,26 +221,27 @@ function sendMessage() {
         name = nameInput.value;
     }
 
-    const outgoingMessage = {
-      name,
-      body: messageInput.value,
-      id: privateMsgIndex,
-    }
 
     if (messageInput.value != '') {
+        let sentMessage = {}
         // send private message
         if ($('.privateMsg').is(':visible')){
-            console.log('about to send to peers. what are they?', peers)
-            for (let peer of Object.values(peers)){
+            for (let [peerId, peer] of Object.entries(peers)){
+              const outgoingMessage = {
+                name,
+                body: messageInput.value,
+                id: privateMsgIndex,
+                recipient: peerId
+              }
               if ('send' in peer){
+                messageTracker.addMessage(outgoingMessage);
                 peer.send(JSON.stringify(outgoingMessage));
+                sentMessage = outgoingMessage
               }
             }
-            //track number of users who have received the private message
-            const peerCount = Object.keys(peers).length;
-            messageTracker.addMessage(outgoingMessage, peerCount);
             //add message to UI
-            addPrivateMsg(outgoingMessage.name, outgoingMessage.body);
+            addPrivateMsg(sentMessage.name, sentMessage.body);
+            markUnread(sentMessage.id);
         }
         // send public message
         if ($('.publicMsg').is(':visible')){
@@ -306,8 +305,6 @@ function addPrivateMsg(name, outgoingMsg) {
     );
     // auto-scroll message container
     privateMsg.scrollTop = privateMsg.scrollHeight - privateMsg.clientHeight;
-
-    markUnread(privateMsgIndex);
 
     privateMsgIndex++;
 
