@@ -56,14 +56,6 @@ module.exports = new p5(function() {
       //toggles on receiving peer event from server
       //all simplePeer events happen once the socket has received the peer event
       //peer event instantiates P2P object and adds event listeners
-      //todo: * encapsulate so that globals aren't an issue
-      //      * broadcast data to all peers
-      //      * what's causing errors on multiple peer connections?
-      //      * is there a better way to do it? We don't really need to have a live connection to the server
-      //      * well, maybe we do? otherwise, how do we know who dropped off of the connection?
-      //
-      //
- 
 
       /*
        * chain of events:
@@ -73,7 +65,7 @@ module.exports = new p5(function() {
        * 4. (cli) receives 'peer' ws event
        * 5. (cli) instantiates P2P as either initiator or receiver depending on data
        *
-       * 6. (cli) somehow emits a ws signal????????
+       * 6. (cli) runs "signal" event if initiating
        * 7. (serv) iterates over all available sockets and emits 'signal' with socket id
        * 8. (cli) emits peer.signal
        * 9. (cli) receives peer.signal
@@ -81,12 +73,6 @@ module.exports = new p5(function() {
        *
        * client A outgoing WS: connect, signal, ping pong
        * client B outgoing WS: connect, signal, ping pong
-       *
-       *
-       * update: apparently event listeners are reversed;
-       * webrtc waits for event to be prepped, then triggers
-       * idk why tf they'd do it like this, but peer.on('signal') doesn't wait for
-       * a remote signal, but rather waits for your signal to be prepped then does XYZ
        *
       */
 
@@ -129,8 +115,8 @@ module.exports = new p5(function() {
             let newPeerMsg = `You're available on the signal server but you have not been paired`;
             console.log(`${newPeerMsg} Peer ID: ${peerId}`);
 
-          //if initiator, fires signal immediately
-          //if not, waits for remote signal
+            //if initiator, fires signal immediately
+            //if not, waits for remote signal
             peer.on("signal", function(data) {
               //when i have a signal ready, do the following
               console.log('===============peer signal event=========================')
@@ -145,7 +131,6 @@ module.exports = new p5(function() {
                 });
             });
 
-          //do i need to create another new peer here?
             socket.on("signal", function(data) {
                 console.log('===============socket signal event=========================')
                 console.log('receiving data', data)
@@ -235,7 +220,7 @@ function sendMessage() {
     if (messageInput.value != '') {
         outgoingMsg = messageInput.value;
         // send private message
-        if ($('.privateMsg').is(':visible') == true && $('.publicMsg').is(':visible') == false) {
+        if ($('.privateMsg').is(':visible')){
             console.log('about to send to peers. what are they?', peers)
             for (let peer of Object.values(peers)){
               if ('send' in peer){
@@ -245,7 +230,7 @@ function sendMessage() {
             addPrivateMsg(name, outgoingMsg);
         }
         // send public message
-        else if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == false) {
+        if ($('.publicMsg').is(':visible')){
             socket.emit('public message', {
                 name: name,
                 outgoingMsg: outgoingMsg
@@ -254,15 +239,6 @@ function sendMessage() {
             addPublicMsg(name, outgoingMsg);
         }
         // send private message
-        else if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == true) {
-            console.log('about to send to peers. what are they?', peers)
-            for(let peer of Object.values(peers)){
-              if ('send' in peer){
-                peer.send([name, outgoingMsg]);
-              }
-            }
-            addPrivateMsg(name, outgoingMsg);
-        }
         console.log(`sending message: ${outgoingMsg}`); // note: using template literal string: ${variable} inside backticks
         // clear input field
         messageInput.value = "";
