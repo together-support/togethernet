@@ -8,11 +8,14 @@ const socket = io.connect(); // Manually opens the socket
 // const url = "https://togethernet-p2p-template.herokuapp.com";
 const url = "http://localhost:3000";
 const archive = "/archive";
+const { MessageTracker } = require('./lib/messagetracker');
 
 // Simple Peer
 let peer;
 const peers = {};
 
+// MessageTracker instance to handle read state of messages
+const messageTracker = new MessageTracker();
 
 // HTML elements
 let privateMsg;
@@ -28,12 +31,7 @@ let outgoingMsg;
 let outgoingPublicMsg;
 let incomingPublicMsg;
 
-socket.test = socket.emit;
-socket.emit = function(...args){
-  console.log('outgoing ws message')
-  console.log(args);
-  return socket.test(...args);
-}
+
 
 // P5.JS
 module.exports = new p5(function() {
@@ -56,14 +54,6 @@ module.exports = new p5(function() {
       //toggles on receiving peer event from server
       //all simplePeer events happen once the socket has received the peer event
       //peer event instantiates P2P object and adds event listeners
-      //todo: * encapsulate so that globals aren't an issue
-      //      * broadcast data to all peers
-      //      * what's causing errors on multiple peer connections?
-      //      * is there a better way to do it? We don't really need to have a live connection to the server
-      //      * well, maybe we do? otherwise, how do we know who dropped off of the connection?
-      //
-      //
- 
 
       /*
        * chain of events:
@@ -73,7 +63,7 @@ module.exports = new p5(function() {
        * 4. (cli) receives 'peer' ws event
        * 5. (cli) instantiates P2P as either initiator or receiver depending on data
        *
-       * 6. (cli) somehow emits a ws signal????????
+       * 6. (cli) runs "signal" event if initiating
        * 7. (serv) iterates over all available sockets and emits 'signal' with socket id
        * 8. (cli) emits peer.signal
        * 9. (cli) receives peer.signal
@@ -81,12 +71,6 @@ module.exports = new p5(function() {
        *
        * client A outgoing WS: connect, signal, ping pong
        * client B outgoing WS: connect, signal, ping pong
-       *
-       *
-       * update: apparently event listeners are reversed;
-       * webrtc waits for event to be prepped, then triggers
-       * idk why tf they'd do it like this, but peer.on('signal') doesn't wait for
-       * a remote signal, but rather waits for your signal to be prepped then does XYZ
        *
       */
 
@@ -129,23 +113,20 @@ module.exports = new p5(function() {
             let newPeerMsg = `You're available on the signal server but you have not been paired`;
             console.log(`${newPeerMsg} Peer ID: ${peerId}`);
 
-          //if initiator, fires signal immediately
-          //if not, waits for remote signal
+            //if initiator, fires signal immediately
+            //if not, waits for remote signal
             peer.on("signal", function(data) {
               //when i have a signal ready, do the following
               console.log('===============peer signal event=========================')
               console.log('data is', data)
                 // Fired when the peer wants to send signaling data to the remote peer
                 console.log('sending socket signal')
-                  //peer.signal(data.signal);
-              //why does the socket have to emit a signal?
                 socket.emit("signal", {
                     signal: data,
                     peerId: peerId
                 });
             });
 
-          //do i need to create another new peer here?
             socket.on("signal", function(data) {
                 console.log('===============socket signal event=========================')
                 console.log('receiving data', data)
@@ -173,13 +154,22 @@ module.exports = new p5(function() {
 
             peer.on("data", function(data) {
                 // converts received data from Unit8Array to string
-                incomingMsg = data.toString();
+                incomingMsg = JSON.parse(data.toString());
+                console.log(incomingMsg);
 
-                // separate name and msg apart
-                let splitMsg = incomingMsg.split(',');
-
+                if(incomingMsg.type === 'read'){
+                  messageTracker.processReceipt(incomingMsg);
+                  const messageState = messageTracker.getReceivedState(incomingMsg.id);
+                  console.log('status of our message is', messageState);
+                  if(messageState.missedRecipients.length === 0){
+                    markRead(incomingMsg.id);
+                  }
+                }else{
                 // insert msg into the chatroom
-                addPrivateMsg(splitMsg[0], splitMsg[1]);
+                  addPrivateMsg(incomingMsg.name, incomingMsg.body);
+                  const receipt = messageTracker.createReceipt(incomingMsg);
+                  peer.send(JSON.stringify(receipt))
+                }
             });
 
 
@@ -197,6 +187,7 @@ module.exports = new p5(function() {
     };
     this.draw = function draw() {};
 });
+
 
 function messageUI() {
     // private msg HTML elements
@@ -222,8 +213,6 @@ function messageUI() {
     });
 }
 
-// fails on webrtc not open if > 2
-// how do we ensure that webrtc is listening?
 function sendMessage() {
 
     let name = 'Anonymous';
@@ -232,43 +221,56 @@ function sendMessage() {
         name = nameInput.value;
     }
 
+
     if (messageInput.value != '') {
-        outgoingMsg = messageInput.value;
+        let sentMessage = {}
         // send private message
-        if ($('.privateMsg').is(':visible') == true && $('.publicMsg').is(':visible') == false) {
-            console.log('about to send to peers. what are they?', peers)
-            for (let peer of Object.values(peers)){
+        if ($('.privateMsg').is(':visible')){
+            for (let [peerId, peer] of Object.entries(peers)){
+              const outgoingMessage = {
+                name,
+                body: messageInput.value,
+                id: privateMsgIndex,
+                recipient: peerId
+              }
               if ('send' in peer){
-                peer.send([name, outgoingMsg]);
+                messageTracker.addMessage(outgoingMessage);
+                peer.send(JSON.stringify(outgoingMessage));
+                sentMessage = outgoingMessage
               }
             }
-            addPrivateMsg(name, outgoingMsg);
+            //add message to UI
+            addPrivateMsg(sentMessage.name, sentMessage.body);
+            markUnread(sentMessage.id);
         }
         // send public message
-        else if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == false) {
+        if ($('.publicMsg').is(':visible')){
             socket.emit('public message', {
                 name: name,
-                outgoingMsg: outgoingMsg
+                outgoingMsg: outgoingMessage.body
             });
             archivePublicMsg(name, outgoingMsg);
-            addPublicMsg(name, outgoingMsg);
+            addPublicMsg(outgoingMessage.name, outgoingMessage.body);
         }
         // send private message
-        else if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == true) {
-            console.log('about to send to peers. what are they?', peers)
-            for(let peer of Object.values(peers)){
-              if ('send' in peer){
-                peer.send([name, outgoingMsg]);
-              }
-            }
-            addPrivateMsg(name, outgoingMsg);
-        }
         console.log(`sending message: ${outgoingMsg}`); // note: using template literal string: ${variable} inside backticks
         // clear input field
         messageInput.value = "";
     } else {
         alert('your message is empty');
     }
+}
+
+//add/hide CSS class to items that are unread/read
+function markRead(id){
+  const messageDiv = document.getElementById(`message${id}`)
+  messageDiv.classList.add("read");
+  messageDiv.classList.remove("unread");
+}
+function markUnread(id){
+  const messageDiv = document.getElementById(`message${id}`)
+  messageDiv.classList.add("unread");
+  messageDiv.classList.remove("read");
 }
 
 function addSystemMsg(systemMsg) {
@@ -287,8 +289,6 @@ function addPrivateMsg(name, outgoingMsg) {
     let today = new Date();
     let time = today.getHours() + ":" + today.getMinutes();
 
-    privateMsgIndex++;
-
     privateMsg.insertAdjacentHTML(
         "beforeend",
         `<div class="row">
@@ -305,6 +305,9 @@ function addPrivateMsg(name, outgoingMsg) {
     );
     // auto-scroll message container
     privateMsg.scrollTop = privateMsg.scrollHeight - privateMsg.clientHeight;
+
+    privateMsgIndex++;
+
 
     // if user is in the other chat mode, send notification
     if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == false) {
@@ -325,6 +328,7 @@ function addPrivateMsg(name, outgoingMsg) {
         });
     }
 }
+
 
 function archivePublicMsg(name, outgoingMsg) {
 

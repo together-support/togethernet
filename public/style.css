@@ -88,6 +88,13 @@ p {
     z-index: 1;
 }
 
+.unread p{
+  font-style: italic !important;
+}
+.read p{
+  font-style: normal !important;
+}
+
 .message {
     display: flex;
     padding-bottom: 8pt;
