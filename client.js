@@ -1,5 +1,5 @@
 // Exports node modules
-const P2P = require("simple-peer");
+const Peer = require("simple-peer");
 const io = require("socket.io-client");
 const p5 = require("p5");
 const socket = io.connect(); // Manually opens the socket
@@ -102,7 +102,7 @@ module.exports = new p5(function() {
 
             console.log('data.initiator', data.initiator);
             // opens up possibility for a connection/configuration
-            const peer = new P2P({
+            const peer = new Peer({
                 initiator: data.initiator,
                 // reconnectTimer: 3000,
                 // iceTransportPolicy: 'relay',
@@ -162,9 +162,14 @@ module.exports = new p5(function() {
             });
 
 
-            peer.on("error", function(e) {
+            peer.on("error", function(e) { <<
+                << << < HEAD
                 console.log('===============peer error event=========================')
-                let errorMsg = `Something went wrong. Try refreshing the page`
+                let errorMsg = `Something went wrong. Try refreshing the page` ===
+                    === =
+                    delete peers[peerId];
+                let errorMsg = `Error connecting to peer. Please wait or refresh the page` >>>
+                    >>> > 1 d7091742a0214bf94e68dcc99e620bac472e084
                 addSystemMsg(errorMsg);
                 console.log(`Error sending connection to peer: ${peerId}, ${e}`);
             });
