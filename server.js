@@ -46,10 +46,21 @@ app.get('/archive', (req, res) => {
     res.send('got archive');
 });
 
-app.get('/sockets', (req, res)=>{
-  // returns list of current socket ids
-  console.log(io.sockets.connected);
-  return res.json(Object.keys(io.sockets.connected));
+app.get('/record', (req, res) => {
+    let data;
+    let incomingQuery = {
+        text: "SELECT time, author, msg FROM archive"
+    }
+    pool.query(incomingQuery, (err, response) => {
+        console.log(err, response.rows);
+        res.json(response.rows);
+    });
+});
+
+app.get('/sockets', (req, res) => {
+    // returns list of current socket ids
+    console.log(io.sockets.connected);
+    return res.json(Object.keys(io.sockets.connected));
 })
 
 // SOCKET COMMUNICATIONS
@@ -69,36 +80,36 @@ app.get('/sockets', (req, res)=>{
  */
 
 io.on('connection', function(socket) {
-  console.log("============================connection=====================")
-  console.log(socket.id, 'has connected');
-  let existingSockets = Object.values(io.sockets.connected).filter(item=>item.id !== socket.id);
-  console.log('existingSockets is', existingSockets.map(socket=>socket.id))
-  console.log('and should not include', socket.id)
-  //connect to existing peers
-  existingSockets.forEach(targetSocket =>{
-    console.log(`peer event to ${socket.id} (initiator) and ${targetSocket.id} (receiver)`);
-    socket.emit('peer', {peerId: targetSocket.id, initiator: true});
-    targetSocket.emit('peer', {peerId: socket.id, initiator: false});
-  })
+    console.log("============================connection=====================")
+    console.log(socket.id, 'has connected');
+    let existingSockets = Object.values(io.sockets.connected).filter(item => item.id !== socket.id);
+    console.log('existingSockets is', existingSockets.map(socket => socket.id))
+    console.log('and should not include', socket.id)
+        //connect to existing peers
+    existingSockets.forEach(targetSocket => {
+        console.log(`peer event to ${socket.id} (initiator) and ${targetSocket.id} (receiver)`);
+        socket.emit('peer', { peerId: targetSocket.id, initiator: true });
+        targetSocket.emit('peer', { peerId: socket.id, initiator: false });
+    })
 
     socket.on('signal', function(data) {
-      console.log("============================signal=====================")
-      //updates existing socket list
-      existingSockets = Object.values(io.sockets.connected).filter(item=>item.id !== socket.id);
-      console.log('existingSockets is', existingSockets.map(socket=>socket.id))
-      console.log('and should not include', socket.id)
+        console.log("============================signal=====================")
+            //updates existing socket list
+        existingSockets = Object.values(io.sockets.connected).filter(item => item.id !== socket.id);
+        console.log('existingSockets is', existingSockets.map(socket => socket.id))
+        console.log('and should not include', socket.id)
 
-      //fix later! should only send to one client at a time instead of all
-      //where did it come from
-      //where is it going?
-      //io.sockets.connected[data.peerId]
-      console.log('is data.peerId in io.sockets.connected?', data.peerId)
-      console.log(Object.keys(io.sockets.connected))
-      io.sockets.connected[data.peerId].emit(
-        'signal', {
-          signal: data.signal,
-          peerId: socket.id
-      })
+        //fix later! should only send to one client at a time instead of all
+        //where did it come from
+        //where is it going?
+        //io.sockets.connected[data.peerId]
+        console.log('is data.peerId in io.sockets.connected?', data.peerId)
+        console.log(Object.keys(io.sockets.connected))
+        io.sockets.connected[data.peerId].emit(
+            'signal', {
+                signal: data.signal,
+                peerId: socket.id
+            })
     });
 
 
@@ -119,7 +130,7 @@ io.on('connection', function(socket) {
     // broadcast public messages to everyone
     // i don't think this currently does anything
     socket.on('public message', function(data) {
-      console.log('emitting public message to', data.name);
+        console.log('emitting public message to', data.name);
         socket.broadcast.emit('public message', {
             name: data.name,
             msg: data.outgoingMsg

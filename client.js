@@ -1,5 +1,5 @@
 // Exports node modules
-const Peer = require("simple-peer");
+const P2P = require("simple-peer");
 const io = require("socket.io-client");
 const p5 = require("p5");
 const socket = io.connect(); // Manually opens the socket
@@ -8,6 +8,7 @@ const socket = io.connect(); // Manually opens the socket
 // const url = "https://togethernet-p2p-template.herokuapp.com";
 const url = "http://localhost:3000";
 const archive = "/archive";
+const record = "/record";
 
 // Simple Peer
 let peer;
@@ -19,6 +20,7 @@ let privateMsg;
 let publicMsg;
 let messageInput; // text field to type message
 let sendBtn; // button to send message
+let historyBtn; // button to open history menu
 
 let publicMsgIndex = 0;
 let privateMsgIndex = 0;
@@ -27,12 +29,13 @@ let incomingMsg;
 let outgoingMsg;
 let outgoingPublicMsg;
 let incomingPublicMsg;
+let historyMsg;
 
 socket.test = socket.emit;
-socket.emit = function(...args){
-  console.log('outgoing ws message')
-  console.log(args);
-  return socket.test(...args);
+socket.emit = function(...args) {
+    console.log('outgoing ws message')
+    console.log(args);
+    return socket.test(...args);
 }
 
 // P5.JS
@@ -40,12 +43,13 @@ module.exports = new p5(function() {
     this.setup = function setup() {
         console.log("p5 is working");
         messageUI();
+        loadHistory();
 
         // SOCKET.IO + SIMPLE PEER
         // Connects to the Node signaling server
         socket.on("connect", function() {
-          console.log('===============socket connect event=========================')
-            // System broadcast
+            console.log('===============socket connect event=========================')
+                // System broadcast
             let connectedMsg = `Searching for peers...`;
             addSystemMsg(connectedMsg);
 
@@ -53,44 +57,44 @@ module.exports = new p5(function() {
             console.log(`${connectedMsg}, your peer ID is ${socket.id}`);
         });
 
-      //toggles on receiving peer event from server
-      //all simplePeer events happen once the socket has received the peer event
-      //peer event instantiates P2P object and adds event listeners
-      //todo: * encapsulate so that globals aren't an issue
-      //      * broadcast data to all peers
-      //      * what's causing errors on multiple peer connections?
-      //      * is there a better way to do it? We don't really need to have a live connection to the server
-      //      * well, maybe we do? otherwise, how do we know who dropped off of the connection?
-      //
-      //
- 
+        //toggles on receiving peer event from server
+        //all simplePeer events happen once the socket has received the peer event
+        //peer event instantiates P2P object and adds event listeners
+        //todo: * encapsulate so that globals aren't an issue
+        //      * broadcast data to all peers
+        //      * what's causing errors on multiple peer connections?
+        //      * is there a better way to do it? We don't really need to have a live connection to the server
+        //      * well, maybe we do? otherwise, how do we know who dropped off of the connection?
+        //
+        //
 
-      /*
-       * chain of events:
-       * 1. (client) connect to socketIO
-       * 2. (server) registers socket id and look for other sockets to connect to
-       * 3. (serv) emits 'peer' event to available sockets
-       * 4. (cli) receives 'peer' ws event
-       * 5. (cli) instantiates P2P as either initiator or receiver depending on data
-       *
-       * 6. (cli) somehow emits a ws signal????????
-       * 7. (serv) iterates over all available sockets and emits 'signal' with socket id
-       * 8. (cli) emits peer.signal
-       * 9. (cli) receives peer.signal
-       * 10. (cli) triggers new P2P()
-       *
-       * client A outgoing WS: connect, signal, ping pong
-       * client B outgoing WS: connect, signal, ping pong
-       *
-       *
-       * update: apparently event listeners are reversed;
-       * webrtc waits for event to be prepped, then triggers
-       * idk why tf they'd do it like this, but peer.on('signal') doesn't wait for
-       * a remote signal, but rather waits for your signal to be prepped then does XYZ
-       *
-      */
 
-      //this should already scope all of the event listeners to each peer, no?
+        /*
+         * chain of events:
+         * 1. (client) connect to socketIO
+         * 2. (server) registers socket id and look for other sockets to connect to
+         * 3. (serv) emits 'peer' event to available sockets
+         * 4. (cli) receives 'peer' ws event
+         * 5. (cli) instantiates P2P as either initiator or receiver depending on data
+         *
+         * 6. (cli) somehow emits a ws signal????????
+         * 7. (serv) iterates over all available sockets and emits 'signal' with socket id
+         * 8. (cli) emits peer.signal
+         * 9. (cli) receives peer.signal
+         * 10. (cli) triggers new P2P()
+         *
+         * client A outgoing WS: connect, signal, ping pong
+         * client B outgoing WS: connect, signal, ping pong
+         *
+         *
+         * update: apparently event listeners are reversed;
+         * webrtc waits for event to be prepped, then triggers
+         * idk why tf they'd do it like this, but peer.on('signal') doesn't wait for
+         * a remote signal, but rather waits for your signal to be prepped then does XYZ
+         *
+         */
+
+        //this should already scope all of the event listeners to each peer, no?
 
         socket.on("peer", function(data) {
             console.log('===============socket peer event=========================')
@@ -121,33 +125,33 @@ module.exports = new p5(function() {
 
             //maintain global list of peers
             peers[peerId] = peer;
-          /*
-            peer.on('close', ()=>{
-              delete peers[peerId];
-            })
-            */
+            /*
+              peer.on('close', ()=>{
+                delete peers[peerId];
+              })
+              */
 
             // System broadcast
             let newPeerMsg = `You're available on the signal server but you have not been paired`;
             console.log(`${newPeerMsg} Peer ID: ${peerId}`);
 
-          //if initiator, fires signal immediately
-          //if not, waits for remote signal
+            //if initiator, fires signal immediately
+            //if not, waits for remote signal
             peer.on("signal", function(data) {
-              //when i have a signal ready, do the following
-              console.log('===============peer signal event=========================')
-              console.log('data is', data)
-                // Fired when the peer wants to send signaling data to the remote peer
+                //when i have a signal ready, do the following
+                console.log('===============peer signal event=========================')
+                console.log('data is', data)
+                    // Fired when the peer wants to send signaling data to the remote peer
                 console.log('sending socket signal')
-                  //peer.signal(data.signal);
-              //why does the socket have to emit a signal?
+                    //peer.signal(data.signal);
+                    //why does the socket have to emit a signal?
                 socket.emit("signal", {
                     signal: data,
                     peerId: peerId
                 });
             });
 
-          //do i need to create another new peer here?
+            //do i need to create another new peer here?
             socket.on("signal", function(data) {
                 console.log('===============socket signal event=========================')
                 console.log('receiving data', data)
@@ -159,15 +163,15 @@ module.exports = new p5(function() {
 
 
             peer.on("error", function(e) {
-            console.log('===============peer error event=========================')
+                console.log('===============peer error event=========================')
                 let errorMsg = `Something went wrong. Try refreshing the page`
                 addSystemMsg(errorMsg);
                 console.log(`Error sending connection to peer: ${peerId}, ${e}`);
             });
 
             peer.on("connect", function() {
-            console.log('===============peer connect event=========================')
-                // System broadcast
+                console.log('===============peer connect event=========================')
+                    // System broadcast
                 let connectedPeerMsg = `Peer connection established. You're now ready to chat in the p2p mode`;
                 addSystemMsg(connectedPeerMsg);
                 console.log(`${connectedPeerMsg}`);
@@ -191,7 +195,7 @@ module.exports = new p5(function() {
         // SOCKET.IO + ARCHIVAL
         // Whenever the server emits 'new message', update the chat body
         socket.on('public message', (data) => {
-          console.log('===============socket public message event=========================')
+            console.log('===============socket public message event=========================')
             const clientName = data.name;
             incomingPublicMsg = data.msg;
             addPublicMsg(clientName, incomingPublicMsg);
@@ -206,15 +210,18 @@ function messageUI() {
     publicMsg = document.querySelector("#_publicMsg"); // public messages go here
     messageInput = document.querySelector("#_messageInput"); // text input for message
     sendBtn = document.querySelector("#_sendBtn"); // send button
+    historyBtn = document.querySelector("#_historyToggle"); // button to open history menu
     nameInput = document.querySelector("#_nameInput");
+
 
     // public msg HTML elements
     publicMsgInput = document.querySelector("#_publicMsgInput"); // text input for message
     publicSendBtn = document.querySelector("#_publicSendBtn"); // send button
 
     // set events for sending message > trigger the sendMessage() function
-    // -> for when button is blicked
     sendBtn.addEventListener("click", sendMessage);
+    // historyBtn.addEventListener("click", history);
+
     // -> for when "enter" is pressed in input field
     messageInput.addEventListener("keyup", function(event) {
         if (event.keyCode === 13) {
@@ -239,10 +246,10 @@ function sendMessage() {
         // send private message
         if ($('.privateMsg').is(':visible') == true && $('.publicMsg').is(':visible') == false) {
             console.log('about to send to peers. what are they?', peers)
-            for (let peer of Object.values(peers)){
-              if ('send' in peer){
-                peer.send([name, outgoingMsg]);
-              }
+            for (let peer of Object.values(peers)) {
+                if ('send' in peer) {
+                    peer.send([name, outgoingMsg]);
+                }
             }
             addPrivateMsg(name, outgoingMsg);
         }
@@ -258,10 +265,10 @@ function sendMessage() {
         // send private message
         else if ($('.publicMsg').is(':visible') == true && $('.privateMsg').is(':visible') == true) {
             console.log('about to send to peers. what are they?', peers)
-            for(let peer of Object.values(peers)){
-              if ('send' in peer){
-                peer.send([name, outgoingMsg]);
-              }
+            for (let peer of Object.values(peers)) {
+                if ('send' in peer) {
+                    peer.send([name, outgoingMsg]);
+                }
             }
             addPrivateMsg(name, outgoingMsg);
         }
@@ -314,41 +321,6 @@ function addPrivateMsg(name, outgoingMsg) {
     } else {
         $('#_privacyToggle').css('border', '1px solid black');
     }
-
-    // let askingConsent = {
-    //     privateMsgIndex = i,
-    //     notification = true
-    // }
-    for (let i = 0; i < privateMsgIndex; i++) {
-        $(`#message${i}`).click(function() {
-            $(`#message${i}`).slideUp();
-            peer.send(askingConsent); // install Buffer to send more comlex data
-            console.log(`#message${i} has been clicked`);
-        });
-    }
-}
-
-function archivePublicMsg(name, outgoingMsg) {
-
-    let outgoingPublicJson = {
-        name: name,
-        msg: outgoingMsg
-    }
-
-    console.log(outgoingPublicJson);
-
-    // send msg to archive/
-    fetch(url + archive, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(outgoingPublicJson)
-    }).then((res) => {
-        return res.text();
-    }).then((data) => {
-        console.log(data);
-    }); // posting url, object, 
 }
 
 function addPublicMsg(name, outgoingMsg) {
@@ -382,5 +354,61 @@ function addPublicMsg(name, outgoingMsg) {
         $('#_privacyToggle').css('border', '1px solid red');
     } else {
         $('#_privacyToggle').css('border', '1px solid black');
+    }
+}
+
+function archivePublicMsg(name, outgoingMsg) {
+
+    let outgoingPublicJson = {
+        name: name,
+        msg: outgoingMsg
+    }
+
+    console.log(outgoingPublicJson);
+
+    // send msg to archive/
+    fetch(url + archive, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(outgoingPublicJson)
+    }).then((res) => {
+        return res.text();
+    }).then((data) => {
+        console.log(data);
+    }); // posting url, object, 
+}
+
+function loadHistory() {
+    getData();
+    // pull history from the record
+    async function getData() {
+        const res = await fetch(url + record, {
+            method: 'GET'
+        });
+        const data = await res.json();
+        console.log(data[0].time, data[0].author, data[0].msg);
+
+        for (let i = 0; i < data.length; i++) {
+            name = data[i].author;
+            time = data[i].time;
+            historyMsg = data[i].msg;
+            publicMsgIndex = i;
+            publicMsg.insertAdjacentHTML(
+                "beforeend",
+                `<div class="row">
+                <div id="_privateName">
+                <p>${name}</p>
+                </div>
+                <div id="_privateStamp">
+                <p>${time}</p>
+                </div>
+                </div>
+                <div class="message" id="message${publicMsgIndex}">
+                <p>${historyMsg}</p>
+                </div>`
+            );
+        }
     }
 }
