@@ -162,14 +162,10 @@ module.exports = new p5(function() {
             });
 
 
-            peer.on("error", function(e) { <<
-                << << < HEAD
+            peer.on("error", function(e) {
                 console.log('===============peer error event=========================')
-                let errorMsg = `Something went wrong. Try refreshing the page` ===
-                    === =
-                    delete peers[peerId];
-                let errorMsg = `Error connecting to peer. Please wait or refresh the page` >>>
-                    >>> > 1 d7091742a0214bf94e68dcc99e620bac472e084
+                delete peers[peerId];
+                let errorMsg = `Error connecting to peer. Please wait or refresh the page`
                 addSystemMsg(errorMsg);
                 console.log(`Error sending connection to peer: ${peerId}, ${e}`);
             });
