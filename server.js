@@ -105,11 +105,13 @@ io.on('connection', function(socket) {
         //io.sockets.connected[data.peerId]
         console.log('is data.peerId in io.sockets.connected?', data.peerId)
         console.log(Object.keys(io.sockets.connected))
-        io.sockets.connected[data.peerId].emit(
+        if(io.sockets.connected){
+          io.sockets.connected[data.peerId].emit(
             'signal', {
                 signal: data.signal,
                 peerId: socket.id
             })
+        }
     });
 
 
