@@ -4,6 +4,7 @@ const io = require("socket.io-client");
 const p5 = require("p5");
 const socket = io.connect(); // Manually opens the socket
 // const { makeConnectionList } = require('./connection');
+const FileType = require('file-type');
 
 // const url = "https://togethernet-p2p-template.herokuapp.com";
 const url = "http://localhost:3000";
@@ -37,6 +38,69 @@ socket.emit = function(...args) {
     console.log(args);
     return socket.test(...args);
 }
+// audio recording code
+const audioPlayer = document.getElementById('audioPlayer');
+const recordButton = document.getElementById('recordButton');
+const stopRecordButton = document.getElementById('stopRecordButton');
+const sendButton = document.getElementById('sendBlob');
+let recording;
+let blob;
+
+let [stopped, shouldStop] = [false, false];
+
+stopRecordButton.addEventListener('click', ()=>{
+  console.log('clicked');
+  shouldStop = true;
+})
+
+sendButton.addEventListener('click', ()=>{
+  console.log('trying to send')
+  sendBlob(blob);
+})
+
+
+const captureAudio = ()=>{
+  [stopped, shouldStop] = [false, false];
+  navigator.mediaDevices.getUserMedia({
+    audio: true,
+    video: false
+  }).then((stream)=>{
+    console.log('getting stream');
+    const options = {mimeType: 'audio/webm'};
+    const recordedChunks = [];
+    const mediaRecorder = new MediaRecorder(stream, options);
+
+    mediaRecorder.addEventListener('dataavailable', (e)=>{
+      console.log('we are getting data');
+      if(e.data.size > 0){
+        recordedChunks.push(e.data);
+      }
+      if(shouldStop === true && stopped === false){
+        console.log('we are stopping')
+        mediaRecorder.stop();
+        stopped = true;
+      }
+    })
+
+    mediaRecorder.addEventListener('stop', ()=>{
+      console.log('we are stopping');
+      blob = new Blob(recordedChunks)
+      recording = URL.createObjectURL(blob);
+      audioPlayer.src = recording;
+      stream.getTracks().forEach((track)=>{
+        track.stop();
+      })
+    })
+
+    mediaRecorder.start(1000);
+
+  }).catch((err)=>{
+    console.log('err capturing audio', err)
+  })
+}
+
+recordButton.addEventListener('click', captureAudio)
+
 
 // P5.JS
 module.exports = new p5(function() {
@@ -103,6 +167,7 @@ module.exports = new p5(function() {
             console.log('data.initiator', data.initiator);
             // opens up possibility for a connection/configuration
             const peer = new Peer({
+                objectMode: true,
                 initiator: data.initiator,
                 // reconnectTimer: 3000,
                 // iceTransportPolicy: 'relay',
@@ -177,16 +242,27 @@ module.exports = new p5(function() {
                 addSystemMsg(connectedPeerMsg);
                 console.log(`${connectedPeerMsg}`);
             });
+            peer.on('stream', function(stream){
+              console.log('receiving stream!!!');
+              audioPlayer.src = URL.createObjectURL(stream);
+            })
 
             peer.on("data", function(data) {
-                // converts received data from Unit8Array to string
-                incomingMsg = data.toString();
+              console.log('receiving data', typeof data)
+                if(typeof data === "object"){
+                  const blob = new Blob([data])
+                  audioPlayer.src = URL.createObjectURL(blob);
+                }else{
+                  console.log('data is', data)
+                  // converts received data from Unit8Array to string
+                  incomingMsg = data.toString();
 
-                // separate name and msg apart
-                let splitMsg = incomingMsg.split(',');
+                  // separate name and msg apart
+                  let splitMsg = incomingMsg.split(',');
 
-                // insert msg into the chatroom
-                addPrivateMsg(splitMsg[0], splitMsg[1]);
+                  // insert msg into the chatroom
+                  addPrivateMsg(splitMsg[0], splitMsg[1]);
+                }
             });
 
 
@@ -230,6 +306,16 @@ function messageUI() {
             return false;
         }
     });
+}
+
+function sendBlob(blob){
+  blob.arrayBuffer().then(buffer=>{
+    for(let peer of Object.values(peers)){
+      if('addStream' in peer){
+        peer.send(buffer);
+      }
+    }
+  })
 }
 
 // fails on webrtc not open if > 2
