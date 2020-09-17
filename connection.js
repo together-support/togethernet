@@ -1,7 +1,6 @@
 const modules = require("browserify-middleware/lib/modules");
 
 function makeConnectionList(peerList) {
-
     let connectionList = [];
 
     for (let i = 0; i < peerList.length; i++) {
@@ -15,5 +14,5 @@ function makeConnectionList(peerList) {
 }
 
 module.exports = {
-    makeConnectionList
-}
+    makeConnectionList,
+};
