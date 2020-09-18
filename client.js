@@ -35,7 +35,8 @@ let sendBtn; // button to send message
 let historyBtn; // button to open history menu
 
 let publicMsgIndex = 0;
-let privateMsgIndex = 0;
+let incomingMsgIndex = 0;
+let outgoingMsgIndex = 0;
 let privatePeerIndex = 0;
 let sysMsgIndex = 0;
 
@@ -232,16 +233,18 @@ module.exports = new p5(function () {
             updateRemotePeer(moveX, moveY);
             // reset data array
             dataArray = [];
-          } else if (
-            Number(dataArray[0]) != dataArray[0] &&
-            Number(dataArray[1]) != dataArray[1]
-          ) {
-            console.log(
-              `incoming ${dataArray[0]} ${dataArray[1]} is not a number`
-            );
-            addPrivateMsg(dataArray[0], dataArray[1]);
-            // // reset data array
-            dataArray = [];
+          } else if (dataArray[0] != null && dataArray[1] != null) {
+            if (
+              Number(dataArray[0]) != dataArray[0] &&
+              Number(dataArray[1]) != dataArray[1]
+            ) {
+              console.log(
+                `incoming ${dataArray[0]} ${dataArray[1]} is not a number`
+              );
+              incomingPrivateMsg(dataArray[0], dataArray[1]);
+              // reset data array
+              dataArray = [];
+            }
           }
         }
       });
@@ -496,7 +499,7 @@ function sendMessage() {
           peer.send(name);
         }
       }
-      addPrivateMsg(name, outgoingMsg);
+      outgoingPrivateMsg(name, outgoingMsg);
     }
     // send public message
     else if (
@@ -521,7 +524,7 @@ function sendMessage() {
           peer.send([name, outgoingMsg]);
         }
       }
-      addPrivateMsg(name, outgoingMsg);
+      outgoingPrivateMsg(name, outgoingMsg);
     }
     console.log(`sending message: ${outgoingMsg}`); // note: using template literal string: ${variable} inside backticks
     // clear input field
@@ -551,26 +554,28 @@ function removeSysMsg() {
   }
 }
 
-function addPrivateMsg(name, outgoingMsg) {
+function incomingPrivateMsg() {}
+
+function outgoingPrivateMsg(name, msg) {
   removeSysMsg();
   // add txt bubble to avatar
-  privateMsgIndex++;
-  addTxtBubble(user);
+  outgoingMsgIndex++;
+  addTxtBubble(user, name, msg);
   // add msg record to chatroom
-  privateMsgIndex++;
+  outgoingMsgIndex++;
   let txtRecord = document.createElement("div");
-  txtRecord.setAttribute(`id`, `txtRecord${privateMsgIndex}`);
+  txtRecord.setAttribute(`id`, `txtRecord${outgoingMsgIndex}`);
   txtRecord.setAttribute(`class`, `txtRecord`);
   privateChatBox.appendChild(txtRecord);
   userX = ui.getUserPos()[0];
   userY = ui.getUserPos()[1];
-  $(`#txtRecord${privateMsgIndex}`).css({
+  $(`#txtRecord${outgoingMsgIndex}`).css({
     left: `${userX}px`,
     top: `${userY}px`,
     backgroundColor: `${randomColor}`,
   });
   // add txt bubble to txt record
-  addTxtBubble(txtRecord);
+  addTxtBubble(txtRecord, name, msg);
 
   // vanilla text chat interface
   //   let today = new Date();
@@ -585,7 +590,7 @@ function addPrivateMsg(name, outgoingMsg) {
   //     <p>${time}</p>
   //     </div>
   //     </div>
-  //     <div class="message" id="message${privateMsgIndex}">
+  //     <div class="message" id="message${outgoingMsgIndex}">
   //     <p>${outgoingMsg}</p>
   //     </div>`
   // );
@@ -602,12 +607,12 @@ function addPrivateMsg(name, outgoingMsg) {
   }
 }
 
-function addTxtBubble(parent) {
+function addTxtBubble(parent, name, msg) {
   // add text bubble to avatar
   let txtBlb = document.createElement("div");
-  txtBlb.setAttribute(`id`, `txtBlb${privateMsgIndex}`);
+  txtBlb.setAttribute(`id`, `txtBlb${outgoingMsgIndex}`);
   txtBlb.setAttribute(`class`, `txtBlb`);
-  txtBlb.innerHTML = `<p><b>${name}</b></p><p>${outgoingMsg}</p>`;
+  txtBlb.innerHTML = `<p><b>${name}</b></p><p>${msg}</p>`;
   parent.appendChild(txtBlb);
 }
 
@@ -621,7 +626,7 @@ function addSysBubble(systemMsg) {
 }
 
 function hidePrivateMsg() {
-  for (let i = 1; i <= privateMsgIndex; i++) {
+  for (let i = 1; i <= outgoingMsgIndex; i++) {
     let txtBlb = document.getElementById(`txtBlb${i}`);
     txtBlb.style.visibility = "hidden";
   }
@@ -629,7 +634,7 @@ function hidePrivateMsg() {
 }
 
 function togglePrivateMsg() {
-  for (let i = 1; i <= privateMsgIndex; i++) {
+  for (let i = 1; i <= outgoingMsgIndex; i++) {
     $(`#txtRecord${i}`)
       .mouseenter(function () {
         $(`#txtBlb${i}`).css("visibility", "visible");
