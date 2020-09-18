@@ -18,11 +18,13 @@ const record = "/record";
 
 // Simple Peer
 let user;
+let userPos, userX, userY;
 let randomColor;
 let peer;
-let peerArray = [];
+let peerPos, peerX, peerY;
 const peers = {};
 let dataArray = [];
+let cell = 50;
 
 // HTML elements
 let privateChatBox;
@@ -55,62 +57,7 @@ const stopRecordButton = document.getElementById("stopRecordButton");
 const sendButton = document.getElementById("sendBlob");
 let recording;
 let blob;
-
 let [stopped, shouldStop] = [false, false];
-
-stopRecordButton.addEventListener("click", () => {
-  console.log("clicked");
-  shouldStop = true;
-});
-
-sendButton.addEventListener("click", () => {
-  console.log("trying to send");
-  sendBlob(blob);
-});
-
-const captureAudio = () => {
-  [stopped, shouldStop] = [false, false];
-  navigator.mediaDevices
-    .getUserMedia({
-      audio: true,
-      video: false,
-    })
-    .then((stream) => {
-      console.log("getting stream");
-      const options = { mimeType: "audio/webm" };
-      const recordedChunks = [];
-      const mediaRecorder = new MediaRecorder(stream, options);
-
-      mediaRecorder.addEventListener("dataavailable", (e) => {
-        console.log("we are getting data");
-        if (e.data.size > 0) {
-          recordedChunks.push(e.data);
-        }
-        if (shouldStop === true && stopped === false) {
-          console.log("we are stopping");
-          mediaRecorder.stop();
-          stopped = true;
-        }
-      });
-
-      mediaRecorder.addEventListener("stop", () => {
-        console.log("we are stopping");
-        blob = new Blob(recordedChunks);
-        recording = URL.createObjectURL(blob);
-        audioPlayer.src = recording;
-        stream.getTracks().forEach((track) => {
-          track.stop();
-        });
-      });
-
-      mediaRecorder.start(1000);
-    })
-    .catch((err) => {
-      console.log("err capturing audio", err);
-    });
-};
-
-recordButton.addEventListener("click", captureAudio);
 
 // P5.JS
 module.exports = new p5(function () {
@@ -206,7 +153,6 @@ module.exports = new p5(function () {
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       delete peers[peerId];
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     })
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
-
       // System broadcast
       let newPeerMsg = `You're available on the signal server but you have not been paired`;
       console.log(`${newPeerMsg} Peer ID: ${peerId}`);
@@ -274,15 +220,15 @@ module.exports = new p5(function () {
           audioPlayer.src = URL.createObjectURL(blob);
         } else {
           dataArray.unshift(data);
-          // received coordinates from peer
+          // received x, y movements from peer
           if (
             Number(dataArray[0]) == dataArray[0] &&
             Number(dataArray[1]) == dataArray[1]
           ) {
-            console.log("incoming data is a number");
-            let userX = Number(dataArray[0]);
-            let userY = Number(dataArray[1]);
-            updateRemotePeer(userX, userY);
+            console.log("incoming data are numbers");
+            let moveX = Number(dataArray[0]);
+            let moveY = Number(dataArray[1]);
+            updateRemotePeer(moveX, moveY);
             // reset data array
             dataArray = [];
           } else if (
@@ -299,6 +245,7 @@ module.exports = new p5(function () {
         }
       });
 
+      // show list of peers by their ID
       console.log("peers are", peers);
     });
 
@@ -314,78 +261,8 @@ module.exports = new p5(function () {
     });
     sendPos();
   };
-  this.draw = function draw() {};
+  // this.draw = function draw() {};
 });
-
-function sendPos() {
-  let userX = 0;
-  let userY = 0;
-  privateMsgToggle.addEventListener("keydown", function (e) {
-    switch (e.which) {
-      case 37: //left arrow key
-        userX = -50;
-        break;
-      case 38: //up arrow key
-        userY = -50;
-        break;
-      case 39: //right arrow key
-        userX = 50;
-        break;
-      case 40: //bottom arrow key
-        userY = 50;
-        break;
-    }
-
-    for (let peer of Object.values(peers)) {
-      // keep in this order to accomodate unshift()
-      peer.send(userY);
-      peer.send(userX);
-    }
-    console.log(`user is going to x: ${userX} y: ${userY}`);
-    userX = 0;
-    userY = 0;
-  });
-
-  // for draggable
-
-  // let userX = ui.getUserPos()[0];
-  // let userY = ui.getUserPos()[1];
-}
-
-// let $peerPos = [];
-// let $pastX = [];
-// let $pastY = [];
-
-function peerUI() {
-  privateChatBox = document.querySelector("#privateMsgToggle"); // private chat box
-  peer = document.createElement("div");
-  privatePeerIndex += 1;
-  peerArray = [`${privatePeerIndex}`];
-  peer.setAttribute(`id`, `peer${privatePeerIndex}`);
-  peer.setAttribute(`class`, `square yellow`);
-  privateChatBox.appendChild(peer);
-
-  $peerPos = $(`#peer${privatePeerIndex}`).position();
-  $pastX = $peerPos.left;
-
-  // for (let i = 0; i < peerArray.length; i++) {
-  // $peerPos.push($(`#peer${privatePeerIndex}`).position());
-  // $pastX[i] = $peerPos[i].left;
-  // $pastY[i] = $peerPos[i].top;
-  // console.log(`peer X is ${$pastX[i]} and peer Y is ${$pastY[i]}`);
-  // }
-}
-
-let userUI = () => {
-  // user HTML elements
-  user = document.getElementById("user");
-
-  // generate a random user color
-  randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
-  user.style.backgroundColor = randomColor;
-
-  return randomColor;
-};
 
 function messageUI() {
   // private msg HTML elements
@@ -413,6 +290,173 @@ function messageUI() {
   });
 }
 
+let userUI = () => {
+  // user HTML elements
+  user = document.getElementById("user");
+
+  // get user initial position
+  userX = ui.getUserPos()[0];
+  userY = ui.getUserPos()[1];
+
+  // generate a random user color
+  randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+  user.style.backgroundColor = randomColor;
+
+  return randomColor;
+};
+
+function sendPos() {
+  let moveX = 0;
+  let moveY = 0;
+
+  privateMsgToggle.addEventListener("keydown", function (e) {
+    switch (e.which) {
+      case 37: //left arrow key
+        moveX = -cell;
+        break;
+      case 38: //up arrow key
+        moveY = -cell;
+        break;
+      case 39: //right arrow key
+        moveX = cell;
+        break;
+      case 40: //bottom arrow key
+        moveY = cell;
+        break;
+    }
+    for (let peer of Object.values(peers)) {
+      // keep in this order to accomodate unshift()
+      peer.send(moveY);
+      peer.send(moveX);
+    }
+    console.log(`user is going to x: ${moveX} y: ${moveY}`);
+    moveX = 0;
+    moveY = 0;
+  });
+}
+
+function peerUI() {
+  privateChatBox = document.querySelector("#privateMsgToggle"); // private chat box
+  peer = document.createElement("div");
+  privatePeerIndex += 1;
+  peer.setAttribute(`id`, `peer${privatePeerIndex}`);
+  peer.setAttribute(`class`, `square`);
+  // generate a random user color
+  let peerColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+  peer.style.backgroundColor = peerColor;
+  privateChatBox.appendChild(peer);
+
+  peerPos = $(`#peer${privatePeerIndex}`).position();
+  peerX = peerPos.left;
+  peerY = peerPos.top;
+
+  // for (let i = 0; i < peerArray.length; i++) {
+  // $peerPos.push($(`#peer${privatePeerIndex}`).position());
+  // $pastX[i] = $peerPos[i].left;
+  // $pastY[i] = $peerPos[i].top;
+  // console.log(`peer X is ${$pastX[i]} and peer Y is ${$pastY[i]}`);
+  // }
+}
+
+// update the positions of remote peers
+function updateRemotePeer(currentX, currentY) {
+  console.log(currentX);
+  let direction;
+  if (currentX > 0 || currentY > 0) {
+    direction = "+=";
+    // keeping track of peer's global location
+    peerX += currentX;
+    peerY += currentY;
+  } else if (currentX < 0 || currentY < 0) {
+    direction = "-=";
+    currentX = -currentX;
+    currentY = -currentY;
+    // keeping track of peer's global location
+    peerX -= currentX;
+    peerY -= currentY;
+  }
+
+  $(function () {
+    $(`#peer${privatePeerIndex}`)
+      .finish()
+      .animate({
+        left: `${direction}${currentX}`, // why doesn't left work???
+        top: `${direction}${currentY}`,
+      });
+
+    userX = ui.getUserPos()[0];
+    userY = ui.getUserPos()[1];
+
+    // console.log("current peer location is: " + peerX, peerY);
+    // console.log("current user location is: " + userX, userY);
+
+    if (peerX == userX && peerY == userY) {
+      console.log(`YOU ARE OVERLAPPED ^_^`);
+    } else if (
+      (peerX == userX + cell && peerY == userY) ||
+      (peerX == userX - cell && peerY == userY) ||
+      (peerY == userY + cell && peerX == userX) ||
+      (peerY == userY - cell && peerX == userX)
+    ) {
+      console.log(`START A THREAD? ?_?`);
+    }
+  });
+}
+
+// audio
+stopRecordButton.addEventListener("click", () => {
+  console.log("clicked");
+  shouldStop = true;
+});
+
+sendButton.addEventListener("click", () => {
+  console.log("trying to send");
+  sendBlob(blob);
+});
+
+const captureAudio = () => {
+  [stopped, shouldStop] = [false, false];
+  navigator.mediaDevices
+    .getUserMedia({
+      audio: true,
+      video: false,
+    })
+    .then((stream) => {
+      console.log("getting stream");
+      const options = { mimeType: "audio/webm" };
+      const recordedChunks = [];
+      const mediaRecorder = new MediaRecorder(stream, options);
+
+      mediaRecorder.addEventListener("dataavailable", (e) => {
+        console.log("we are getting data");
+        if (e.data.size > 0) {
+          recordedChunks.push(e.data);
+        }
+        if (shouldStop === true && stopped === false) {
+          console.log("we are stopping");
+          mediaRecorder.stop();
+          stopped = true;
+        }
+      });
+
+      mediaRecorder.addEventListener("stop", () => {
+        console.log("we are stopping");
+        blob = new Blob(recordedChunks);
+        recording = URL.createObjectURL(blob);
+        audioPlayer.src = recording;
+        stream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      });
+
+      mediaRecorder.start(1000);
+    })
+    .catch((err) => {
+      console.log("err capturing audio", err);
+    });
+};
+
+recordButton.addEventListener("click", captureAudio);
 function sendBlob(blob) {
   blob.arrayBuffer().then((buffer) => {
     for (let peer of Object.values(peers)) {
@@ -497,51 +541,6 @@ let $peerPos;
 let $pastX;
 let $pastY;
 
-// update the positions of remote peers
-function updateRemotePeer(currentX, currentY) {
-
-  let direction;
-
-  if (currentX > 0 || currentY > 0){
-    direction = '+=';
-  } else if (currentX < 0 || currentY < 0){
-    direction = '-=';
-    currentX = -currentX;
-    currentY = -currentY;
-  }
- $(function () {
-      $(`#peer${privatePeerIndex}`)
-        .finish()
-        .animate({
-          "margin-left": `${direction}${currentX}`,
-          "margin-top": `${direction}${currentY}`,
-        });
-
-   //  if (currentX > $pastX) {
-   //    $(`#peer${privatePeerIndex}`)
-   //      .finish()
-   //      .animate({
-   //        "margin-left": `+=${cell}`,
-   //      });
-   //    console.log(
-   //      `true that ${currentX} is bigger than ${$pastX}, so move to the right by ${cell}`
-   //    );
-   //  } else if (currentX < $pastX) {
-   //     $(`#peer${privatePeerIndex}`)
-   //           .finish()
-   //           .animate({
-   //             "margin-left": `-=${cell}`,
-   //     });
-   //    console.log(`it's not true that ${currentX} is bigger than ${$pastX}`);
-   //  }
-   //  console.log(
-   //    `remote peers position is at ${currentX}, ${currentY}`
-   //  );
-   //  // reset peerX
-   //  $pastX = currentX;
- });
-}
-
 function addPrivateMsg(name, outgoingMsg) {
   let today = new Date();
   let time = today.getHours() + ":" + today.getMinutes();
@@ -560,7 +559,7 @@ function addPrivateMsg(name, outgoingMsg) {
   // add msg record to chatroom
   let txtRecord = document.createElement("div");
   txtRecord.setAttribute(`id`, `txtRecord${privateMsgIndex}`);
-  txtRecord.style.top = 50;
+  // txtRecord.style.top = cell;
   txtRecord.setAttribute(`class`, `square txtRecord`);
   // textRecord.style["backgroundColor"] = randomColor;
   txtRecord.innerHTML = `<p><b>${name}</b></p><p>${outgoingMsg}</p>`;

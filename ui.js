@@ -1,6 +1,7 @@
 let $cell = 50;
 let $userPos, $userX, $userY;
-let $futureX, futureY;
+let $sendX = 0;
+let $sendY = 0;
 let $chatPos, $chatX, $chatY, $chatW, $chatH;
 let $snap = 1;
 
@@ -20,6 +21,8 @@ $(document).ready(function () {
   });
 
   $(document).keydown(function (e) {
+    $sendX = 0;
+    $sendY = 0;
     switch (e.which) {
       case 13:
         // update user coordinates
@@ -32,9 +35,8 @@ $(document).ready(function () {
             .animate({
               left: `-=${$cell}`,
             });
-          $futureX = $userX - $cell;
           $userX -= $cell;
-        }
+            }
         break;
       case 38: //up arrow key
         if ($userY - $chatPos.top > $snap) {
@@ -44,7 +46,7 @@ $(document).ready(function () {
               top: `-=${$cell}`,
             });
           $userY -= $cell;
-        }
+          }
         break;
       case 39: //right arrow key
         if ($chatX + $chatW - $userX - $cell > $snap) {
@@ -53,9 +55,8 @@ $(document).ready(function () {
             .animate({
               left: `+=${$cell}`,
             });
-          $futureX = $userX + $cell;
           $userX += $cell;
-        }
+           }
         break;
       case 40: //bottom arrow key
         if ($chatY + $chatH - $userY - $cell > $snap) {
@@ -65,7 +66,7 @@ $(document).ready(function () {
               top: `+=${$cell}`,
             });
           $userY += $cell;
-        }
+           }
         break;
     }
 
@@ -75,6 +76,7 @@ $(document).ready(function () {
 
 let getUserPos = () => {
   return [$userX, $userY];
+  // return [$sendX, $sendY];
 };
 exports.getUserPos = getUserPos;
 
