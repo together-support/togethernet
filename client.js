@@ -37,6 +37,7 @@ let historyBtn; // button to open history menu
 let publicMsgIndex = 0;
 let privateMsgIndex = 0;
 let privatePeerIndex = 0;
+let sysMsgIndex = 0;
 
 let incomingMsg;
 let outgoingMsg;
@@ -201,7 +202,7 @@ module.exports = new p5(function () {
         );
         // System broadcast
         let connectedPeerMsg = `Peer connection established. You're now ready to chat in the p2p mode`;
-        // addSystemMsg(connectedPeerMsg);
+        addSystemMsg(connectedPeerMsg);
         console.log(`${connectedPeerMsg}`);
         // Create peer UI
         peerUI();
@@ -308,7 +309,6 @@ let userUI = () => {
 function sendPos() {
   let moveX = 0;
   let moveY = 0;
-
   privateMsgToggle.addEventListener("keydown", function (e) {
     switch (e.which) {
       case 37: //left arrow key
@@ -329,9 +329,11 @@ function sendPos() {
       peer.send(moveY);
       peer.send(moveX);
     }
-    console.log(`user is going to x: ${moveX} y: ${moveY}`);
     moveX = 0;
     moveY = 0;
+    // hide system & private msg when a key is pressed
+    removeSysMsg();
+    hidePrivateMsg();
   });
 }
 
@@ -392,13 +394,16 @@ function updateRemotePeer(currentX, currentY) {
 
     if (peerX == userX && peerY == userY) {
       console.log(`YOU ARE OVERLAPPED ^_^`);
+      // addSystemMsg();
     } else if (
       (peerX == userX + cell && peerY == userY) ||
       (peerX == userX - cell && peerY == userY) ||
       (peerY == userY + cell && peerX == userX) ||
       (peerY == userY - cell && peerX == userX)
     ) {
+      let replyThreadMsg = `Reply Thread`;
       console.log(`START A THREAD? ?_?`);
+      addSystemMsg(replyThreadMsg);
     }
   });
 }
@@ -527,6 +532,8 @@ function sendMessage() {
 }
 
 function addSystemMsg(systemMsg) {
+  addSysBubble(systemMsg);
+
   // privateMsg.insertAdjacentHTML(
   //     "beforeend",
   //     `<div class="message" id="systemMsg">
@@ -537,35 +544,37 @@ function addSystemMsg(systemMsg) {
   // privateMsg.scrollTop = privateMsg.scrollHeight - privateMsg.clientHeight;
 }
 
-let $peerPos;
-let $pastX;
-let $pastY;
+function removeSysMsg() {
+  for (let i = 1; i <= sysMsgIndex; i++) {
+    let sysBlb = document.getElementById(`sysBlb${i}`);
+    sysBlb.style.display = "none";
+  }
+}
 
 function addPrivateMsg(name, outgoingMsg) {
-  let today = new Date();
-  let time = today.getHours() + ":" + today.getMinutes();
-
+  removeSysMsg();
+  // add txt bubble to avatar
   privateMsgIndex++;
-
-  // add text bubble to avatar
-  let txtBlb = document.createElement("div");
-  txtBlb.setAttribute(`id`, `txtBlb${privateMsgIndex}`);
-  txtBlb.setAttribute(`class`, `txtBlb`);
-  txtBlb.innerHTML = `<p><b>${name}</b></p><p>${outgoingMsg}</p>`;
-  user.appendChild(txtBlb);
-  let txtOpacity = 0.7;
-  txtBlb.style.opacity = txtOpacity;
-
+  addTxtBubble(user);
   // add msg record to chatroom
+  privateMsgIndex++;
   let txtRecord = document.createElement("div");
   txtRecord.setAttribute(`id`, `txtRecord${privateMsgIndex}`);
-  // txtRecord.style.top = cell;
-  txtRecord.setAttribute(`class`, `square txtRecord`);
-  // textRecord.style["backgroundColor"] = randomColor;
-  txtRecord.innerHTML = `<p><b>${name}</b></p><p>${outgoingMsg}</p>`;
-  $(txtRecord).insertBefore(user);
+  txtRecord.setAttribute(`class`, `txtRecord`);
+  privateChatBox.appendChild(txtRecord);
+  userX = ui.getUserPos()[0];
+  userY = ui.getUserPos()[1];
+  $(`#txtRecord${privateMsgIndex}`).css({
+    left: `${userX}px`,
+    top: `${userY}px`,
+    backgroundColor: `${randomColor}`,
+  });
+  // add txt bubble to txt record
+  addTxtBubble(txtRecord);
 
   // vanilla text chat interface
+  //   let today = new Date();
+  // let time = today.getHours() + ":" + today.getMinutes();
   // privateMsg.insertAdjacentHTML(
   //     "beforeend",
   //     `<div class="row">
@@ -590,6 +599,44 @@ function addPrivateMsg(name, outgoingMsg) {
     $("#_privacyToggle").css("border", "1px solid red");
   } else {
     $("#_privacyToggle").css("border", "1px solid black");
+  }
+}
+
+function addTxtBubble(parent) {
+  // add text bubble to avatar
+  let txtBlb = document.createElement("div");
+  txtBlb.setAttribute(`id`, `txtBlb${privateMsgIndex}`);
+  txtBlb.setAttribute(`class`, `txtBlb`);
+  txtBlb.innerHTML = `<p><b>${name}</b></p><p>${outgoingMsg}</p>`;
+  parent.appendChild(txtBlb);
+}
+
+function addSysBubble(systemMsg) {
+  sysMsgIndex++;
+  let sysBlb = document.createElement("div");
+  sysBlb.setAttribute(`id`, `sysBlb${sysMsgIndex}`);
+  sysBlb.setAttribute(`class`, `sysBlb`);
+  sysBlb.innerHTML = `<p>${systemMsg}</p>`;
+  user.appendChild(sysBlb);
+}
+
+function hidePrivateMsg() {
+  for (let i = 1; i <= privateMsgIndex; i++) {
+    let txtBlb = document.getElementById(`txtBlb${i}`);
+    txtBlb.style.visibility = "hidden";
+  }
+  togglePrivateMsg();
+}
+
+function togglePrivateMsg() {
+  for (let i = 1; i <= privateMsgIndex; i++) {
+    $(`#txtRecord${i}`)
+      .mouseenter(function () {
+        $(`#txtBlb${i}`).css("visibility", "visible");
+      })
+      .mouseleave(function () {
+        $(`#txtBlb${i}`).css("visibility", "hidden");
+      });
   }
 }
 

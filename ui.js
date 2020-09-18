@@ -4,6 +4,7 @@ let $sendX = 0;
 let $sendY = 0;
 let $chatPos, $chatX, $chatY, $chatW, $chatH;
 let $snap = 1;
+let $hideBubble = false;
 
 $(document).ready(function () {
   // log div positions into variables when document finished loading
@@ -24,10 +25,9 @@ $(document).ready(function () {
     $sendX = 0;
     $sendY = 0;
     switch (e.which) {
-      case 13:
-        // update user coordinates
-        $("#user").addMsg();
-        break;
+      // case 13:
+      //   $("#user").addMsg();
+      //   break;
       case 37: //left arrow key
         if ($userX - $chatPos.left > $snap) {
           $("#user")
@@ -36,7 +36,7 @@ $(document).ready(function () {
               left: `-=${$cell}`,
             });
           $userX -= $cell;
-            }
+        }
         break;
       case 38: //up arrow key
         if ($userY - $chatPos.top > $snap) {
@@ -46,7 +46,7 @@ $(document).ready(function () {
               top: `-=${$cell}`,
             });
           $userY -= $cell;
-          }
+        }
         break;
       case 39: //right arrow key
         if ($chatX + $chatW - $userX - $cell > $snap) {
@@ -56,7 +56,7 @@ $(document).ready(function () {
               left: `+=${$cell}`,
             });
           $userX += $cell;
-           }
+        }
         break;
       case 40: //bottom arrow key
         if ($chatY + $chatH - $userY - $cell > $snap) {
@@ -66,10 +66,10 @@ $(document).ready(function () {
               top: `+=${$cell}`,
             });
           $userY += $cell;
-           }
+        }
         break;
     }
-
+    // $hideBubble = !$hideBubble;
     // console.log(`in ui this is x ${$userX} and this is y ${$userY}`);
   });
 });
@@ -78,5 +78,9 @@ let getUserPos = () => {
   return [$userX, $userY];
   // return [$sendX, $sendY];
 };
-exports.getUserPos = getUserPos;
 
+let hideBubble = () => {
+  return $hideBubble;
+};
+exports.hideBubble = hideBubble;
+exports.getUserPos = getUserPos;
