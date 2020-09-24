@@ -148,12 +148,6 @@ module.exports = new p5(function () {
         // }
       });
 
-      // Create peer UI
-      if (!(peerId in peers)) {
-        // if peerId exists as keys in peers
-        peerUI();
-      }
-
       //maintain global list of peers
       peers[peerId] = peer;
       /*
@@ -211,7 +205,8 @@ module.exports = new p5(function () {
         let connectedPeerMsg = `Peer connection established. You're now ready to chat in the p2p mode`;
         addSystemMsg(connectedPeerMsg);
         console.log(`${connectedPeerMsg}`);
-        console.log(peers, peerId);
+        // Create peer UI
+        peerUI();
       });
       peer.on("stream", function (stream) {
         console.log("receiving stream!!!");
@@ -304,8 +299,8 @@ let userUI = () => {
   user = document.getElementById("user");
 
   // get user initial position
-  userX = ui.getUserPos()[0]; //x
-  userY = ui.getUserPos()[1]; //y
+  userX = ui.getUserPos()[0];
+  userY = ui.getUserPos()[1];
 
   // generate a random user color
   randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
@@ -315,21 +310,33 @@ let userUI = () => {
 };
 
 function sendPos() {
+  let moveX = 0;
+  let moveY = 0;
   privateMsgToggle.addEventListener("keydown", function (e) {
-    setTimeout(function () {
-      userX = ui.getUserPos()[0]; //x
-      userY = ui.getUserPos()[1]; //y
-
-      console.log("local pos is : " + userX, userY);
-      for (let peer of Object.values(peers)) {
-        // keep in this order to accomodate unshift()
-        peer.send(userY);
-        peer.send(userX);
-      }
-      // hide system & private msg when a key is pressed
-      removeSysMsg();
-      hidePrivateMsg();
-    }, 0);
+    switch (e.which) {
+      case 37: //left arrow key
+        moveX = -cell;
+        break;
+      case 38: //up arrow key
+        moveY = -cell;
+        break;
+      case 39: //right arrow key
+        moveX = cell;
+        break;
+      case 40: //bottom arrow key
+        moveY = cell;
+        break;
+    }
+    for (let peer of Object.values(peers)) {
+      // keep in this order to accomodate unshift()
+      peer.send(moveY);
+      peer.send(moveX);
+    }
+    moveX = 0;
+    moveY = 0;
+    // hide system & private msg when a key is pressed
+    removeSysMsg();
+    hidePrivateMsg();
   });
 }
 
@@ -347,24 +354,46 @@ function peerUI() {
   peerPos = $(`#peer${privatePeerIndex}`).position();
   peerX = peerPos.left;
   peerY = peerPos.top;
+
+  // for (let i = 0; i < peerArray.length; i++) {
+  // $peerPos.push($(`#peer${privatePeerIndex}`).position());
+  // $pastX[i] = $peerPos[i].left;
+  // $pastY[i] = $peerPos[i].top;
+  // console.log(`peer X is ${$pastX[i]} and peer Y is ${$pastY[i]}`);
+  // }
 }
 
 // update the positions of remote peers
 function updateRemotePeer(currentX, currentY) {
-  console.log(currentX, currentY);
+  console.log(currentX);
+  let direction;
+  if (currentX > 0 || currentY > 0) {
+    direction = "+=";
+    // keeping track of peer's global location
+    peerX += currentX;
+    peerY += currentY;
+  } else if (currentX < 0 || currentY < 0) {
+    direction = "-=";
+    currentX = -currentX;
+    currentY = -currentY;
+    // keeping track of peer's global location
+    peerX -= currentX;
+    peerY -= currentY;
+  }
+
   $(function () {
     $(`#peer${privatePeerIndex}`)
       .finish()
-      .offset({
-        left: `${currentX}`,
-        top: `${currentY}`,
+      .animate({
+        left: `${direction}${currentX}`, // why doesn't left work???
+        top: `${direction}${currentY}`,
       });
 
     userX = ui.getUserPos()[0];
     userY = ui.getUserPos()[1];
 
-    console.log("current peer location is: " + currentX, currentY);
-    console.log("current user location is: " + userX, userY);
+    // console.log("current peer location is: " + peerX, peerY);
+    // console.log("current user location is: " + userX, userY);
 
     // check user & peer adjacency
     // if (peerX == userX && peerY == userY) {

@@ -1,5 +1,7 @@
 let $cell = 50;
 let $userPos, $userX, $userY;
+let $sendX = 0;
+let $sendY = 0;
 let $chatPos, $chatX, $chatY, $chatW, $chatH;
 let $snap = 1;
 let $hideBubble = false;
@@ -20,48 +22,50 @@ $(document).ready(function () {
   });
 
   $(document).keydown(function (e) {
+    $sendX = 0;
+    $sendY = 0;
     switch (e.which) {
       // case 13:
       //   $("#user").addMsg();
       //   break;
       case 37: //left arrow key
         if ($userX - $chatPos.left > $snap) {
-          $userX -= $cell;
           $("#user")
             .finish()
             .animate({
-              left: `${$userX}`,
+              left: `-=${$cell}`,
             });
+          $userX -= $cell;
         }
         break;
       case 38: //up arrow key
         if ($userY - $chatPos.top > $snap) {
-          $userY -= $cell;
           $("#user")
             .finish()
             .animate({
-              top: `${$userY}`,
+              top: `-=${$cell}`,
             });
+          $userY -= $cell;
         }
         break;
       case 39: //right arrow key
         if ($chatX + $chatW - $userX - $cell > $snap) {
-          $userX += $cell;
           $("#user")
             .finish()
             .animate({
-              left: `${$userX}`,
+              left: `+=${$cell}`,
             });
+          $userX += $cell;
         }
         break;
       case 40: //bottom arrow key
         if ($chatY + $chatH - $userY - $cell > $snap) {
-          $userY += $cell;
           $("#user")
             .finish()
             .animate({
-              top: `${$userY}`,
+              top: `+=${$cell}`,
             });
+          $userY += $cell;
         }
         break;
     }
