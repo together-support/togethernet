@@ -36,6 +36,7 @@ let publicMsg;
 let messageInput; // text field to type message
 let sendBtn; // button to send message
 let historyBtn; // button to open history menu
+let stopSendMsg = false;
 
 let publicMsgIndex = 0;
 let incomingMsgIndex = 0;
@@ -356,29 +357,68 @@ function sendPos() {
         peer.send(userX);
       }
 
+      // check if avatar & user's text records are overlapped or adjacent
+      for (let i = 0; i < userPosArray.length; i++) {
+        let oldUserX = userPosArray[i][0];
+        let oldUserY = userPosArray[i][1];
+
+        if (userX == oldUserX && userY == oldUserY) {
+          getConsent(evt);
+        } else if (
+          (oldUserX == userX + cell && oldUserY == userY) ||
+          (oldUserX == userX - cell && oldUserY == userY) ||
+          (oldUserY == userY + cell && oldUserX == userX) ||
+          (oldUserY == userY - cell && oldUserX == userX)
+        ) {
+          replyThread(evt);
+        } else {
+          // allow user to send new msg
+          stopSendMsg = false;
+        }
+      }
+
       // check if avatar & peer's text records are overlapped or adjacent
       for (let i = 0; i < peerPosArray.length; i++) {
         let peerX = peerPosArray[i][0];
         let peerY = peerPosArray[i][1];
         if (userX == peerX && userY == peerY) {
-          console.log(`YOU ARE OVERLAPPED ^_^`);
+          getConsent(evt);
         } else if (
           (peerX == userX + cell && peerY == userY) ||
           (peerX == userX - cell && peerY == userY) ||
           (peerY == userY + cell && peerX == userX) ||
           (peerY == userY - cell && peerX == userX)
         ) {
-          let replyThreadMsg = `Reply Thread`;
-          console.log(`START A THREAD? ?_?`);
-          addSystemMsg(replyThreadMsg);
-
-          if (evt.keyCode == 13) {
-            console.log("MAKE THREAD");
-          }
+          replyThread(evt);
+        } else {
+          // allow user to send new msg
+          stopSendMsg = false;
         }
       }
     }, 0);
   });
+}
+
+function getConsent(evt) {
+  let getConsent = `Ask for Consent?`;
+  console.log(`YOU ARE OVERLAPPED ^_^`);
+  addSystemMsg(getConsent);
+  if (evt.keyCode == 13) {
+    console.log("ASK FOR CONSENT");
+  }
+  // prevents user from sending msg when it overlaps peer's txtrecord
+  stopSendMsg = true;
+}
+
+function replyThread(evt) {
+  let replyThread = `Reply Thread?`;
+  console.log(`START A THREAD? ?_?`);
+  addSystemMsg(replyThread);
+  if (evt.keyCode == 13) {
+    console.log("MAKE THREAD");
+  }
+  // allow user to reply thread
+  stopSendMsg = false;
 }
 
 function peerUI() {
@@ -486,7 +526,7 @@ function sendBlob(blob) {
 // fails on webrtc not open if > 2
 // how do we ensure that webrtc is listening?
 function sendMessage() {
-  if (messageInput.value != "") {
+  if (!stopSendMsg && messageInput.value != "") {
     outgoingMsg = messageInput.value;
     // send private message
     if (
@@ -531,7 +571,9 @@ function sendMessage() {
     console.log(`sending message: ${outgoingMsg}`); // note: using template literal string: ${variable} inside backticks
     // clear input field
     messageInput.value = "";
-  } else {
+  } else if (stopSendMsg) {
+    alert("move to an empty spot to write the msg");
+  } else if (messageInput.value == "") {
     alert("your message is empty");
   }
 }
@@ -599,6 +641,10 @@ function outgoingPrivateMsg(name, msg) {
     top: `${userY}px`,
     backgroundColor: `${userColor}`,
   });
+
+  // store peer txtRecord positions
+  userPosArray.push([userX, userY]);
+
   // add txt bubble to txt record
   addTxtBubble(txtRecord, name, msg);
 
