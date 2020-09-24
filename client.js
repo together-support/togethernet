@@ -19,6 +19,7 @@ const record = "/record";
 // Simple Peer
 let user;
 let userX, userY;
+let name = "Anonymous";
 let peer;
 let peerPos, peerX, peerY;
 const peers = {};
@@ -286,11 +287,14 @@ function messageUI() {
   publicMsgInput = document.querySelector("#_publicMsgInput"); // text input for message
   publicSendBtn = document.querySelector("#_publicSendBtn"); // send button
 
-  // set events for sending message > trigger the sendMessage() function
-  sendBtn.addEventListener("click", sendMessage);
-  // historyBtn.addEventListener("click", history);
+  // set default name
+  nameInput.innerHTML = name;
+  nameInput.addEventListener("click", userName);
 
-  // -> for when "enter" is pressed in input field
+  // send msg
+  // through click
+  sendBtn.addEventListener("click", sendMessage);
+  // through key
   messageInput.addEventListener("keyup", function (event) {
     if (event.keyCode === 13) {
       sendMessage();
@@ -322,12 +326,24 @@ let userUI = () => {
   });
 };
 
+function userName() {
+  let txt;
+  name = prompt("Please enter your name:");
+  if (name == null || name == "") {
+    name = "Anonymous";
+  } else {
+    nameInput.innerHTML = name;
+  }
+}
+
 function sendPos() {
-  privateMsgToggle.addEventListener("keydown", function (e) {
-    // hide system & private msg when a key is pressed
-    removeSysMsg();
-    hidePrivateMsg();
+  $(privateMsgToggle).keydown(function (evt) {
+    evt = evt || window.event;
     setTimeout(function () {
+      // hide system & private msg when a key is pressed
+      removeSysMsg();
+      hidePrivateMsg();
+
       userX = ui.getUserPos()[0]; //x
       userY = ui.getUserPos()[1]; //y
 
@@ -337,6 +353,8 @@ function sendPos() {
         peer.send(userY);
         peer.send(userX);
       }
+
+      console.log("keydown: " + evt.keyCode);
     }, 0);
   });
 }
@@ -460,12 +478,6 @@ function sendBlob(blob) {
 // fails on webrtc not open if > 2
 // how do we ensure that webrtc is listening?
 function sendMessage() {
-  let name = "Anonymous";
-
-  if (nameInput.value != "") {
-    name = nameInput.value;
-  }
-
   if (messageInput.value != "") {
     outgoingMsg = messageInput.value;
     // send private message
@@ -606,15 +618,6 @@ function outgoingPrivateMsg(name, msg) {
   }
 }
 
-function addTxtBubble(parent, name, msg) {
-  // add text bubble to avatar
-  let txtBlb = document.createElement("div");
-  txtBlb.setAttribute(`id`, `txtBlb${msgIndex}`);
-  txtBlb.setAttribute(`class`, `txtBlb`);
-  txtBlb.innerHTML = `<p><b>${name}</b></p><p>${msg}</p>`;
-  parent.appendChild(txtBlb);
-}
-
 function addSysBubble(systemMsg) {
   sysMsgIndex++;
   let sysBlb = document.createElement("div");
@@ -624,11 +627,22 @@ function addSysBubble(systemMsg) {
   user.appendChild(sysBlb);
 }
 
+function addTxtBubble(parent, name, msg) {
+  // add text bubble to avatar
+  let txtBlb = document.createElement("div");
+  txtBlb.setAttribute(`id`, `txtBlb${msgIndex}`);
+  txtBlb.setAttribute(`class`, `txtBlb`);
+  txtBlb.innerHTML = `<p><b>${name}</b></p><p>${msg}</p>`;
+  parent.appendChild(txtBlb);
+}
+
 function hidePrivateMsg() {
-  //   // for (let i = 1; i <= msgIndex; i++) {
-  //   //   let txtBlb = document.getElementById(`txtBlb${i}`);
-  //   //   txtBlb.style.visibility = "hidden";
-  //   // }
+  setTimeout(function () {
+    for (let i = 1; i <= msgIndex; i++) {
+      let txtBlb = document.getElementById(`txtBlb${i}`);
+      txtBlb.style.visibility = "hidden";
+    }
+  }, 0);
   //   for (let i = 1; i <= msgIndex; i++) {
   //     let txtBlb = document.getElementById(`txtBlb${i}`);
   //     txtBlb.style.visibility = "hidden";
@@ -641,18 +655,6 @@ function hidePrivateMsg() {
   //       });
   //   }
 }
-
-// function hidePrivateMsg() {
-//   for (let i = 1; i <= msgIndex; i++) {
-//     $(`#txtRecord${i}`)
-//       .mouseenter(function () {
-//         $(`#txtBlb${i}`).css("visibility", "visible");
-//       })
-//       .mouseleave(function () {
-//         $(`#txtBlb${i}`).css("visibility", "hidden");
-//       });
-//   }
-// }
 
 function addPublicMsg(name, outgoingMsg) {
   let today = new Date();

@@ -29,7 +29,7 @@
         </div>
 
         <div class="row">
-            <div class="chat privateMsg" id="privateMsgToggle" tabindex="1">
+            <div class="chat privateMsg" id="privateMsgToggle" tabindex="0">
                 <div class="col">
                     <div class="messageDiv" id="_privateMsg"></div>
                 </div>
@@ -51,7 +51,8 @@
 
         <div class="sendMessageDiv row">
             <input type="color" id="userProfile" class="slit" name="userProfile">
-                        <input type="text" id="_nameInput" name="text" placeholder="Your name" />
+            <button id="_nameInput"></button>
+                        <!-- <input type="text" id="_nameInput" name="text" placeholder="Your name" /> -->
             <input type="text" id="_messageInput" name="text" placeholder=" Type your message here" />
             <button type="button" class="btn icon" title="send message" id="_sendBtn" name="">
       <i class="fas fa-paper-plane"></i>

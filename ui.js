@@ -19,12 +19,17 @@ $(document).ready(function () {
 
   $(function () {
     $("#user").draggable({ grid: [$cell, $cell] });
+    $userPos = $("#user").position();
+    $userX = $userPos.left;
+    $userY = $userPos.top;
   });
 
-  $(document).keydown(function (e) {
+  $("#privateMsgToggle").keydown(function (evt) {
+    // will only work if #privateMsgToggle is in focus
+    evt = evt || window.event;
     $sendX = 0;
     $sendY = 0;
-    switch (e.which) {
+    switch (evt.which) {
       // case 13:
       //   $("#user").addMsg();
       //   break;
@@ -76,7 +81,6 @@ $(document).ready(function () {
 
 let getUserPos = () => {
   return [$userX, $userY];
-  // return [$sendX, $sendY];
 };
 
 let hideBubble = () => {
