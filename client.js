@@ -148,6 +148,12 @@ module.exports = new p5(function () {
         // }
       });
 
+      // Create peer UI
+      if (!(peerId in peers)) {
+        // if peerId exists as keys in peers
+        peerUI();
+      }
+
       //maintain global list of peers
       peers[peerId] = peer;
       /*
@@ -205,8 +211,7 @@ module.exports = new p5(function () {
         let connectedPeerMsg = `Peer connection established. You're now ready to chat in the p2p mode`;
         addSystemMsg(connectedPeerMsg);
         console.log(`${connectedPeerMsg}`);
-        // Create peer UI
-        peerUI();
+        console.log(peers, peerId);
       });
       peer.on("stream", function (stream) {
         console.log("receiving stream!!!");
@@ -297,46 +302,42 @@ function messageUI() {
 let userUI = () => {
   // user HTML elements
   user = document.getElementById("user");
+  userProfile = document.getElementById("userProfile");
 
   // get user initial position
-  userX = ui.getUserPos()[0];
-  userY = ui.getUserPos()[1];
+  userX = ui.getUserPos()[0]; //x
+  userY = ui.getUserPos()[1]; //y
 
   // generate a random user color
-  randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
-  user.style.backgroundColor = randomColor;
+  userColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+  // then assign randomized color to user and userProfile
+  user.style.backgroundColor = userColor;
+  userProfile.value = userColor;
 
-  return randomColor;
+  // listens to changes in the color picker to change user and userProfile colors
+  userProfile.addEventListener("change", function () {
+    userColor = userProfile.value;
+    document.getElementById("user").style.backgroundColor = userColor;
+    console.log("changed color" + userProfile.value);
+  });
 };
 
 function sendPos() {
-  let moveX = 0;
-  let moveY = 0;
   privateMsgToggle.addEventListener("keydown", function (e) {
-    switch (e.which) {
-      case 37: //left arrow key
-        moveX = -cell;
-        break;
-      case 38: //up arrow key
-        moveY = -cell;
-        break;
-      case 39: //right arrow key
-        moveX = cell;
-        break;
-      case 40: //bottom arrow key
-        moveY = cell;
-        break;
-    }
-    for (let peer of Object.values(peers)) {
-      // keep in this order to accomodate unshift()
-      peer.send(moveY);
-      peer.send(moveX);
-    }
-    moveX = 0;
-    moveY = 0;
     // hide system & private msg when a key is pressed
     removeSysMsg();
     hidePrivateMsg();
+    setTimeout(function () {
+      userX = ui.getUserPos()[0]; //x
+      userY = ui.getUserPos()[1]; //y
+
+      console.log("local pos is : " + userX, userY);
+      for (let peer of Object.values(peers)) {
+        // keep in this order to accomodate unshift()
+        peer.send(userY);
+        peer.send(userX);
+      }
+    }, 0);
   });
 }
 
@@ -354,46 +355,24 @@ function peerUI() {
   peerPos = $(`#peer${privatePeerIndex}`).position();
   peerX = peerPos.left;
   peerY = peerPos.top;
-
-  // for (let i = 0; i < peerArray.length; i++) {
-  // $peerPos.push($(`#peer${privatePeerIndex}`).position());
-  // $pastX[i] = $peerPos[i].left;
-  // $pastY[i] = $peerPos[i].top;
-  // console.log(`peer X is ${$pastX[i]} and peer Y is ${$pastY[i]}`);
-  // }
 }
 
 // update the positions of remote peers
 function updateRemotePeer(currentX, currentY) {
-  console.log(currentX);
-  let direction;
-  if (currentX > 0 || currentY > 0) {
-    direction = "+=";
-    // keeping track of peer's global location
-    peerX += currentX;
-    peerY += currentY;
-  } else if (currentX < 0 || currentY < 0) {
-    direction = "-=";
-    currentX = -currentX;
-    currentY = -currentY;
-    // keeping track of peer's global location
-    peerX -= currentX;
-    peerY -= currentY;
-  }
-
+  console.log(currentX, currentY);
   $(function () {
     $(`#peer${privatePeerIndex}`)
       .finish()
-      .animate({
-        left: `${direction}${currentX}`, // why doesn't left work???
-        top: `${direction}${currentY}`,
+      .offset({
+        left: `${currentX}`,
+        top: `${currentY}`,
       });
 
     userX = ui.getUserPos()[0];
     userY = ui.getUserPos()[1];
 
-    // console.log("current peer location is: " + peerX, peerY);
-    // console.log("current user location is: " + userX, userY);
+    console.log("current peer location is: " + currentX, currentY);
+    console.log("current user location is: " + userX, userY);
 
     if (peerX == userX && peerY == userY) {
       console.log(`YOU ARE OVERLAPPED ^_^`);
@@ -554,7 +533,26 @@ function removeSysMsg() {
   }
 }
 
-function incomingPrivateMsg() {}
+function incomingPrivateMsg() {
+  // add txt bubble to avatar
+  outgoingMsgIndex++;
+  addTxtBubble(user, name, msg);
+  // add msg record to chatroom
+  outgoingMsgIndex++;
+  let txtRecord = document.createElement("div");
+  txtRecord.setAttribute(`id`, `txtRecord${outgoingMsgIndex}`);
+  txtRecord.setAttribute(`class`, `txtRecord`);
+  privateChatBox.appendChild(txtRecord);
+  userX = ui.getUserPos()[0];
+  userY = ui.getUserPos()[1];
+  $(`#txtRecord${outgoingMsgIndex}`).css({
+    left: `${userX}px`,
+    top: `${userY}px`,
+    backgroundColor: `${randomColor}`,
+  });
+  // add txt bubble to txt record
+  addTxtBubble(txtRecord, name, msg);
+}
 
 function outgoingPrivateMsg(name, msg) {
   removeSysMsg();
@@ -625,25 +623,27 @@ function addSysBubble(systemMsg) {
   user.appendChild(sysBlb);
 }
 
-function hidePrivateMsg() {
-  for (let i = 1; i <= outgoingMsgIndex; i++) {
-    let txtBlb = document.getElementById(`txtBlb${i}`);
-    txtBlb.style.visibility = "hidden";
-  }
-  togglePrivateMsg();
-}
+// NOT WORKING
 
-function togglePrivateMsg() {
-  for (let i = 1; i <= outgoingMsgIndex; i++) {
-    $(`#txtRecord${i}`)
-      .mouseenter(function () {
-        $(`#txtBlb${i}`).css("visibility", "visible");
-      })
-      .mouseleave(function () {
-        $(`#txtBlb${i}`).css("visibility", "hidden");
-      });
-  }
-}
+// function hidePrivateMsg() {
+//   for (let i = 1; i <= outgoingMsgIndex; i++) {
+//     let txtBlb = document.getElementById(`txtBlb${i}`);
+//     txtBlb.style.visibility = "hidden";
+//   }
+//   togglePrivateMsg();
+// }
+
+// function togglePrivateMsg() {
+//   for (let i = 1; i <= outgoingMsgIndex; i++) {
+//     $(`#userRecord${i}`)
+//       .mouseenter(function () {
+//         $(`#txtBlb${i}`).css("visibility", "visible");
+//       })
+//       .mouseleave(function () {
+//         $(`#txtBlb${i}`).css("visibility", "hidden");
+//       });
+//   }
+// }
 
 function addPublicMsg(name, outgoingMsg) {
   let today = new Date();

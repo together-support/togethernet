@@ -106,16 +106,17 @@ p {
 }
 
 #_nameInput {
-  border: 1px solid black;
+  border: 1px solid gray;
   padding: 5px;
-  margin: 5px 0px 5px 5px;
-  width: 150px;
-  height: 40px;
+  /* margin: 5px 0px 5px 5px; */
+  width: 100px;
+  height: 50px;
   font: 14px "Courier New", Courier, "Lucida Sans Typewriter",
     "Lucida Typewriter", monospace;
 }
 
 #_messageInput {
+  border: 1px solid gray;
   display: flex;
   flex-grow: 5;
   font: 14px "Courier New", Courier, "Lucida Sans Typewriter",
@@ -218,16 +219,14 @@ p {
 #user {
   z-index: 5;
 }
-
-#snaptarget {
-  width: 80%;
-  height: 500px;
-  background: greenyellow;
-}
-
 .square {
   position: absolute;
   width: 50px;
+  height: 50px;
+}
+.slit {
+  position: relative;
+  width: 10px;
   height: 50px;
 }
 
@@ -261,7 +260,7 @@ p {
   background-color: #f8f8f8;
   border: 1px solid transparent;
 }
-/* .txtBlb:after,
+.txtBlb:after,
 .sysBlb:after {
   content: "";
   position: absolute;
@@ -275,8 +274,8 @@ p {
   border-bottom: 0;
   margin-top: -4px;
   margin-left: -8px;
-} */
-
+  z-index: 10;
+}
 .sysBlb p,
 .txtBlb p {
   font-family: sans-serif;
@@ -287,21 +286,18 @@ p {
   padding: 1px;
 }
 
-/* .txtBlbBottomLeft:before {
-  content: "";
-  width: 0px;
-  height: 0px;
-  position: absolute;
-  border-left: 24px solid #fff;
-  border-right: 12px solid transparent;
-  border-top: 12px solid #fff;
-  border-bottom: 20px solid transparent;
-  left: 32px;
-  bottom: -24px;
-  background-color: crimson;
-} */
-
 #privateChatBox {
   width: 100%;
   height: 100%;
+}
+
+input[type="color"] {
+  -webkit-appearance: none;
+  border: none;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+  border: none;
 }
