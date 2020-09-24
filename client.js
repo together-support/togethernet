@@ -395,20 +395,19 @@ function updateRemotePeer(currentX, currentY) {
     // console.log("current peer location is: " + peerX, peerY);
     // console.log("current user location is: " + userX, userY);
 
-    // check user & peer adjacency
-    // if (peerX == userX && peerY == userY) {
-    //   console.log(`YOU ARE OVERLAPPED ^_^`);
-    //   // addSystemMsg();
-    // } else if (
-    //   (peerX == userX + cell && peerY == userY) ||
-    //   (peerX == userX - cell && peerY == userY) ||
-    //   (peerY == userY + cell && peerX == userX) ||
-    //   (peerY == userY - cell && peerX == userX)
-    // ) {
-    //   let replyThreadMsg = `Reply Thread`;
-    //   console.log(`START A THREAD? ?_?`);
-    //   addSystemMsg(replyThreadMsg);
-    // }
+    if (peerX == userX && peerY == userY) {
+      console.log(`YOU ARE OVERLAPPED ^_^`);
+      // addSystemMsg();
+    } else if (
+      (peerX == userX + cell && peerY == userY) ||
+      (peerX == userX - cell && peerY == userY) ||
+      (peerY == userY + cell && peerX == userX) ||
+      (peerY == userY - cell && peerX == userX)
+    ) {
+      let replyThreadMsg = `Reply Thread`;
+      console.log(`START A THREAD? ?_?`);
+      addSystemMsg(replyThreadMsg);
+    }
   });
 }
 
@@ -555,9 +554,7 @@ function removeSysMsg() {
   }
 }
 
-function incomingPrivateMsg(name, msg) {
-  txtRecord("id");
-}
+function incomingPrivateMsg() {}
 
 function outgoingPrivateMsg(name, msg) {
   removeSysMsg();
@@ -609,6 +606,7 @@ function outgoingPrivateMsg(name, msg) {
     $("#_privacyToggle").css("border", "1px solid black");
   }
 }
+
 function addTxtBubble(parent, name, msg) {
   // add text bubble to avatar
   let txtBlb = document.createElement("div");
