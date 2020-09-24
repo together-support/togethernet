@@ -36,7 +36,7 @@ let historyBtn; // button to open history menu
 
 let publicMsgIndex = 0;
 let incomingMsgIndex = 0;
-let outgoingMsgIndex = 0;
+let msgIndex = 0;
 let privatePeerIndex = 0;
 let sysMsgIndex = 0;
 
@@ -538,15 +538,15 @@ function removeSysMsg() {
 
 function incomingPrivateMsg(name, msg) {
   // add txt bubble to avatar
-  outgoingMsgIndex++;
+  msgIndex++;
   addTxtBubble(peer, name, msg);
   // add msg record to chatroom
-  outgoingMsgIndex++;
+  msgIndex++;
   let txtRecord = document.createElement("div");
-  txtRecord.setAttribute(`id`, `txtRecord${outgoingMsgIndex}`);
+  txtRecord.setAttribute(`id`, `txtRecord${msgIndex}`);
   txtRecord.setAttribute(`class`, `txtRecord`);
   privateChatBox.appendChild(txtRecord);
-  $(`#txtRecord${outgoingMsgIndex}`).css({
+  $(`#txtRecord${msgIndex}`).css({
     left: `${peerX}px`,
     top: `${peerY}px`,
     backgroundColor: `${peerColor}`,
@@ -558,17 +558,17 @@ function incomingPrivateMsg(name, msg) {
 function outgoingPrivateMsg(name, msg) {
   removeSysMsg();
   // add txt bubble to avatar
-  outgoingMsgIndex++;
+  msgIndex++;
   addTxtBubble(user, name, msg);
   // add msg record to chatroom
-  outgoingMsgIndex++;
+  msgIndex++;
   let txtRecord = document.createElement("div");
-  txtRecord.setAttribute(`id`, `txtRecord${outgoingMsgIndex}`);
+  txtRecord.setAttribute(`id`, `txtRecord${msgIndex}`);
   txtRecord.setAttribute(`class`, `txtRecord`);
   privateChatBox.appendChild(txtRecord);
   userX = ui.getUserPos()[0];
   userY = ui.getUserPos()[1];
-  $(`#txtRecord${outgoingMsgIndex}`).css({
+  $(`#txtRecord${msgIndex}`).css({
     left: `${userX}px`,
     top: `${userY}px`,
     backgroundColor: `${userColor}`,
@@ -589,7 +589,7 @@ function outgoingPrivateMsg(name, msg) {
   //     <p>${time}</p>
   //     </div>
   //     </div>
-  //     <div class="message" id="message${outgoingMsgIndex}">
+  //     <div class="message" id="message${msgIndex}">
   //     <p>${outgoingMsg}</p>
   //     </div>`
   // );
@@ -609,7 +609,7 @@ function outgoingPrivateMsg(name, msg) {
 function addTxtBubble(parent, name, msg) {
   // add text bubble to avatar
   let txtBlb = document.createElement("div");
-  txtBlb.setAttribute(`id`, `txtBlb${outgoingMsgIndex}`);
+  txtBlb.setAttribute(`id`, `txtBlb${msgIndex}`);
   txtBlb.setAttribute(`class`, `txtBlb`);
   txtBlb.innerHTML = `<p><b>${name}</b></p><p>${msg}</p>`;
   parent.appendChild(txtBlb);
@@ -625,23 +625,34 @@ function addSysBubble(systemMsg) {
 }
 
 // function hidePrivateMsg() {
-//   for (let i = 1; i <= outgoingMsgIndex; i++) {
+//   // for (let i = 1; i <= msgIndex; i++) {
+//   //   let txtBlb = document.getElementById(`txtBlb${i}`);
+//   //   txtBlb.style.visibility = "hidden";
+//   // }
+//   for (let i = 1; i <= msgIndex; i++) {
 //     let txtBlb = document.getElementById(`txtBlb${i}`);
 //     txtBlb.style.visibility = "hidden";
+//     $(`#txtRecord${i}`)
+//       .mouseenter(function () {
+//         $(`#txtBlb${i}`).css("visibility", "visible");
+//       })
+//       .mouseleave(function () {
+//         $(`#txtBlb${i}`).css("visibility", "hidden");
+//       });
 //   }
 // }
 
-function hidePrivateMsg() {
-  for (let i = 1; i <= outgoingMsgIndex; i++) {
-    $(`#userRecord${i}`)
-      .mouseenter(function () {
-        $(`#txtBlb${i}`).css("visibility", "visible");
-      })
-      .mouseleave(function () {
-        $(`#txtBlb${i}`).css("visibility", "hidden");
-      });
-  }
-}
+// function hidePrivateMsg() {
+//   for (let i = 1; i <= msgIndex; i++) {
+//     $(`#txtRecord${i}`)
+//       .mouseenter(function () {
+//         $(`#txtBlb${i}`).css("visibility", "visible");
+//       })
+//       .mouseleave(function () {
+//         $(`#txtBlb${i}`).css("visibility", "hidden");
+//       });
+//   }
+// }
 
 function addPublicMsg(name, outgoingMsg) {
   let today = new Date();
