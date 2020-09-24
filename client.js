@@ -11,8 +11,8 @@ const { update } = require("lodash");
 // const test = require("./test");
 // console.log(`User: ${test.getName()}`);
 
-const url = "https://togethernet.herokuapp.com";
-// const url = "http://localhost:3000";
+// const url = "https://togethernet.herokuapp.com";
+const url = "http://localhost:3000";
 const archive = "/archive";
 const record = "/record";
 
@@ -26,6 +26,8 @@ const peers = {};
 let dataArray = [];
 let cell = 50; // cell size
 let userColor, peerColor;
+let userPosArray = [];
+let peerPosArray = [];
 
 // HTML elements
 let privateChatBox;
@@ -354,7 +356,27 @@ function sendPos() {
         peer.send(userX);
       }
 
-      console.log("keydown: " + evt.keyCode);
+      // check if avatar & peer's text records are overlapped or adjacent
+      for (let i = 0; i < peerPosArray.length; i++) {
+        let peerX = peerPosArray[i][0];
+        let peerY = peerPosArray[i][1];
+        if (userX == peerX && userY == peerY) {
+          console.log(`YOU ARE OVERLAPPED ^_^`);
+        } else if (
+          (peerX == userX + cell && peerY == userY) ||
+          (peerX == userX - cell && peerY == userY) ||
+          (peerY == userY + cell && peerX == userX) ||
+          (peerY == userY - cell && peerX == userX)
+        ) {
+          let replyThreadMsg = `Reply Thread`;
+          console.log(`START A THREAD? ?_?`);
+          addSystemMsg(replyThreadMsg);
+
+          if (evt.keyCode == 13) {
+            console.log("MAKE THREAD");
+          }
+        }
+      }
     }, 0);
   });
 }
@@ -394,20 +416,6 @@ function updateRemotePeer(currentX, currentY) {
 
     console.log("current peer location is: " + peerX, peerY);
     console.log("current user location is: " + userX, userY);
-
-    if (peerX == userX && peerY == userY) {
-      console.log(`YOU ARE OVERLAPPED ^_^`);
-      // addSystemMsg();
-    } else if (
-      (peerX == userX + cell && peerY == userY) ||
-      (peerX == userX - cell && peerY == userY) ||
-      (peerY == userY + cell && peerX == userX) ||
-      (peerY == userY - cell && peerX == userX)
-    ) {
-      let replyThreadMsg = `Reply Thread`;
-      console.log(`START A THREAD? ?_?`);
-      addSystemMsg(replyThreadMsg);
-    }
   });
 }
 
@@ -563,6 +571,12 @@ function incomingPrivateMsg(name, msg) {
     top: `${peerY}px`,
     backgroundColor: `${peerColor}`,
   });
+  // store peer txtRecord positions
+  peerPosArray.push([peerX, peerY]);
+  // console.log(
+  //   `PEER TXT RECORDS are: ` + peerPosArray[0][0],
+  //   peerPosArray[0][1]
+  // );
   // add txt bubble to txt record
   addTxtBubble(txtRecord, name, msg);
 }
@@ -641,6 +655,13 @@ function hidePrivateMsg() {
     for (let i = 1; i <= msgIndex; i++) {
       let txtBlb = document.getElementById(`txtBlb${i}`);
       txtBlb.style.visibility = "hidden";
+      $(`#txtRecord${i}`)
+        .mouseenter(function () {
+          $(txtBlb).css("visibility", "visible");
+        })
+        .mouseleave(function () {
+          $(txtBlb).css("visibility", "hidden");
+        });
     }
   }, 0);
   //   for (let i = 1; i <= msgIndex; i++) {

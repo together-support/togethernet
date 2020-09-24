@@ -251,7 +251,7 @@ p {
 .txtBlb,
 .sysBlb {
   position: absolute;
-  top: -30px;
+  top: -10px;
   left: 52px;
   width: auto;
   min-width: 100px;
@@ -259,9 +259,17 @@ p {
   padding: 5px;
   border-radius: 5px;
   text-align: left;
-  background-color: #f8f8f8;
   border: 1px solid transparent;
 }
+
+.txtBlb {
+  background-color: #f8f8f8;
+}
+
+.sysBlb {
+  background-color: lightgray;
+}
+
 .txtBlb:after,
 .sysBlb:after {
   content: "";
@@ -271,13 +279,20 @@ p {
   width: 0;
   height: 0;
   border: 8px solid transparent;
-  border-right-color: #f8f8f8;
   border-left: 0;
   border-bottom: 0;
   margin-top: -4px;
   margin-left: -8px;
   z-index: 10;
 }
+
+.txtBlb:after {
+  border-right-color: #f8f8f8;
+}
+.sysBlb:after {
+  border-right-color: lightgray;
+}
+
 .sysBlb p,
 .txtBlb p {
   font-family: sans-serif;
