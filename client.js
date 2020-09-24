@@ -624,23 +624,23 @@ function addSysBubble(systemMsg) {
   user.appendChild(sysBlb);
 }
 
-// function hidePrivateMsg() {
-//   // for (let i = 1; i <= msgIndex; i++) {
-//   //   let txtBlb = document.getElementById(`txtBlb${i}`);
-//   //   txtBlb.style.visibility = "hidden";
-//   // }
-//   for (let i = 1; i <= msgIndex; i++) {
-//     let txtBlb = document.getElementById(`txtBlb${i}`);
-//     txtBlb.style.visibility = "hidden";
-//     $(`#txtRecord${i}`)
-//       .mouseenter(function () {
-//         $(`#txtBlb${i}`).css("visibility", "visible");
-//       })
-//       .mouseleave(function () {
-//         $(`#txtBlb${i}`).css("visibility", "hidden");
-//       });
-//   }
-// }
+function hidePrivateMsg() {
+  //   // for (let i = 1; i <= msgIndex; i++) {
+  //   //   let txtBlb = document.getElementById(`txtBlb${i}`);
+  //   //   txtBlb.style.visibility = "hidden";
+  //   // }
+  //   for (let i = 1; i <= msgIndex; i++) {
+  //     let txtBlb = document.getElementById(`txtBlb${i}`);
+  //     txtBlb.style.visibility = "hidden";
+  //     $(`#txtRecord${i}`)
+  //       .mouseenter(function () {
+  //         $(`#txtBlb${i}`).css("visibility", "visible");
+  //       })
+  //       .mouseleave(function () {
+  //         $(`#txtBlb${i}`).css("visibility", "hidden");
+  //       });
+  //   }
+}
 
 // function hidePrivateMsg() {
 //   for (let i = 1; i <= msgIndex; i++) {
