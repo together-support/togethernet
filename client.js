@@ -351,14 +351,14 @@ function sendPos() {
       userX = ui.getUserPos()[0]; //x
       userY = ui.getUserPos()[1]; //y
 
-      console.log("local pos is : " + userX, userY);
+      // console.log("local pos is : " + userX, userY);
       for (let peer of Object.values(peers)) {
         // keep in this order to accomodate unshift()
         peer.send(userY);
         peer.send(userX);
       }
 
-      console.log(posArray.length, msgIndex + msgIndex);
+      // console.log(posArray.length, msgIndex + msgIndex);
       // check if avatar & user's text records are overlapped or adjacent
       for (let i = 0; i < posArray.length; i++) {
         let posX = posArray[i][0];
@@ -582,7 +582,6 @@ function removeSysMsg() {
   for (let i = 0; i < sysMsgIndex; i++) {
     let sysBlb = document.getElementById(`sysBlb${i}`);
     sysBlb.style.display = "none";
-    console.log(i);
   }
 }
 
@@ -594,10 +593,12 @@ function incomingPrivateMsg(name, msg) {
     top: `${peerY}px`,
     backgroundColor: `${peerColor}`,
   });
-  addTxtRecord(peerX, peerY, peerColor, name, msg, msgIndex);
+  addTxtRecord(peerX, peerY, peerColor, name, msg);
   // store peer txtRecord positions
   peerPosArray.push([peerX, peerY]);
   posArray.push([peerX, peerY]);
+  // add 1 to msgIndex
+  msgIndex++;
 }
 
 function outgoingPrivateMsg(name, msg) {
@@ -607,10 +608,12 @@ function outgoingPrivateMsg(name, msg) {
   // add txt record
   userX = ui.getUserPos()[0];
   userY = ui.getUserPos()[1];
-  addTxtRecord(userX, userY, userColor, name, msg, msgIndex);
+  addTxtRecord(userX, userY, userColor, name, msg);
   // store peer txtRecord positions
   userPosArray.push([userX, userY]);
   posArray.push([userX, userY]);
+  // add 1 to msgIndex
+  msgIndex++;
   // vanilla text chat interface
   //   let today = new Date();
   // let time = today.getHours() + ":" + today.getMinutes();
@@ -641,31 +644,30 @@ function outgoingPrivateMsg(name, msg) {
   }
 }
 
-function addTxtRecord(x, y, color, name, msg, index) {
+function addTxtRecord(x, y, color, name, msg) {
   let txtRecord = document.createElement("div");
-  txtRecord.setAttribute(`id`, `txtRecord${index}`);
+  txtRecord.setAttribute(`id`, `txtRecord${msgIndex}`);
   txtRecord.setAttribute(`class`, `txtRecord`);
   privateChatBox.appendChild(txtRecord);
 
-  $(`#txtRecord${index}`).css({
+  $(`#txtRecord${msgIndex}`).css({
     left: `${x}px`,
     top: `${y}px`,
     backgroundColor: `${color}`,
   });
 
   // append txt bubble to txt record
-  addTxtBubble(txtRecord, name, msg, index);
+  addTxtBubble(txtRecord, name, msg);
 }
 
-function addTxtBubble(parent, name, msg, index) {
+function addTxtBubble(parent, name, msg) {
   // add text bubble to txt record
   let txtBlb = document.createElement("div");
   console.log(parent);
-  txtBlb.setAttribute(`id`, `txtBlb${index}`);
+  txtBlb.setAttribute(`id`, `txtBlb${msgIndex}`);
   txtBlb.setAttribute(`class`, `txtBlb`);
   txtBlb.innerHTML = `<p><b>${name}</b></p><p>${msg}</p>`;
   parent.appendChild(txtBlb);
-  msgIndex++;
 }
 
 function addSysBubble(systemMsg) {
@@ -689,8 +691,7 @@ function addTempBubble(parent, name, msg) {
 
 function hidePrivateMsg() {
   setTimeout(function () {
-    let index = msgIndex + msgIndex;
-    for (let i = 0; i <= index; i++) {
+    for (let i = 0; i < msgIndex; i++) {
       let txtBlb = document.getElementById(`txtBlb${i}`);
       let tempBlb = document.getElementById(`tempBlb${i}`);
       if (tempBlb) {
