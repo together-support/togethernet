@@ -28,6 +28,7 @@ let cell = 50; // cell size
 let userColor, peerColor;
 let userPosArray = [];
 let peerPosArray = [];
+let posArray = []; // userPosArray + peerPosArray
 
 // HTML elements
 let privateChatBox;
@@ -357,39 +358,20 @@ function sendPos() {
         peer.send(userX);
       }
 
+      console.log(posArray.length, msgIndex + msgIndex);
       // check if avatar & user's text records are overlapped or adjacent
-      for (let i = 0; i < userPosArray.length; i++) {
-        let oldUserX = userPosArray[i][0];
-        let oldUserY = userPosArray[i][1];
-
-        if (userX == oldUserX && userY == oldUserY) {
+      for (let i = 0; i < posArray.length; i++) {
+        let posX = posArray[i][0];
+        let posY = posArray[i][1];
+        if (userX == posX && userY == posY) {
           getConsent(evt);
         } else if (
-          (oldUserX == userX + cell && oldUserY == userY) ||
-          (oldUserX == userX - cell && oldUserY == userY) ||
-          (oldUserY == userY + cell && oldUserX == userX) ||
-          (oldUserY == userY - cell && oldUserX == userX)
+          (posX == userX + cell && posY == userY) ||
+          (posX == userX - cell && posY == userY) ||
+          (posY == userY + cell && posX == userX) ||
+          (posY == userY - cell && posX == userX)
         ) {
-          replyThread(evt);
-        } else {
-          // allow user to send new msg
-          stopSendMsg = false;
-        }
-      }
-
-      // check if avatar & peer's text records are overlapped or adjacent
-      for (let i = 0; i < peerPosArray.length; i++) {
-        let peerX = peerPosArray[i][0];
-        let peerY = peerPosArray[i][1];
-        if (userX == peerX && userY == peerY) {
-          getConsent(evt);
-        } else if (
-          (peerX == userX + cell && peerY == userY) ||
-          (peerX == userX - cell && peerY == userY) ||
-          (peerY == userY + cell && peerX == userX) ||
-          (peerY == userY - cell && peerX == userX)
-        ) {
-          replyThread(evt);
+          replyThread(evt, i);
         } else {
           // allow user to send new msg
           stopSendMsg = false;
@@ -410,10 +392,18 @@ function getConsent(evt) {
   stopSendMsg = true;
 }
 
-function replyThread(evt) {
-  let replyThread = `Reply Thread?`;
+function replyThread(evt, txtRecordNum) {
+  // let replyThread = `Reply Thread?`;
   console.log(`START A THREAD? ?_?`);
-  addSystemMsg(replyThread);
+  // addSystemMsg(replyThread);
+
+  setTimeout(function () {
+    let txtBlb = document.getElementById(`txtBlb${txtRecordNum}`);
+    if (txtBlb) {
+      txtBlb.style.visibility = "visible";
+    }
+  }, 0);
+
   if (evt.keyCode == 13) {
     console.log("MAKE THREAD");
   }
@@ -453,9 +443,6 @@ function updateRemotePeer(currentX, currentY) {
     userY = ui.getUserPos()[1];
     peerX = currentX;
     peerY = currentY;
-
-    console.log("current peer location is: " + peerX, peerY);
-    console.log("current user location is: " + userX, userY);
   });
 }
 
@@ -592,62 +579,38 @@ function addSystemMsg(systemMsg) {
 }
 
 function removeSysMsg() {
-  for (let i = 1; i <= sysMsgIndex; i++) {
+  for (let i = 0; i < sysMsgIndex; i++) {
     let sysBlb = document.getElementById(`sysBlb${i}`);
     sysBlb.style.display = "none";
+    console.log(i);
   }
 }
 
 function incomingPrivateMsg(name, msg) {
-  // add txt bubble to avatar
-  msgIndex++;
-  addTxtBubble(peer, name, msg);
-  // add msg record to chatroom
-  msgIndex++;
-  let txtRecord = document.createElement("div");
-  txtRecord.setAttribute(`id`, `txtRecord${msgIndex}`);
-  txtRecord.setAttribute(`class`, `txtRecord`);
-  privateChatBox.appendChild(txtRecord);
+  addTempBubble(peer, name, msg);
+  // add txt record
   $(`#txtRecord${msgIndex}`).css({
     left: `${peerX}px`,
     top: `${peerY}px`,
     backgroundColor: `${peerColor}`,
   });
+  addTxtRecord(peerX, peerY, peerColor, name, msg, msgIndex);
   // store peer txtRecord positions
   peerPosArray.push([peerX, peerY]);
-  // console.log(
-  //   `PEER TXT RECORDS are: ` + peerPosArray[0][0],
-  //   peerPosArray[0][1]
-  // );
-  // add txt bubble to txt record
-  addTxtBubble(txtRecord, name, msg);
+  posArray.push([peerX, peerY]);
 }
 
 function outgoingPrivateMsg(name, msg) {
+  // add user bubble
   removeSysMsg();
-  // add txt bubble to avatar
-  msgIndex++;
-  addTxtBubble(user, name, msg);
-  // add msg record to chatroom
-  msgIndex++;
-  let txtRecord = document.createElement("div");
-  txtRecord.setAttribute(`id`, `txtRecord${msgIndex}`);
-  txtRecord.setAttribute(`class`, `txtRecord`);
-  privateChatBox.appendChild(txtRecord);
+  addTempBubble(user, name, msg);
+  // add txt record
   userX = ui.getUserPos()[0];
   userY = ui.getUserPos()[1];
-  $(`#txtRecord${msgIndex}`).css({
-    left: `${userX}px`,
-    top: `${userY}px`,
-    backgroundColor: `${userColor}`,
-  });
-
+  addTxtRecord(userX, userY, userColor, name, msg, msgIndex);
   // store peer txtRecord positions
   userPosArray.push([userX, userY]);
-
-  // add txt bubble to txt record
-  addTxtBubble(txtRecord, name, msg);
-
+  posArray.push([userX, userY]);
   // vanilla text chat interface
   //   let today = new Date();
   // let time = today.getHours() + ":" + today.getMinutes();
@@ -678,19 +641,47 @@ function outgoingPrivateMsg(name, msg) {
   }
 }
 
+function addTxtRecord(x, y, color, name, msg, index) {
+  let txtRecord = document.createElement("div");
+  txtRecord.setAttribute(`id`, `txtRecord${index}`);
+  txtRecord.setAttribute(`class`, `txtRecord`);
+  privateChatBox.appendChild(txtRecord);
+
+  $(`#txtRecord${index}`).css({
+    left: `${x}px`,
+    top: `${y}px`,
+    backgroundColor: `${color}`,
+  });
+
+  // append txt bubble to txt record
+  addTxtBubble(txtRecord, name, msg, index);
+}
+
+function addTxtBubble(parent, name, msg, index) {
+  // add text bubble to txt record
+  let txtBlb = document.createElement("div");
+  console.log(parent);
+  txtBlb.setAttribute(`id`, `txtBlb${index}`);
+  txtBlb.setAttribute(`class`, `txtBlb`);
+  txtBlb.innerHTML = `<p><b>${name}</b></p><p>${msg}</p>`;
+  parent.appendChild(txtBlb);
+  msgIndex++;
+}
+
 function addSysBubble(systemMsg) {
-  sysMsgIndex++;
   let sysBlb = document.createElement("div");
   sysBlb.setAttribute(`id`, `sysBlb${sysMsgIndex}`);
   sysBlb.setAttribute(`class`, `sysBlb`);
   sysBlb.innerHTML = `<p>${systemMsg}</p>`;
   user.appendChild(sysBlb);
+  sysMsgIndex++;
 }
 
-function addTxtBubble(parent, name, msg) {
+function addTempBubble(parent, name, msg) {
   // add text bubble to avatar
   let txtBlb = document.createElement("div");
-  txtBlb.setAttribute(`id`, `txtBlb${msgIndex}`);
+  console.log(parent);
+  txtBlb.setAttribute(`id`, `tempBlb${msgIndex}`);
   txtBlb.setAttribute(`class`, `txtBlb`);
   txtBlb.innerHTML = `<p><b>${name}</b></p><p>${msg}</p>`;
   parent.appendChild(txtBlb);
@@ -698,16 +689,24 @@ function addTxtBubble(parent, name, msg) {
 
 function hidePrivateMsg() {
   setTimeout(function () {
-    for (let i = 1; i <= msgIndex; i++) {
+    let index = msgIndex + msgIndex;
+    for (let i = 0; i <= index; i++) {
       let txtBlb = document.getElementById(`txtBlb${i}`);
-      txtBlb.style.visibility = "hidden";
-      $(`#txtRecord${i}`)
-        .mouseenter(function () {
-          $(txtBlb).css("visibility", "visible");
-        })
-        .mouseleave(function () {
-          $(txtBlb).css("visibility", "hidden");
-        });
+      let tempBlb = document.getElementById(`tempBlb${i}`);
+      if (tempBlb) {
+        // remove temp bubble permenantly
+        tempBlb.style.display = "none";
+      }
+      if (txtBlb) {
+        txtBlb.style.visibility = "hidden";
+        $(`#txtRecord${i}`)
+          .mouseenter(function () {
+            $(txtBlb).css("visibility", "visible");
+          })
+          .mouseleave(function () {
+            $(txtBlb).css("visibility", "hidden");
+          });
+      }
     }
   }, 0);
   //   for (let i = 1; i <= msgIndex; i++) {

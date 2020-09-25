@@ -267,7 +267,7 @@ p {
 }
 
 .sysBlb {
-  background-color: lightgray;
+  background-color: #f8f8f8;
 }
 
 .txtBlb:after,
@@ -288,9 +288,11 @@ p {
 
 .txtBlb:after {
   border-right-color: #f8f8f8;
+  z-index: 9;
 }
 .sysBlb:after {
-  border-right-color: lightgray;
+  border-right-color: #f8f8f8;
+  z-index: 9;
 }
 
 .sysBlb p,
