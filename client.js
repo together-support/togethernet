@@ -11,8 +11,8 @@ const { update } = require("lodash");
 // const test = require("./test");
 // console.log(`User: ${test.getName()}`);
 
-// const url = "https://togethernet.herokuapp.com";
-const url = "http://localhost:3000";
+const url = "https://togethernet.herokuapp.com";
+// const url = "http://localhost:3000";
 const archive = "/archive";
 const record = "/record";
 
