@@ -4,7 +4,6 @@ let browserify = require("browserify-middleware");
 let debug = require("debug")("server");
 const express = require("express");
 const { Pool, Client } = require("pg"); // https://node-postgres.com/features/connecting
-const { makeConnectionList } = require("./connection");
 
 const app = express();
 const bodyParser = require("body-parser");
@@ -97,11 +96,6 @@ io.on("connection", function(socket) {
     let existingSockets = Object.values(io.sockets.connected).filter(
         (item) => item.id !== socket.id
     );
-    console.log(
-        "existingSockets is",
-        existingSockets.map((socket) => socket.id)
-    );
-    console.log("and should not include", socket.id);
     //connect to existing peers
     existingSockets.forEach((targetSocket) => {
         console.log(
@@ -122,11 +116,6 @@ io.on("connection", function(socket) {
             existingSockets.map((socket) => socket.id)
         );
         console.log("and should not include", socket.id);
-
-        //fix later! should only send to one client at a time instead of all
-        //where did it come from
-        //where is it going?
-        //io.sockets.connected[data.peerId]
         console.log("is data.peerId in io.sockets.connected?", data.peerId);
         console.log(Object.keys(io.sockets.connected));
         if (io.sockets.connected) {
@@ -137,22 +126,10 @@ io.on("connection", function(socket) {
         }
     });
 
-    // socket1.on('signal', function(data) {
-    //     console.log(data.peerId, data.initiator);
-    //     var socket2 = io.sockets.connected[data.peerId];
-    //     if (!socket2) { return; }
-    //     for (let i = 0; i < connectionList.length; i++) {
-    //         console.log('Proxying signal from peer %s to %s', connectionList[i][0], connectionList[i][1]);
-    //         socket2.emit('signal', {
-    //             signal: data.signal,
-    //             peerId: connectionList[i][0]
-    //         });
-    //         console.log(socket2.connected);
-    //     }
-    // });
+    socket.on("disconnect", (data)=>{
+      console.log(`peer ${socket.id} disconnected`)
+    })
 
-    // broadcast public messages to everyone
-    // i don't think this currently does anything
     socket.on("public message", function(data) {
         console.log("emitting public message to", data.name);
         socket.broadcast.emit("public message", {

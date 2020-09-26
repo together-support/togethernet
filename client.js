@@ -5,12 +5,7 @@ const p5 = require("p5");
 const ui = require("./ui");
 const socket = io.connect(); // Manually opens the socket
 
-const FileType = require("file-type");
 const { update } = require("lodash");
-
-// const test = require("./test");
-// console.log(`User: ${test.getName()}`);
-
 // const url = "https://togethernet.herokuapp.com";
 const url = "http://localhost:3000";
 const archive = "/archive";
@@ -57,6 +52,7 @@ socket.emit = function (...args) {
   console.log(args);
   return socket.test(...args);
 };
+
 // audio recording code
 const audioPlayer = document.getElementById("audioPlayer");
 const recordButton = document.getElementById("recordButton");
@@ -86,44 +82,6 @@ module.exports = new p5(function () {
       // print your peer ID in the console
       console.log(`${connectedMsg}, your peer ID is ${socket.id}`);
     });
-
-    //toggles on receiving peer event from server
-    //all simplePeer events happen once the socket has received the peer event
-    //peer event instantiates P2P object and adds event listeners
-    //todo: * encapsulate so that globals aren't an issue
-    //      * broadcast data to all peers
-    //      * what's causing errors on multiple peer connections?
-    //      * is there a better way to do it? We don't really need to have a live connection to the server
-    //      * well, maybe we do? otherwise, how do we know who dropped off of the connection?
-    //
-    //
-
-    /*
-     * chain of events:
-     * 1. (client) connect to socketIO
-     * 2. (server) registers socket id and look for other sockets to connect to
-     * 3. (serv) emits 'peer' event to available sockets
-     * 4. (cli) receives 'peer' ws event
-     * 5. (cli) instantiates P2P as either initiator or receiver depending on data
-     *
-     * 6. (cli) somehow emits a ws signal????????
-     * 7. (serv) iterates over all available sockets and emits 'signal' with socket id
-     * 8. (cli) emits peer.signal
-     * 9. (cli) receives peer.signal
-     * 10. (cli) triggers new P2P()
-     *
-     * client A outgoing WS: connect, signal, ping pong
-     * client B outgoing WS: connect, signal, ping pong
-     *
-     *
-     * update: apparently event listeners are reversed;
-     * webrtc waits for event to be prepped, then triggers
-     * idk why tf they'd do it like this, but peer.on('signal') doesn't wait for
-     * a remote signal, but rather waits for your signal to be prepped then does XYZ
-     *
-     */
-
-    //this should already scope all of the event listeners to each peer, no?
 
     socket.on("peer", function (data) {
       console.log("===============socket peer event=========================");
@@ -160,11 +118,6 @@ module.exports = new p5(function () {
 
       //maintain global list of peers
       peers[peerId] = peer;
-      /*
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    peer.on('close', ()=>{
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      delete peers[peerId];
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    })
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    */
       // System broadcast
       let newPeerMsg = `You're available on the signal server but you have not been paired`;
       console.log(`${newPeerMsg} Peer ID: ${peerId}`);
@@ -354,8 +307,10 @@ function sendPos() {
       // console.log("local pos is : " + userX, userY);
       for (let peer of Object.values(peers)) {
         // keep in this order to accomodate unshift()
-        peer.send(userY);
-        peer.send(userX);
+        if(peer){
+          peer.send(userY);
+          peer.send(userX);
+        }
       }
 
       // console.log(posArray.length, msgIndex + msgIndex);
