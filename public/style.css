@@ -5,7 +5,7 @@
 }
 
 body {
-  font: 14px "Courier New", Courier, "Lucida Sans Typewriter",
+  font: 12px "Courier New", Courier, "Lucida Sans Typewriter",
     "Lucida Typewriter", monospace;
   /* background-color: #5900b3; */
   /* background-color: #ffffff;
@@ -33,8 +33,7 @@ p {
 }
 
 .menu {
-  border: 1px dotted gray;
-  background-color: #ffffff;
+  border: none;
   /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23000000' fill-opacity='0.59' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E"); */
 }
 
@@ -45,8 +44,7 @@ p {
   margin: auto;
   margin-top: 50px;
   margin-bottom: 50px;
-  border: 1px solid gray;
-  box-shadow: 5px 10px;
+  border: none;
   /* background-color: #ffffff; */
   z-index: -5;
 }
@@ -67,12 +65,12 @@ p {
 .chat {
   display: block;
   width: 100%;
+  border: 0.5px solid gray;
   height: 500px;
   /* margin: auto;
     padding: 40px; */
   margin: 0;
   padding: 0;
-  border: 1px solid gray;
   z-index: 1;
 }
 
@@ -84,8 +82,8 @@ p {
 }
 
 .sendMessageDiv {
-  padding: 10px;
-  border: 1px dotted grey;
+  padding: 0px;
+  /* border: 1px dotted grey; */
   background-color: #ffffff;
   /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23000000' fill-opacity='0.59' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E"); */
   z-index: 1;
@@ -134,13 +132,17 @@ p {
 }
 
 .btn {
-  border: 1px solid black;
-  padding: 5px;
-  margin: 5px 0px 5px 5px;
-  width: 40px;
-  height: 40px;
+  padding: 20px;
+  margin: 0 2px 0 0;
+  width: auto;
+  height: 50px;
   font: 14px "Courier New", Courier, "Lucida Sans Typewriter",
     "Lucida Typewriter", monospace;
+  border-radius: 20px 20px 0px 0px;
+  border-top: 0.5px solid gray;
+  border-left: 0.5px solid gray;
+  border-right: 0.5px solid gray;
+  border-bottom: 0px transparent;
 }
 
 .icon {
@@ -149,6 +151,9 @@ p {
 
 #_privacyToggle {
   border: 1px solid black;
+}
+
+#editorToggle {
 }
 
 .btn:hover {
@@ -223,6 +228,13 @@ p {
 }
 .square {
   position: absolute;
+  width: 50px;
+  height: 50px;
+}
+.entry {
+  position: relative;
+  display: inline-block;
+  float: left;
   width: 50px;
   height: 50px;
 }
@@ -319,4 +331,8 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 }
 input[type="color"]::-webkit-color-swatch {
   border: none;
+}
+
+button p {
+  font-size: 12px;
 }

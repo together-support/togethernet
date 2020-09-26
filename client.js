@@ -11,8 +11,8 @@ const { update } = require("lodash");
 // const test = require("./test");
 // console.log(`User: ${test.getName()}`);
 
-const url = "https://togethernet.herokuapp.com";
-// const url = "http://localhost:3000";
+// const url = "https://togethernet.herokuapp.com";
+const url = "http://localhost:3000";
 const archive = "/archive";
 const record = "/record";
 
@@ -69,7 +69,6 @@ let [stopped, shouldStop] = [false, false];
 // P5.JS
 module.exports = new p5(function () {
   this.setup = function setup() {
-    console.log("p5 is working");
     messageUI();
     userUI();
     loadHistory();
@@ -281,9 +280,10 @@ module.exports = new p5(function () {
 function messageUI() {
   // private msg HTML elements
   privateMsg = document.querySelector("#_privateMsg"); // private messages go here
+  privateChatBox = document.querySelector("#privateMsgToggle"); // private chat box
   publicMsg = document.querySelector("#_publicMsg"); // public messages go here
   messageInput = document.querySelector("#_messageInput"); // text input for message
-  sendBtn = document.querySelector("#_sendBtn"); // send button
+  // sendBtn = document.querySelector("#_sendBtn"); // send button
   historyBtn = document.querySelector("#_historyToggle"); // button to open history menu
   nameInput = document.querySelector("#_nameInput");
 
@@ -297,7 +297,7 @@ function messageUI() {
 
   // send msg
   // through click
-  sendBtn.addEventListener("click", sendMessage);
+  // sendBtn.addEventListener("click", sendMessage);
   // through key
   messageInput.addEventListener("keyup", function (event) {
     if (event.keyCode === 13) {
@@ -386,7 +386,15 @@ function getConsent(evt) {
   console.log(`YOU ARE OVERLAPPED ^_^`);
   addSystemMsg(getConsent);
   if (evt.keyCode == 13) {
+    let getConsent = `Can I get your consent to archive this message?`;
     console.log("ASK FOR CONSENT");
+    for (let peer of Object.values(peers)) {
+      if ("send" in peer) {
+        // keep it in this order to accomodate unshift()
+        peer.send(getConsent);
+        peer.send(name);
+      }
+    }
   }
   // prevents user from sending msg when it overlaps peer's txtrecord
   stopSendMsg = true;
@@ -412,7 +420,6 @@ function replyThread(evt, txtRecordNum) {
 }
 
 function peerUI() {
-  privateChatBox = document.querySelector("#privateMsgToggle"); // private chat box
   peer = document.createElement("div");
   privatePeerIndex += 1;
   peer.setAttribute(`id`, `peer${privatePeerIndex}`);
@@ -792,13 +799,23 @@ function loadHistory() {
       method: "GET",
     });
     const data = await res.json();
-    console.log(data[0].time, data[0].author, data[0].msg);
+    // console.log(data[0].time, data[0].author, data[0].msg);
 
     for (let i = 0; i < data.length; i++) {
       name = data[i].author;
       time = data[i].time;
       historyMsg = data[i].msg;
       publicMsgIndex = i;
+
+      archiveView = document.querySelector("#_publicMsg"); // archive view
+      entry = document.createElement("div");
+      entry.setAttribute(`id`, `entry${publicMsgIndex}`);
+      entry.setAttribute(`class`, `entry`);
+      // generate a random user color
+      peerColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+      entry.style.backgroundColor = peerColor;
+      archiveView.appendChild(entry);
+
       publicMsg.insertAdjacentHTML(
         "beforeend",
         `<div class="row">

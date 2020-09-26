@@ -77,6 +77,66 @@ $(document).ready(function () {
     // $hideBubble = !$hideBubble;
     // console.log(`in ui this is x ${$userX} and this is y ${$userY}`);
   });
+
+  $("#_infoToggle").click(function () {
+    $("#infoToggleIcon").toggleClass("fas fa-eye fas fa-eye-slash");
+    $(".overlay").toggle();
+
+    if (
+      $(".publicMsg").is(":visible") == false ||
+      $(".privateMsg").is(":visible") == true
+    ) {
+      $(".overlay").text("p2p mode does not store any messages on the server.");
+    }
+    if (
+      $(".publicMsg").is(":visible") == true &&
+      $(".privateMsg").is(":visible") == false
+    ) {
+      $(".overlay").text(
+        "archival mode automatically pushes messages to the server."
+      );
+    }
+  });
+  $("#ephemeralMode").click(function () {
+    if ($(".privateMsg").is(":visible") == false) {
+      $(".privateMsg").show();
+      $(".publicMsg").hide();
+    }
+  });
+  $("#archivalMode").click(function () {
+    if ($(".publicMsg").is(":visible") == false) {
+      $(".privateMsg").hide();
+      $(".publicMsg").show();
+    }
+  });
+  $("#_duoToggle").click(function () {
+    $("#duoToggleIcon").toggleClass("fas fa-plus fas fa-minus");
+    if (
+      $(".privateMsg").is(":visible") == false &&
+      $(".publicMsg").is(":visible") == true
+    ) {
+      $(".publicMsg").toggle();
+    }
+
+    // else if (
+    //   $(".publicMsg").is(":visible") == true &&
+    //   $(".privateMsg").is(":visible") == false
+    // ) {
+    //   $(".privateMsg").toggle();
+    // } else if (
+    //   $(".publicMsg").is(":visible") == true &&
+    //   $(".privateMsg").is(":visible") == true
+    // ) {
+    //   $(".publicMsg").toggle();
+    // }
+  });
+  // under dev alerts
+  $("#_recordBtn").click(function () {
+    alert("recording feature coming soon");
+  });
+  $("#_historyToggle").click(function () {
+    alert("history feature coming soon");
+  });
 });
 
 let getUserPos = () => {

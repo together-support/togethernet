@@ -20,9 +20,26 @@
 <body>
 
     <div class="container">
-        <!-- <div class="menu row">
-<p>placeholder</p>
-        </div> -->
+        <div class="menu row">
+
+            <button type="button" class="btn icon" id="ephemeralMode">
+                <p>sitting-at-the-park</p>
+            <!-- <i class="fas fa-upload" title="p2p/archival mode" id="privacyToggleIcon"></i> -->
+            </button>
+
+
+                        <button type="button" class="btn icon" id="archivalMode">
+                            <p>speaking-on-the-stage</p>
+                            <!-- <i class="fas fa-upload" title="p2p/archival mode" id="privacyToggleIcon"></i> -->
+                        </button>
+
+            <!-- <button type="button" class="btn icon" id="_privacyToggle">
+            <i class="fas fa-upload" title="p2p/archival mode" id="privacyToggleIcon"></i>
+            </button>-->
+<button type="button" class="btn icon" id="_duoToggle">
+    <i class="fas fa-plus" title="duo panel" id="duoToggleIcon"></i>
+</button> 
+        </div>
 
         <div class="row">
             <div class="overlay" id="_infoToggleIcon"></div>
@@ -47,19 +64,22 @@
             <div class="chat publicMsg" id="publicMsgToggle">
                 <div class="messageDiv" id="_publicMsg"></div>
             </div>
+
+            <!-- <div class="chat editor" id="editorToggle">
+                <div class="messageDiv" id="_editor"></div>
+            </div> -->
         </div>
 
         <div class="sendMessageDiv row">
             <input type="color" id="userProfile" class="slit" name="userProfile">
             <button id="_nameInput"></button>
-                        <!-- <input type="text" id="_nameInput" name="text" placeholder="Your name" /> -->
             <input type="text" id="_messageInput" name="text" placeholder=" Type your message here" />
-            <button type="button" class="btn icon" title="send message" id="_sendBtn" name="">
+            <!-- <button type="button" class="btn icon" title="send message" id="_sendBtn" name="">
       <i class="fas fa-paper-plane"></i>
     </button>
             <button type="button" class="btn icon" title="record audio" id="_recordBtn" name="">
         <i class="fas fa-microphone-alt"></i>
-    </button>
+    </button> -->
         </div>
 
             <button id="recordButton">record audio</button>
