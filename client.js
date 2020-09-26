@@ -4,7 +4,6 @@ const io = require("socket.io-client");
 const p5 = require("p5");
 const socket = io.connect(); // Manually opens the socket
 // const { makeConnectionList } = require('./connection');
-const FileType = require('file-type');
 
 // const url = "https://togethernet-p2p-template.herokuapp.com";
 const url = "http://localhost:3000";
