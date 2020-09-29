@@ -108,17 +108,12 @@ io.on("connection", function(socket) {
     socket.on("signal", function(data) {
         console.log("============================signal=====================");
         //updates existing socket list
+        // ensures that our current socket does not have itself in the list of peers
         existingSockets = Object.values(io.sockets.connected).filter(
-            (item) => item.id !== socket.id
-        );
-        console.log(
-            "existingSockets is",
-            existingSockets.map((socket) => socket.id)
-        );
-        console.log("and should not include", socket.id);
-        console.log("is data.peerId in io.sockets.connected?", data.peerId);
-        console.log(Object.keys(io.sockets.connected));
-        if (io.sockets.connected) {
+            (item) => ( item.id !== socket.id &&
+                        item.connected === true &&
+                        item.disconnected === false ));
+        if (io.sockets.connected && data.peerId in io.sockets.connected) {
             io.sockets.connected[data.peerId].emit("signal", {
                 signal: data.signal,
                 peerId: socket.id,
@@ -127,11 +122,14 @@ io.on("connection", function(socket) {
     });
 
     socket.on("disconnect", (data)=>{
+      // clean up disconnect
       console.log(`peer ${socket.id} disconnected`)
+      existingSockets.forEach((targetSocket) => {
+          targetSocket.emit("peerDisconnect", { peerId: socket.id });
+      });
     })
 
     socket.on("public message", function(data) {
-        console.log("emitting public message to", data.name);
         socket.broadcast.emit("public message", {
             name: data.name,
             msg: data.outgoingMsg,

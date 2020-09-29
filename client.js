@@ -3,7 +3,6 @@ const Peer = require("simple-peer");
 const io = require("socket.io-client");
 const p5 = require("p5");
 const ui = require("./ui");
-const socket = io.connect(); // Manually opens the socket
 
 const { update } = require("lodash");
 // const url = "https://togethernet.herokuapp.com";
@@ -46,13 +45,6 @@ let outgoingPublicMsg;
 let incomingPublicMsg;
 let historyMsg;
 
-socket.test = socket.emit;
-socket.emit = function (...args) {
-  console.log("outgoing ws message");
-  console.log(args);
-  return socket.test(...args);
-};
-
 // audio recording code
 const audioPlayer = document.getElementById("audioPlayer");
 const recordButton = document.getElementById("recordButton");
@@ -65,6 +57,7 @@ let [stopped, shouldStop] = [false, false];
 // P5.JS
 module.exports = new p5(function () {
   this.setup = function setup() {
+    const socket = io.connect(); // Manually opens the socket
     messageUI();
     userUI();
     loadHistory();
@@ -72,9 +65,7 @@ module.exports = new p5(function () {
     // SOCKET.IO + SIMPLE PEER
     // Connects to the Node signaling server
     socket.on("connect", function () {
-      console.log(
-        "===============socket connect event========================="
-      );
+      console.log('socket connect event');
       // System broadcast
       let connectedMsg = `Searching for peers...`;
       addSystemMsg(connectedMsg);
@@ -84,10 +75,9 @@ module.exports = new p5(function () {
     });
 
     socket.on("peer", function (data) {
-      console.log("===============socket peer event=========================");
+      console.log('socket peer event');
+      console.log("connecting to new peer");
       let peerId = data.peerId; //id of remote peer (provided by server)
-
-      console.log("data.initiator", data.initiator);
       // opens up possibility for a connection/configuration
       const peer = new Peer({
         objectMode: true,
@@ -143,7 +133,7 @@ module.exports = new p5(function () {
       //do i need to create another new peer here?
       socket.on("signal", function (data) {
         console.log(
-          "===============socket signal event========================="
+          "socket signal event"
         );
         console.log("receiving data", data);
         if (data.peerId == peerId) {
@@ -153,8 +143,8 @@ module.exports = new p5(function () {
       });
 
       peer.on("error", function (e) {
-        console.log("===============peer error event=========================");
         delete peers[peerId];
+        peer.destroy();
         let errorMsg = `Error connecting to peer. Please wait or refresh the page`;
         addSystemMsg(errorMsg);
         console.log(`Error sending connection to peer: ${peerId}, ${e}`);
@@ -219,7 +209,7 @@ module.exports = new p5(function () {
     // Whenever the server emits 'new message', update the chat body
     socket.on("public message", (data) => {
       console.log(
-        "===============socket public message event========================="
+        "socket public message event"
       );
       const clientName = data.name;
       incomingPublicMsg = data.msg;
@@ -294,6 +284,7 @@ function userName() {
 }
 
 function sendPos() {
+  console.log('setting up event listener');
   $(privateMsgToggle).keydown(function (evt) {
     evt = evt || window.event;
     setTimeout(function () {
@@ -307,7 +298,8 @@ function sendPos() {
       // console.log("local pos is : " + userX, userY);
       for (let peer of Object.values(peers)) {
         // keep in this order to accomodate unshift()
-        if(peer){
+        if(peer && 'send' in peer){
+          console.log('peer is', peer)
           peer.send(userY);
           peer.send(userX);
         }
@@ -344,7 +336,7 @@ function getConsent(evt) {
     let getConsent = `Can I get your consent to archive this message?`;
     console.log("ASK FOR CONSENT");
     for (let peer of Object.values(peers)) {
-      if ("send" in peer) {
+      if (peer && "send" in peer) {
         // keep it in this order to accomodate unshift()
         peer.send(getConsent);
         peer.send(name);
@@ -465,7 +457,7 @@ recordButton.addEventListener("click", captureAudio);
 function sendBlob(blob) {
   blob.arrayBuffer().then((buffer) => {
     for (let peer of Object.values(peers)) {
-      if ("addStream" in peer) {
+      if (peer && "addStream" in peer && "send" in peer) {
         peer.send(buffer);
       }
     }
@@ -484,7 +476,7 @@ function sendMessage() {
     ) {
       console.log("about to send to peers. what are they?", peers);
       for (let peer of Object.values(peers)) {
-        if ("send" in peer) {
+        if (peer && "send" in peer) {
           // keep it in this order to accomodate unshift()
           peer.send(outgoingMsg);
           peer.send(name);
@@ -511,7 +503,7 @@ function sendMessage() {
     ) {
       console.log("about to send to peers. what are they?", peers);
       for (let peer of Object.values(peers)) {
-        if ("send" in peer) {
+        if (peer && "send" in peer) {
           peer.send([name, outgoingMsg]);
         }
       }
