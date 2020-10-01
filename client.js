@@ -3,14 +3,8 @@ const Peer = require("simple-peer");
 const io = require("socket.io-client");
 const p5 = require("p5");
 const ui = require("./ui");
-const socket = io.connect(); // Manually opens the socket
 
-const FileType = require("file-type");
 const { update } = require("lodash");
-
-// const test = require("./test");
-// console.log(`User: ${test.getName()}`);
-
 // const url = "https://togethernet.herokuapp.com";
 const url = "http://localhost:3000";
 const archive = "/archive";
@@ -51,12 +45,6 @@ let outgoingPublicMsg;
 let incomingPublicMsg;
 let historyMsg;
 
-socket.test = socket.emit;
-socket.emit = function (...args) {
-  console.log("outgoing ws message");
-  console.log(args);
-  return socket.test(...args);
-};
 // audio recording code
 const audioPlayer = document.getElementById("audioPlayer");
 const recordButton = document.getElementById("recordButton");
@@ -69,6 +57,7 @@ let [stopped, shouldStop] = [false, false];
 // P5.JS
 module.exports = new p5(function () {
   this.setup = function setup() {
+    const socket = io.connect(); // Manually opens the socket
     messageUI();
     userUI();
     loadHistory();
@@ -76,9 +65,7 @@ module.exports = new p5(function () {
     // SOCKET.IO + SIMPLE PEER
     // Connects to the Node signaling server
     socket.on("connect", function () {
-      console.log(
-        "===============socket connect event========================="
-      );
+      console.log('socket connect event');
       // System broadcast
       let connectedMsg = `Searching for peers...`;
       addSystemMsg(connectedMsg);
@@ -87,49 +74,10 @@ module.exports = new p5(function () {
       console.log(`${connectedMsg}, your peer ID is ${socket.id}`);
     });
 
-    //toggles on receiving peer event from server
-    //all simplePeer events happen once the socket has received the peer event
-    //peer event instantiates P2P object and adds event listeners
-    //todo: * encapsulate so that globals aren't an issue
-    //      * broadcast data to all peers
-    //      * what's causing errors on multiple peer connections?
-    //      * is there a better way to do it? We don't really need to have a live connection to the server
-    //      * well, maybe we do? otherwise, how do we know who dropped off of the connection?
-    //
-    //
-
-    /*
-     * chain of events:
-     * 1. (client) connect to socketIO
-     * 2. (server) registers socket id and look for other sockets to connect to
-     * 3. (serv) emits 'peer' event to available sockets
-     * 4. (cli) receives 'peer' ws event
-     * 5. (cli) instantiates P2P as either initiator or receiver depending on data
-     *
-     * 6. (cli) somehow emits a ws signal????????
-     * 7. (serv) iterates over all available sockets and emits 'signal' with socket id
-     * 8. (cli) emits peer.signal
-     * 9. (cli) receives peer.signal
-     * 10. (cli) triggers new P2P()
-     *
-     * client A outgoing WS: connect, signal, ping pong
-     * client B outgoing WS: connect, signal, ping pong
-     *
-     *
-     * update: apparently event listeners are reversed;
-     * webrtc waits for event to be prepped, then triggers
-     * idk why tf they'd do it like this, but peer.on('signal') doesn't wait for
-     * a remote signal, but rather waits for your signal to be prepped then does XYZ
-     *
-     */
-
-    //this should already scope all of the event listeners to each peer, no?
-
     socket.on("peer", function (data) {
-      console.log("===============socket peer event=========================");
+      console.log('socket peer event');
+      console.log("connecting to new peer");
       let peerId = data.peerId; //id of remote peer (provided by server)
-
-      console.log("data.initiator", data.initiator);
       // opens up possibility for a connection/configuration
       const peer = new Peer({
         objectMode: true,
@@ -160,11 +108,6 @@ module.exports = new p5(function () {
 
       //maintain global list of peers
       peers[peerId] = peer;
-      /*
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    peer.on('close', ()=>{
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      delete peers[peerId];
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    })
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    */
       // System broadcast
       let newPeerMsg = `You're available on the signal server but you have not been paired`;
       console.log(`${newPeerMsg} Peer ID: ${peerId}`);
@@ -190,7 +133,7 @@ module.exports = new p5(function () {
       //do i need to create another new peer here?
       socket.on("signal", function (data) {
         console.log(
-          "===============socket signal event========================="
+          "socket signal event"
         );
         console.log("receiving data", data);
         if (data.peerId == peerId) {
@@ -200,8 +143,8 @@ module.exports = new p5(function () {
       });
 
       peer.on("error", function (e) {
-        console.log("===============peer error event=========================");
         delete peers[peerId];
+        peer.destroy();
         let errorMsg = `Error connecting to peer. Please wait or refresh the page`;
         addSystemMsg(errorMsg);
         console.log(`Error sending connection to peer: ${peerId}, ${e}`);
@@ -266,7 +209,7 @@ module.exports = new p5(function () {
     // Whenever the server emits 'new message', update the chat body
     socket.on("public message", (data) => {
       console.log(
-        "===============socket public message event========================="
+        "socket public message event"
       );
       const clientName = data.name;
       incomingPublicMsg = data.msg;
@@ -341,6 +284,7 @@ function userName() {
 }
 
 function sendPos() {
+  console.log('setting up event listener');
   $(privateMsgToggle).keydown(function (evt) {
     evt = evt || window.event;
     setTimeout(function () {
@@ -354,8 +298,11 @@ function sendPos() {
       // console.log("local pos is : " + userX, userY);
       for (let peer of Object.values(peers)) {
         // keep in this order to accomodate unshift()
-        peer.send(userY);
-        peer.send(userX);
+        if(peer && 'send' in peer){
+          console.log('peer is', peer)
+          peer.send(userY);
+          peer.send(userX);
+        }
       }
 
       // console.log(posArray.length, msgIndex + msgIndex);
@@ -389,7 +336,7 @@ function getConsent(evt) {
     let getConsent = `Can I get your consent to archive this message?`;
     console.log("ASK FOR CONSENT");
     for (let peer of Object.values(peers)) {
-      if ("send" in peer) {
+      if (peer && "send" in peer) {
         // keep it in this order to accomodate unshift()
         peer.send(getConsent);
         peer.send(name);
@@ -510,7 +457,7 @@ recordButton.addEventListener("click", captureAudio);
 function sendBlob(blob) {
   blob.arrayBuffer().then((buffer) => {
     for (let peer of Object.values(peers)) {
-      if ("addStream" in peer) {
+      if (peer && "addStream" in peer && "send" in peer) {
         peer.send(buffer);
       }
     }
@@ -529,7 +476,7 @@ function sendMessage() {
     ) {
       console.log("about to send to peers. what are they?", peers);
       for (let peer of Object.values(peers)) {
-        if ("send" in peer) {
+        if (peer && "send" in peer) {
           // keep it in this order to accomodate unshift()
           peer.send(outgoingMsg);
           peer.send(name);
@@ -556,7 +503,7 @@ function sendMessage() {
     ) {
       console.log("about to send to peers. what are they?", peers);
       for (let peer of Object.values(peers)) {
-        if ("send" in peer) {
+        if (peer && "send" in peer) {
           peer.send([name, outgoingMsg]);
         }
       }
