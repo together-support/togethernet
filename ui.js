@@ -131,9 +131,6 @@ $(document).ready(function () {
     // }
   });
   // under dev alerts
-  $("#_recordBtn").click(function () {
-    alert("recording feature coming soon");
-  });
   $("#_historyToggle").click(function () {
     alert("history feature coming soon");
   });

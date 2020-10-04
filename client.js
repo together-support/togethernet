@@ -47,9 +47,7 @@ let historyMsg;
 
 // audio recording code
 const audioPlayer = document.getElementById("audioPlayer");
-const recordButton = document.getElementById("recordButton");
-const stopRecordButton = document.getElementById("stopRecordButton");
-const sendButton = document.getElementById("sendBlob");
+const recordButton = document.getElementById("_recordBtn");
 let recording;
 let blob;
 let [stopped, shouldStop] = [false, false];
@@ -65,7 +63,7 @@ module.exports = new p5(function () {
     // SOCKET.IO + SIMPLE PEER
     // Connects to the Node signaling server
     socket.on("connect", function () {
-      console.log('socket connect event');
+      console.log("socket connect event");
       // System broadcast
       let connectedMsg = `Searching for peers...`;
       addSystemMsg(connectedMsg);
@@ -75,7 +73,7 @@ module.exports = new p5(function () {
     });
 
     socket.on("peer", function (data) {
-      console.log('socket peer event');
+      console.log("socket peer event");
       console.log("connecting to new peer");
       let peerId = data.peerId; //id of remote peer (provided by server)
       // opens up possibility for a connection/configuration
@@ -132,9 +130,7 @@ module.exports = new p5(function () {
 
       //do i need to create another new peer here?
       socket.on("signal", function (data) {
-        console.log(
-          "socket signal event"
-        );
+        console.log("socket signal event");
         console.log("receiving data", data);
         if (data.peerId == peerId) {
           console.log("sending peer signal");
@@ -208,9 +204,7 @@ module.exports = new p5(function () {
     // SOCKET.IO + ARCHIVAL
     // Whenever the server emits 'new message', update the chat body
     socket.on("public message", (data) => {
-      console.log(
-        "socket public message event"
-      );
+      console.log("socket public message event");
       const clientName = data.name;
       incomingPublicMsg = data.msg;
       addPublicMsg(clientName, incomingPublicMsg);
@@ -226,7 +220,7 @@ function messageUI() {
   privateChatBox = document.querySelector("#privateMsgToggle"); // private chat box
   publicMsg = document.querySelector("#_publicMsg"); // public messages go here
   messageInput = document.querySelector("#_messageInput"); // text input for message
-  // sendBtn = document.querySelector("#_sendBtn"); // send button
+  sendBtn = document.querySelector("#_sendBtn"); // send button
   historyBtn = document.querySelector("#_historyToggle"); // button to open history menu
   nameInput = document.querySelector("#_nameInput");
 
@@ -240,7 +234,7 @@ function messageUI() {
 
   // send msg
   // through click
-  // sendBtn.addEventListener("click", sendMessage);
+  sendBtn.addEventListener("click", sendMessage);
   // through key
   messageInput.addEventListener("keyup", function (event) {
     if (event.keyCode === 13) {
@@ -284,7 +278,7 @@ function userName() {
 }
 
 function sendPos() {
-  console.log('setting up event listener');
+  console.log("setting up event listener");
   $(privateMsgToggle).keydown(function (evt) {
     evt = evt || window.event;
     setTimeout(function () {
@@ -298,8 +292,8 @@ function sendPos() {
       // console.log("local pos is : " + userX, userY);
       for (let peer of Object.values(peers)) {
         // keep in this order to accomodate unshift()
-        if(peer && 'send' in peer){
-          console.log('peer is', peer)
+        if (peer && "send" in peer) {
+          console.log("peer is", peer);
           peer.send(userY);
           peer.send(userX);
         }
@@ -312,6 +306,7 @@ function sendPos() {
         let posY = posArray[i][1];
         if (userX == posX && userY == posY) {
           getConsent(evt);
+          stopSendMsg = true;
         } else if (
           (posX == userX + cell && posY == userY) ||
           (posX == userX - cell && posY == userY) ||
@@ -319,6 +314,7 @@ function sendPos() {
           (posY == userY - cell && posX == userX)
         ) {
           replyThread(evt, i);
+          stopSendMsg = false;
         } else {
           // allow user to send new msg
           stopSendMsg = false;
@@ -401,15 +397,6 @@ function updateRemotePeer(currentX, currentY) {
 }
 
 // audio
-stopRecordButton.addEventListener("click", () => {
-  console.log("clicked");
-  shouldStop = true;
-});
-
-sendButton.addEventListener("click", () => {
-  console.log("trying to send");
-  sendBlob(blob);
-});
 
 const captureAudio = () => {
   [stopped, shouldStop] = [false, false];
@@ -444,6 +431,7 @@ const captureAudio = () => {
         stream.getTracks().forEach((track) => {
           track.stop();
         });
+        sendBlob(blob);
       });
 
       mediaRecorder.start(1000);
@@ -453,7 +441,6 @@ const captureAudio = () => {
     });
 };
 
-recordButton.addEventListener("click", captureAudio);
 function sendBlob(blob) {
   blob.arrayBuffer().then((buffer) => {
     for (let peer of Object.values(peers)) {
@@ -463,6 +450,12 @@ function sendBlob(blob) {
     }
   });
 }
+
+recordButton.addEventListener("mousedown", captureAudio);
+
+recordButton.addEventListener("mouseup", () => {
+  shouldStop = true;
+});
 
 // fails on webrtc not open if > 2
 // how do we ensure that webrtc is listening?
@@ -495,19 +488,6 @@ function sendMessage() {
       });
       archivePublicMsg(name, outgoingMsg);
       addPublicMsg(name, outgoingMsg);
-    }
-    // send private message
-    else if (
-      $(".publicMsg").is(":visible") == true &&
-      $(".privateMsg").is(":visible") == true
-    ) {
-      console.log("about to send to peers. what are they?", peers);
-      for (let peer of Object.values(peers)) {
-        if (peer && "send" in peer) {
-          peer.send([name, outgoingMsg]);
-        }
-      }
-      outgoingPrivateMsg(name, outgoingMsg);
     }
     console.log(`sending message: ${outgoingMsg}`); // note: using template literal string: ${variable} inside backticks
     // clear input field
