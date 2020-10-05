@@ -36,6 +36,7 @@ let stopSendMsg = false;
 let publicMsgIndex = 0;
 let incomingMsgIndex = 0;
 let msgIndex = 0;
+let audioIndex = 0;
 let privatePeerIndex = 0;
 let sysMsgIndex = 0;
 
@@ -46,7 +47,7 @@ let incomingPublicMsg;
 let historyMsg;
 
 // audio recording code
-const audioPlayer = document.getElementById("audioPlayer");
+let audio;
 const recordButton = document.getElementById("_recordBtn");
 let recording;
 let blob;
@@ -158,7 +159,9 @@ module.exports = new p5(function () {
       });
       peer.on("stream", function (stream) {
         console.log("receiving stream!!!");
-        audioPlayer.src = URL.createObjectURL(stream);
+
+        audio = document.getElementById(`audio${audioIndex}`);
+        audio.src = URL.createObjectURL(stream);
       });
 
       peer.on("data", function (data) {
@@ -167,7 +170,7 @@ module.exports = new p5(function () {
         // received audio clips from peer
         if (typeof data === "object") {
           const blob = new Blob([data]);
-          audioPlayer.src = URL.createObjectURL(blob);
+          incomingAudioMsg(blob);
         } else {
           dataArray.unshift(data);
           // received x, y movements from peer
@@ -427,7 +430,10 @@ const captureAudio = () => {
         console.log("we are stopping");
         blob = new Blob(recordedChunks);
         recording = URL.createObjectURL(blob);
-        audioPlayer.src = recording;
+
+        // send outgoing audio msg
+        // audio.src = recording;
+        outgoingAudioMsg();
         stream.getTracks().forEach((track) => {
           track.stop();
         });
@@ -576,6 +582,62 @@ function outgoingPrivateMsg(name, msg) {
   } else {
     $("#_privacyToggle").css("border", "1px solid black");
   }
+}
+
+function incomingAudioMsg(blob) {
+  // add audio element
+  audio = document.createElement("audio");
+  audio.setAttribute(`id`, `audio${audioIndex}`);
+  // inject recording into audio src
+  audio.src = URL.createObjectURL(blob);
+
+  addAudioRecord(audio, peerX, peerY, peerColor);
+  // store peer audioRecord positions
+  peerPosArray.push([peerX, peerY]);
+  posArray.push([peerX, peerY]);
+}
+
+function outgoingAudioMsg() {
+  removeSysMsg();
+  // add audio record
+  userX = ui.getUserPos()[0];
+  userY = ui.getUserPos()[1];
+  // add audio element
+  audio = document.createElement("audio");
+  audio.setAttribute(`id`, `audio${audioIndex}`);
+  // inject recording into audio src
+  audio.src = recording;
+  addAudioRecord(audio, userX, userY, userColor);
+  // store user audioRecord positions
+  userPosArray.push([userX, userY]);
+  posArray.push([userX, userY]);
+}
+
+function addAudioRecord(audio, x, y, color) {
+  let audioRecord = document.createElement("button");
+  audioRecord.setAttribute(`id`, `audioRecord${audioIndex}`);
+  audioRecord.setAttribute(`class`, `audioRecord`);
+  privateChatBox.appendChild(audioRecord);
+  $(`#audioRecord${audioIndex}`).css({
+    left: `${x}px`,
+    top: `${y}px`,
+    backgroundColor: `${color}`,
+  });
+  playPauseAudio(audio, audioRecord);
+}
+
+function playPauseAudio(audio, audioRecord) {
+  // create play arrow
+  let audioPlay = document.createElement("div");
+  audioPlay.setAttribute(`id`, `audioPlay${audioIndex}`);
+  audioPlay.setAttribute("class", "audioPlay");
+  audioRecord.appendChild(audioPlay);
+
+  audioRecord.addEventListener("click", () => {
+    audio.play();
+  });
+
+  audioIndex++;
 }
 
 function addTxtRecord(x, y, color, name, msg) {
@@ -739,7 +801,6 @@ function loadHistory() {
       entry.setAttribute(`id`, `entry${publicMsgIndex}`);
       entry.setAttribute(`class`, `entry`);
       // generate a random user color
-      peerColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
       entry.style.backgroundColor = peerColor;
       archiveView.appendChild(entry);
 
