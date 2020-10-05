@@ -131,8 +131,8 @@ $(document).ready(function () {
     // }
   });
   // under dev alerts
-  $("#_historyToggle").click(function () {
-    alert("history feature coming soon");
+  $("#_breakoutZone").click(function () {
+    alert("Breakout zones coming soon");
   });
 });
 

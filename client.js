@@ -5,8 +5,8 @@ const p5 = require("p5");
 const ui = require("./ui");
 
 const { update } = require("lodash");
-// const url = "https://togethernet.herokuapp.com";
-const url = "http://localhost:3000";
+const url = "https://togethernet.herokuapp.com";
+// const url = "http://localhost:3000";
 const archive = "/archive";
 const record = "/record";
 
