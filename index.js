@@ -2,8 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import http from 'http';
 import bodyParser from 'body-parser';
-
-var browserify = require('browserify-middleware');
+import browserify from 'browserify-middleware';
 
 import {onConnection} from './src/server/connection.js'
 
