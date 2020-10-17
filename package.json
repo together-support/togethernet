@@ -1,36 +1,22 @@
 {
-  "//1": "describes your app and its dependencies",
-  "//2": "https://docs.npmjs.com/files/package.json",
-  "//3": "updating this file will download and update your packages",
-  "name": "simple-peer-node",
-  "version": "0.0.1",
-  "description": "a simple chatroom template that uses Simple Peer, Node.js, Socket.io, Express, and Browserify",
+  "name": "togethernet",
+  "version": "1.0.0",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "repository": "https://github.com/xinemata/togethernet.git",
+  "license": "MIT",
+  "private": false,
   "dependencies": {
     "body-parser": "^1.19.0",
     "browserify-middleware": "^8.1.1",
-    "debug": "^4.2.0",
     "express": "^4.17.1",
-    "lodash": "^4.17.19",
-    "p5": "^1.1.7",
-    "pg": "^8.3.0",
+    "lodash": "^4.17.20",
+    "p5": "^1.1.9",
+    "pg": "^8.4.1",
     "simple-peer": "^9.7.2",
     "socket.io": "^2.3.0",
-    "socket.io-client": "^2.3.0"
+    "socket.io-client": "^2.3.1"
   },
-  "engines": {
-    "node": "8.x"
-  },
-  "repository": {
-    "url": "https://glitch.com/edit/#!/hello-express"
-  },
-  "license": "MIT",
-  "keywords": [
-    "node",
-    "glitch",
-    "express"
-  ]
+  "devDependencies": {
+    "debug": "^4.2.0"
+  }
 }
