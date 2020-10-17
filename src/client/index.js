@@ -1,5 +1,5 @@
 import Peer from 'simple-peer';
-import io from 'socket-io.client';
+import io from 'socket.io-client';
 import p5 from 'p5';
 
 const socket = io.connect(); // Manually opens the socket
@@ -101,7 +101,7 @@ recordButton.addEventListener('click', captureAudio)
 
 
 // P5.JS
-module.exports = new p5(function() {
+const client = () => {
     this.setup = function setup() {
         console.log("p5 is working");
         messageUI();
@@ -277,7 +277,7 @@ module.exports = new p5(function() {
         });
     };
     this.draw = function draw() {};
-});
+};
 
 function messageUI() {
     // private msg HTML elements
