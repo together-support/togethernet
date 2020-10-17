@@ -1,9 +1,8 @@
-// Exports node modules
-const Peer = require("simple-peer");
-const io = require("socket.io-client");
-const p5 = require("p5");
+import Peer from 'simple-peer';
+import io from 'socket-io.client';
+import p5 from 'p5';
+
 const socket = io.connect(); // Manually opens the socket
-// const { makeConnectionList } = require('./connection');
 
 // const url = "https://togethernet-p2p-template.herokuapp.com";
 const url = "http://localhost:3000";
