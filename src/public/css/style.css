@@ -153,7 +153,8 @@ p {
   border: 1px solid black;
 }
 
-#editorToggle {
+#_privacyToggle.private {
+  border: 1px solid red;
 }
 
 .btn:hover {
@@ -240,7 +241,7 @@ p {
   height: 50px;
 }
 
-.txtRecord,
+.textRecord,
 .audioRecord {
   position: absolute;
   width: 50px;

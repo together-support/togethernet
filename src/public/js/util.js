@@ -1,19 +1,14 @@
-const modules = require("browserify-middleware/lib/modules");
+const makeConnectionList = (peerList) => {
+  // let connectionList = [];
+  // peerList.forEach((node, i) => {
+  //   for (let j = i + 1; j < peerList.length; j++) {
+  //     connectionList.push([node, peerList[j]])
+  //   }
+  // })
 
-function makeConnectionList(peerList) {
-
-    let connectionList = [];
-
-    for (let i = 0; i < peerList.length; i++) {
-        for (let j = i + 1; j < peerList.length; j++) {
-            let connection = [];
-            connection.push(peerList[i], peerList[j]);
-            connectionList.push(connection);
-        }
-    }
-    return connectionList;
+  // return connectionList;
 }
 
-module.exports = {
-    makeConnectionList
+export const isPrivateVisible = () => {
+  // $(".privateMsg").is(":visible") && !($(".publicMsg").is(":visible"))
 }

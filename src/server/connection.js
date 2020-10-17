@@ -3,8 +3,8 @@ import socketIO from 'socket.io';
 // SOCKET COMMUNICATIONS
 /*
  * imagine we have two users, A and B
- * A connects to the server, which triggers a 'connection' event and registers A with socket.io
- * B connects to the server, which triggers a 'connection' event and registers B with socket.io
+ * A connects to socketIO server, which triggers a 'connection' event and registers A with socket.io
+ * B connects to socketIO  server, which triggers a 'connection' event and registers B with socket.io
  * when B connects, it sees that A is also connected.
  * B sends a peer event to A
  * B sends a signal to A
@@ -19,7 +19,7 @@ import socketIO from 'socket.io';
 export const connectSocket = (server) => {
   const io = socketIO(server);
 
-  io.on("connection", function(socket) {
+  io.on("connection", (socket) => {
     console.log("============================connection=====================");
     console.log(socket.id, "has connected");
     let existingSockets = Object.values(io.sockets.connected).filter(
