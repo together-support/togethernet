@@ -1,11 +1,14 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import http from 'http';
 import bodyParser from 'body-parser';
 import browserify from 'browserify-middleware';
 import babelify from 'babelify';
 
-import {onConnection} from './src/server/connection.js'
+import http from 'http';
+import path, {dirname} from 'path';
+import {fileURLToPath} from 'url';
+
+import {connectSocket} from './server/connection.js'
 
 browserify.settings({
   transform: [babelify.configure({
@@ -19,10 +22,10 @@ const app = express();
 app.use(bodyParser.json());
 const server = http.Server(app);
 
-app.use(express.static("src/views"));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-const port = process.env.PORT || '3000';
-server.listen(port, () => console.log(`server listening on ${port}`));
+app.use(express.static(path.join(__dirname, '/public')));
 
 app.get('/js/bundle.js', browserify([
   'debug', 'socket.io-client', 'simple-peer', 'p5', {
@@ -30,4 +33,7 @@ app.get('/js/bundle.js', browserify([
   }])
 );
 
-onConnection(server);
+const port = process.env.PORT || '3000';
+server.listen(port, () => console.log(`server listening on ${port}`));
+
+connectSocket(server);

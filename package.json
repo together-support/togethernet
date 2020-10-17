@@ -1,18 +1,19 @@
 {
   "name": "togethernet",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "repository": "https://github.com/xinemata/togethernet.git",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "node index.js"
+    "start": "node src/index.js"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
     "browserify-middleware": "^8.1.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "file-type": "^15.0.1",
     "lodash": "^4.17.20",
     "p5": "^1.1.9",
     "pg": "^8.4.1",

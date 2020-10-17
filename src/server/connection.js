@@ -16,10 +16,10 @@ import socketIO from 'socket.io';
  *  right now C signals to A and B again instead of A and B responding to C
  */
 
-export const onConnection = (server) => {
+export const connectSocket = (server) => {
   const io = socketIO(server);
 
-  io.on("connection", (socket) => {
+  io.on("connection", function(socket) {
     console.log("============================connection=====================");
     console.log(socket.id, "has connected");
     let existingSockets = Object.values(io.sockets.connected).filter(
@@ -64,5 +64,5 @@ export const onConnection = (server) => {
             msg: data.outgoingMsg,
         });
     });
-  });  
+  });
 }
