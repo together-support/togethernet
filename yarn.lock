@@ -1957,6 +1957,14 @@ enquirer@^2.3.5:
   dependencies:
     ansi-colors "^4.1.1"
 
+envify@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/envify/-/envify-4.1.0.tgz#f39ad3db9d6801b4e6b478b61028d3f0b6819f7e"
+  integrity sha512-IKRVVoAYr4pIx4yIWNsz9mOsboxlNXiu7TNBnem/K/uTHdkyzXWDzHCK7UTolqBbgaBz0tQHsD3YNls0uIIjiw==
+  dependencies:
+    esprima "^4.0.0"
+    through "~2.3.4"
+
 es-abstract@^1.17.5:
   version "1.17.7"
   resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.17.7.tgz#a4de61b2f66989fc7421676c1cb9787573ace54c"
@@ -2550,6 +2558,11 @@ ignore@^4.0.6:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
   integrity sha512-cyFDKrqc/YdcWFniJhzI42+AzS+gNwmUzOSFcRCQYwySuBBBy/KjuxWLZ/FHEH6Moq1NizMOBWyTcv8O4OZIMg==
+
+immer@^7.0.9:
+  version "7.0.9"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-7.0.9.tgz#28e7552c21d39dd76feccd2b800b7bc86ee4a62e"
+  integrity sha512-Vs/gxoM4DqNAYR7pugIxi0Xc8XAun/uy7AQu4fLLqaTBHxjOP9pJ266Q9MWA/ly4z6rAFZbvViOtihxUZ7O28A==
 
 import-fresh@^3.0.0, import-fresh@^3.2.1:
   version "3.2.1"
@@ -3203,11 +3216,6 @@ outpipe@^1.1.0:
   integrity sha1-UM+GFjZeh+Ax4ppeyTOaPaRyX6I=
   dependencies:
     shell-quote "^1.4.2"
-
-p5@^1.1.9:
-  version "1.1.9"
-  resolved "https://registry.yarnpkg.com/p5/-/p5-1.1.9.tgz#b33692100f991b993128fd8e3324cc56adad68b2"
-  integrity sha512-gU+UBEAXLGt3RQFzTtsKijF+eBidweIqRrg51AniuLG8LKHzylrB5ilIOzyDgcR1/hWt6danWPArjaVtXHWfWg==
 
 packet-reader@1.0.0:
   version "1.0.0"
@@ -4149,7 +4157,7 @@ through2@^2.0.0:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-through@2, "through@>=2.2.7 <3":
+through@2, "through@>=2.2.7 <3", through@~2.3.4:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
