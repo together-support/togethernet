@@ -5,16 +5,20 @@ import update from 'lodash/update'
 import publicConfig from './publicConfig.js'
 import {attachSocketEvents} from './socketEvents.js';
 import {loadHistory} from './history.js';
+import {attachUIEvents} from './uiEvents.js'
 
 // let stopSendMsg = false;
 // const record = "/record";
 
-export const setup = () => {
+$(window).load(() => {
+  // loadSocketConnections();
+  // loadUserProfile();
   // const socket = io.connect();
   // attachSocketEvents(socket);
+  //   loadUserAvatar();
+  //   loadHistory();
+  //   sendPos();
 
-//   loadUserAvatar();
-//   messageUI();
-//   loadHistory();
-//   sendPos();
-}
+  attachUIEvents();
+  // attachSocketEvents();
+});

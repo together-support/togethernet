@@ -1,9 +1,12 @@
-// let stopSendMsg = false;
-// let incomingMsg;
-// let outgoingMsg;
+export const sendMessageOnEnter = (event) => {
+  if (event.keyCode === 13) {
+    console.log('hello')
+    // event.preventDefault();
+    // sendMessage();
+  }
+}
 
-
-export const sendMessage = () => {
+export const sendMessage = (event) => {
 //   if (!stopSendMsg && messageInput.value != "") {
 //     outgoingMsg = messageInput.value;
 //     // send private message

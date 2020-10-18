@@ -1,10 +1,13 @@
+import store from '../store/store.js'
+import {changeName} from '../store/actions.js'
 
-export const userName = () => {
-  // let text;
-  // name = prompt("Please enter your name:");
-  // if (name == null || name == "") {
-  //   name = "Anonymous";
-  // } else {
-  //   nameInput.innerHTML = name;
-  // }
+export const setUserName = () => {
+  const name = prompt("Please enter your name:");
+  changeName(name)
+  displayUserName();
+};
+
+const displayUserName = () => {
+  const $nameInput = $("#_nameInput");
+  $nameInput.text(store.get('name'));
 }
