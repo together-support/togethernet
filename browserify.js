@@ -11,7 +11,8 @@ browserify.settings({
         "@babel/preset-react"
       ],
       plugins: [
-        "@babel/plugin-proposal-class-properties"
+        "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-transform-runtime"
       ]
     }),
     ['envify', publicConfig]

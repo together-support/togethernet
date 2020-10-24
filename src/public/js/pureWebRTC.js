@@ -6,7 +6,6 @@ export default class PeerConnection {
     this.socket = io.connect();
     this.socketId = null;
     this.peerConnection = null;
-    this.dataChannel = null;
   }
 
   connect = () => {
@@ -21,7 +20,7 @@ export default class PeerConnection {
     this.send({type: 'enterRoom'})
   }
 
-  handleMessage = (message) => {
+  handleMessage = async (message) => {
     let data; 
     try { 
        data = JSON.parse(message); 
@@ -32,7 +31,7 @@ export default class PeerConnection {
 
     switch(data.type) {
       case "enteredRoom":
-        this.enteredRoom(data)
+        await this.enteredRoom(data)
         break;
       case "offer":
         this.handleReceivedOffer(data); 
@@ -41,66 +40,103 @@ export default class PeerConnection {
         this.handleReceivedAnswer(data); 
         break; 
       case "candidate": 
-        this.onCandidate(data); 
+        this.addCandidate(data); 
         break; 
       default: 
         break; 
     } 
   }; 
 
-  enteredRoom = ({success}) => {
+  enteredRoom = async ({success}) => {
     if (success) {
       this.initPeerConnection();
-      this.connectToPeers();
-      this.initializeOrJoinDataChannel();
+      await this.signalToPeers();
+      this.openDataChannel();
     } else {
       alert('error connecting. already connected!')
     }
   }
  
-  initializeOrJoinDataChannel = () => {
+  initPeerConnection = () => {
+    console.log('init peer connection')
+    this.peerConnection = new webkitRTCPeerConnection({ 
+      "iceServers": [{"urls": [
+        'stun:stun.l.google.com:19302',
+        'stun:global.stun.twilio.com:3478'
+      ]}] 
+    }, {optional: [{RtpDataChannels: true}]});
+
+    // this.peerConnection.onicecandidate = (event) => { 
+    //   console.log('onicecandidate')
+    //   if (event.candidate) { 
+    //     this.send({type: "shareCandidate", candidate: event.candidate}); 
+    //   } 
+    // };
+
+    this.peerConnection.onconnectionstatechange = (e) => {
+      alert('hello!!')
+      console.log(e);
+    };
   }
 
-  initPeerConnection = () => {
-    const configuration = { 
-      "iceServers": [{ "url": "stun:stun.1.google.com:19302" }] 
-    };
-    this.peerConnection = new webkitRTCPeerConnection(configuration, {
-      optional: [{RtpDataChannels: true}]
+  signalToPeers = async () => { 
+    console.log('want to signal to peers')
+    try {
+      const offer = await this.peerConnection.createOffer();
+      await this.peerConnection.setLocalDescription(offer); 
+      this.send({type: "sendOffers", offer});
+    } catch (e) {
+      alert("error creating offer to connect to peers"); 
+    }
+  }
+
+  openDataChannel = () => {	
+    console.log('open data channel')
+    const dataChannel = this.peerConnection.createDataChannel("myDataChannel", { 
+      reliable: true 
     });
 
-    this.peerConnection.onicecandidate = (event) => { 
-      if (event.candidate) { 
-        this.send({type: "shareCandidate", candidate: event.candidate}); 
-      } 
-    }; 
+    this.peerConnection.addEventListener('datachannel', e => {
+      alert(e)
+    })
+	
+    dataChannel.onerror = function (error) { 
+      console.log("Error:", error); 
+    };
+	
+    dataChannel.onmessage = function (event) { 
+      console.log("Got message:", event.data); 
+    };
+
+    dataChannel.onopen = () => {
+      alert('open')
+      store.set('dataChannel', dataChannel);
+    }
   }
 
-  connectToPeers = () => { 
-    this.peerConnection.createOffer((offer) => { 
-      this.send({type: "sendOffers", offer});
-      this.peerConnection.setLocalDescription(offer); 
-    }, (error) => { 
-      alert("error connecting to peers"); 
-    }); 
-  }
-
-  handleReceivedOffer = ({offer, offerInitiator}) => { 
-    this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer)); 
-    this.peerConnection.createAnswer((answer) => { 
-      this.peerConnection.setLocalDescription(answer); 
+  handleReceivedOffer = async ({offer, offerInitiator}) => { 
+    try {
+      await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer)); 
+      const answer = await this.peerConnection.createAnswer();
+      await this.peerConnection.setLocalDescription(answer); 
+      console.log(`received an offer - generated answer ${answer}`)
       this.send({type: "sendAnswer", answer, offerInitiator});
-    }, (error) => { 
+    } catch (e) {
       alert("error receiving offer"); 
-    }); 
+    }
   }
  
-  handleReceivedAnswer = ({answer}) => { 
-    this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer)); 
+  handleReceivedAnswer = async ({answer}) => { 
+    console.log(`received answer - ${answer}`)
+    await this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer)); 
   } 
 
-  onCandidate = ({candidate}) => { 
-    this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate)); 
+  addCandidate = async ({candidate}) => { 
+    try {
+      await this.peerConnection.addIceCandidate(candidate); 
+    } catch (e) {
+      console.log('error adding received ice candidate', e)
+    }
   }
 
   handleError = () => {

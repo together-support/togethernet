@@ -1,7 +1,8 @@
 import {attachUIEvents} from './uiEvents.js'
 import PeerConnection from './pureWebRTC.js';
+import store from '../store/store.js';
 
 $(window).load(() => {
-  attachUIEvents();
   new PeerConnection().connect();
+  // attachUIEvents();
 }); 

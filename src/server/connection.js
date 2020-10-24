@@ -3,19 +3,19 @@ import socketIO from 'socket.io';
 export default class SocketConnection {
   constructor(server) {
     this.io = socketIO(server);
-    this.socket = null;
     this.connectedUsers = {};
   }
 
   connect = () => {
     this.io.on("connection", (socket) => {
-      this.socket = socket;
-      socket.on('message', this.handleMessage);
-      socket.on('disconnect', this.handleConnectionClose);
+      socket.on('message', (message) => {
+        this.handleMessage(socket, message);
+      });
+      socket.on('disconnect', () => this.handleDisconnect(socket));
     })
   }
 
-  handleMessage = (message) => {
+  handleMessage = (socket, message) => {
     let data; 
     try { 
        data = JSON.parse(message); 
@@ -26,7 +26,7 @@ export default class SocketConnection {
     
     switch (data.type) { 
       case "enterRoom": 
-        this.handleEnterRoom(data);
+        this.handleEnterRoom(socket, data);
         break;
       case "sendOffers": 
         this.handleSendOffers(data);
@@ -38,57 +38,47 @@ export default class SocketConnection {
         this.handleCandidate(data);
         break; 
       default: 
-        this.send({type: "error", message: "Command not found: " + data.type}); 
+        this.sendConnection(socket, {type: "error", message: "Command not found: " + data.type}); 
         break; 
     }
   }
 
-  handleEnterRoom = ({fromSocket, fromName}) => {
-    if(this.connectedUsers[fromSocket]) { 
-      this.send({type: "enteredRoom", success: false}); 
-    } else { 
-      this.connectedUsers[fromSocket] = this.socket; 
-      this.connectedUsers[fromSocket]['name'] = fromName; 
-      this.send({type: "enteredRoom", success: true});
-    }
+  handleEnterRoom = (socket, {fromSocket, fromName}) => {
+    this.io.sockets.connected[fromSocket]['name'] = fromName;
+    this.sendConnection(socket, {type: "enteredRoom", success: true});
   }
 
   handleSendOffers = ({offer, fromSocket}) => {
-    const peerIds = Object.keys(this.connectedUsers).filter(socketId => socketId !== this.socket.id)
+    const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== fromSocket);
     peerIds.forEach((peerId) => {
-      const connection = this.connectedUsers[peerId];
+      const connection = this.io.sockets.connected[peerId];
       this.sendConnection(connection, {type: "offer", offer, offerInitiator: fromSocket});    
     })
   }
 
   handleSendAnswer = ({offerInitiator, answer}) => {
-    const connection = this.connectedUsers[offerInitiator];   
+    const connection = this.io.sockets.connected[offerInitiator];   
     if(Boolean(connection)){ 
       this.sendConnection(connection, {type: "answer", answer}); 
     }
   }
 
-  handleCandidate = ({candidate}) => {
-    const peerIds = Object.keys(this.connectedUsers).filter(socketId => socketId !== this.socket.id)
+  handleCandidate = ({fromSocket, candidate}) => {
+    const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== fromSocket)
 
     peerIds.forEach((peerId) => {
-      const connection = this.connectedUsers[peerId];
+      const connection = this.io.sockets.connected[peerId];
       this.sendConnection(connection, {type: "candidate", candidate}); 
     })
   }
 
-  handleConnectionClose = () => {
-    this.send({type: 'leave'});
-    const peerIds = Object.keys(this.connectedUsers).filter(socketId => socketId !== this.socket.id)
-    peerIds.forEach((peerId) => {
-      const connection = this.connectedUsers[peerId];
-      this.sendConnection(connection, {type: 'leave', fromSocket: this.socket.id});
-    });
-    delete this.connectedUsers[this.socket.id]; 
-  }
+  handleDisconnect = ({id: leavingUser}) => {
+    const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== leavingUser)
 
-  send = (message) => {
-    this.sendConnection(this.socket, message);
+    peerIds.forEach((peerId) => {
+      const connection = this.io.sockets.connected[peerId];
+      this.sendConnection(connection, {type: "leave", leavingUser}); 
+    })
   }
 
   sendConnection = (socket, message) => {
