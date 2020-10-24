@@ -1,68 +1,97 @@
 import socketIO from 'socket.io';
 
-// SOCKET COMMUNICATIONS
-/*
- * imagine we have two users, A and B
- * A connects to socketIO server, which triggers a 'connection' event and registers A with socket.io
- * B connects to socketIO  server, which triggers a 'connection' event and registers B with socket.io
- * when B connects, it sees that A is also connected.
- * B sends a peer event to A
- * B sends a signal to A
- * A sends a signal to B
- * A and B are now connected
- * p2p means they don't actually rely on the ws implementation here except for handshake
- *
- *  when C connects, C signals to A and B
- *  right now C signals to A and B again instead of A and B responding to C
- */
+export default class SocketConnection {
+  constructor(server) {
+    this.io = socketIO(server);
+    this.socket = null;
+    this.connectedUsers = {};
+  }
 
-export const connectSocket = (server) => {
-  const io = socketIO(server);
-
-  io.on("connection", (socket) => {
-    console.log("============================connection=====================");
-    console.log(socket.id, "has connected");
-    let existingSockets = Object.values(io.sockets.connected).filter(
-        (item) => item.id !== socket.id
-    );
-    //connect to existing peers
-    existingSockets.forEach((targetSocket) => {
-        console.log(
-            `peer event to ${socket.id} (initiator) and ${targetSocket.id} (receiver)`
-        );
-        socket.emit("peer", { peerId: targetSocket.id, initiator: true });
-        targetSocket.emit("peer", { peerId: socket.id, initiator: false });
-    });
-
-    socket.on("signal", function(data) {
-        console.log("============================signal=====================");
-        //updates existing socket list
-        // ensures that our current socket does not have itself in the list of peers
-        existingSockets = Object.values(io.sockets.connected).filter(
-            (item) => ( item.id !== socket.id &&
-                        item.connected === true &&
-                        item.disconnected === false ));
-        if (io.sockets.connected && data.peerId in io.sockets.connected) {
-            io.sockets.connected[data.peerId].emit("signal", {
-                signal: data.signal,
-                peerId: socket.id,
-            });
-        }
-    });
-
-    socket.on("disconnect", (data)=>{
-      // clean up disconnect
-      console.log(`peer ${socket.id} disconnected`)
-      existingSockets.forEach((targetSocket) => {
-          targetSocket.emit("peerDisconnect", { peerId: socket.id });
-      });
+  connect = () => {
+    this.io.on("connection", (socket) => {
+      this.socket = socket;
+      socket.on('message', this.handleMessage);
+      socket.on('disconnect', this.handleConnectionClose);
     })
+  }
 
-    socket.on("public message", function(data) {
-        socket.broadcast.emit("public message", {
-            name: data.name,
-            msg: data.outgoingMsg,
-        });
+  handleMessage = (message) => {
+    let data; 
+    try { 
+       data = JSON.parse(message); 
+    } catch (e) { 
+      console.log("Invalid JSON"); 
+      data = {}; 
+    } 
+    
+    switch (data.type) { 
+      case "enterRoom": 
+        this.handleEnterRoom(data);
+        break;
+      case "sendOffers": 
+        this.handleSendOffers(data);
+        break;
+      case "sendAnswer":        
+        this.handleSendAnswer(data);
+        break;     
+      case "shareCandidate":       
+        this.handleCandidate(data);
+        break; 
+      default: 
+        this.send({type: "error", message: "Command not found: " + data.type}); 
+        break; 
+    }
+  }
+
+  handleEnterRoom = ({fromSocket, fromName}) => {
+    if(this.connectedUsers[fromSocket]) { 
+      this.send({type: "enteredRoom", success: false}); 
+    } else { 
+      this.connectedUsers[fromSocket] = this.socket; 
+      this.connectedUsers[fromSocket]['name'] = fromName; 
+      this.send({type: "enteredRoom", success: true});
+    }
+  }
+
+  handleSendOffers = ({offer, fromSocket}) => {
+    const peerIds = Object.keys(this.connectedUsers).filter(socketId => socketId !== this.socket.id)
+    peerIds.forEach((peerId) => {
+      const connection = this.connectedUsers[peerId];
+      this.sendConnection(connection, {type: "offer", offer, offerInitiator: fromSocket});    
+    })
+  }
+
+  handleSendAnswer = ({offerInitiator, answer}) => {
+    const connection = this.connectedUsers[offerInitiator];   
+    if(Boolean(connection)){ 
+      this.sendConnection(connection, {type: "answer", answer}); 
+    }
+  }
+
+  handleCandidate = ({candidate}) => {
+    const peerIds = Object.keys(this.connectedUsers).filter(socketId => socketId !== this.socket.id)
+
+    peerIds.forEach((peerId) => {
+      const connection = this.connectedUsers[peerId];
+      this.sendConnection(connection, {type: "candidate", candidate}); 
+    })
+  }
+
+  handleConnectionClose = () => {
+    this.send({type: 'leave'});
+    const peerIds = Object.keys(this.connectedUsers).filter(socketId => socketId !== this.socket.id)
+    peerIds.forEach((peerId) => {
+      const connection = this.connectedUsers[peerId];
+      this.sendConnection(connection, {type: 'leave', fromSocket: this.socket.id});
     });
-  });
+    delete this.connectedUsers[this.socket.id]; 
+  }
+
+  send = (message) => {
+    this.sendConnection(this.socket, message);
+  }
+
+  sendConnection = (socket, message) => {
+    Boolean(socket) && socket.send(JSON.stringify(message));
+  }
 }

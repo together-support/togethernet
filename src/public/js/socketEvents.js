@@ -1,19 +1,15 @@
 import Peer from 'simple-peer';
+import io from 'socket.io-client';
 
 import { onSimplePeerSignal, onSimplePeerError, onSimplePeerData, onSimplePeerStream, onSimplePeerConnect } from './peerEvents.js';
 
 export const attachSocketEvents = (socket) => {
-  // // SOCKET.IO + SIMPLE PEER
-  // // Connects to the Node signaling server
-  // socket.on("connect", function () {
-  //   console.log("socket connect event");
-  //   // System broadcast
-  //   let connectedMsg = `Searching for peers...`;
-  //   addSystemMsg(connectedMsg);
+  const socket = io.connect();
 
-  //   // print your peer ID in the console
-  //   console.log(`${connectedMsg}, your peer ID is ${socket.id}`);
-  // });
+  socket.on("connect", function () {
+    // let connectedMsg = `Searching for peers...`;
+    // addSystemMsg(connectedMsg);
+  });
 
   // socket.on("peer", onSocketPeer);
   // socket.on("public message", onSocketPublicMessage);

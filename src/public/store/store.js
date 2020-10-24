@@ -2,6 +2,8 @@ class Store {
   constructor() {
     this.name = 'Anonymous';
     this.stopSendMessage = false;
+    this.selfX = 0;
+    this.selfY = 0;
   }
 
   set(key, val) {

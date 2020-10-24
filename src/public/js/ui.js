@@ -92,29 +92,17 @@ $(document).ready(() => {
   });
 
   $("#ephemeralMode").click(() => {
-    // if (!isPrivateVisible) {
-    //   $(".privateMsg").show();
-    //   $(".publicMsg").hide();
-    // }
+    if (!isPrivateVisible) {
+      $(".privateMsg").show();
+      $(".publicMsg").hide();
+    }
   });
 
   $("#archivalMode").click(function () {
-    // if (isPrivateVisible) {
-    //   $(".privateMsg").hide();
-    //   $(".publicMsg").show();
-    // }
-  });
-
-  $("#_duoToggle").click(function () {
-    // $("#duoToggleIcon").toggleClass("fas fa-plus fas fa-minus");
-    // if (isPrivateVisible) {
-    //   $(".publicMsg").toggle();
-    // }
-  });
-
-  // under dev alerts
-  $("#_breakoutZone").click(function () {
-    // alert("Breakout zones coming soon");
+    if (isPrivateVisible) {
+      $(".privateMsg").hide();
+      $(".publicMsg").show();
+    }
   });
 });
 
