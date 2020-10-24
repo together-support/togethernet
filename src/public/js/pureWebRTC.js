@@ -1,8 +1,10 @@
 import io from 'socket.io-client';
 import store from '../store/store.js'
+import {getBrowserRTC} from './ensureWebRTC.js'
 
 export default class PeerConnection {
   constructor () {
+    this._wrtc = getBrowserRTC();
     this.socket = io.connect();
     this.socketId = null;
     this.peerConnection = null;
@@ -50,28 +52,25 @@ export default class PeerConnection {
   enteredRoom = async ({success}) => {
     if (success) {
       this.initPeerConnection();
-      await this.signalToPeers();
-      this.openDataChannel();
+      this.signalToPeers();
     } else {
       alert('error connecting. already connected!')
     }
   }
  
   initPeerConnection = () => {
-    console.log('init peer connection')
-    this.peerConnection = new webkitRTCPeerConnection({ 
-      "iceServers": [{"urls": [
-        'stun:stun.l.google.com:19302',
-        'stun:global.stun.twilio.com:3478'
-      ]}] 
-    }, {optional: [{RtpDataChannels: true}]});
+    this.peerConnection = new this._wrtc.RTCPeerConnection({ 
+      "iceServers": [{
+        url: 'stun:stun.l.google.com:19302'
+      }] 
+    });
 
-    // this.peerConnection.onicecandidate = (event) => { 
-    //   console.log('onicecandidate')
-    //   if (event.candidate) { 
-    //     this.send({type: "shareCandidate", candidate: event.candidate}); 
-    //   } 
-    // };
+    this.peerConnection.onicecandidate = (event) => { 
+      console.log('onicecandidate')
+      if (event.candidate) { 
+        this.send({type: "shareCandidate", candidate: this._wrtc.RTCIceCandidate(event.candidate)}); 
+      } 
+    };
 
     this.peerConnection.onconnectionstatechange = (e) => {
       alert('hello!!')
@@ -80,7 +79,6 @@ export default class PeerConnection {
   }
 
   signalToPeers = async () => { 
-    console.log('want to signal to peers')
     try {
       const offer = await this.peerConnection.createOffer();
       await this.peerConnection.setLocalDescription(offer); 
@@ -91,7 +89,6 @@ export default class PeerConnection {
   }
 
   openDataChannel = () => {	
-    console.log('open data channel')
     const dataChannel = this.peerConnection.createDataChannel("myDataChannel", { 
       reliable: true 
     });
@@ -112,6 +109,7 @@ export default class PeerConnection {
       alert('open')
       store.set('dataChannel', dataChannel);
     }
+    console.log()
   }
 
   handleReceivedOffer = async ({offer, offerInitiator}) => { 
