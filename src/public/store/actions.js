@@ -18,3 +18,8 @@ export const getPeer = (id) => {
   const peers = {...store.get('peers')};
   return peers[id];
 }
+
+export const setDataChannel = (id, channel) => {
+  const peer = getPeer(id);
+  peer.dataChannel = channel;
+}

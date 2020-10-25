@@ -8,7 +8,7 @@ export default class SocketConnection {
 
   connect = () => {
     this.io.on('connection', (socket) => {
-      if (Object.keys(io.sockets.connected).length > process.env.CONNECTION_LIMIT || 10) {
+      if (Object.keys(this.io.sockets.connected).length > (process.env.CONNECTION_LIMIT || 10)) {
         socket.disconnect();
       }
       
@@ -24,6 +24,7 @@ export default class SocketConnection {
   }
 
   initConnections = (initiator) => {
+    console.log('i am', initiator.id)
     const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== initiator.id);
     peerIds.forEach((peer) => {
       this.sendConnection(initiator, {type: "initConnections", initiator: initiator.id, peer});    
