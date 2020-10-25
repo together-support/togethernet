@@ -21,14 +21,14 @@ export default class PeerConnection {
     this.socket.on('error', this.handleError);
   }
 
-  initConnections = async ({peer}) => {
-    const peerConnection = this.initPeerConnection(peer, {initiator: true});
+  initConnections = async ({peerId}) => {
+    const peerConnection = this.initPeerConnection(peerId, {initiator: true});
     try {
       const offer = await peerConnection.createOffer({
         offerToReceiveAudio: true
       });
       await peerConnection.setLocalDescription(offer); 
-      this.send({type: "sendOffers", offer});
+      this.send({type: "sendOffers", offer, peerId});
     } catch (e) {
       console.log("error creating offer to connect to peers", e); 
     }

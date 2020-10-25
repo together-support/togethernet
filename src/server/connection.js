@@ -26,17 +26,14 @@ export default class SocketConnection {
   initConnections = (initiator) => {
     console.log('i am', initiator.id)
     const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== initiator.id);
-    peerIds.forEach((peer) => {
-      this.sendConnection(initiator, {type: "initConnections", initiator: initiator.id, peer});    
+    peerIds.forEach((peerId) => {
+      this.sendConnection(initiator, {type: "initConnections", initiator: initiator.id, peerId});    
     })
   }
 
-  handleSendOffers = ({offer, fromSocket}) => {
-    const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== fromSocket);
-    peerIds.forEach((peerId) => {
-      const connection = this.io.sockets.connected[peerId];
-      this.sendConnection(connection, {type: "offer", offer, offerInitiator: fromSocket});    
-    })
+  handleSendOffers = ({offer, peerId, fromSocket}) => {
+    const connection = this.io.sockets.connected[peerId];
+    this.sendConnection(connection, {type: "offer", offer, offerInitiator: fromSocket});    
   }
 
   handleSendAnswer = (socket, {offerInitiator, answer}) => {
