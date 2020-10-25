@@ -7,45 +7,19 @@ export default class SocketConnection {
   }
 
   connect = () => {
-    this.io.on("connection", (socket) => {
-      socket.on('message', (message) => {
-        this.handleMessage(socket, message);
-      });
+    this.io.on('connection', (socket) => {
+      socket.on('enterRoom', this.handleEnterRoom);
+      socket.on('sendOffers', this.handleSendOffers);
+      socket.on('sendAnswer', this.handleSendAnswer);
+      socket.on('trickleCandidate', this.handleTrickleCandidate);
       socket.on('disconnect', () => this.handleDisconnect(socket));
     })
   }
 
-  handleMessage = (socket, message) => {
-    let data; 
-    try { 
-       data = JSON.parse(message); 
-    } catch (e) { 
-      console.log("Invalid JSON"); 
-      data = {}; 
-    } 
-    
-    switch (data.type) { 
-      case "enterRoom": 
-        this.handleEnterRoom(socket, data);
-        break;
-      case "sendOffers": 
-        this.handleSendOffers(data);
-        break;
-      case "sendAnswer":        
-        this.handleSendAnswer(data);
-        break;     
-      case "shareCandidate":       
-        this.handleCandidate(data);
-        break; 
-      default: 
-        this.sendConnection(socket, {type: "error", message: "Command not found: " + data.type}); 
-        break; 
-    }
-  }
-
-  handleEnterRoom = (socket, {fromSocket, fromName}) => {
-    this.io.sockets.connected[fromSocket]['name'] = fromName;
-    this.sendConnection(socket, {type: "enteredRoom", success: true});
+  handleEnterRoom = ({fromSocket, fromName}) => {
+    const connection = this.io.sockets.connected[fromSocket];
+    connection['name'] = fromName;
+    this.sendConnection(connection, {type: "enteredRoom", success: true});
   }
 
   handleSendOffers = ({offer, fromSocket}) => {
@@ -63,7 +37,7 @@ export default class SocketConnection {
     }
   }
 
-  handleCandidate = ({fromSocket, candidate}) => {
+  handleTrickleCandidate = ({fromSocket, candidate}) => {
     const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== fromSocket)
 
     peerIds.forEach((peerId) => {
@@ -82,6 +56,6 @@ export default class SocketConnection {
   }
 
   sendConnection = (socket, message) => {
-    Boolean(socket) && socket.send(JSON.stringify(message));
+    Boolean(socket) && socket.emit(message.type, message);
   }
 }

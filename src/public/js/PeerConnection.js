@@ -6,56 +6,26 @@ export default class PeerConnection {
   constructor () {
     this._wrtc = getBrowserRTC();
     this.socket = io.connect();
-    this.socketId = null;
     this.peerConnection = null;
+    this.channelName = store.get('room');
+    this.initiator = false
   }
 
   connect = () => {
-    this.socket.on('connect', this.handleConnect)
-    this.socket.on('message', this.handleMessage)
-    this.socket.on('close', this.handleLeave)
-    this.socket.on('error', this.handleError)
+    this.socket.on('connect', () => {
+      this.send({type: 'enterRoom'});
+    })
+    this.socket.on('enteredRoom', this.enteredRoom);
+    this.socket.on('offer', this.handleReceivedOffer);
+    this.socket.on('answer', this.handleReceivedAnswer);
+    this.socket.on('candidate', this.addCandidate);
+    this.socket.on('leave', this.handleLeave);
+    this.socket.on('error', this.handleError);
   }
 
-  handleConnect = () => {
-    this.socketId = this.socket.id;
-    this.send({type: 'enterRoom'})
-  }
-
-  handleMessage = async (message) => {
-    let data; 
-    try { 
-       data = JSON.parse(message); 
-    } catch (e) { 
-       console.log("Invalid JSON"); 
-       data = {}; 
-    } 
-
-    switch(data.type) {
-      case "enteredRoom":
-        await this.enteredRoom(data)
-        break;
-      case "offer":
-        this.handleReceivedOffer(data); 
-        break; 
-      case "answer":
-        this.handleReceivedAnswer(data); 
-        break; 
-      case "candidate": 
-        this.addCandidate(data); 
-        break; 
-      default: 
-        break; 
-    } 
-  }; 
-
-  enteredRoom = async ({success}) => {
-    if (success) {
-      this.initPeerConnection();
-      this.signalToPeers();
-    } else {
-      alert('error connecting. already connected!')
-    }
+  enteredRoom = async () => {
+    this.initPeerConnection();
+    await this.signalToPeers();
   }
  
   initPeerConnection = () => {
@@ -68,7 +38,7 @@ export default class PeerConnection {
     this.peerConnection.onicecandidate = (event) => { 
       console.log('onicecandidate')
       if (event.candidate) { 
-        this.send({type: "shareCandidate", candidate: this._wrtc.RTCIceCandidate(event.candidate)}); 
+        this.send({type: "trickleCandidate", candidate: new this._wrtc.RTCIceCandidate(event.candidate)}); 
       } 
     };
 
@@ -82,6 +52,7 @@ export default class PeerConnection {
     try {
       const offer = await this.peerConnection.createOffer();
       await this.peerConnection.setLocalDescription(offer); 
+      this.openDataChannel();
       this.send({type: "sendOffers", offer});
     } catch (e) {
       alert("error creating offer to connect to peers"); 
@@ -92,10 +63,6 @@ export default class PeerConnection {
     const dataChannel = this.peerConnection.createDataChannel("myDataChannel", { 
       reliable: true 
     });
-
-    this.peerConnection.addEventListener('datachannel', e => {
-      alert(e)
-    })
 	
     dataChannel.onerror = function (error) { 
       console.log("Error:", error); 
@@ -109,12 +76,14 @@ export default class PeerConnection {
       alert('open')
       store.set('dataChannel', dataChannel);
     }
-    console.log()
   }
 
   handleReceivedOffer = async ({offer, offerInitiator}) => { 
     try {
-      await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer)); 
+      this.peerConnection.addEventListener('datachannel', e => {
+        alert(e)
+      });
+      await this.peerConnection.setRemoteDescription(new this._wrtc.RTCSessionDescription(offer)); 
       const answer = await this.peerConnection.createAnswer();
       await this.peerConnection.setLocalDescription(answer); 
       console.log(`received an offer - generated answer ${answer}`)
@@ -126,7 +95,7 @@ export default class PeerConnection {
  
   handleReceivedAnswer = async ({answer}) => { 
     console.log(`received answer - ${answer}`)
-    await this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer)); 
+    await this.peerConnection.setRemoteDescription(new this._wrtc.RTCSessionDescription(answer)); 
   } 
 
   addCandidate = async ({candidate}) => { 
@@ -137,8 +106,12 @@ export default class PeerConnection {
     }
   }
 
-  handleError = () => {
-    console.log('error')
+  handleError = (e) => {
+    console.log('error', e)
+  }
+
+  handleLeave = ({leavingUser}) => {
+    console.log(`${leavingUser} left`)
   }
 
   handleLeave = () => {
@@ -147,10 +120,10 @@ export default class PeerConnection {
   }
 
   send = (data) => {
-    this.socket.send(JSON.stringify({
+    this.socket.emit(data.type, {
       ...data, 
-      fromSocket: this.socketId,
+      fromSocket: this.socket.id,
       fromName: store.get('name')
-    }));
+    });
   }
 }

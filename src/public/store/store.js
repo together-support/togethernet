@@ -4,6 +4,7 @@ class Store {
     this.stopSendMessage = false;
     this.selfX = 0;
     this.selfY = 0;
+    this.room = 'ephemeral';
   }
 
   set(key, val) {
