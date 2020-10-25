@@ -5,6 +5,7 @@ class Store {
     this.selfX = 0;
     this.selfY = 0;
     this.room = 'ephemeral';
+    this.peers = {};
   }
 
   set(key, val) {

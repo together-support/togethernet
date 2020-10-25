@@ -8,18 +8,22 @@ export default class SocketConnection {
 
   connect = () => {
     this.io.on('connection', (socket) => {
-      socket.on('enterRoom', this.handleEnterRoom);
+      this.initConnections(socket);
+
       socket.on('sendOffers', this.handleSendOffers);
-      socket.on('sendAnswer', this.handleSendAnswer);
+      socket.on('sendAnswer', (message) => {
+        this.handleSendAnswer(socket, message)
+      });
       socket.on('trickleCandidate', this.handleTrickleCandidate);
       socket.on('disconnect', () => this.handleDisconnect(socket));
     })
   }
 
-  handleEnterRoom = ({fromSocket, fromName}) => {
-    const connection = this.io.sockets.connected[fromSocket];
-    connection['name'] = fromName;
-    this.sendConnection(connection, {type: "enteredRoom", success: true});
+  initConnections = (initiator) => {
+    const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== initiator.id);
+    peerIds.forEach((peer) => {
+      this.sendConnection(initiator, {type: "initConnections", initiator: initiator.id, peer});    
+    })
   }
 
   handleSendOffers = ({offer, fromSocket}) => {
@@ -30,10 +34,10 @@ export default class SocketConnection {
     })
   }
 
-  handleSendAnswer = ({offerInitiator, answer}) => {
+  handleSendAnswer = (socket, {offerInitiator, answer}) => {
     const connection = this.io.sockets.connected[offerInitiator];   
     if(Boolean(connection)){ 
-      this.sendConnection(connection, {type: "answer", answer}); 
+      this.sendConnection(connection, {type: "answer", answer, fromSocket: socket.id}); 
     }
   }
 
@@ -42,7 +46,7 @@ export default class SocketConnection {
 
     peerIds.forEach((peerId) => {
       const connection = this.io.sockets.connected[peerId];
-      this.sendConnection(connection, {type: "candidate", candidate}); 
+      this.sendConnection(connection, {type: "candidate", candidate, fromSocket}); 
     })
   }
 
