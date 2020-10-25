@@ -70,6 +70,10 @@ export default class PeerConnection {
       dataChannel.onerror = function (error) { 
         console.log("Error:", error); 
       };
+
+      dataChannel.onclose = function (event) { 
+        console.log("Channel Closed"); 
+      };
     
       dataChannel.onmessage = function (event) { 
         console.log("Got message:", event.data); 
@@ -103,12 +107,14 @@ export default class PeerConnection {
   }
 
   handlePeerLeave = ({leavingUser}) => {
-    getPeer(leavingUser).close();
-    console.log(`${leavingUser} left`);
+    const peerConnection = getPeer(leavingUser)
+    peerConnection.dataChannel.close();
+    peerConnection.close();
   }
 
   handleLeave = () => {
     Object.values(store.peers).forEach(peerConnection => {
+      peerConnection.dataChannel.close();
       peerConnection.close();
       peerConnection.onicecandidate = null;
     })

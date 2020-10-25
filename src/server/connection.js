@@ -24,7 +24,6 @@ export default class SocketConnection {
   }
 
   initConnections = (initiator) => {
-    console.log('i am', initiator.id)
     const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== initiator.id);
     peerIds.forEach((peerId) => {
       this.sendConnection(initiator, {type: "initConnections", initiator: initiator.id, peerId});    
