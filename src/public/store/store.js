@@ -1,7 +1,12 @@
 class Store {
   constructor() {
-    this.name = 'Anonymous';
+    this.name = 'Anonymous'
+    this.avatar = '#000';
     this.stopSendMessage = false;
+    this.position = {
+      x: 0,
+      y: 0,
+    }
     this.selfX = 0;
     this.selfY = 0;
     this.room = 'ephemeral';
