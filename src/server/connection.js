@@ -8,6 +8,10 @@ export default class SocketConnection {
 
   connect = () => {
     this.io.on('connection', (socket) => {
+      if (Object.keys(io.sockets.connected).length > process.env.CONNECTION_LIMIT || 10) {
+        socket.disconnect();
+      }
+      
       this.initConnections(socket);
 
       socket.on('sendOffers', this.handleSendOffers);
