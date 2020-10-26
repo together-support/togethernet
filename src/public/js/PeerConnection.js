@@ -67,30 +67,36 @@ export default class PeerConnection {
     };
 
     if (initiator) {
-      const dataChannel = peerConnection.createDataChannel(store.get('room'), { 
-        reliable: true,
-      });
-
-      dataChannel.onclose = function (event) { 
-        console.log("Channel Closed"); 
-      };
-    
-      dataChannel.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.type === 'text') {
-          renderIncomingEphemeralMessage(data.data);
-        } 
-      };
-
+      const dataChannel = peerConnection.createDataChannel(store.get('room'), {reliable: true});
+      dataChannel.onclose = this.onDataChannelClose;
+      dataChannel.onmessage = this.onDataChannelMessage;
       peerConnection.dataChannel = dataChannel;
     } else {
       peerConnection.ondatachannel = (event) => {
-        console.log(peerId, event.channel)
-        setDataChannel(peerId, event.channel);
+        const dataChannel = event.channel;
+        dataChannel.onclose = this.onDataChannelClose;
+        dataChannel.onmessage = this.onDataChannelMessage;
+        console.log(dataChannel)
+        setDataChannel(peerId, dataChannel);
       }
     }
 
     return peerConnection
+  }
+
+  onDataChannelClose = () => {
+    console.log("channel close"); 
+  }
+
+  onDataChannelMessage = (eveent) => {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type === 'text') {
+        renderIncomingEphemeralMessage(data.data);
+      } 
+    } catch (err) {
+      console.log('invalid JSON');
+    }
   }
 
   handleReceivedAnswer = async ({fromSocket, answer}) => {
