@@ -3,6 +3,7 @@ import {addPeer, getPeer, setDataChannel} from '../store/actions.js'
 import store from '../store/store.js';
 import {renderIncomingEphemeralMessage} from './ephemeral.js'
 import {getBrowserRTC} from './ensureWebRTC.js'
+import {renderPeer} from '../components/avatars.js'
 
 export default class PeerConnection {
   constructor () {
@@ -68,35 +69,49 @@ export default class PeerConnection {
 
     if (initiator) {
       const dataChannel = peerConnection.createDataChannel(store.get('room'), {reliable: true});
-      dataChannel.onclose = this.onDataChannelClose;
-      dataChannel.onmessage = this.onDataChannelMessage;
-      peerConnection.dataChannel = dataChannel;
+      peerConnection.dataChannel = this.setUpDataChannel(dataChannel);
     } else {
       peerConnection.ondatachannel = (event) => {
-        const dataChannel = event.channel;
-        dataChannel.onclose = this.onDataChannelClose;
-        dataChannel.onmessage = this.onDataChannelMessage;
-        console.log(dataChannel)
-        setDataChannel(peerId, dataChannel);
+        setDataChannel(peerId, this.setUpDataChannel(event.channel));
       }
     }
 
     return peerConnection
   }
 
-  onDataChannelClose = () => {
-    console.log("channel close"); 
-  }
+  setUpDataChannel = (dataChannel) => {
+    dataChannel.onclose = () => {
+      console.log("channel close"); 
+    };
 
-  onDataChannelMessage = (eveent) => {
-    try {
-      const data = JSON.parse(event.data);
+    dataChannel.onmessage = (event) => {
+      let data;
+      try {
+        data = JSON.parse(event.data);
+      } catch (err) {
+        console.log('invalid JSON');
+      };
+
+      console.log(data.type)
+
       if (data.type === 'text') {
         renderIncomingEphemeralMessage(data.data);
-      } 
-    } catch (err) {
-      console.log('invalid JSON');
-    }
+      } else if (data.type === 'position') {
+        renderPeer(data.data).appendTo($('#privateMsgToggle'));
+      }
+    };
+
+    dataChannel.onopen = () => {
+      dataChannel.send(JSON.stringify({
+        type: 'position',
+        data: {
+          avatar: store.get('avatar'),
+          ...store.get('position')
+        }
+      }));
+    };
+
+    return dataChannel
   }
 
   handleReceivedAnswer = async ({fromSocket, answer}) => {

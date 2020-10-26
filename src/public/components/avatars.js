@@ -1,14 +1,12 @@
-export const peer = () => {
-//   peer = document.createElement("div");
-//   privatePeerIndex += 1;
-//   peer.setAttribute(`id`, `peer${privatePeerIndex}`);
-//   peer.setAttribute(`class`, `square`);
-//   // generate a random user color
-//   peerColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
-//   peer.style.backgroundColor = peerColor;
-//   privateChatBox.appendChild(peer);
+import store from '../store/store.js';
 
-//   peerPos = $(`#peer${privatePeerIndex}`).position();
-//   peerX = peerPos.left;
-//   peerY = peerPos.top;
+export const renderPeer = ({x, y, avatar}) => {
+  const $peer = $(`<div class='square' id=${Object.keys(store.get('peers')).length - 1}></div>`);
+  $peer.css({
+    left: `${x}px`,
+    top: `${y}px`,
+    backgroundColor: avatar,
+  });
+
+  return $peer;
 }
