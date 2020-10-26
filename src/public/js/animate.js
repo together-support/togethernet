@@ -1,87 +1,83 @@
+import throttle from 'lodash/throttle';
+import store from '../store/store.js';
+
 export default class AvatarAnimator {
   constructor() {
-    this.$user = $('#user');
-    // this.cell = 50;
-    // this.sendX = 0;
-    // this.sendY = 0;
-    // this.chatPos
-    // this.chatWidth
-    // this.chatHeight = 
-    // this.chatX
-    // this.chatY
-    // this.chatY
-    // this.snap = 1
-    // this.hideBubble = false
+    this.avatarSize = $('#user').width();
+    this.topBoundary = $('#privateMsgToggle').offset().top;
+    this.leftBoundary = $('#privateMsgToggle').offset().left;
+    this.rightBoundary = this.leftBoundary + $('#privateMsgToggle').width();
+    this.bottomBoundary = this.topBoundary + $('#privateMsgToggle').height();
+
+    $(window).on('resize', throttle(this.changeBoundary, 500));
   }
 
   attachAnimationEvents = () => {
-    $("#privateMsgToggle").on('keydown', (event) => {
+    const animationEvents = (event) => {
       event.preventDefault();
-      console.log(event.key)
-
       if (event.key === "ArrowUp") {
-        debugger
-
-      } else if (event.key === "ArrowDown") {
-        
+        this.moveUp();
       } else if (event.key === "ArrowLeft") {
-
+        this.moveLeft();
       } else if (event.key === "ArrowRight") {
+        this.moveRight();
+      } else if (event.key === "ArrowDown") {
+        this.moveDown();
+      }
+    }
 
+    $(document).on('keydown', (e) => {
+      if (['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(e.key)){
+        e.preventDefault();
       }
     });
-  };
-}
 
-export const attachAnimationEvents = () => {
-//   // will only work if #privateMsgToggle is in focus
-//   evt = evt || window.event;
-//   $sendX = 0;
-//   $sendY = 0;
-//   switch (evt.which) {
-//     // case 13:
-//     //   $("#user").addMsg();
-//     //   break;
-//     case 37: //left arrow key
-//       if ($userX - $chatPos.left > $snap) {
-//         $("#user")
-//           .finish()
-//           .animate({
-//             left: `-=${$cell}`,
-//           });
-//         $userX -= $cell;
-//       }
-//       break;
-//     case 38: //up arrow key
-//       if ($userY - $chatPos.top > $snap) {
-//         $("#user")
-//           .finish()
-//           .animate({
-//             top: `-=${$cell}`,
-//           });
-//         $userY -= $cell;
-//       }
-//       break;
-//     case 39: //right arrow key
-//       if ($chatX + $chatW - $userX - $cell > $snap) {
-//         $("#user")
-//           .finish()
-//           .animate({
-//             left: `+=${$cell}`,
-//           });
-//         $userX += $cell;
-//       }
-//       break;
-//     case 40: //bottom arrow key
-//       if ($chatY + $chatH - $userY - $cell > $snap) {
-//         $("#user")
-//           .finish()
-//           .animate({
-//             top: `+=${$cell}`,
-//           });
-//         $userY += $cell;
-//       }
-//       break;
-//   }
-// });
+    $("#privateMsgToggle").on('keydown', animationEvents);
+  };
+
+  moveUp = () => {
+    const {top, left} = $('#user').position();
+    const newY = top - this.avatarSize;
+    if (newY > this.topBoundary) {
+      $("#user").finish().animate({top: `-=${this.avatarSize}`});
+
+      store.set('position', {x: left, y: newY})
+    }
+  }
+
+  moveDown = () => {
+    console.log('down')
+    const {top, left} = $('#user').position();
+    const newY = top + this.avatarSize;
+    if (newY + this.avatarSize < this.bottomBoundary) {
+      $("#user").finish().animate({top: `+=${this.avatarSize}`});
+      store.set('position', {x: left, y: newY})
+    }
+  }
+
+  moveLeft = () => {
+    const {top, left} = $('#user').position();
+    const newX = left - this.avatarSize;
+    if (newX > this.leftBoundary) {
+      $("#user").finish().animate({left: `-=${this.avatarSize}`});
+      store.set('position', {x: newX, y: top})
+    }
+  }
+
+  moveRight = () => {
+    const {top, left} = $('#user').position();
+    const newX = left + this.avatarSize;
+    if (newX + this.avatarSize < this.rightBoundary) {
+      $("#user").finish().animate({left: `+=${this.avatarSize}`});
+      store.set('position', {x: newX, y: top})
+    }
+  }
+
+  changeBoundary = () => {
+    this.topBoundary = $('#privateMsgToggle').offset().top;
+    this.leftBoundary = $('#privateMsgToggle').offset().left;
+    this.rightBoundary = this.leftBoundary + $('#privateMsgToggle').width();
+    this.bottomBoundary = this.topBoundary + $('#privateMsgToggle').height();  
+    this.avatarSize = $('#user').width();
+  }
 }

@@ -17,6 +17,11 @@ export const initAvatar = () => {
   $user.css('background-color', avatarColor);
   $userProfile.val(avatarColor);
 
+  store.set('position', {
+    x: $('#privateMsgToggle').offset().left,
+    y: $('#privateMsgToggle').offset().top
+  })
+
   $userProfile.on('change', (e) => {
     e.preventDefault();
     $user.css('background-color', e.target.value);
