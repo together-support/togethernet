@@ -1,33 +1,49 @@
-export const sendMessage = (event) => {
-//   if (!stopSendMsg && messageInput.value != "") {
-//     outgoingMsg = messageInput.value;
-//     // send private message
-//     if (isPrivateVisible) {
-//       console.log("about to send to peers. what are they?", peers);
-//       for (let peer of Object.values(peers)) {
-//         if (peer && "send" in peer) {
-//           // keep it in this order to accomodate unshift()
-//           peer.send(outgoingMsg);
-//           peer.send(name);
-//         }
-//       }
-//       outgoingPrivateMsg(name, outgoingMsg);
-//     }
-//     // send public message
-//     else if (!isPrivateVisible) {
-//       socket.emit("public message", {
-//         name: name,
-//         outgoingMsg: outgoingMsg,
-//       });
-//       archivePublicMsg(name, outgoingMsg);
-//       addPublicMsg(name, outgoingMsg);
-//     }
-//     console.log(`sending message: ${outgoingMsg}`); // note: using template literal string: ${variable} inside backticks
-//     // clear input field
-//     messageInput.value = "";
-//   } else if (stopSendMsg) {
-//     alert("move to an empty spot to write the msg");
-//   } else if (messageInput.value == "") {
-//     alert("your message is empty");
-//   }
+import store from '../store/store.js'
+import {renderOutgoingEphemeralMessage} from './ephemeral.js'
+
+export const sendMessage = () => {
+  const $messageInput = $('#_messageInput');
+  const message = $messageInput.val();
+  if (!store.get('allowSendMessage')) {
+    alert("move to an empty spot to write the msg");
+  }
+
+  if (store.get('allowSendMessage') && Boolean(message)) {
+    if (store.get('room') === 'ephemeral') {
+      ephemeralSendMessage(message);
+    } else if (store.get('room') === 'archival') {
+      archivalSendMessage(message);
+    }
+  }
+
+  $messageInput.val('');
+}
+
+const ephemeralSendMessage = (message) => {
+  Object.values(store.get('peers')).forEach(peer => {
+    console.log(peer.dataChannel)
+    peer.dataChannel.send(JSON.stringify({
+      type: 'text',
+      data: {
+        sender: {
+          socketId: store.get('socketId'),
+          name: store.get('name'),
+          avatar: store.get('avatar'),
+          ...store.get('position')
+        },
+        message
+      },
+    }));
+  });
+
+  renderOutgoingEphemeralMessage(message);
+}
+
+const archivalSendMessage = () => {
+  //       socket.emit("public message", {
+  //         name: name,
+  //         outgoingMsg: outgoingMsg,
+  //       });
+  //       archivePublicMsg(name, outgoingMsg);
+  //       addPublicMsg(name, outgoingMsg);
 }

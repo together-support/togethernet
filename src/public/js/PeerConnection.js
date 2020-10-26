@@ -1,6 +1,7 @@
 import io from 'socket.io-client';
 import {addPeer, getPeer, setDataChannel} from '../store/actions.js'
 import store from '../store/store.js';
+import {renderIncomingEphemeralMessage} from './ephemeral.js'
 import {getBrowserRTC} from './ensureWebRTC.js'
 
 export default class PeerConnection {
@@ -12,6 +13,9 @@ export default class PeerConnection {
   }
 
   connect = () => {
+    this.socket.on('connect', () => {
+      store.set('socketId', this.socket.id);
+    })
     this.socket.on('initConnections', this.initConnections)
     this.socket.on('offer', this.handleReceivedOffer);
     this.socket.on('answer', this.handleReceivedAnswer);
@@ -67,19 +71,21 @@ export default class PeerConnection {
         reliable: true,
       });
 
-      dataChannel.onerror = function (error) { 
-        console.log("Error:", error); 
-      };
-
       dataChannel.onclose = function (event) { 
         console.log("Channel Closed"); 
       };
     
-      dataChannel.onmessage = function (event) { 
-        console.log("Got message:", event.data); 
+      dataChannel.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        if (data.type === 'text') {
+          renderIncomingEphemeralMessage(data.data);
+        } 
       };
+
+      peerConnection.dataChannel = dataChannel;
     } else {
       peerConnection.ondatachannel = (event) => {
+        console.log(peerId, event.channel)
         setDataChannel(peerId, event.channel);
       }
     }
@@ -110,6 +116,7 @@ export default class PeerConnection {
     const peerConnection = getPeer(leavingUser)
     peerConnection.dataChannel.close();
     peerConnection.close();
+    removePeer(leavingUser);
   }
 
   handleLeave = () => {

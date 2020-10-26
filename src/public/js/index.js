@@ -1,9 +1,11 @@
 import PeerConnection from './PeerConnection.js';
+import AvatarAnimator from './animate.js'
 import {attachUIEvents} from './uiEvents.js'
-import {displayAvatar, initAvatar} from './user.js'
+import {initAvatar} from './user.js'
 
-$(window).load(async () => {
-  new PeerConnection().connect()
+$(window).load(() => {
+  new PeerConnection().connect();
+  new AvatarAnimator().attachAnimationEvents();
   attachUIEvents();
   initAvatar();
 }); 

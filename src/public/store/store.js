@@ -2,14 +2,20 @@ class Store {
   constructor() {
     this.name = 'Anonymous'
     this.avatar = '#000';
-    this.stopSendMessage = false;
+    this.socketId = '';
+    this.allowSendMessage = true;
     this.position = {
       x: 0,
       y: 0,
     }
-    this.selfX = 0;
-    this.selfY = 0;
     this.room = 'ephemeral';
+
+    this.messageIndex = 0;
+    this.systemMessageIndex = 0;
+
+    this.activePositions = {};
+    this.myActivePositions = {};
+
     this.peers = {};
   }
 
