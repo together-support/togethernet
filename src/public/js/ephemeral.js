@@ -7,11 +7,11 @@ export const renderOutgoingEphemeralMessage = (message) => {
   removeAllSystemMessage();
   addMyActivePositions();
   incrementMessageIndex();
-  myTextRecord(message).appendTo($('#privateMsgToggle'));
+  myTextRecord(message).appendTo($('#ephemeralSpace'));
 }
 
 export const renderIncomingEphemeralMessage = ({sender, message}) => {
-  textRecord({...sender, message}).appendTo($('#privateMsgToggle'));
+  textRecord({...sender, message}).appendTo($('#ephemeralSpace'));
   incrementMessageIndex();
   addActivePositions({x: sender.x, y: sender.y});
 }

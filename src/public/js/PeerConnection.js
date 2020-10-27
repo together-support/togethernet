@@ -3,7 +3,7 @@ import {addPeer, getPeer, setDataChannel} from '../store/actions.js'
 import store from '../store/store.js';
 import {renderIncomingEphemeralMessage} from './ephemeral.js'
 import {getBrowserRTC} from './ensureWebRTC.js'
-import {renderPeer} from '../components/avatars.js'
+import {initPeer, removePeer, updatePeerPosition} from './users.js';
 
 export default class PeerConnection {
   constructor () {
@@ -21,8 +21,7 @@ export default class PeerConnection {
     this.socket.on('offer', this.handleReceivedOffer);
     this.socket.on('answer', this.handleReceivedAnswer);
     this.socket.on('candidate', this.addCandidate);
-    this.socket.on('peerLeave', this.handlePeerLeave);
-    this.socket.on('disconnect', this.handleLeave);
+    this.socket.on('peerLeave', this.handlePeerLeaveSocket);
     this.socket.on('error', this.handleError);
   }
 
@@ -69,17 +68,17 @@ export default class PeerConnection {
 
     if (initiator) {
       const dataChannel = peerConnection.createDataChannel(store.get('room'), {reliable: true});
-      peerConnection.dataChannel = this.setUpDataChannel(dataChannel);
+      peerConnection.dataChannel = this.setUpDataChannel({dataChannel, peerId});
     } else {
       peerConnection.ondatachannel = (event) => {
-        setDataChannel(peerId, this.setUpDataChannel(event.channel));
+        setDataChannel(peerId, this.setUpDataChannel({dataChannel: event.channel, peerId}));
       }
     }
 
     return peerConnection
   }
 
-  setUpDataChannel = (dataChannel) => {
+  setUpDataChannel = ({dataChannel, peerId}) => {
     dataChannel.onclose = () => {
       console.log("channel close"); 
     };
@@ -92,23 +91,29 @@ export default class PeerConnection {
         console.log('invalid JSON');
       };
 
-      console.log(data.type)
-
       if (data.type === 'text') {
         renderIncomingEphemeralMessage(data.data);
-      } else if (data.type === 'position') {
-        renderPeer(data.data).appendTo($('#privateMsgToggle'));
+      } else if (data.type === 'initPeer') {
+        initPeer(data.data);
+      } else if (data.type === 'updatePosition') {
+        updatePeerPosition({...data.data, id: peerId})
       }
     };
 
     dataChannel.onopen = () => {
       dataChannel.send(JSON.stringify({
-        type: 'position',
+        type: 'initPeer',
         data: {
           avatar: store.get('avatar'),
+          id: this.socket.id,
           ...store.get('position')
         }
       }));
+    };
+
+    dataChannel.onclose = () => {
+      // this.socket.disconnect();
+      // alert("you've been disconnected - please refresh to join again");
     };
 
     return dataChannel
@@ -116,7 +121,6 @@ export default class PeerConnection {
 
   handleReceivedAnswer = async ({fromSocket, answer}) => {
     const peerConnection = getPeer(fromSocket);
-    console.log('answer from socket', fromSocket)
     await peerConnection.setRemoteDescription(new this._wrtc.RTCSessionDescription(answer)); 
   } 
 
@@ -133,19 +137,11 @@ export default class PeerConnection {
     console.log('error', e)
   }
 
-  handlePeerLeave = ({leavingUser}) => {
+  handlePeerLeaveSocket = ({leavingUser}) => {
     const peerConnection = getPeer(leavingUser)
     peerConnection.dataChannel.close();
     peerConnection.close();
     removePeer(leavingUser);
-  }
-
-  handleLeave = () => {
-    Object.values(store.peers).forEach(peerConnection => {
-      peerConnection.dataChannel.close();
-      peerConnection.close();
-      peerConnection.onicecandidate = null;
-    })
   }
 
   send = (data) => {

@@ -13,8 +13,8 @@ export const myTextRecord = (message) => {
 export const textRecord = ({x, y, messageIndex, message, name, avatar}) => {
   const $textRecord = $(`<div class="textRecord" id="textRecord-${messageIndex}"></div>`)
   $textRecord.css({
-    left: `${x}px`,
-    top: `${y}px`,
+    left: x,
+    top: y,
     backgroundColor: avatar,
   });
 

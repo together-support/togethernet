@@ -9,73 +9,11 @@ let $hideBubble = false;
 import {isPrivateVisible} from './util.js'
 
 $(document).ready(() => {
-  // // log div positions into variables when document finished loading
-  // $userPos = $("#user").position();
-  // $userX = $userPos.left;
-  // $userY = $userPos.top;
-  // $chatPos = $("#privateMsgToggle").position();
-  // $chatX = $chatPos.left;
-  // $chatY = $chatPos.top;
-  // $chatW = $("#privateMsgToggle").width();
-  // $chatH = $("#privateMsgToggle").height();
-
   // $(() => {
   //   $("#user").draggable({ grid: [$cell, $cell] });
   //   $userPos = $("#user").position();
   //   $userX = $userPos.left;
   //   $userY = $userPos.top;
-  // });
-
-  // $("#privateMsgToggle").keydown(function (evt) {
-  //   // will only work if #privateMsgToggle is in focus
-  //   evt = evt || window.event;
-  //   $sendX = 0;
-  //   $sendY = 0;
-  //   switch (evt.which) {
-  //     // case 13:
-  //     //   $("#user").addMsg();
-  //     //   break;
-  //     case 37: //left arrow key
-  //       if ($userX - $chatPos.left > $snap) {
-  //         $("#user")
-  //           .finish()
-  //           .animate({
-  //             left: `-=${$cell}`,
-  //           });
-  //         $userX -= $cell;
-  //       }
-  //       break;
-  //     case 38: //up arrow key
-  //       if ($userY - $chatPos.top > $snap) {
-  //         $("#user")
-  //           .finish()
-  //           .animate({
-  //             top: `-=${$cell}`,
-  //           });
-  //         $userY -= $cell;
-  //       }
-  //       break;
-  //     case 39: //right arrow key
-  //       if ($chatX + $chatW - $userX - $cell > $snap) {
-  //         $("#user")
-  //           .finish()
-  //           .animate({
-  //             left: `+=${$cell}`,
-  //           });
-  //         $userX += $cell;
-  //       }
-  //       break;
-  //     case 40: //bottom arrow key
-  //       if ($chatY + $chatH - $userY - $cell > $snap) {
-  //         $("#user")
-  //           .finish()
-  //           .animate({
-  //             top: `+=${$cell}`,
-  //           });
-  //         $userY += $cell;
-  //       }
-  //       break;
-  //   }
   // });
 
   $("#_infoToggle").click(() => {

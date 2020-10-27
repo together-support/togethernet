@@ -4,7 +4,7 @@ class Store {
     this.avatar = '#000';
     this.socketId = '';
     this.allowSendMessage = true;
-    this.position = {};
+    this.position = { x: 0, y: 0 };
     this.room = 'ephemeral';
 
     this.messageIndex = 0;
@@ -22,6 +22,10 @@ class Store {
 
   get(key) {
     return this[key];
+  }
+
+  removePeer = (id) => {
+    delete this.peers[id];
   }
 }
 

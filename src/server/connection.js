@@ -56,7 +56,7 @@ export default class SocketConnection {
 
     peerIds.forEach((peerId) => {
       const connection = this.io.sockets.connected[peerId];
-      this.sendConnection(connection, {type: "leave", leavingUser}); 
+      this.sendConnection(connection, {type: "peerLeave", leavingUser}); 
     })
   }
 

@@ -4,10 +4,10 @@ import store from '../store/store.js';
 export default class AvatarAnimator {
   constructor() {
     this.avatarSize = $('#user').width();
-    this.topBoundary = $('#privateMsgToggle').offset().top;
-    this.leftBoundary = $('#privateMsgToggle').offset().left;
-    this.rightBoundary = this.leftBoundary + $('#privateMsgToggle').width();
-    this.bottomBoundary = this.topBoundary + $('#privateMsgToggle').height();
+    this.topBoundary = 0;
+    this.leftBoundary = 0;
+    this.rightBoundary = $('#ephemeralSpace').width();
+    this.bottomBoundary = $('#ephemeralSpace').height();
 
     $(window).on('resize', throttle(this.changeBoundary, 500));
   }
@@ -24,6 +24,16 @@ export default class AvatarAnimator {
       } else if (event.key === "ArrowDown") {
         this.moveDown();
       }
+
+      Object.values(store.get('peers')).forEach(peerConnection => {
+        peerConnection.dataChannel.send(JSON.stringify({
+          type: 'updatePosition',
+          data: {
+            avatar: store.get('avatar'),
+            ...store.get('position')
+          }
+        }));
+      });
     }
 
     $(document).on('keydown', (e) => {
@@ -32,13 +42,13 @@ export default class AvatarAnimator {
       }
     });
 
-    $("#privateMsgToggle").on('keydown', animationEvents);
+    $("#ephemeralSpace").on('keydown', animationEvents);
   };
 
   moveUp = () => {
     const {top, left} = $('#user').position();
     const newY = top - this.avatarSize;
-    if (newY > this.topBoundary) {
+    if (newY >= this.topBoundary) {
       $("#user").finish().animate({top: `-=${this.avatarSize}`});
 
       store.set('position', {x: left, y: newY})
@@ -46,10 +56,9 @@ export default class AvatarAnimator {
   }
 
   moveDown = () => {
-    console.log('down')
     const {top, left} = $('#user').position();
     const newY = top + this.avatarSize;
-    if (newY + this.avatarSize < this.bottomBoundary) {
+    if (newY + this.avatarSize <= this.bottomBoundary) {
       $("#user").finish().animate({top: `+=${this.avatarSize}`});
       store.set('position', {x: left, y: newY})
     }
@@ -58,7 +67,7 @@ export default class AvatarAnimator {
   moveLeft = () => {
     const {top, left} = $('#user').position();
     const newX = left - this.avatarSize;
-    if (newX > this.leftBoundary) {
+    if (newX >= this.leftBoundary) {
       $("#user").finish().animate({left: `-=${this.avatarSize}`});
       store.set('position', {x: newX, y: top})
     }
@@ -67,17 +76,17 @@ export default class AvatarAnimator {
   moveRight = () => {
     const {top, left} = $('#user').position();
     const newX = left + this.avatarSize;
-    if (newX + this.avatarSize < this.rightBoundary) {
+    if (newX + this.avatarSize <= this.rightBoundary) {
       $("#user").finish().animate({left: `+=${this.avatarSize}`});
       store.set('position', {x: newX, y: top})
     }
   }
 
   changeBoundary = () => {
-    this.topBoundary = $('#privateMsgToggle').offset().top;
-    this.leftBoundary = $('#privateMsgToggle').offset().left;
-    this.rightBoundary = this.leftBoundary + $('#privateMsgToggle').width();
-    this.bottomBoundary = this.topBoundary + $('#privateMsgToggle').height();  
+    this.topBoundary = $('#ephemeralSpace').offset().top;
+    this.leftBoundary = $('#ephemeralSpace').offset().left;
+    this.rightBoundary = this.leftBoundary + $('#ephemeralSpace').width();
+    this.bottomBoundary = this.topBoundary + $('#ephemeralSpace').height();  
     this.avatarSize = $('#user').width();
   }
 }

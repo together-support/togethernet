@@ -19,10 +19,6 @@ export const getPeer = (id) => {
   return peers[id];
 }
 
-export const removePeer = (id) => {
-  delete store.peers[id];
-}
-
 export const setDataChannel = (id, channel) => {
   const peer = getPeer(id);
   peer.dataChannel = channel;
