@@ -9,23 +9,8 @@ export const setMyUserName = () => {
   $nameInput.text(store.get('name'));
 };
 
-export const initMyAvatar = () => {
-  const $user = $('#user');
-  const $userProfile = $('#userProfile');
-  const avatarColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-
-  store.set('avatar', avatarColor);
-  $user.css('background-color', avatarColor);
-  $userProfile.val(avatarColor);
-
-  $userProfile.on('change', (e) => {
-    e.preventDefault();
-    $user.css('background-color', e.target.value);
-  });
-}
-
 export const updatePeerPosition = ({id, x, y}) => {
-  $(`#peer-${id}`).css({
+  $(`#peer-${id}`).finish().animate({
     left: x,
     top: y
   })
@@ -36,6 +21,6 @@ export const initPeer = (data) => {
 }
 
 export const removePeer = (leavingUser) => {
-  $(`#peer-${leavingUser}`).remove();
+  $(`#peer-${leavingUser}`).finish().animate({opacity: 0.1});
   store.removePeer(leavingUser)
 }

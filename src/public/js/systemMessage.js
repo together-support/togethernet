@@ -1,22 +1,13 @@
 import store from '../store/store.js';
+import {systemBubble} from '../components/message.js';
 
-export const addSystemBubble = (systemMsg) => {
-//   let systemBubble = document.createElement("div");
-//   sysBlb.setAttribute(`id`, `sysBlb${sysMsgIndex}`);
-//   sysBlb.setAttribute(`class`, `sysBlb`);
-//   sysBlb.innerHTML = `<p>${systemMsg}</p>`;
-//   user.appendChild(sysBlb);
-//   sysMsgIndex++;
-}
-  
-export const addSystemMsg = (systemMsg) => {
-  // addSysBubble(systemMsg);
+export const addSystemMessage = (systemMsg) => {
+  removeAllSystemMessage();
+  systemBubble(systemMsg).appendTo($('#user'));
+  store.increment('systemMessageIndex');
 }
 
 export const removeAllSystemMessage = () => {
-  for (let i = 0; i < store.get('systemMessageIndex'); i++) {
-    let systemBubble = document.getElementById(`system-bubble-${i}`);
-    systemBubble.remove();
-    store.set('systemMessageIndex', 0)
-  }
+  $('.systemBubble').each((_, el) => $(el).remove());
+  store.set('systemMessageIndex', 0)
 }

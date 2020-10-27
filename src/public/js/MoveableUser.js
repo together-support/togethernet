@@ -1,8 +1,10 @@
 import throttle from 'lodash/throttle';
 import store from '../store/store.js';
+import {removeAllSystemMessage} from './systemMessage';
 
-export default class AvatarAnimator {
+export default class MoveableUser {
   constructor() {
+
     this.avatarSize = $('#user').width();
     this.topBoundary = 0;
     this.leftBoundary = 0;
@@ -12,8 +14,20 @@ export default class AvatarAnimator {
     $(window).on('resize', throttle(this.changeBoundary, 500));
   }
 
+  initialize = () => {
+    this.initializeAvatar();
+    this.attachAnimationEvents();
+    $("#ephemeralSpace").one('keydown', removeAllSystemMessage);
+  };
+
   attachAnimationEvents = () => {
-    const animationEvents = (event) => {
+    $(document).on('keydown', (e) => {
+      if (['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(e.key)){
+        e.preventDefault();
+      }
+    });
+
+    $("#ephemeralSpace").on('keydown', (event) => {
       event.preventDefault();
       if (event.key === "ArrowUp") {
         this.moveUp();
@@ -34,23 +48,29 @@ export default class AvatarAnimator {
           }
         }));
       });
-    }
-
-    $(document).on('keydown', (e) => {
-      if (['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(e.key)){
-        e.preventDefault();
-      }
     });
-
-    $("#ephemeralSpace").on('keydown', animationEvents);
   };
+
+  initializeAvatar = () => {
+    const $user = $('#user');
+    const $userProfile = $('#userProfile');
+    const avatarColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
+    store.set('avatar', avatarColor);
+    $user.css('background-color', avatarColor);
+    $userProfile.val(avatarColor);
+
+    $userProfile.on('change', (e) => {
+      e.preventDefault();
+      $user.css('background-color', e.target.value);
+    });
+  }
 
   moveUp = () => {
     const {top, left} = $('#user').position();
     const newY = top - this.avatarSize;
     if (newY >= this.topBoundary) {
       $("#user").finish().animate({top: `-=${this.avatarSize}`});
-
       store.set('position', {x: left, y: newY})
     }
   }

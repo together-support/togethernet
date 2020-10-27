@@ -1,9 +1,10 @@
 import io from 'socket.io-client';
 import {addPeer, getPeer, setDataChannel} from '../store/actions.js'
 import store from '../store/store.js';
-import {renderIncomingEphemeralMessage} from './ephemeral.js'
 import {getBrowserRTC} from './ensureWebRTC.js'
+import {renderIncomingEphemeralMessage} from './ephemeral.js'
 import {initPeer, removePeer, updatePeerPosition} from './users.js';
+import {addSystemMessage} from './systemMessage.js';
 
 export default class PeerConnection {
   constructor () {
@@ -15,6 +16,7 @@ export default class PeerConnection {
 
   connect = () => {
     this.socket.on('connect', () => {
+      addSystemMessage('Searching for peers...');
       store.set('socketId', this.socket.id);
     })
     this.socket.on('initConnections', this.initConnections)
@@ -101,6 +103,7 @@ export default class PeerConnection {
     };
 
     dataChannel.onopen = () => {
+      addSystemMessage("Peer connection established. You're now ready to chat in the p2p mode");
       dataChannel.send(JSON.stringify({
         type: 'initPeer',
         data: {
@@ -111,9 +114,9 @@ export default class PeerConnection {
       }));
     };
 
-    dataChannel.onclose = () => {
-      // this.socket.disconnect();
-      // alert("you've been disconnected - please refresh to join again");
+    dataChannel.onerror = (err) => {
+      dataChannel.close();
+      addSystemMessage(`Peer connection error: ${err}`)
     };
 
     return dataChannel

@@ -38,8 +38,3 @@ export const addActivePositions = ({x, y}) => {
   Boolean(activePositions[x]) ? activePositions[x][y] = true : activePositions[x] = {[y]: true};
   store.set('activePositions', activePositions);
 }
-
-export const incrementMessageIndex = () => {
-  const currentMessageIndex = store.get('messageIndex');
-  store.set('messageIndex', currentMessageIndex + 1);
-}

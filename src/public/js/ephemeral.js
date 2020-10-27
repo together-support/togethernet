@@ -1,18 +1,19 @@
-import {incrementMessageIndex, addActivePositions, addMyActivePositions} from '../store/actions.js';
+import store from '../store/store.js';
+import {addActivePositions, addMyActivePositions} from '../store/actions.js';
 import {removeAllSystemMessage} from './systemMessage.js';
-import {myTextRecord, textRecord} from '../components/messageRecord.js';
+import {myTextRecord, textRecord} from '../components/message.js';
 
 
 export const renderOutgoingEphemeralMessage = (message) => {
   removeAllSystemMessage();
   addMyActivePositions();
-  incrementMessageIndex();
+  store.increment('messageIndex');
   myTextRecord(message).appendTo($('#ephemeralSpace'));
 }
 
 export const renderIncomingEphemeralMessage = ({sender, message}) => {
   textRecord({...sender, message}).appendTo($('#ephemeralSpace'));
-  incrementMessageIndex();
+  store.increment('messageIndex');
   addActivePositions({x: sender.x, y: sender.y});
 }
 

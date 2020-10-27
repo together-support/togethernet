@@ -27,6 +27,12 @@ class Store {
   removePeer = (id) => {
     delete this.peers[id];
   }
+
+  increment = (attribute) => {
+    if (!isNaN(this[attribute])) {
+      this[attribute] += 1;
+    }
+  }
 }
 
 const store = new Store();

@@ -41,3 +41,12 @@ export const tempBubble = (name, msg) => {
 
   return tempBubble;
 }
+
+export const systemBubble = (message) => {
+  const $systemBubble = $(`<div class="systemBubble" id="system-bubble-${store.get('systemMessageIndex')}"></div>`);
+  const $message = $('<p></p>');
+  $message.text(message);
+
+  $message.appendTo($systemBubble);
+  return $systemBubble;
+}
