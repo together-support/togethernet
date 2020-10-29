@@ -24,17 +24,3 @@ export const setDataChannel = (id, channel) => {
   peer.dataChannel = channel;
 }
 
-export const addMyActivePositions = () => {
-  const {x, y} = store.get('position');
-
-  const myActivePositions = {...store.get('myActivePositions')};
-  Boolean(myActivePositions[x]) ? myActivePositions[x][y] = true : myActivePositions[x] = {[y]: true};;
-  store.set('myActivePositions', myActivePositions);
-  addActivePositions({x, y});
-}
-
-export const addActivePositions = ({x, y}) => {
-  const activePositions = {...store.get('activePositions')};
-  Boolean(activePositions[x]) ? activePositions[x][y] = true : activePositions[x] = {[y]: true};
-  store.set('activePositions', activePositions);
-}

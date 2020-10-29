@@ -33,6 +33,25 @@ class Store {
       this[attribute] += 1;
     }
   }
+
+  addMyActivePositions = () => {
+    const {x, y} = this.position;
+    if (Boolean(this.myActivePositions)[x]) {
+      this.myActivePositions[x][y] = true
+    } else {
+      this.myActivePositions[x] = {[y]: true};
+    }
+
+    this.addActivePositions({x, y});
+  }
+  
+  addActivePositions = ({x, y}) => {
+    if (Boolean(this.activePositions)[x]) {
+      this.activePositions[x][y] = true
+    } else {
+      this.activePositions[x] = {[y]: true};
+    }
+  }
 }
 
 const store = new Store();

@@ -337,6 +337,10 @@ p {
   padding: 1px;
 }
 
+.textBubble b {
+  color: #000;
+}
+
 #privateChatBox {
   width: 100%;
   height: 100%;

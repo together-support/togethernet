@@ -1,6 +1,6 @@
 import socketIO from 'socket.io';
 
-export default class SocketConnection {
+export default class SignalingServer {
   constructor(server) {
     this.io = socketIO(server);
     this.connectedUsers = {};

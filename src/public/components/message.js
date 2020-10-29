@@ -18,7 +18,7 @@ export const textRecord = ({x, y, messageIndex, message, name, avatar}) => {
     backgroundColor: avatar,
   });
 
-  const $textBubble = $(`<div class="text-bubble" id="textBubble-${messageIndex}"></div>`)
+  const $textBubble = $(`<div class="textBubble" id="textBubble-${messageIndex}"></div>`)
 
   const $name = $('<b></b>');
   $name.text(name);
@@ -33,17 +33,23 @@ export const textRecord = ({x, y, messageIndex, message, name, avatar}) => {
   return $textRecord;
 }
 
-export const tempBubble = (name, msg) => {
-  let tempBubble = document.createElement("div");
-  tempBubble.setAttribute('id', `tempBlb-${msgIndex}`);
-  tempBubble.classList.add(text-bubble);
-  tempBubble.innerHTML = `<p><b>${name}</b></p><p>${msg}</p>`;
+export const tempBubble = (name, message) => {
+  const $tempBubble = $(`<div class="textBubble" id="tempBubble-${store.get('messageIndex')}"></div>`);
 
-  return tempBubble;
+  const $name = $('<b></b>');
+  $name.text(name);
+
+  const $message = $('<p></p>');
+  $message.text(message)
+
+  $name.appendTo($tempBubble);
+  $message.appendTo($tempBubble);
+
+  return $tempBubble;
 }
 
 export const systemBubble = (message) => {
-  const $systemBubble = $(`<div class="systemBubble" id="system-bubble-${store.get('systemMessageIndex')}"></div>`);
+  const $systemBubble = $(`<div class="systemBubble" id="systemBubble-${store.get('systemMessageIndex')}"></div>`);
   const $message = $('<p></p>');
   $message.text(message);
 

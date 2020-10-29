@@ -4,7 +4,6 @@ import {removeAllSystemMessage} from './systemMessage';
 
 export default class MoveableUser {
   constructor() {
-
     this.avatarSize = $('#user').width();
     this.topBoundary = 0;
     this.leftBoundary = 0;
@@ -103,8 +102,6 @@ export default class MoveableUser {
   }
 
   changeBoundary = () => {
-    this.topBoundary = $('#ephemeralSpace').offset().top;
-    this.leftBoundary = $('#ephemeralSpace').offset().left;
     this.rightBoundary = this.leftBoundary + $('#ephemeralSpace').width();
     this.bottomBoundary = this.topBoundary + $('#ephemeralSpace').height();  
     this.avatarSize = $('#user').width();
