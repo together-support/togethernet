@@ -20,15 +20,17 @@ export const sendMessage = () => {
 }
 
 const ephemeralSendMessage = (message) => {
-  store.sendToPeers({
+  const data = {
     type: 'text', 
     data: {
       message,
       x: $('#user').position().left,
       y: $('#user').position().top
     }
-  });
-  renderOutgoingEphemeralMessage(message);
+  }
+
+  store.sendToPeers(data);
+  renderOutgoingEphemeralMessage({message, name: $('#_nameInput').text()});
 }
 
 const archivalSendMessage = () => {

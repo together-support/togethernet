@@ -1,6 +1,6 @@
 import store from '../store/store.js';
 
-export const myTextRecord = (message) => {  
+export const myTextRecord = ({message}) => {  
   return textRecord({
     messageIndex: store.get('messageIndex'),
     name: $('#_nameInput').text(),
@@ -30,12 +30,16 @@ export const textRecord = ({x, y, messageIndex, message, name, avatar}) => {
   $name.appendTo($textBubble);
   $message.appendTo($textBubble);
   $textBubble.appendTo($textRecord)
+
+  $textRecord
+    .mouseenter(() => $textBubble.show())
+    .mouseleave(() => $textBubble.hide())
   
   return $textRecord;
 }
 
-export const tempBubble = (name, message) => {
-  const $tempBubble = $(`<div class="textBubble" id="tempBubble-${store.get('messageIndex')}"></div>`);
+export const tempBubble = ({name, message}) => {
+  const $tempBubble = $(`<div class="tempBubble textBubble" id="tempBubble-${store.get('messageIndex')}"></div>`);
 
   const $name = $('<b></b>');
   $name.text(name);

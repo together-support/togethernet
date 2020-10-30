@@ -4,7 +4,7 @@ import store from '../store/store.js';
 import {getBrowserRTC} from './ensureWebRTC.js'
 import {renderIncomingEphemeralMessage} from './ephemeral.js'
 import {initPeer, removePeer, updatePeerPosition} from './users.js';
-import {addSystemMessage} from './systemMessage.js';
+import {addSystemMessage, removeAllSystemMessage} from './systemMessage.js';
 
 export default class PeerConnection {
   constructor () {
@@ -113,9 +113,9 @@ export default class PeerConnection {
       });
     };
 
-    dataChannel.onerror = (err) => {
+    dataChannel.onerror = (event) => {
       dataChannel.close();
-      addSystemMessage(`Peer connection error: ${err}`)
+      addSystemMessage(event.error.message);
     };
 
     return dataChannel
@@ -136,13 +136,12 @@ export default class PeerConnection {
   }
 
   handleError = (e) => {
-    console.log('error', e)
+    this.socket.disconnect();
   }
 
   handlePeerLeaveSocket = ({leavingUser}) => {
     const peerConnection = getPeer(leavingUser)
     peerConnection.dataChannel.close();
-    peerConnection.close();
     removePeer(leavingUser);
   }
 

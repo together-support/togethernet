@@ -5,6 +5,8 @@ export const addSystemMessage = (systemMsg) => {
   removeAllSystemMessage();
   systemBubble(systemMsg).appendTo($('#user'));
   store.increment('systemMessageIndex');
+  $("#ephemeralSpace").one('keydown', removeAllSystemMessage);
+  $("#user").one('dragstart', removeAllSystemMessage);
 }
 
 export const removeAllSystemMessage = () => {

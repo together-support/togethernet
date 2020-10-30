@@ -15,8 +15,8 @@ export default class MoveableUser {
 
   initialize = () => {
     this.initializeAvatar();
-    this.attachAnimationEvents();
-    $("#ephemeralSpace").one('keydown', removeAllSystemMessage);
+    this.makeDraggable();
+    this.attachKeyboardEvents();
   };
 
   initializeAvatar = () => {
@@ -35,7 +35,14 @@ export default class MoveableUser {
     });
   }
 
-  attachAnimationEvents = () => {
+  makeDraggable = () => {
+    $("#user").draggable({
+      grid: [this.avatarSize, this.avatarSize],
+      stop: this.sendPositionToPeers,
+    });
+  }
+
+  attachKeyboardEvents = () => {
     $(document).on('keydown', (e) => {
       if (['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(e.key)){
         e.preventDefault();

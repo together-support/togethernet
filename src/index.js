@@ -7,7 +7,7 @@ import http from 'http';
 import path, {dirname} from 'path';
 import {fileURLToPath} from 'url';
 
-import SocketConnection from './server/connection.js'
+import SignalingServer from './server/SignalingServer.js'
 
 dotenv.config();
 const app = express();
@@ -24,4 +24,4 @@ app.get('/js/bundle.js',  browserify('src/public/js/index.js'))
 const port = process.env.PORT || '3000';
 server.listen(port, () => console.log(`server listening on ${port}`));
 
-new SocketConnection(server).connect();
+new SignalingServer(server).connect();
