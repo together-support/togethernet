@@ -4,7 +4,6 @@ class Store {
     this.avatar = '#000';
     this.socketId = '';
     this.allowSendMessage = true;
-    this.position = { x: 0, y: 0 };
     this.room = 'ephemeral';
 
     this.messageIndex = 0;

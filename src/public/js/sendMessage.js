@@ -29,7 +29,8 @@ const ephemeralSendMessage = (message) => {
           socketId: store.get('socketId'),
           name: store.get('name'),
           avatar: store.get('avatar'),
-          ...store.get('position')
+          x: $('#user').position().left,
+          y: $('#user').position().top,
         },
         message
       },

@@ -5,7 +5,8 @@ export const myTextRecord = (message) => {
     messageIndex: store.get('messageIndex'),
     name: store.get('name'),
     avatar: store.get('avatar'),
-    ...store.get('position'),
+    x: $('#user').position().left,
+    y: $('#user').position().top,
     message
   });
 }

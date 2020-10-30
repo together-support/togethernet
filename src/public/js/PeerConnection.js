@@ -109,7 +109,8 @@ export default class PeerConnection {
         data: {
           avatar: store.get('avatar'),
           id: this.socket.id,
-          ...store.get('position')
+          x: $('#user').position().left,
+          y: $('#user').position().top,
         }
       }));
     };

@@ -26,27 +26,16 @@ export default class MoveableUser {
       }
     });
 
+    const animationEvents = {
+      'ArrowUp': this.moveUp,
+      'ArrowLeft': this.moveLeft,
+      'ArrowRight': this.moveRight,
+      'ArrowDown': this.moveDown
+    }
+
     $("#ephemeralSpace").on('keydown', (event) => {
       event.preventDefault();
-      if (event.key === "ArrowUp") {
-        this.moveUp();
-      } else if (event.key === "ArrowLeft") {
-        this.moveLeft();
-      } else if (event.key === "ArrowRight") {
-        this.moveRight();
-      } else if (event.key === "ArrowDown") {
-        this.moveDown();
-      }
-
-      Object.values(store.get('peers')).forEach(peerConnection => {
-        peerConnection.dataChannel.send(JSON.stringify({
-          type: 'updatePosition',
-          data: {
-            avatar: store.get('avatar'),
-            ...store.get('position')
-          }
-        }));
-      });
+      animationEvents[event.key]();
     });
   };
 
@@ -69,8 +58,7 @@ export default class MoveableUser {
     const {top, left} = $('#user').position();
     const newY = top - this.avatarSize;
     if (newY >= this.topBoundary) {
-      $("#user").finish().animate({top: `-=${this.avatarSize}`});
-      store.set('position', {x: left, y: newY})
+      $("#user").finish().animate({top: `-=${this.avatarSize}`}, {complete: this.sendPositionToPeers});
     }
   }
 
@@ -78,8 +66,7 @@ export default class MoveableUser {
     const {top, left} = $('#user').position();
     const newY = top + this.avatarSize;
     if (newY + this.avatarSize <= this.bottomBoundary) {
-      $("#user").finish().animate({top: `+=${this.avatarSize}`});
-      store.set('position', {x: left, y: newY})
+      $("#user").finish().animate({top: `+=${this.avatarSize}`}, {complete: this.sendPositionToPeers});
     }
   }
 
@@ -87,8 +74,7 @@ export default class MoveableUser {
     const {top, left} = $('#user').position();
     const newX = left - this.avatarSize;
     if (newX >= this.leftBoundary) {
-      $("#user").finish().animate({left: `-=${this.avatarSize}`});
-      store.set('position', {x: newX, y: top})
+      $("#user").finish().animate({left: `-=${this.avatarSize}`}, {complete: this.sendPositionToPeers});
     }
   }
 
@@ -96,9 +82,21 @@ export default class MoveableUser {
     const {top, left} = $('#user').position();
     const newX = left + this.avatarSize;
     if (newX + this.avatarSize <= this.rightBoundary) {
-      $("#user").finish().animate({left: `+=${this.avatarSize}`});
-      store.set('position', {x: newX, y: top})
+      $("#user").finish().animate({left: `+=${this.avatarSize}`}, {complete: this.sendPositionToPeers});
     }
+  }
+
+  sendPositionToPeers = () => {
+    Object.values(store.get('peers')).forEach(peerConnection => {
+      peerConnection.dataChannel.send(JSON.stringify({
+        type: 'updatePosition',
+        data: {
+          avatar: store.get('avatar'),
+          x: $('#user').position().left,
+          y: $('#user').position().top,
+        }
+      }));
+    });
   }
 
   changeBoundary = () => {
