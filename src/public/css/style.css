@@ -223,11 +223,17 @@ p {
 #user {
   z-index: 5;
 }
+
+#ephemeralSpace {
+  position: relative;
+}
+
 .square {
   position: absolute;
   width: 50px;
   height: 50px;
 }
+
 .entry {
   position: relative;
   display: inline-block;
@@ -274,8 +280,8 @@ p {
   background-color: yellow;
 }
 
-.txtBlb,
-.sysBlb {
+.textBubble,
+.systemBubble {
   position: absolute;
   top: -10px;
   left: 52px;
@@ -288,16 +294,16 @@ p {
   border: 1px solid transparent;
 }
 
-.txtBlb {
+.textBubble {
   background-color: #f8f8f8;
 }
 
-.sysBlb {
+.systemBubble {
   background-color: #f8f8f8;
 }
 
-.txtBlb:after,
-.sysBlb:after {
+.textBubble:after,
+.systemBubble:after {
   content: "";
   position: absolute;
   left: 0;
@@ -312,23 +318,27 @@ p {
   z-index: 10;
 }
 
-.txtBlb:after {
+.textBubble:after {
   border-right-color: #f8f8f8;
   z-index: 9;
 }
-.sysBlb:after {
+.systemBubble:after {
   border-right-color: #f8f8f8;
   z-index: 9;
 }
 
-.sysBlb p,
-.txtBlb p {
+.systemBubble p,
+.textBubble p {
   font-family: sans-serif;
   font-size: 12px;
   line-height: 15px;
   text-align: left;
   color: #000;
   padding: 1px;
+}
+
+.textBubble b {
+  color: #000;
 }
 
 #privateChatBox {

@@ -1,5 +1,6 @@
 import {historyMessage} from '../components/history.js';
 
+// const record = "/record";
 export const loadHistory = () => {
   // let response;
   // let data;
