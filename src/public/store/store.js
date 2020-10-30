@@ -34,14 +34,14 @@ class Store {
   }
 
   addMyActivePositions = () => {
-    const {x, y} = this.position;
-    if (Boolean(this.myActivePositions)[x]) {
-      this.myActivePositions[x][y] = true
+    const position = $('#user').position();
+    if (Boolean(this.myActivePositions)[position.left]) {
+      this.myActivePositions[position.left][position.top] = true
     } else {
-      this.myActivePositions[x] = {[y]: true};
+      this.myActivePositions[position.left] = {[position.left]: true};
     }
 
-    this.addActivePositions({x, y});
+    this.addActivePositions({x: position.left, y: position.top});
   }
   
   addActivePositions = ({x, y}) => {
@@ -50,6 +50,24 @@ class Store {
     } else {
       this.activePositions[x] = {[y]: true};
     }
+  }
+
+  sendToPeer = (dataChannel, {type, data}) => {
+    dataChannel.send(JSON.stringify({
+      type,
+      data: {
+        ...data, 
+        socketId: this.socketId,
+        name: $('#_nameInput').text(),
+        avatar: $('#userProfile').val(),
+      }
+    }));
+  }
+
+  sendToPeers = ({type, data}) => {
+    Object.values(this.peers).forEach(peer => {
+      this.sendToPeer(peer.dataChannel, {type, data});
+    });
   }
 }
 

@@ -96,23 +96,21 @@ export default class PeerConnection {
       if (data.type === 'text') {
         renderIncomingEphemeralMessage(data.data);
       } else if (data.type === 'initPeer') {
-        initPeer(data.data);
-      } else if (data.type === 'updatePosition') {
+        initPeer({...data.data, id: peerId});
+      } else if (data.type === 'position') {
         updatePeerPosition({...data.data, id: peerId})
       }
     };
 
     dataChannel.onopen = () => {
       addSystemMessage("Peer connection established. You're now ready to chat in the p2p mode");
-      dataChannel.send(JSON.stringify({
-        type: 'initPeer',
+      store.sendToPeer(dataChannel, {
+        type: 'initPeer', 
         data: {
-          avatar: store.get('avatar'),
-          id: this.socket.id,
           x: $('#user').position().left,
           y: $('#user').position().top,
         }
-      }));
+      });
     };
 
     dataChannel.onerror = (err) => {
@@ -152,7 +150,6 @@ export default class PeerConnection {
     this.socket.emit(data.type, {
       ...data, 
       fromSocket: this.socket.id,
-      fromName: store.get('name')
     });
   }
 }

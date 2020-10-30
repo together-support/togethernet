@@ -3,8 +3,8 @@ import store from '../store/store.js';
 export const myTextRecord = (message) => {  
   return textRecord({
     messageIndex: store.get('messageIndex'),
-    name: store.get('name'),
-    avatar: store.get('avatar'),
+    name: $('#_nameInput').text(),
+    avatar: $('#userProfile').val(),
     x: $('#user').position().left,
     y: $('#user').position().top,
     message

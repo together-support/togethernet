@@ -20,23 +20,14 @@ export const sendMessage = () => {
 }
 
 const ephemeralSendMessage = (message) => {
-  Object.values(store.get('peers')).forEach(peer => {
-    console.log(peer.dataChannel)
-    peer.dataChannel.send(JSON.stringify({
-      type: 'text',
-      data: {
-        sender: {
-          socketId: store.get('socketId'),
-          name: store.get('name'),
-          avatar: store.get('avatar'),
-          x: $('#user').position().left,
-          y: $('#user').position().top,
-        },
-        message
-      },
-    }));
+  store.sendToPeers({
+    type: 'text', 
+    data: {
+      message,
+      x: $('#user').position().left,
+      y: $('#user').position().top
+    }
   });
-
   renderOutgoingEphemeralMessage(message);
 }
 

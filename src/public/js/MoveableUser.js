@@ -35,7 +35,9 @@ export default class MoveableUser {
 
     $("#ephemeralSpace").on('keydown', (event) => {
       event.preventDefault();
-      animationEvents[event.key]();
+      if(['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(event.key)) {
+        animationEvents[event.key]();
+      }
     });
   };
 
@@ -87,15 +89,12 @@ export default class MoveableUser {
   }
 
   sendPositionToPeers = () => {
-    Object.values(store.get('peers')).forEach(peerConnection => {
-      peerConnection.dataChannel.send(JSON.stringify({
-        type: 'updatePosition',
-        data: {
-          avatar: store.get('avatar'),
-          x: $('#user').position().left,
-          y: $('#user').position().top,
-        }
-      }));
+    store.sendToPeers({
+      type: 'position', 
+      data: {
+        x: $('#user').position().left,
+        y: $('#user').position().top,
+      }
     });
   }
 

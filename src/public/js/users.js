@@ -1,12 +1,10 @@
 import store from '../store/store.js';
-import {changeName} from '../store/actions.js';
 import {renderPeer} from '../components/users.js';
+import DOMPurify from 'dompurify';
 
 export const setMyUserName = () => {
   const name = prompt("Please enter your name:");
-  changeName(name);
-  const $nameInput = $("#_nameInput");
-  $nameInput.text(store.get('name'));
+  $("#_nameInput").text(DOMPurify(name));
 };
 
 export const updatePeerPosition = ({id, x, y}) => {
@@ -21,6 +19,7 @@ export const initPeer = (data) => {
 }
 
 export const removePeer = (leavingUser) => {
-  $(`#peer-${leavingUser}`).finish().animate({opacity: 0.1});
-  store.removePeer(leavingUser)
+  $(`#peer-${leavingUser}`).finish().animate({opacity: 0}, {
+    complete: () => store.removePeer(leavingUser)
+  });
 }

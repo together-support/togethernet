@@ -11,10 +11,10 @@ export const renderOutgoingEphemeralMessage = (message) => {
   tempBubble(message).appendTo($('#user'));
 }
 
-export const renderIncomingEphemeralMessage = ({sender, message}) => {
-  textRecord({...sender, message}).appendTo($('#ephemeralSpace'));
+export const renderIncomingEphemeralMessage = ({x, y, name, avatar, message}) => {
+  textRecord({x, y, name, avatar, message}).appendTo($('#ephemeralSpace'));
   store.increment('messageIndex');
-  store.addActivePositions({x: sender.x, y: sender.y});
+  store.addActivePositions({x, y});
 }
 
 const hidePrivateMsg = () => {
