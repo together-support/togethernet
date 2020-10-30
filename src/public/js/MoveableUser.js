@@ -19,6 +19,22 @@ export default class MoveableUser {
     $("#ephemeralSpace").one('keydown', removeAllSystemMessage);
   };
 
+  initializeAvatar = () => {
+    const $user = $('#user');
+    const $userProfile = $('#userProfile');
+    const randomColor = Math.floor(Math.random() * 16777216).toString(16)
+    const avatarColor = `#${randomColor}${'0'.repeat(6 - randomColor.length)}`.substring(0, 7);
+
+    store.set('avatar', avatarColor);
+    $user.css('background-color', avatarColor);
+    $userProfile.val(avatarColor);
+
+    $userProfile.on('change', (e) => {
+      e.preventDefault();
+      $user.css('background-color', e.target.value);
+    });
+  }
+
   attachAnimationEvents = () => {
     $(document).on('keydown', (e) => {
       if (['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(e.key)){
@@ -40,21 +56,6 @@ export default class MoveableUser {
       }
     });
   };
-
-  initializeAvatar = () => {
-    const $user = $('#user');
-    const $userProfile = $('#userProfile');
-    const avatarColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-
-    store.set('avatar', avatarColor);
-    $user.css('background-color', avatarColor);
-    $userProfile.val(avatarColor);
-
-    $userProfile.on('change', (e) => {
-      e.preventDefault();
-      $user.css('background-color', e.target.value);
-    });
-  }
 
   moveUp = () => {
     const {top, left} = $('#user').position();
