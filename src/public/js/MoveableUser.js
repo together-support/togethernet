@@ -49,7 +49,7 @@ export default class MoveableUser {
   makeDraggable = () => {
     $("#user").draggable({
       grid: [this.avatarSize, this.avatarSize],
-      stop: this.sendPositionToPeers,
+      stop: this.onAnimationComplete,
     });
   }
 
@@ -76,35 +76,50 @@ export default class MoveableUser {
   };
 
   moveUp = () => {
-    const {top, left} = $('#user').position();
-    const newY = top - this.avatarSize;
+    const newY = $('#user').position().top - this.avatarSize;
     if (newY >= this.topBoundary) {
-      $("#user").finish().animate({top: `-=${this.avatarSize}`}, {complete: this.sendPositionToPeers});
+      $("#user").finish().animate({top: `-=${this.avatarSize}`}, {complete: this.onAnimationComplete});
     }
   }
 
   moveDown = () => {
-    const {top, left} = $('#user').position();
-    const newY = top + this.avatarSize;
+    const newY = $('#user').position().top + this.avatarSize;
     if (newY + this.avatarSize <= this.bottomBoundary) {
-      $("#user").finish().animate({top: `+=${this.avatarSize}`}, {complete: this.sendPositionToPeers});
+      $("#user").finish().animate({top: `+=${this.avatarSize}`}, {complete: this.onAnimationComplete});
     }
   }
 
   moveLeft = () => {
-    const {top, left} = $('#user').position();
-    const newX = left - this.avatarSize;
+    const newX = $('#user').position().left - this.avatarSize;
     if (newX >= this.leftBoundary) {
-      $("#user").finish().animate({left: `-=${this.avatarSize}`}, {complete: this.sendPositionToPeers});
+      $("#user").finish().animate({left: `-=${this.avatarSize}`}, {complete: this.onAnimationComplete});
     }
   }
 
   moveRight = () => {
-    const {top, left} = $('#user').position();
-    const newX = left + this.avatarSize;
+    const newX = $('#user').position().left + this.avatarSize;
     if (newX + this.avatarSize <= this.rightBoundary) {
-      $("#user").finish().animate({left: `+=${this.avatarSize}`}, {complete: this.sendPositionToPeers});
+      $("#user").finish().animate({left: `+=${this.avatarSize}`}, {complete: this.onAnimationComplete});
     }
+  }
+
+  onAnimationComplete = () => {
+    this.showAdjacentMessages();
+    this.sendPositionToPeers();
+  }
+
+  showAdjacentMessages = () => {
+    const {left, top} = $('#user').position();
+    const adjacentPositions = [
+      `${left}-${top + this.avatarSize}`,
+      `${left}-${top - this.avatarSize}`,
+      `${left - this.avatarSize}-${top}`,
+      `${left + this.avatarSize}-${top}`,
+    ]
+
+    adjacentPositions.forEach(position => {
+      $(`.textRecord[data-position=${position}]`).trigger('adjacent');
+    })
   }
 
   sendPositionToPeers = () => {

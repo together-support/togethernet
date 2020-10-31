@@ -13,4 +13,17 @@ export const attachUIEvents = () => {
 
   $('#_recordBtn').on('mousedown', startRecordingAudio)
   $('#_recordBtn').on('mouseup', sendAudio)
+
+  $("#ephemeralSpace").on('keydown', hidePrivateMessage);
+  $("#user").on('dragstart', hidePrivateMessage);
+}
+
+const hidePrivateMessage = () => {
+  $('.tempBubble').each((_, el) => {
+    $(el).remove();
+  });
+  
+  $('.textBubble').each((_, el) => {
+    $(el).hide();
+  });
 }
