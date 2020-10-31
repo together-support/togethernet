@@ -1,6 +1,6 @@
 import store from '../store/store.js';
 import {removeAllSystemMessage} from './systemMessage.js';
-import {myTextRecord, textRecord, tempBubble} from '../components/message.js';
+import {myTextRecord, tempBubble} from '../components/message.js';
 
 
 export const renderOutgoingEphemeralMessage = (data) => {
@@ -12,12 +12,6 @@ export const renderOutgoingEphemeralMessage = (data) => {
 
   $("#ephemeralSpace").one('keydown', hidePrivateMessage);
   $("#user").one('dragstart', hidePrivateMessage);
-}
-
-export const renderIncomingEphemeralMessage = ({x, y, name, avatar, message}) => {
-  store.increment('messageIndex');
-  store.addActivePositions({x, y});
-  textRecord({x, y, name, avatar, message}).appendTo($('#ephemeralSpace'));
 }
 
 const hidePrivateMessage = () => {

@@ -1,13 +1,24 @@
-import {getUserPos} from './ui.js';
-import {audioMessage} from 'components/audio.js'
+// import {audioMessage} from '../components/audio.js'
 
-// // audio recording code
-// const recordButton = document.getElementById("_recordBtn");
-// let [stopped, shouldStop] = [false, false];
-let stopped = false;
-let shouldStop =false;
-let audioIndex = 0;
-export const captureAudio = () => {
+export const startRecordingAudio = () => {
+  // navigator.mediaDevices.getUserMedia({
+  //   audio: true,
+  //   video: false,
+  // }).then(stream => {
+  //   const options = { mimeType: "audio/webm" };
+  //   const recordedChunks = [];
+  //   const mediaRecorder = new MediaRecorder(stream, options);
+
+  //   mediaRecorder.addEventListener("dataavailable", onData);
+  //   mediaRecorder.addEventListener("stop", () => stopRecording(recordedChunks));
+
+  //   mediaRecorder.start(1000);
+  // }).catch((err) => {
+  //   console.log("err capturing audio", err);
+  // });
+};
+
+export const sendAudio = () => {
   // navigator.mediaDevices.getUserMedia({
   //   audio: true,
   //   video: false,
@@ -41,15 +52,15 @@ const stopRecording = (recordedChunks) => {
   // sendBlob(blob);
 }
 
-export const audioMessage = (blob) => {
-  // privateChatBox.appendChild(audioMessage({
-  //   index, blob, userX, userY, color
-  // }));
+// export const audioMessage = (blob) => {
+//   // privateChatBox.appendChild(audioMessage({
+//   //   index, blob, userX, userY, color
+//   // }));
 
-//   // store peer audioRecord positions
-//   peerPosArray.push([peerX, peerY]);
-//   posArray.push([peerX, peerY]);
-}
+// //   // store peer audioRecord positions
+// //   peerPosArray.push([peerX, peerY]);
+// //   posArray.push([peerX, peerY]);
+// }
 
 export const sendBlob = (blob) => {
   // blob.arrayBuffer().then(buffer => {
