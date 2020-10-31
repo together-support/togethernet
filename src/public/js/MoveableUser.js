@@ -1,6 +1,6 @@
 import throttle from 'lodash/throttle';
 import store from '../store/store.js';
-import {removeAllSystemMessage} from './systemMessage';
+import DOMPurify from 'dompurify';
 
 export default class MoveableUser {
   constructor() {
@@ -14,9 +14,17 @@ export default class MoveableUser {
   }
 
   initialize = () => {
+    $('#_nameInput').on('click', this.setMyUserName);
     this.initializeAvatar();
     this.makeDraggable();
     this.attachKeyboardEvents();
+  };
+
+  setMyUserName = () => {
+    const name = prompt("Please enter your name:");
+    if (Boolean(name)) {
+      $("#_nameInput").text(DOMPurify.sanitize(name));
+    }
   };
 
   initializeAvatar = () => {
@@ -32,6 +40,9 @@ export default class MoveableUser {
     $userProfile.on('change', (e) => {
       e.preventDefault();
       $user.css('background-color', e.target.value);
+      store.sendToPeers({
+        type: 'changeAvatar'
+      });
     });
   }
 

@@ -3,8 +3,8 @@ import {addPeer, getPeer, setDataChannel} from '../store/actions.js'
 import store from '../store/store.js';
 import {getBrowserRTC} from './ensureWebRTC.js'
 import {renderIncomingEphemeralMessage} from './ephemeral.js'
-import {initPeer, removePeer, updatePeerPosition} from './users.js';
-import {addSystemMessage, removeAllSystemMessage} from './systemMessage.js';
+import {initPeer, removePeer, updatePeerPosition, updatePeerAvatar} from './users.js';
+import {addSystemMessage} from './systemMessage.js';
 
 export default class PeerConnection {
   constructor () {
@@ -99,6 +99,8 @@ export default class PeerConnection {
         initPeer({...data.data, id: peerId});
       } else if (data.type === 'position') {
         updatePeerPosition({...data.data, id: peerId})
+      } else if (data.type === 'changeAvatar') {
+        updatePeerAvatar({...data.data, id: peerId})
       }
     };
 

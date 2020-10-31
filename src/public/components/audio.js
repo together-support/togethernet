@@ -8,7 +8,7 @@ export const incomingAudio = (blob) => {
   // audio.src = URL.createObjectURL(blob);
 }
 
-const audioMessage = ({audioIndex, blob, recording, userY, userX, color, audioIndex}) => {
+export const audioMessage = ({audioIndex, blob, recording, userY, userX, color, audioIndex}) => {
   // const audio = Boolean(recording) ? outgoingAudio(recording) : incomingAudio(blob);
   // audio.setAttribute('id', `audio-${audioIndex}`);
 

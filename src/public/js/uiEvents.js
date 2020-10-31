@@ -1,8 +1,8 @@
-import {sendMessage} from './sendMessage.js';
-import {setMyName} from './users.js';
+import {sendMessage} from './sendText.js';
+import {startRecordingAudio, sendAudio} from './sendAudio.js';
+import {setMyUserName} from './users.js';
 
 export const attachUIEvents = () => {
-  $('#_nameInput').on('click', setMyName);
   $('#_sendBtn').on('click', sendMessage);
   
   $('#_messageInput').on('keyup', (e) => {
@@ -11,4 +11,7 @@ export const attachUIEvents = () => {
       sendMessage();
     }
   });
+
+  $('#_recordBtn').on('mousedown', startRecordingAudio)
+  $('#_recordBtn').on('mouseup', sendAudio)
 }
