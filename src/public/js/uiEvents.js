@@ -1,6 +1,5 @@
 import {sendMessage} from './sendText.js';
 import {startRecordingAudio, sendAudio} from './sendAudio.js';
-import {setMyUserName} from './users.js';
 
 export const attachUIEvents = () => {
   $('#_sendBtn').on('click', sendMessage);

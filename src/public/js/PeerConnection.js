@@ -1,9 +1,7 @@
 import io from 'socket.io-client';
-import {addPeer, getPeer, setDataChannel} from '../store/actions.js'
 import store from '../store/store.js';
 import {getBrowserRTC} from './ensureWebRTC.js'
-import {renderIncomingEphemeralMessage} from './ephemeral.js'
-import {initPeer, removePeer, updatePeerPosition, updatePeerAvatar} from './users.js';
+import {handleData} from './dataReceiver.js';
 import {addSystemMessage} from './systemMessage.js';
 
 export default class PeerConnection {
@@ -60,7 +58,7 @@ export default class PeerConnection {
       sdpSemantics: 'unified-plan'
     });
 
-    addPeer(peerId, peerConnection);
+    store.addPeer(peerId, peerConnection);
 
     peerConnection.onicecandidate = (event) => { 
       if (Boolean(event.candidate)) { 
@@ -73,7 +71,7 @@ export default class PeerConnection {
       peerConnection.dataChannel = this.setUpDataChannel({dataChannel, peerId});
     } else {
       peerConnection.ondatachannel = (event) => {
-        setDataChannel(peerId, this.setUpDataChannel({dataChannel: event.channel, peerId}));
+        store.setDataChannel(peerId, this.setUpDataChannel({dataChannel: event.channel, peerId}));
       }
     }
 
@@ -86,22 +84,7 @@ export default class PeerConnection {
     };
 
     dataChannel.onmessage = (event) => {
-      let data;
-      try {
-        data = JSON.parse(event.data);
-      } catch (err) {
-        console.log('invalid JSON');
-      };
-
-      if (data.type === 'text') {
-        renderIncomingEphemeralMessage(data.data);
-      } else if (data.type === 'initPeer') {
-        initPeer({...data.data, id: peerId});
-      } else if (data.type === 'position') {
-        updatePeerPosition({...data.data, id: peerId})
-      } else if (data.type === 'changeAvatar') {
-        updatePeerAvatar({...data.data, id: peerId})
-      }
+      handleData({event, peerId});
     };
 
     dataChannel.onopen = () => {
@@ -124,13 +107,13 @@ export default class PeerConnection {
   }
 
   handleReceivedAnswer = async ({fromSocket, answer}) => {
-    const peerConnection = getPeer(fromSocket);
+    const peerConnection = store.getPeer(fromSocket);
     await peerConnection.setRemoteDescription(new this._wrtc.RTCSessionDescription(answer)); 
   } 
 
   addCandidate = async ({candidate, fromSocket}) => { 
     try {
-      const peerConnection = getPeer(fromSocket);
+      const peerConnection = store.getPeer(fromSocket);
       await peerConnection.addIceCandidate(candidate); 
     } catch (e) {
       console.log('error adding received ice candidate', e)
@@ -142,9 +125,11 @@ export default class PeerConnection {
   }
 
   handlePeerLeaveSocket = ({leavingUser}) => {
-    const peerConnection = getPeer(leavingUser)
+    const peerConnection = store.getPeer(leavingUser);
     peerConnection.dataChannel.close();
-    removePeer(leavingUser);
+    $(`#peer-${leavingUser}`).finish().animate({opacity: 0}, {
+      complete: () => store.removePeer(leavingUser)
+    });
   }
 
   send = (data) => {

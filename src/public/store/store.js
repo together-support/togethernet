@@ -23,6 +23,18 @@ class Store {
     return this[key];
   }
 
+  addPeer = (id, peer) => {
+    this.peers[id] = peer
+  }
+  
+  getPeer = (id) => {
+    return this.peers[id];
+  }
+
+  setDataChannel = (id, channel) => {
+    this.peers[id].dataChannel = channel;
+  }
+
   removePeer = (id) => {
     delete this.peers[id];
   }
