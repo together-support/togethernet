@@ -4,13 +4,10 @@ class Store {
     this.avatar = '#000';
     this.socketId = '';
     this.allowSendMessage = true;
-    this.room = 'ephemeral';
+    this.room = 'ephemeralSpace';
 
     this.messageIndex = 0;
     this.systemMessageIndex = 0;
-
-    this.activePositions = {};
-    this.myActivePositions = {};
 
     this.peers = {};
   }
@@ -45,25 +42,6 @@ class Store {
     }
   }
 
-  addMyActivePositions = () => {
-    const position = $('#user').position();
-    if (Boolean(this.myActivePositions)[position.left]) {
-      this.myActivePositions[position.left][position.top] = true
-    } else {
-      this.myActivePositions[position.left] = {[position.left]: true};
-    }
-
-    this.addActivePositions({x: position.left, y: position.top});
-  }
-  
-  addActivePositions = ({x, y}) => {
-    if (Boolean(this.activePositions)[x]) {
-      this.activePositions[x][y] = true
-    } else {
-      this.activePositions[x] = {[y]: true};
-    }
-  }
-
   sendToPeer = (dataChannel, {type, data}) => {
     dataChannel.send(JSON.stringify({
       type,
@@ -72,6 +50,7 @@ class Store {
         socketId: this.socketId,
         name: $('#_nameInput').text(),
         avatar: $('#userProfile').val(),
+        room: this.room
       }
     }));
   }

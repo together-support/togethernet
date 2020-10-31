@@ -21,14 +21,13 @@ export const handleData = ({event, peerId}) => {
   }
 }
 
-export const renderIncomingEphemeralMessage = ({x, y, name, avatar, message}) => {
+export const renderIncomingEphemeralMessage = ({x, y, name, avatar, message, room}) => {
   store.increment('messageIndex');
-  store.addActivePositions({x, y});
-  textRecord({x, y, name, avatar, message}).appendTo($('#ephemeralSpace'));
+  textRecord({x, y, name, avatar, message}).appendTo($(`#${room}`));
 }
 
 export const initPeer = (data) => {
-  renderPeer(data).appendTo($('#ephemeralSpace'));
+  renderPeer(data).appendTo($(`#${data.room}`));
 }
 
 export const updatePeerPosition = ({id, x, y}) => {

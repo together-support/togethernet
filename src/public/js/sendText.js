@@ -9,9 +9,9 @@ export const sendMessage = () => {
   }
 
   if (store.get('allowSendMessage') && Boolean(message)) {
-    if (store.get('room') === 'ephemeral') {
+    if (store.get('room') === 'ephemeralSpace') {
       ephemeralSendMessage(message);
-    } else if (store.get('room') === 'archival') {
+    } else if (store.get('room') === 'archivalSpace') {
       archivalSendMessage(message);
     }
   }

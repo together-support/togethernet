@@ -322,6 +322,7 @@ p {
   border-right-color: #f8f8f8;
   z-index: 9;
 }
+
 .systemBubble:after {
   border-right-color: #f8f8f8;
   z-index: 9;
@@ -337,8 +338,17 @@ p {
   padding: 1px;
 }
 
-.textBubble b {
+.textBubble {
   color: #000;
+  display: flex;
+  flex-direction: column;
+}
+
+.textBubble button {
+  border: none;
+  background-color:  #f8f8f8;
+  width: 100%;
+  text-align: right;
 }
 
 #privateChatBox {

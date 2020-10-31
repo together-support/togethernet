@@ -118,7 +118,7 @@ export default class MoveableUser {
     ]
 
     adjacentPositions.forEach(position => {
-      $(`.textRecord[data-position=${position}]`).trigger('adjacent');
+      $(`#${store.get('room')}-${position}`).trigger('adjacent');
     })
   }
 
