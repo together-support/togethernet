@@ -1,4 +1,5 @@
 import store from '../store/store.js';
+import {removeMessage} from '../js/ephemeral.js';
 
 export const myTextRecord = ({message}) => {  
   return textRecord({
@@ -13,23 +14,13 @@ export const myTextRecord = ({message}) => {
 }
 
 export const textRecord = ({x, y, message, name, avatar, isMine, room}) => {
-  const $textRecord = $(
-    `<div 
-      class="textRecord" 
-      id="${room}-${x}-${y}"
-    >
-    </div>`
-  )
-  $textRecord.css({
-    left: x,
-    top: y,
-    backgroundColor: avatar,
-  });
-
+  const $textRecord = $(`<div class="textRecord" id="${room}-${x}-${y}"></div>`);
+  $textRecord.css({left: x, top: y, backgroundColor: avatar});
   const $textBubble = $(`<div class="textBubble" id="textBubble-${room}-${x}-${y}"></div>`);
 
   if (isMine) {
     const $closeButton = $('<button>x</button>');
+    $closeButton.on('click', removeMessage);
     $closeButton.appendTo($textBubble);
   }
 

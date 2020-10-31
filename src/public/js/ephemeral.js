@@ -7,3 +7,19 @@ export const renderOutgoingEphemeralMessage = (data) => {
   const outgoingMessage = myTextRecord(data)
   outgoingMessage.appendTo($(`#${store.get('room')}`));
 }
+
+export const removeMessage = (event) => {
+  event.preventDefault();
+  const $messageRecord = $(event.target).parent().parent();
+  $messageRecord.finish().animate({opacity: 0}, {
+    complete: () => {
+      $messageRecord.remove();
+      store.sendToPeers({
+        type: 'removeEphemeralMessage',
+        data: {
+          messageId: $messageRecord.attr('id')
+        }
+      });
+    }
+  });  
+};
