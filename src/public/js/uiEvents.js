@@ -19,10 +19,6 @@ export const attachUIEvents = () => {
 }
 
 const hidePrivateMessage = () => {
-  $('.tempBubble').each((_, el) => {
-    $(el).remove();
-  });
-  
   $('.textBubble').each((_, el) => {
     $(el).hide();
   });

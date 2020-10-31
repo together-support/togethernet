@@ -128,7 +128,10 @@ export default class PeerConnection {
     const peerConnection = store.getPeer(leavingUser);
     peerConnection.dataChannel.close();
     $(`#peer-${leavingUser}`).finish().animate({opacity: 0}, {
-      complete: () => store.removePeer(leavingUser)
+      complete: () => {
+        $(`#peer-${leavingUser}`).remove();
+        store.removePeer(leavingUser);
+      }
     });
   }
 

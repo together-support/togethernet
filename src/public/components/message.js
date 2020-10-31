@@ -1,32 +1,28 @@
 import store from '../store/store.js';
+import {removeMessage} from '../js/ephemeral.js';
 
 export const myTextRecord = ({message}) => {  
   return textRecord({
-    messageIndex: store.get('messageIndex'),
     name: $('#_nameInput').text(),
     avatar: $('#userProfile').val(),
     x: $('#user').position().left,
     y: $('#user').position().top,
-    message
+    message,
+    isMine: true,
+    room: store.get('room'),
   });
 }
 
-export const textRecord = ({x, y, messageIndex, message, name, avatar}) => {
-  const $textRecord = $(
-    `<div 
-      class="textRecord" 
-      id="textRecord-${messageIndex}"
-      data-position="${x}-${y}"
-    >
-    </div>`
-  )
-  $textRecord.css({
-    left: x,
-    top: y,
-    backgroundColor: avatar,
-  });
+export const textRecord = ({x, y, message, name, avatar, isMine, room}) => {
+  const $textRecord = $(`<div class="textRecord" id="${room}-${x}-${y}"></div>`);
+  $textRecord.css({left: x, top: y, backgroundColor: avatar});
+  const $textBubble = $(`<div class="textBubble" id="textBubble-${room}-${x}-${y}"></div>`);
 
-  const $textBubble = $(`<div class="textBubble" id="textBubble-${messageIndex}"></div>`)
+  if (isMine) {
+    const $closeButton = $('<button>x</button>');
+    $closeButton.on('click', removeMessage);
+    $closeButton.appendTo($textBubble);
+  }
 
   const $name = $('<b></b>');
   $name.text(name);
@@ -44,21 +40,6 @@ export const textRecord = ({x, y, messageIndex, message, name, avatar}) => {
     .on('adjacent', () => $textBubble.show());
   
   return $textRecord;
-}
-
-export const tempBubble = ({name, message}) => {
-  const $tempBubble = $(`<div class="tempBubble textBubble" id="tempBubble-${store.get('messageIndex')}"></div>`);
-
-  const $name = $('<b></b>');
-  $name.text(name);
-
-  const $message = $('<p></p>');
-  $message.text(message)
-
-  $name.appendTo($tempBubble);
-  $message.appendTo($tempBubble);
-
-  return $tempBubble;
 }
 
 export const systemBubble = (message) => {
