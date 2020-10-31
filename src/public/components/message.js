@@ -12,7 +12,14 @@ export const myTextRecord = ({message}) => {
 }
 
 export const textRecord = ({x, y, messageIndex, message, name, avatar}) => {
-  const $textRecord = $(`<div class="textRecord" id="textRecord-${messageIndex}"></div>`)
+  const $textRecord = $(
+    `<div 
+      class="textRecord" 
+      id="textRecord-${messageIndex}"
+      data-position="${x}-${y}"
+    >
+    </div>`
+  )
   $textRecord.css({
     left: x,
     top: y,
@@ -34,6 +41,7 @@ export const textRecord = ({x, y, messageIndex, message, name, avatar}) => {
   $textRecord
     .mouseenter(() => $textBubble.show())
     .mouseleave(() => $textBubble.hide())
+    .on('adjacent', () => $textBubble.show());
   
   return $textRecord;
 }
