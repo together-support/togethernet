@@ -3,13 +3,13 @@ class Store {
     this.name = 'Anonymous'
     this.avatar = '#000';
     this.socketId = '';
-    this.allowSendMessage = true;
     this.room = 'ephemeralSpace';
 
-    this.messageIndex = 0;
-    this.systemMessageIndex = 0;
-
     this.peers = {};
+    this.needEphemeralHistory = true;
+    this.ephemeralHistory = {
+      ephemeralSpace: {},
+    };
   }
 
   set(key, val) {
@@ -36,21 +36,12 @@ class Store {
     delete this.peers[id];
   }
 
-  increment = (attribute) => {
-    if (!isNaN(this[attribute])) {
-      this[attribute] += 1;
-    }
-  }
-
   sendToPeer = (dataChannel, {type, data}) => {
     dataChannel.send(JSON.stringify({
       type,
       data: {
         ...data, 
-        socketId: this.socketId,
-        name: $('#_nameInput').text(),
-        avatar: $('#userProfile').val(),
-        room: this.room
+        ...this.getProfile(),
       }
     }));
   }
@@ -59,6 +50,29 @@ class Store {
     Object.values(this.peers).forEach(peer => {
       this.sendToPeer(peer.dataChannel, {type, data});
     });
+  }
+
+  addEphemeralHistory = (data) => {
+    const {x, y, room} = data;
+    const id = `${room}-${x}-${y}`;
+    if (this.ephemeralHistory[room]) {
+      this.ephemeralHistory[room][id] = {...data};
+    } else {
+      this.ephemeralHistory[room] = {[id]: {...data}};
+    }
+  }
+
+  removeEphemeralHistory = ({room, messageId}) => {
+    delete this.ephemeralHistory[room][messageId];
+  }
+
+  getProfile = () => {
+    return {
+      socketId: this.socketId,
+      name: $('#_nameInput').text(),
+      avatar: $('#userProfile').val(),
+      room: this.room,
+    }
   }
 }
 

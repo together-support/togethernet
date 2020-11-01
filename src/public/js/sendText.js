@@ -4,11 +4,15 @@ import {renderOutgoingEphemeralMessage} from './ephemeral.js'
 export const sendMessage = () => {
   const $messageInput = $('#_messageInput');
   const message = $messageInput.val();
-  if (!store.get('allowSendMessage')) {
-    alert("move to an empty spot to write the msg");
+
+  if (!Boolean(message)) {
+    return;
   }
 
-  if (store.get('allowSendMessage') && Boolean(message)) {
+  const {left, top} = $('#user').position();
+  if ($(`#${store.get('room')}-${left}-${top}`).length) {
+    alert("move to an empty spot to write the msg");
+  } else {
     if (store.get('room') === 'ephemeralSpace') {
       ephemeralSendMessage(message);
     } else if (store.get('room') === 'archivalSpace') {
@@ -20,17 +24,12 @@ export const sendMessage = () => {
 }
 
 const ephemeralSendMessage = (message) => {
-  const data = {
-    type: 'text', 
-    data: {
-      message,
-      x: $('#user').position().left,
-      y: $('#user').position().top
-    }
-  }
+  const {left, top} = $('#user').position();
+  const data = {message, x: left, y: top}
 
-  store.sendToPeers(data);
-  renderOutgoingEphemeralMessage({message, name: $('#_nameInput').text()});
+  store.sendToPeers({type: 'text', data});
+  store.addEphemeralHistory({...data, ...store.getProfile()});
+  renderOutgoingEphemeralMessage({...data, ...store.getProfile()});
 }
 
 const archivalSendMessage = () => {

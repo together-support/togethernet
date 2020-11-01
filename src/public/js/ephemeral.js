@@ -4,7 +4,7 @@ import {myTextRecord} from '../components/message.js';
 
 export const renderOutgoingEphemeralMessage = (data) => {
   removeAllSystemMessage();
-  const outgoingMessage = myTextRecord(data)
+  const outgoingMessage = myTextRecord(data);
   outgoingMessage.appendTo($(`#${store.get('room')}`));
 }
 
@@ -16,10 +16,9 @@ export const removeMessage = (event) => {
       $messageRecord.remove();
       store.sendToPeers({
         type: 'removeEphemeralMessage',
-        data: {
-          messageId: $messageRecord.attr('id')
-        }
+        data: {messageId: $messageRecord.attr('id')}
       });
+      store.removeEphemeralHistory({room: store.get('room'), messageId: $messageRecord.attr('id')})
     }
   });  
 };

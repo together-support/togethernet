@@ -96,13 +96,17 @@ export default class PeerConnection {
           y: $('#user').position().top,
         }
       });
+      
+      if (store.get('needEphemeralHistory')) {
+        store.sendToPeer(dataChannel, {type: 'requestEphemeralHistory'});
+      }
     };
 
     dataChannel.onerror = (event) => {
       dataChannel.close();
       addSystemMessage(event.error.message);
     };
-
+    
     return dataChannel
   }
 
