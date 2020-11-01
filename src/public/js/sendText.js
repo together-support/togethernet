@@ -25,18 +25,11 @@ export const sendMessage = () => {
 
 const ephemeralSendMessage = (message) => {
   const {left, top} = $('#user').position();
-  const data = {
-    type: 'text', 
-    data: {
-      message,
-      x: left,
-      y: top
-    }
-  }
+  const data = {message, x: left, y: top}
 
-  store.sendToPeers(data);
+  store.sendToPeers({type: 'text', data});
   store.addEphemeralHistory({...data, ...store.getProfile()});
-  renderOutgoingEphemeralMessage({message, ...store.getProfile()});
+  renderOutgoingEphemeralMessage({...data, ...store.getProfile()});
 }
 
 const archivalSendMessage = () => {
