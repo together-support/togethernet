@@ -4,11 +4,15 @@ import {renderOutgoingEphemeralMessage} from './ephemeral.js'
 export const sendMessage = () => {
   const $messageInput = $('#_messageInput');
   const message = $messageInput.val();
-  if (!store.get('allowSendMessage')) {
-    alert("move to an empty spot to write the msg");
+
+  if (!Boolean(message)) {
+    return;
   }
 
-  if (store.get('allowSendMessage') && Boolean(message)) {
+  const {left, top} = $('#user').position();
+  if ($(`#${store.get('room')}-${left}-${top}`).length) {
+    alert("move to an empty spot to write the msg");
+  } else {
     if (store.get('room') === 'ephemeralSpace') {
       ephemeralSendMessage(message);
     } else if (store.get('room') === 'archivalSpace') {

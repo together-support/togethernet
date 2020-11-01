@@ -3,13 +3,13 @@ class Store {
     this.name = 'Anonymous'
     this.avatar = '#000';
     this.socketId = '';
-    this.allowSendMessage = true;
     this.room = 'ephemeralSpace';
 
     this.messageIndex = 0;
     this.systemMessageIndex = 0;
 
     this.peers = {};
+    this.needEphemeralHistory = true;
   }
 
   set(key, val) {
