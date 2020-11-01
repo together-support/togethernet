@@ -62,12 +62,16 @@ class Store {
     }
   }
 
+  removeEphemeralHistory = ({room, messageId}) => {
+    delete this.ephemeralHistory[room][messageId];
+  }
+
   getProfile = () => {
     return {
       socketId: this.socketId,
       name: $('#_nameInput').text(),
       avatar: $('#userProfile').val(),
-      room: this.room
+      room: this.room,
     }
   }
 }

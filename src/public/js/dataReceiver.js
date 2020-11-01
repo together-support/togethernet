@@ -44,9 +44,12 @@ const updatePeerAvatar = ({id, avatar}) => {
   $(`#peer-${id}`).finish().animate({backgroundColor: avatar});
 }
 
-const removeEphemeralPeerMessage = ({messageId}) => {
+const removeEphemeralPeerMessage = ({room, messageId}) => {
   $(`.textRecord#${messageId}`).finish().animate({opacity: 0}, {
-    complete: () => $(`textRecord#${messageId}`).remove()
+    complete: () => {
+      $(`textRecord#${messageId}`).remove();
+      store.removeEphemeralHistory({room, messageId});
+    }
   })
 }
 

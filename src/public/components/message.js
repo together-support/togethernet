@@ -1,4 +1,3 @@
-import store from '../store/store.js';
 import {removeMessage} from '../js/ephemeral.js';
 
 export const myTextRecord = (data) => {  
