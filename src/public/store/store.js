@@ -5,11 +5,9 @@ class Store {
     this.socketId = '';
     this.room = 'ephemeralSpace';
 
-    this.messageIndex = 0;
-    this.systemMessageIndex = 0;
-
     this.peers = {};
     this.needEphemeralHistory = true;
+    this.ephemeralHistory = {};
   }
 
   set(key, val) {
