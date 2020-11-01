@@ -26,21 +26,18 @@
       <button type="button" class="tab icon" id="archivalMode">
         <p>speaking-on-the-stage</p>
       </button>
+
+      <button type="button" class="tab icon" id="addRoom">
+        <p>+</p>
+      </button>
     </div>
 
-    <div class="row">
-      <div class="overlay" id="_infoToggleIcon"></div>
-    </div>
-
-    <div class="row">
+    <div class="row" id="rooms">
       <div class="chat privateMsg" id="ephemeralSpace" tabindex="0">
-        <div class="col">
-          <div class="messageDiv" id="_privateMsg"></div>
-        </div>
         <div id="user" class="avatar draggable ui-widget-content"></div>
       </div>
 
-      <div class="chat publicMsg" id="publicMsgToggle">
+      <div class="chat publicMsg" id="archivalSpace">
         <div class="messageDiv" id="_publicMsg"></div>
       </div>
     </div>
