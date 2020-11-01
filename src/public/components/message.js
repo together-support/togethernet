@@ -1,20 +1,15 @@
 import store from '../store/store.js';
 import {removeMessage} from '../js/ephemeral.js';
 
-export const myTextRecord = ({message}) => {  
+export const myTextRecord = (data) => {  
   return textRecord({
-    name: $('#_nameInput').text(),
-    avatar: $('#userProfile').val(),
-    x: $('#user').position().left,
-    y: $('#user').position().top,
-    message,
+    ...data,
     isMine: true,
-    room: store.get('room'),
   });
 }
 
 export const textRecord = ({x, y, message, name, avatar, isMine, room}) => {
-  const $textRecord = $(`<div class="textRecord" id="${room}-${x}-${y}"></div>`);
+  const $textRecord = $(`<div class="textRecord ephemeral" id="${room}-${x}-${y}"></div>`);
   $textRecord.css({left: x, top: y, backgroundColor: avatar});
   const $textBubble = $(`<div class="textBubble" id="textBubble-${room}-${x}-${y}"></div>`);
 
@@ -43,7 +38,7 @@ export const textRecord = ({x, y, message, name, avatar, isMine, room}) => {
 }
 
 export const systemBubble = (message) => {
-  const $systemBubble = $(`<div class="systemBubble" id="systemBubble-${store.get('systemMessageIndex')}"></div>`);
+  const $systemBubble = $(`<div class="systemBubble"></div>`);
   const $message = $('<p></p>');
   $message.text(message);
 
