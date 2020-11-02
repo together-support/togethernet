@@ -1,5 +1,5 @@
 import {textRecord} from '../components/message.js';
-import {renderPeer} from '../components/users.js';
+import {peerAvatar} from '../components/users.js';
 import store from '../store/index.js'
 
 export const handleData = ({event, peerId}) => {
@@ -33,7 +33,7 @@ const renderIncomingEphemeralMessage = ({x, y, name, avatar, message, room}) => 
 }
 
 const initPeer = (data) => {
-  renderPeer(data).appendTo($(`#${data.room}`));
+  peerAvatar(data).appendTo($(`#${data.room}`));
 }
 
 const updatePeerPosition = ({id, x, y}) => {
