@@ -1,5 +1,6 @@
 import store from '../store/index.js';
 import DOMPurify from 'dompurify';
+import {sendPositionToPeers, showAdjacentMessages} from './positions.js';
 
 export default class MoveableUser {
   initialize = () => {
@@ -45,31 +46,7 @@ export default class MoveableUser {
   }
 
   onAnimationComplete = () => {
-    this.showAdjacentMessages();
-    this.sendPositionToPeers();
-  }
-
-  showAdjacentMessages = () => {
-    const {left, top} = $('#user').position();
-    const adjacentPositions = [
-      `${left}-${top + this.avatarSize}`,
-      `${left}-${top - this.avatarSize}`,
-      `${left - this.avatarSize}-${top}`,
-      `${left + this.avatarSize}-${top}`,
-    ]
-
-    adjacentPositions.forEach(position => {
-      $(`#${store.get('room')}-${position}`).trigger('adjacent');
-    })
-  }
-
-  sendPositionToPeers = () => {
-    store.sendToPeers({
-      type: 'position', 
-      data: {
-        x: $('#user').position().left,
-        y: $('#user').position().top,
-      }
-    });
+    showAdjacentMessages();
+    sendPositionToPeers();
   }
 }

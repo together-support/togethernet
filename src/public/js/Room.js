@@ -1,5 +1,6 @@
 import store from '../store/index.js';
 import throttle from 'lodash/throttle';
+import {sendPositionToPeers, showAdjacentMessages} from './positions.js';
 
 export default class Room {
   constructor(options) {
@@ -11,14 +12,14 @@ export default class Room {
   }
 
   initialize = () => {
-    this.renderMenuButton();
-    this.renderRoom();
+    this.initializeMenuButton();
+    this.initializeSpace();
     if (this.ephemeral) {
       this.attachKeyboardEvents();
     }
   }
 
-  renderMenuButton = () => {
+  initializeMenuButton = () => {
     const $roomLink = $('<button type="button" class="tab icon"></button>')
     const $roomTitle = $('<p></p>');
     $roomTitle.text(this.name);
@@ -27,24 +28,38 @@ export default class Room {
       $('.chat').each((_, el) => {
         $(el).hide();
       })
-      $(`#${this.roomId}`).show();
+      $(`#${this.roomId}`).trigger('showRoom');
     })
     $roomLink.insertBefore($('#addRoom'));
   }
 
-  renderRoom = () => {
-    const $room = $(`<div class="chat ${this.ephemeral ? 'privateMsg' : 'publicMsg'}" id="${this.roomId}" tabindex="0"></div>`);
+  initializeSpace = () => {
+    const $room = $(`
+      <div
+        class="chat ${this.ephemeral ? 'squaresView' : 'listView'}" 
+        id="${this.roomId}"
+        tabindex="0"
+        ${store.get('room') === this.roomId ? '' : 'style="display:none"'}
+      >
+      </div>
+    `);
     $room.appendTo('#rooms');
-    this.$roomEl = $room;
 
-    if (store.get('room') === this.roomId) {
-      $room.show();
-      store.set('rightBoundary', $room.width());
-      store.set('bottomBoundary', $room.height());
-      $(window).on('resize', throttle(this.changeBoundary, 500));
-    } else {
-      $room.hide();
-    }
+    $room.on('showRoom', this.showRoom);
+    $room.on('hideRoom', this.hideRoom);
+
+    this.$roomEl = $room;
+  }
+
+  hideRoom = () => {
+    this.$roomEl.hide();
+  }
+
+  showRoom = () => {
+    this.$roomEl.show();
+    store.set('rightBoundary', this.$roomEl.width());
+    store.set('bottomBoundary', this.$roomEl.height());
+    $(window).on('resize', throttle(this.changeBoundary, 500));
   }
 
   attachKeyboardEvents = () => {
@@ -94,5 +109,10 @@ export default class Room {
   changeBoundary = () => {
     store.set('rightBoundary', store.get('leftBoundary') + this.$room.width());
     store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
+  }
+
+  onAnimationComplete = () => {
+    showAdjacentMessages();
+    sendPositionToPeers();
   }
 }

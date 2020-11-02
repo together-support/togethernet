@@ -87,7 +87,7 @@ p {
   padding-right: 10pt;
 }
 
-.privateMsg {
+.squaresView {
   float: left;
   background-color: #ead1dcff;
   color: #eee;
@@ -114,7 +114,7 @@ p {
   padding-left: 10px;
 }
 
-.publicMsg {
+.listView {
   float: left;
   display: none;
   background-color: white;
@@ -165,12 +165,6 @@ p {
   font-size: 14px;
 }
 
-#_privateMsg,
-#_publicMsg {
-  display: flex;
-  flex-grow: 1;
-}
-
 .overlay {
   display: none;
   flex-grow: 1;
@@ -199,11 +193,6 @@ p {
 
 #_privateStamp p {
   color: grey;
-}
-
-#_privateMsg {
-  display: flex;
-  order: 3;
 }
 
 #systemMsg p {
