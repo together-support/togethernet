@@ -4,6 +4,7 @@ import {startRecordingAudio, sendAudio} from './sendAudio.js';
 import DOMPurify from 'dompurify';
 import RoomForm from './RoomForm.js'
 import {renderUserAvatar, attachKeyboardEvents} from './ephemeral.js';
+import {defaultRooms} from '../constants/index.js';
 
 export const attachUIEvents = () => {
   $(document).on('keydown', (e) => {
@@ -68,6 +69,8 @@ const initAvatarColor = () => {
 }
 
 export const setUpDefaultRooms = () => {
-  renderUserAvatar();
-  attachKeyboardEvents($('#ephemeralSpace'));
+  Object.values(defaultRooms).forEach(defaultRoom => {
+    defaultRoom.attachEvents();
+  });
+  defaultRooms['ephemeralSpace'].showRoom();
 }

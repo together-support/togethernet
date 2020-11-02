@@ -8,44 +8,49 @@ export default class Room {
     this.ephemeral = options.ephemeral;
     this.name = options.name;
     this.roomId = options.roomId;
-    this.$room = null;
-    this.isCurrentRoom = store.get('room') === this.roomId;
+    this.$room = $(`#${this.roomId}`);
+    this.$roomLink = $(`#${this.roomId}Link`);
   }
 
   initialize = () => {
-    this.initializeMenuButton();
-    this.$room = this.initializeSpace();
-
-    if (this.isCurrentRoom) {
-      this.showRoom();
-    }
-
-    this.$room.on('showRoom', this.showRoom);
-    this.$room.on('hideRoom', this.hideRoom);
+    this.render();
+    this.attachEvents();
   }
 
-  initializeMenuButton = () => {
+  render = () => {
+    this.renderMenuButton();
+    this.renderSpace();
+  }
+
+  renderMenuButton = () => {
     const $roomLink = $('<button type="button" class="tab icon"></button>')
     const $roomTitle = $('<p></p>');
     $roomTitle.text(this.name);
     $roomTitle.appendTo($roomLink);
-    $roomLink.on('click', () => {
-      $('.chat').each((_, el) => {
-        $(el).trigger('hideRoom');
-      })
-      $(`#${this.roomId}`).trigger('showRoom');
-    })
     $roomLink.insertBefore($('#addRoom'));
+    this.$roomLink = $roomLink;
   }
 
   initializeSpace = () => {
     const $room = $(`<div class="chat hidden" id="${this.roomId}" tabindex="0"></div>`);
     this.ephemeral ? $room.addClass('squaresView') : $room.addClass('listView');
     $room.appendTo('#rooms');
+    this.$room = $room;
+  }
+
+  attachEvents = () => {
+    this.$roomLink.on('click', this.goToRoom);
     if (this.ephemeral) {
-      attachKeyboardEvents($room);
+      attachKeyboardEvents(this.$room);
     };
-    return $room;
+
+    this.$room.on('showRoom', this.showRoom);
+    this.$room.on('hideRoom', this.hideRoom);
+  }
+
+  goToRoom = () => {
+    $('.chat').each((_, el) => $(el).trigger('hideRoom'));
+    this.$room.trigger('showRoom');
   }
 
   showRoom = () => {

@@ -73,8 +73,8 @@ const animationEvents = {
 
 export const renderUserAvatar = () => {
   userAvatar().appendTo($(`#${store.get('room')}`));
-  makeDraggableUser();
   store.set('avatarSize', $("#user").width());
+  makeDraggableUser();
 }
 
 const makeDraggableUser = () => {
