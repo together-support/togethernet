@@ -13,10 +13,10 @@ export const sendPositionToPeers = () => {
 export const showAdjacentMessages = () => {
   const {left, top} = $('#user').position();
   const adjacentPositions = [
-    `${left}-${top + this.avatarSize}`,
-    `${left}-${top - this.avatarSize}`,
-    `${left - this.avatarSize}-${top}`,
-    `${left + this.avatarSize}-${top}`,
+    `${left}-${top + store.get('avatarSize')}`,
+    `${left}-${top - store.get('avatarSize')}`,
+    `${left - store.get('avatarSize')}-${top}`,
+    `${left + store.get('avatarSize')}-${top}`,
   ]
 
   adjacentPositions.forEach(position => {

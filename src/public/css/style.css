@@ -116,7 +116,6 @@ p {
 
 .listView {
   float: left;
-  display: none;
   background-color: white;
   z-index: 1;
 }
@@ -163,14 +162,6 @@ p {
 
 #_privateSendBtn {
   font-size: 14px;
-}
-
-.overlay {
-  display: none;
-  flex-grow: 1;
-  padding: 5px;
-  background-color: black;
-  color: greenyellow;
 }
 
 #_privateName {
@@ -359,4 +350,8 @@ input[type="color"]::-webkit-color-swatch {
 
 button p {
   font-size: 12px;
+}
+
+.hidden {
+  display: none;
 }

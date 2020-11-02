@@ -9,6 +9,7 @@ export default class Room {
     this.name = options.name;
     this.roomId = options.roomId;
     this.$roomEl = null;
+    this.isCurrentRoom = store.get('room') === this.roomId;
   }
 
   initialize = () => {
@@ -17,6 +18,13 @@ export default class Room {
     if (this.ephemeral) {
       this.attachKeyboardEvents();
     }
+
+    if (this.isCurrentRoom) {
+      this.changeBoundary();
+    }
+
+    this.$roomEl.on('showRoom', this.showRoom);
+    this.$roomEl.on('hideRoom', this.hideRoom);
   }
 
   initializeMenuButton = () => {
@@ -34,32 +42,13 @@ export default class Room {
   }
 
   initializeSpace = () => {
-    const $room = $(`
-      <div
-        class="chat ${this.ephemeral ? 'squaresView' : 'listView'}" 
-        id="${this.roomId}"
-        tabindex="0"
-        ${store.get('room') === this.roomId ? '' : 'style="display:none"'}
-      >
-      </div>
-    `);
+    const $room = $(`<div class="chat" id="${this.roomId}" tabindex="0"></div>`);
+
+    this.ephemeral ? $room.addClass('squaresView') : $room.addClass('listView');
+    if (!this.isCurrentRoom) { $room.addClass('hidden') };
+
     $room.appendTo('#rooms');
-
-    $room.on('showRoom', this.showRoom);
-    $room.on('hideRoom', this.hideRoom);
-
     this.$roomEl = $room;
-  }
-
-  hideRoom = () => {
-    this.$roomEl.hide();
-  }
-
-  showRoom = () => {
-    this.$roomEl.show();
-    store.set('rightBoundary', this.$roomEl.width());
-    store.set('bottomBoundary', this.$roomEl.height());
-    $(window).on('resize', throttle(this.changeBoundary, 500));
   }
 
   attachKeyboardEvents = () => {
@@ -107,12 +96,22 @@ export default class Room {
   }
 
   changeBoundary = () => {
-    store.set('rightBoundary', store.get('leftBoundary') + this.$room.width());
-    store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
+    store.set('rightBoundary', store.get('leftBoundary') + this.$roomEl.width());
+    store.set('bottomBoundary', store.get('topBoundary') + this.$roomEl.height());
   }
 
   onAnimationComplete = () => {
     showAdjacentMessages();
     sendPositionToPeers();
+  }
+
+  hideRoom = () => {
+    this.$roomEl.hide();
+  }
+
+  showRoom = () => {
+    this.$roomEl.show();
+    this.changeBoundary();
+    $(window).on('resize', throttle(this.changeBoundary, 500));
   }
 }
