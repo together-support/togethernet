@@ -3,6 +3,7 @@ import {sendMessage} from './sendText.js';
 import {startRecordingAudio, sendAudio} from './sendAudio.js';
 import DOMPurify from 'dompurify';
 import RoomForm from './RoomForm.js'
+import {renderUserAvatar, attachKeyboardEvents} from './ephemeral.js';
 
 export const attachUIEvents = () => {
   $(document).on('keydown', (e) => {
@@ -59,9 +60,14 @@ const initAvatarColor = () => {
 
   $userProfile.on('change', (e) => {
     e.preventDefault();
-    $user.css('background-color', e.target.value);
+    $('#user').css('background-color', e.target.value);
     store.sendToPeers({
       type: 'changeAvatar'
     });
   });
+}
+
+export const setUpDefaultRooms = () => {
+  renderUserAvatar();
+  attachKeyboardEvents($('#ephemeralSpace'));
 }
