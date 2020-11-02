@@ -1,4 +1,4 @@
-import store from '../store/store.js'
+import store from '../store/index.js'
 import {renderOutgoingEphemeralMessage} from './ephemeral.js'
 
 export const sendMessage = () => {

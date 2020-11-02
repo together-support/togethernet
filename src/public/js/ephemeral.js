@@ -1,4 +1,4 @@
-import store from '../store/store.js';
+import store from '../store/index.js';
 import {removeAllSystemMessage} from './systemMessage.js';
 import {myTextRecord} from '../components/message.js';
 

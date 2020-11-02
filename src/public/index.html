@@ -19,28 +19,12 @@
 <body>
   <div class="container">
     <div class="menu row">
-      <button type="button" class="tab icon" id="ephemeralMode">
-        <p>sitting-at-the-park</p>
-      </button>
-
-      <button type="button" class="tab icon" id="archivalMode">
-        <p>speaking-on-the-stage</p>
-      </button>
-
       <button type="button" class="tab icon" id="addRoom">
         <p>+</p>
       </button>
     </div>
 
-    <div class="row" id="rooms">
-      <div class="chat privateMsg" id="ephemeralSpace" tabindex="0">
-        <div id="user" class="avatar draggable ui-widget-content"></div>
-      </div>
-
-      <div class="chat publicMsg" id="archivalSpace">
-        <div class="messageDiv" id="_publicMsg"></div>
-      </div>
-    </div>
+    <div class="row" id="rooms"></div>
 
     <div class="sendMessageDiv row">
       <input type="color" id="userProfile" class="slit" title="change avatar color" name="userProfile">

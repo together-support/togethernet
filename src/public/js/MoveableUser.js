@@ -1,23 +1,11 @@
-import throttle from 'lodash/throttle';
-import store from '../store/store.js';
+import store from '../store/index.js';
 import DOMPurify from 'dompurify';
 
 export default class MoveableUser {
-  constructor() {
-    this.avatarSize = $('#user').width();
-    this.topBoundary = 0;
-    this.leftBoundary = 0;
-    this.rightBoundary = $('#ephemeralSpace').width();
-    this.bottomBoundary = $('#ephemeralSpace').height();
-
-    $(window).on('resize', throttle(this.changeBoundary, 500));
-  }
-
   initialize = () => {
     $('#_nameInput').on('click', this.setMyUserName);
     this.initializeAvatar();
     this.makeDraggable();
-    this.attachKeyboardEvents();
   };
 
   setMyUserName = () => {
@@ -28,7 +16,7 @@ export default class MoveableUser {
   };
 
   initializeAvatar = () => {
-    const $user = $('#user');
+    const $user = $('<div id="user" class="avatar draggabble ui-widget-content"></div>');
     const $userProfile = $('#userProfile');
     const randomColor = Math.floor(Math.random() * 16777216).toString(16)
     const avatarColor = `#${randomColor}${'0'.repeat(6 - randomColor.length)}`.substring(0, 7);
@@ -44,63 +32,16 @@ export default class MoveableUser {
         type: 'changeAvatar'
       });
     });
+
+    $user.appendTo($(`#${store.get('room')}`));
+    store.set('avatarSize', $user.width());
   }
 
   makeDraggable = () => {
     $("#user").draggable({
-      grid: [this.avatarSize, this.avatarSize],
+      grid: [store.get('avatarSize'), store.get('avatarSize')],
       stop: this.onAnimationComplete,
     });
-  }
-
-  attachKeyboardEvents = () => {
-    $(document).on('keydown', (e) => {
-      if (['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(e.key)){
-        e.preventDefault();
-      }
-    });
-
-    const animationEvents = {
-      'ArrowUp': this.moveUp,
-      'ArrowLeft': this.moveLeft,
-      'ArrowRight': this.moveRight,
-      'ArrowDown': this.moveDown
-    }
-
-    $("#ephemeralSpace").on('keydown', (event) => {
-      event.preventDefault();
-      if(['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(event.key)) {
-        animationEvents[event.key]();
-      }
-    });
-  };
-
-  moveUp = () => {
-    const newY = $('#user').position().top - this.avatarSize;
-    if (newY >= this.topBoundary) {
-      $("#user").finish().animate({top: `-=${this.avatarSize}`}, {complete: this.onAnimationComplete});
-    }
-  }
-
-  moveDown = () => {
-    const newY = $('#user').position().top + this.avatarSize;
-    if (newY + this.avatarSize <= this.bottomBoundary) {
-      $("#user").finish().animate({top: `+=${this.avatarSize}`}, {complete: this.onAnimationComplete});
-    }
-  }
-
-  moveLeft = () => {
-    const newX = $('#user').position().left - this.avatarSize;
-    if (newX >= this.leftBoundary) {
-      $("#user").finish().animate({left: `-=${this.avatarSize}`}, {complete: this.onAnimationComplete});
-    }
-  }
-
-  moveRight = () => {
-    const newX = $('#user').position().left + this.avatarSize;
-    if (newX + this.avatarSize <= this.rightBoundary) {
-      $("#user").finish().animate({left: `+=${this.avatarSize}`}, {complete: this.onAnimationComplete});
-    }
   }
 
   onAnimationComplete = () => {
@@ -130,11 +71,5 @@ export default class MoveableUser {
         y: $('#user').position().top,
       }
     });
-  }
-
-  changeBoundary = () => {
-    this.rightBoundary = this.leftBoundary + $('#ephemeralSpace').width();
-    this.bottomBoundary = this.topBoundary + $('#ephemeralSpace').height();  
-    this.avatarSize = $('#user').width();
   }
 }
