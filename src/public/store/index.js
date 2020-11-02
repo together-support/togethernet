@@ -23,6 +23,8 @@ class Store {
     this.bottomBoundary = 0;
 
     this.avatarSize = 0;
+
+    console.log('new store')
   }
 
   set(key, val) {

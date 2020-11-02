@@ -109,6 +109,7 @@ const sendPositionToPeers = () => {
     data: {
       x: $('#user').position().left,
       y: $('#user').position().top,
+      room: store.get('room'),
     }
   });
 }

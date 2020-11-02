@@ -31,7 +31,7 @@ export default class Room {
     this.$roomLink = $roomLink;
   }
 
-  initializeSpace = () => {
+  renderSpace = () => {
     const $room = $(`<div class="chat hidden" id="${this.roomId}" tabindex="0"></div>`);
     this.ephemeral ? $room.addClass('squaresView') : $room.addClass('listView');
     $room.appendTo('#rooms');

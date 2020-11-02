@@ -1,6 +1,6 @@
 import browserify from 'browserify-middleware';
 import babelify from 'babelify';
-import publicConfig from './src/public/js/publicConfig.js';
+import publicConfig from './src/public/config/index.js';
 
 browserify.settings({
   transform: [

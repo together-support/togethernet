@@ -31,7 +31,10 @@ export const attachUIEvents = () => {
   $("#addRoom").on('click', addNewRoom);
   $('#_nameInput').on('click', setMyUserName);
 
-  initAvatarColor();
+  $('#userProfile').on('change', (e) => {
+    $('#user').css('background-color', e.target.value);
+    store.sendToPeers({type: 'changeAvatar'});
+  });
 }
 
 const hidePrivateMessage = () => {
@@ -50,27 +53,3 @@ const setMyUserName = () => {
 const addNewRoom = () => {
   new RoomForm().initialize();
 };
-
-const initAvatarColor = () => {
-  const randomColor = Math.floor(Math.random() * 16777216).toString(16)
-  const avatarColor = `#${randomColor}${'0'.repeat(6 - randomColor.length)}`.substring(0, 7);
-
-  store.set('avatar', avatarColor);
-  const $userProfile = $('#userProfile');
-  $userProfile.val(avatarColor);
-
-  $userProfile.on('change', (e) => {
-    e.preventDefault();
-    $('#user').css('background-color', e.target.value);
-    store.sendToPeers({
-      type: 'changeAvatar'
-    });
-  });
-}
-
-export const setUpDefaultRooms = () => {
-  Object.values(defaultRooms).forEach(defaultRoom => {
-    defaultRoom.attachEvents();
-  });
-  defaultRooms['ephemeralSpace'].showRoom();
-}

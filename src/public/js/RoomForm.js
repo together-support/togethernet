@@ -38,6 +38,8 @@ export default class RoomForm {
     store.rooms[this.roomId] = configs;
 
     $('#configureRoom').hide();
-    new Room(configs).initialize();
+    const newRoom = new Room(configs)
+    newRoom.initialize();
+    newRoom.goToRoom();
   }
 }
