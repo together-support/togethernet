@@ -28,7 +28,7 @@ export default class Room {
     $roomTitle.appendTo($roomLink);
     $roomLink.on('click', () => {
       $('.chat').each((_, el) => {
-        $(el).hide();
+        $(el).trigger('hideRoom');
       })
       $(`#${this.roomId}`).trigger('showRoom');
     })
@@ -36,20 +36,14 @@ export default class Room {
   }
 
   initializeSpace = () => {
-    const $room = $(`<div class="chat" id="${this.roomId}" tabindex="0"></div>`);
+    const $room = $(`<div class="chat hidden" id="${this.roomId}" tabindex="0"></div>`);
     this.ephemeral ? $room.addClass('squaresView') : $room.addClass('listView');
-    if (!this.isCurrentRoom) { $room.addClass('hidden') };
     $room.appendTo('#rooms');
     this.$roomEl = $room;
 
-    this.renderUserAvatar();
-    this.changeBoundary();
-  }
-
-  renderUserAvatar = () => {
-    userAvatar().appendTo($(`#${store.get('room')}`));
-    this.draggableUser();
-    store.set('avatarSize', $("#user").width());
+    if (this.isCurrentRoom) {
+      this.showRoom();
+    }
   }
 
   attachKeyboardEvents = () => {
@@ -96,21 +90,36 @@ export default class Room {
     }
   }
 
-  changeBoundary = () => {
-    store.set('rightBoundary', store.get('leftBoundary') + this.$roomEl.width());
-    store.set('bottomBoundary', store.get('topBoundary') + this.$roomEl.height());
+  showRoom = () => {
+    store.set('room', this.roomId)
+    this.$roomEl.show();
+    $(window).on('resize', this.onResize);
+    
+    if (this.ephemeral) {
+      this.renderUserAvatar();
+      this.changeBoundary();
+    }
   }
 
   hideRoom = () => {
+    $(window).off('resize', this.onResize);
     this.$roomEl.hide();
     $("#user").remove();
   }
 
-  showRoom = () => {
-    this.$roomEl.show();
-    this.changeBoundary();
-    $(window).on('resize', throttle(this.changeBoundary, 500));
-    this.renderUserAvatar();
+  onResize = throttle(() => { 
+    this.changeBoundary()
+  }, 500);
+
+  changeBoundary = () => {   
+    store.set('rightBoundary', store.get('leftBoundary') + this.$roomEl.width());
+    store.set('bottomBoundary', store.get('topBoundary') + this.$roomEl.height());
+  }
+
+  renderUserAvatar = () => {
+    userAvatar().appendTo($(`#${store.get('room')}`));
+    this.draggableUser();
+    store.set('avatarSize', $("#user").width());
   }
 
   draggableUser = () => {

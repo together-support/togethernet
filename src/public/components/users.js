@@ -12,7 +12,6 @@ export const peerAvatar = ({x, y, avatar, id}) => {
 }
 
 export const userAvatar = () => {
-  console.log(store.get('avatar'))
   const $user = $('<div id="user" class="avatar draggabble ui-widget-content"></div>');
   $user.css('background-color', store.get('avatar'));
   return $user;
