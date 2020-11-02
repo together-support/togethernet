@@ -87,7 +87,7 @@ p {
   padding-right: 10pt;
 }
 
-.privateMsg {
+.squaresView {
   float: left;
   background-color: #ead1dcff;
   color: #eee;
@@ -114,9 +114,8 @@ p {
   padding-left: 10px;
 }
 
-.publicMsg {
+.listView {
   float: left;
-  display: none;
   background-color: white;
   z-index: 1;
 }
@@ -165,20 +164,6 @@ p {
   font-size: 14px;
 }
 
-#_privateMsg,
-#_publicMsg {
-  display: flex;
-  flex-grow: 1;
-}
-
-.overlay {
-  display: none;
-  flex-grow: 1;
-  padding: 5px;
-  background-color: black;
-  color: greenyellow;
-}
-
 #_privateName {
   display: flex;
   padding-bottom: 4pt;
@@ -199,11 +184,6 @@ p {
 
 #_privateStamp p {
   color: grey;
-}
-
-#_privateMsg {
-  display: flex;
-  order: 3;
 }
 
 #systemMsg p {
@@ -370,4 +350,8 @@ input[type="color"]::-webkit-color-swatch {
 
 button p {
   font-size: 12px;
+}
+
+.hidden {
+  display: none;
 }

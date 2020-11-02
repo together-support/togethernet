@@ -1,6 +1,6 @@
 import {textRecord} from '../components/message.js';
 import {renderPeer} from '../components/users.js';
-import store from '../store/store.js'
+import store from '../store/index.js'
 
 export const handleData = ({event, peerId}) => {
   let data;

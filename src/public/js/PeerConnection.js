@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import store from '../store/store.js';
+import store from '../store/index.js';
 import {getBrowserRTC} from './ensureWebRTC.js'
 import {handleData} from './dataReceiver.js';
 import {addSystemMessage} from './systemMessage.js';

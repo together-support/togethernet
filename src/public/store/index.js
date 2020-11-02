@@ -1,3 +1,5 @@
+import {defaultRooms} from '../constants/index.js';
+
 class Store {
   constructor() {
     this.name = 'Anonymous'
@@ -10,6 +12,17 @@ class Store {
     this.ephemeralHistory = {
       ephemeralSpace: {},
     };
+
+    this.rooms = {
+      ...defaultRooms
+    };
+
+    this.topBoundary = 0;
+    this.leftBoundary = 0;
+    this.rightBoundary = 0;
+    this.bottomBoundary = 0;
+
+    this.avatarSize = 0;
   }
 
   set(key, val) {
