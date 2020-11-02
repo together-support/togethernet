@@ -2,6 +2,7 @@ import store from '../store/index.js';
 import {sendMessage} from './sendText.js';
 import {startRecordingAudio, sendAudio} from './sendAudio.js';
 import DOMPurify from 'dompurify';
+import RoomForm from './RoomForm.js'
 
 export const attachUIEvents = () => {
   $(document).on('keydown', (e) => {
@@ -45,7 +46,7 @@ const setMyUserName = () => {
 };
 
 const addNewRoom = () => {
-
+  new RoomForm().initialize();
 };
 
 const initAvatarColor = () => {

@@ -355,3 +355,54 @@ button p {
 .hidden {
   display: none;
 }
+
+.modalOverlay {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modalContent {
+  background-color: #EEEEEE;
+  margin: 120px auto;
+  padding: 25px;
+  border: 1px solid #888;
+  width: 414px;
+  height: 422px;
+  font-family: sans-serif;
+  line-height: 2;
+}
+
+.modalContent p {
+  font-family: sans-serif;
+}
+
+.modalContent .modalButtons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modalContent .modalButtons button {
+  padding: 5px 10px;
+  margin-left: 20px;
+  background-color: #919191;
+  color: #FFFFFF;
+}
+
+.modalContent .section {
+  padding: 0 0 20px 0;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
