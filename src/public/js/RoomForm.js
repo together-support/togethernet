@@ -2,10 +2,11 @@ import {EGALITARIAN_MODE, roomModes} from '../constants/index.js';
 import camelCase from 'lodash/camelCase';
 import store from '../store/index.js';
 import Room from './Room.js';
+import publicConfig from '../config/index.js';
 
 export default class RoomForm {
   constructor () {
-    this.mode = EGALITARIAN_MODE;
+    this.mode = publicConfig.defaultMode;
     this.name = '';
     this.roomId = '';
     this.ephemeral = true;
@@ -18,6 +19,7 @@ export default class RoomForm {
   initialize = () => {
     $('#configureRoom').find('.toggleButton').on('click', this.togglePrivacy);
     $('#newRoomName').on('change', this.updateRoomName);
+    $('#meetingMode').on('change', this.changeMeetingMode);
     $('#createNewRoom').on('click', this.createNewRoom);
     
     $("#addRoom").on('click', () => {
@@ -26,16 +28,24 @@ export default class RoomForm {
   }
 
   togglePrivacy = (e) => {
+    e.preventDefault();
     this.ephemeral = !this.ephemeral;
     $('#configureRoom').find('.toggleContainer').toggleClass('archival');
   }
 
+  changeMeetingMode = (e) => {
+    e.preventDefault();
+    this.mode = $('#meetingMode option:selected').val();
+  }
+
   updateRoomName = (e) => {
+    e.preventDefault();
     this.name = e.target.value;
     this.roomId = camelCase(e.target.value);
   }
 
-  createNewRoom = () => {
+  createNewRoom = (e) => {
+    e.preventDefault();
     const newRoom = new Room({
       mode: this.mode,
       ephemeral: this.ephemeral,
