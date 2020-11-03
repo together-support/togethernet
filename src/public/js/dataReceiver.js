@@ -52,7 +52,7 @@ const receiveRooms = ({rooms}) => {
     store.updateOrInitializeRoom(roomId, rooms[roomId]);
   });
 
-  store.getCurrentRoom().showRoom();
+  store.getCurrentRoom().goToRoom();
 }
 
 const addNewRoom = ({options}) => {
