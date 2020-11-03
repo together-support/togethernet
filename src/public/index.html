@@ -13,18 +13,72 @@
   <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 
   <!-- import the webpage's stylesheet -->
+  <link rel="stylesheet" type="text/css" href="/css/reset.css" />
   <link rel="stylesheet" type="text/css" href="/css/style.css" />
+  <link rel="stylesheet" type="text/css" href="/css/ephemeral.css" />
+  <link rel="stylesheet" type="text/css" href="/css/archival.css" />
 </head>
 
 <body>
   <div class="container">
     <div class="menu row">
+      <button type="button" class="tab icon" id="ephemeralSpaceLink">
+        <p>sitting-at-the-park</p>
+      </button>
+      <button type="button" class="tab icon" id="archivalSpaceLink">
+        <p>speaking-on-the-stage</p>
+      </button>
       <button type="button" class="tab icon" id="addRoom">
         <p>+</p>
       </button>
     </div>
 
-    <div class="row" id="rooms"></div>
+    <div id="configureRoom" class="modalOverlay">
+      <!-- Modal content -->
+      <div class="modalContent">
+        <div class="section">
+          <h3>Create a room</h3>
+          <p>Add additional rooms to communicate on different topics.</p>
+        </div>
+        <div class="section">
+          <h3>Ephemeral/Archival Mode</h3>
+          <p>When a room is set to ephemeral mode, conversations will not be stored on the server without collective consent. When a room is set to archival mode, conversations will be archived on the server automatically.</p>
+          <div class="ephemeralArchivalToggle">
+            <span>Ephemeral Mode</span>
+            <div class="toggleContainer">
+              <button class="toggleButton"></button>
+            </div>
+            <span>Archival Mode</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Mode</h3>
+          <select name="meetingMode" id="meetingMode">
+          </select>
+        </div>
+
+        <div class="section">
+          <h3>Name</h3>
+          <p>Customize the name of your room around a topic.</p>
+          <input id="newRoomName"type="text" placeholder="convening-on-the-beach"/>
+        </div>
+
+        <div class="section modalButtons">
+          <button>Customize</button>
+          <button id="createNewRoom">Create</button>
+        </div>
+        <p>Learn more about Ephemeral / Archival Modes&nbsp;<a href="#">here</a>.</p>
+      </div>
+    </div>       
+    
+    <div class="row" id="rooms">
+      <div class="chat squaresView" id="ephemeralSpace" tabindex="0">
+      </div>
+
+      <div class="chat listView hidden" id="archivalSpace">
+      </div>
+    </div>
 
     <div class="sendMessageDiv row">
       <input type="color" id="userProfile" class="slit" title="change avatar color" name="userProfile">

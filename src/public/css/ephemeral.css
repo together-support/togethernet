@@ -1,0 +1,85 @@
+.squaresView {
+  float: left;
+  background-color: #ead1dcff;
+  color: #eee;
+  z-index: 1;
+  position: relative;
+}
+
+.avatar {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+.textRecord,
+.audioRecord {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+}
+
+#user {
+  z-index: 5;
+}
+
+.textBubble,
+.systemBubble {
+  position: absolute;
+  top: -10px;
+  left: 52px;
+  width: auto;
+  min-width: 100px;
+  max-width: 300px;
+  padding: 5px;
+  border-radius: 5px;
+  text-align: left;
+  border: 1px solid transparent;
+  background-color: #f8f8f8;
+}
+
+.textBubble:after,
+.systemBubble:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 65%;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-left: 0;
+  border-bottom: 0;
+  margin-top: -4px;
+  margin-left: -8px;
+  z-index: 10;
+  border-right-color: #f8f8f8;
+}
+
+
+.systemBubble p,
+.textBubble p {
+  font-family: sans-serif;
+  font-size: 12px;
+  line-height: 15px;
+  text-align: left;
+  color: #000;
+  padding: 1px;
+}
+
+.textBubble {
+  color: #000;
+  display: flex;
+  flex-direction: column;
+}
+
+.textBubble button {
+  background-color:  #f8f8f8;
+  width: 100%;
+  text-align: right;
+}
+
+.draggable {
+  margin: 0;
+  font-size: 0.9em;
+}
