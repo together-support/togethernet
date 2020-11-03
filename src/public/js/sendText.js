@@ -1,5 +1,5 @@
 import store from '../store/index.js'
-import {renderOutgoingEphemeralMessage} from './ephemeral.js'
+import {renderOutgoingEphemeralMessage} from './ephemeralView.js'
 
 export const sendMessage = () => {
   const $messageInput = $('#_messageInput');

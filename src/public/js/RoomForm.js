@@ -58,6 +58,12 @@ export default class RoomForm {
 
     store.rooms[this.roomId] = newRoom;
     store.set('currentRoomId', this.roomId);
+    store.sendToPeers({
+      type: 'newRoom',
+      data: { 
+        options: newRoom
+      }
+    });
 
     newRoom.initialize();
     newRoom.goToRoom();

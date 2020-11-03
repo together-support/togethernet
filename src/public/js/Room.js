@@ -1,7 +1,7 @@
 import store from '../store/index.js';
 import throttle from 'lodash/throttle';
 import {keyboardEvent, renderUserAvatar} from './animatedAvatar.js';
-import {renderIncomingEphemeralMessage} from './sendEphemeralText.js';
+import {renderIncomingEphemeralMessage} from './ephemeralView.js';
 
 export default class Room {
   constructor(options) {
@@ -70,6 +70,13 @@ export default class Room {
     }
     
     this.renderHistory();
+
+    store.sendToPeers({
+      type: 'joinedRoom',
+      data: {
+        joinedRoomId: this.roomId
+      }
+    });
   }
 
   renderHistory = () => {

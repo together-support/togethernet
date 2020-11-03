@@ -1,4 +1,4 @@
-import {removeMessage} from '../js/sendEphemeralText.js';
+import {removeMessage} from '../js/ephemeralView.js';
 
 export const myTextRecord = (data) => {  
   return textRecord({

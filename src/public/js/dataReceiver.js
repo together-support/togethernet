@@ -1,6 +1,12 @@
-import {peerAvatar} from '../components/users.js';
 import store from '../store/index.js'
-import {renderIncomingEphemeralMessage} from './ephemeral.js'
+import {
+  removeEphemeralPeerMessage, 
+  renderIncomingEphemeralMessage, 
+  initPeer, 
+  updatePeerPosition, 
+  updatePeerAvatar,
+  updatePeerRoom
+} from './ephemeralView.js'
 
 export const handleData = ({event, peerId}) => {
   let data;
@@ -15,7 +21,11 @@ export const handleData = ({event, peerId}) => {
   } else if (data.type === 'initPeer') {
     initPeer({...data.data, id: peerId});
   } else if (data.type === 'position') {
-    updatePeerPosition({...data.data, id: peerId})
+    updatePeerPosition({...data.data, id: peerId}) 
+  } else if (data.type === 'newRoom') {
+    addNewRoom(data.data);
+  } else if (data.type === 'joinedRoom') {
+    updatePeerRoom(data.data);
   } else if (data.type === 'changeAvatar') {
     updatePeerAvatar({...data.data, id: peerId})
   } else if (data.type === 'removeEphemeralMessage') {
@@ -25,27 +35,6 @@ export const handleData = ({event, peerId}) => {
   } else if (data.type === 'shareRooms') {
     receiveRooms(data.data);
   }
-}
-
-const initPeer = (data) => {
-  peerAvatar(data).appendTo($(`#${data.roomId}`));
-}
-
-const updatePeerPosition = ({id, x, y}) => {
-  $(`#peer-${id}`).finish().animate({left: x, top: y})
-}
-
-const updatePeerAvatar = ({id, avatar}) => {
-  $(`#peer-${id}`).finish().animate({backgroundColor: avatar});
-}
-
-const removeEphemeralPeerMessage = ({roomId, messageId}) => {
-  $(`.textRecord#${messageId}`).finish().animate({opacity: 0}, {
-    complete: () => {
-      $(`textRecord#${messageId}`).remove();
-      store.get(roomId).removeEphemeralHistory(messageId);
-    }
-  })
 }
 
 const sendRooms = (peerId) => {
@@ -62,4 +51,8 @@ const receiveRooms = ({rooms}) => {
   Object.keys(rooms).forEach(roomId => {
     store.updateOrInitializeRoom(roomId, rooms[roomId]);
   });
+}
+
+const addNewRoom = ({options}) => {
+  store.updateOrInitializeRoom(options.roomId, options);
 }

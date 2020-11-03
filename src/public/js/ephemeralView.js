@@ -1,6 +1,7 @@
 import store from '../store/index.js';
 import {removeAllSystemMessage} from './systemMessage.js';
 import {myTextRecord, textRecord} from '../components/message.js';
+import {peerAvatar} from '../components/users.js';
 
 export const renderOutgoingEphemeralMessage = (data) => {
   removeAllSystemMessage();
@@ -27,3 +28,37 @@ export const removeMessage = (event) => {
     }
   });  
 };
+
+export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
+  $(`.textRecord#${messageId}`).finish().animate({opacity: 0}, {
+    complete: () => {
+      $(`textRecord#${messageId}`).remove();
+      store.get(roomId).removeEphemeralHistory(messageId);
+    }
+  })
+}
+
+export const initPeer = (data) => {
+  peerAvatar(data).appendTo($(`#${data.roomId}`));
+}
+
+export const updatePeerPosition = ({id, x, y}) => {
+  $(`#peer-${id}`).finish().animate({left: x, top: y})
+}
+
+export const updatePeerAvatar = ({id, avatar}) => {
+  $(`#peer-${id}`).finish().animate({backgroundColor: avatar});
+}
+
+export const updatePeerRoom = ({socketId, joinedRoomId}) => {
+  $(`#peer-${socketId}`).finish().animate({opacity: 0}, {
+    complete: () => {
+      $(`#peer-${socketId}`).appendTo(store.getRoom(joinedRoomId).$room);
+      $(`#peer-${socketId}`).css({
+        left: 0,
+        top: 0,
+        opacity: 1
+      });
+    }
+  });
+}
