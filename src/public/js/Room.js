@@ -1,6 +1,6 @@
 import store from '../store/index.js';
 import throttle from 'lodash/throttle';
-import {attachKeyboardEvents, renderUserAvatar} from './ephemeral.js';
+import {keyboardEvent, renderUserAvatar} from './ephemeral.js';
 
 export default class Room {
   constructor(options) {
@@ -40,8 +40,10 @@ export default class Room {
 
   attachEvents = () => {
     this.$roomLink.on('click', this.goToRoom);
+
     if (this.ephemeral) {
-      attachKeyboardEvents(this.$room);
+      this.setBoundary();
+      this.$room.on('keydown', keyboardEvent)
     };
 
     this.$room.on('showRoom', this.showRoom);
@@ -54,13 +56,15 @@ export default class Room {
   }
 
   showRoom = () => {
-    store.set('room', this.roomId)
+    store.set('room', this.roomId);
+    store.set('$room', this.$room);
+
     this.$room.show();
     $(window).on('resize', this.onResize);
     
     if (this.ephemeral) {
       renderUserAvatar();
-      this.changeBoundary();
+      this.setBoundary();
     }
   }
 
@@ -71,10 +75,10 @@ export default class Room {
   }
 
   onResize = throttle(() => { 
-    this.changeBoundary()
+    this.setBoundary()
   }, 500);
 
-  changeBoundary = () => {   
+  setBoundary = () => {   
     store.set('rightBoundary', store.get('leftBoundary') + this.$room.width());
     store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
   }

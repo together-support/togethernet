@@ -24,16 +24,13 @@ export const removeMessage = (event) => {
   });  
 };
 
-export const attachKeyboardEvents = ($element) => {
-  store.set('rightBoundary', store.get('leftBoundary') + $element.width());
-  store.set('bottomBoundary', store.get('topBoundary') + $element.height());
+export const keyboardEvent = (event) => {
+  event.preventDefault();
 
-  $element.on('keydown', (event) => {
-    event.preventDefault();
-    if(['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(event.key)) {
-      animationEvents[event.key]();
-    }
-  });
+  if(['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(event.key)) {
+    hidePrivateMessage();
+    animationEvents[event.key]();
+  }
 };
 
 const moveUp = () => {
@@ -72,7 +69,7 @@ const animationEvents = {
 }
 
 export const renderUserAvatar = () => {
-  userAvatar().appendTo($(`#${store.get('room')}`));
+  userAvatar().appendTo(store.get('$room'));
   store.set('avatarSize', $("#user").width());
   makeDraggableUser();
 }
@@ -81,6 +78,16 @@ const makeDraggableUser = () => {
   $("#user").draggable({
     grid: [store.get('avatarSize'), store.get('avatarSize')],
     stop: onAnimationComplete,
+  });
+
+  $("#user").on('dragstart', () => {
+    hidePrivateMessage();
+  });
+}
+
+const hidePrivateMessage = () => {
+  store.get('$room').find('.textBubble').each((_, el) => {
+    $(el).hide();
   });
 }
 

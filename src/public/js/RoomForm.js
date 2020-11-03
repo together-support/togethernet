@@ -13,13 +13,21 @@ export default class RoomForm {
     roomModes.forEach((mode) => {
       $('#meetingMode').append($('<option>').val(mode).text(mode));
     });
-
-    $('#configureRoom').show();
   }
 
   initialize = () => {
+    $('#configureRoom').find('.toggleButton').on('click', this.togglePrivacy);
     $('#newRoomName').on('change', this.updateRoomName);
     $('#createNewRoom').on('click', this.createNewRoom);
+    
+    $("#addRoom").on('click', () => {
+      $('#configureRoom').show();
+    });
+  }
+
+  togglePrivacy = (e) => {
+    this.ephemeral = !this.ephemeral;
+    $('#configureRoom').find('.toggleContainer').toggleClass('archival');
   }
 
   updateRoomName = (e) => {
@@ -28,18 +36,25 @@ export default class RoomForm {
   }
 
   createNewRoom = () => {
-    const configs = {
+    const newRoom = new Room({
       mode: this.mode,
       ephemeral: this.ephemeral,
       name: this.name,
       roomId: this.roomId,
-    };
+    });
+
     store.set('room', this.roomId);
-    store.rooms[this.roomId] = configs;
+    store.rooms[this.roomId] = newRoom;
 
     $('#configureRoom').hide();
-    const newRoom = new Room(configs)
     newRoom.initialize();
     newRoom.goToRoom();
+  }
+
+  resetForm = () => {
+    this.mode = EGALITARIAN_MODE;
+    this.name = '';
+    this.roomId = '';
+    this.ephemeral = true;
   }
 }

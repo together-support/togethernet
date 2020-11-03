@@ -87,13 +87,6 @@ p {
   padding-right: 10pt;
 }
 
-.squaresView {
-  float: left;
-  background-color: #ead1dcff;
-  color: #eee;
-  z-index: 1;
-}
-
 #_nameInput {
   border: 1px solid gray;
   border-right: 0px solid transparent;
@@ -186,52 +179,14 @@ p {
   color: grey;
 }
 
-#systemMsg p {
-  color: greenyellow;
-}
-
-.draggable {
-  margin: 0;
-  font-size: 0.9em;
-}
-
 .ui-widget-header p,
 .ui-widget-content p {
   margin: 0;
 }
 
-#user {
-  z-index: 5;
-}
-
-#ephemeralSpace {
-  position: relative;
-}
-
-.avatar {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
-}
-
-.entry {
-  position: relative;
-  display: inline-block;
-  float: left;
-  width: 50px;
-  height: 50px;
-}
 .slit {
   position: relative;
   width: 10px;
-  height: 50px;
-}
-
-.textRecord,
-.audioRecord {
-  position: absolute;
-  width: 50px;
   height: 50px;
 }
 
@@ -261,90 +216,16 @@ p {
   background-color: yellow;
 }
 
-.textBubble,
-.systemBubble {
-  position: absolute;
-  top: -10px;
-  left: 52px;
-  width: auto;
-  min-width: 100px;
-  max-width: 300px;
-  padding: 5px;
-  border-radius: 5px;
-  text-align: left;
-  border: 1px solid transparent;
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
 }
 
-.textBubble {
-  background-color: #f8f8f8;
-}
-
-.systemBubble {
-  background-color: #f8f8f8;
-}
-
-.textBubble:after,
-.systemBubble:after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 65%;
-  width: 0;
-  height: 0;
-  border: 8px solid transparent;
-  border-left: 0;
-  border-bottom: 0;
-  margin-top: -4px;
-  margin-left: -8px;
-  z-index: 10;
-}
-
-.textBubble:after {
-  border-right-color: #f8f8f8;
-  z-index: 9;
-}
-
-.systemBubble:after {
-  border-right-color: #f8f8f8;
-  z-index: 9;
-}
-
-.systemBubble p,
-.textBubble p {
-  font-family: sans-serif;
-  font-size: 12px;
-  line-height: 15px;
-  text-align: left;
-  color: #000;
-  padding: 1px;
-}
-
-.textBubble {
-  color: #000;
-  display: flex;
-  flex-direction: column;
-}
-
-.textBubble button {
+input[type="color"]::-webkit-color-swatch {
   border: none;
-  background-color:  #f8f8f8;
-  width: 100%;
-  text-align: right;
-}
-
-#privateChatBox {
-  width: 100%;
-  height: 100%;
 }
 
 input[type="color"] {
   -webkit-appearance: none;
-  border: none;
-}
-input[type="color"]::-webkit-color-swatch-wrapper {
-  padding: 0;
-}
-input[type="color"]::-webkit-color-swatch {
   border: none;
 }
 
@@ -374,8 +255,8 @@ button p {
   margin: 120px auto;
   padding: 25px;
   border: 1px solid #888;
-  width: 414px;
-  height: 452px;
+  width: 450px;
+  height: 480px;
   font-family: sans-serif;
   line-height: 2;
 }
@@ -400,9 +281,31 @@ button p {
   padding: 0 0 20px 0;
 }
 
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
+.ephemeralArchivalToggle {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding-top: 20px;
+}
+
+.toggleContainer {
+  width: 80px;
+  height: 34px;
+  background-color: white;
+  border: 2px solid darkgray;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.toggleButton {
+  width: 50px;
+  height: 30px;
+  border-radius: 30px;
+  background-color: darkgray;
+}
+
+.toggleContainer.archival {
+  justify-content: flex-end;
 }

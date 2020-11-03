@@ -3,8 +3,6 @@ import {sendMessage} from './sendText.js';
 import {startRecordingAudio, sendAudio} from './sendAudio.js';
 import DOMPurify from 'dompurify';
 import RoomForm from './RoomForm.js'
-import {renderUserAvatar, attachKeyboardEvents} from './ephemeral.js';
-import {defaultRooms} from '../constants/index.js';
 
 export const attachUIEvents = () => {
   $(document).on('keydown', (e) => {
@@ -25,22 +23,14 @@ export const attachUIEvents = () => {
   $('#_recordBtn').on('mousedown', startRecordingAudio)
   $('#_recordBtn').on('mouseup', sendAudio)
 
-  $("#ephemeralSpace").on('keydown', hidePrivateMessage);
-  $("#user").on('dragstart', hidePrivateMessage);
-
-  $("#addRoom").on('click', addNewRoom);
   $('#_nameInput').on('click', setMyUserName);
 
   $('#userProfile').on('change', (e) => {
     $('#user').css('background-color', e.target.value);
     store.sendToPeers({type: 'changeAvatar'});
   });
-}
 
-const hidePrivateMessage = () => {
-  $('.textBubble').each((_, el) => {
-    $(el).hide();
-  });
+  new RoomForm().initialize();
 }
 
 const setMyUserName = () => {
@@ -48,8 +38,4 @@ const setMyUserName = () => {
   if (Boolean(name)) {
     $("#_nameInput").text(DOMPurify.sanitize(name));
   }
-};
-
-const addNewRoom = () => {
-  new RoomForm().initialize();
 };

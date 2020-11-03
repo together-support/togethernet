@@ -4,9 +4,9 @@ import {attachUIEvents} from './uiEvents.js'
 
 $(window).load(() => {
   initAvatarColor();
+  attachUIEvents();
   Object.values(store.get('rooms')).forEach(room => room.attachEvents());
   store.get('rooms')['ephemeralSpace'].goToRoom();
-  attachUIEvents();
   new PeerConnection().connect();
 });
 
