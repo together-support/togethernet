@@ -8,7 +8,6 @@ export default class PeerConnection {
   constructor () {
     this._wrtc = getBrowserRTC();
     this.socket = io.connect();
-    this.channelName = store.get('room');
     this.initiator = false;
   }
 
@@ -67,7 +66,7 @@ export default class PeerConnection {
     };
 
     if (initiator) {
-      const dataChannel = peerConnection.createDataChannel(store.get('room'), {reliable: true});
+      const dataChannel = peerConnection.createDataChannel('tn', {reliable: true});
       peerConnection.dataChannel = this.setUpDataChannel({dataChannel, peerId});
     } else {
       peerConnection.ondatachannel = (event) => {
@@ -94,11 +93,11 @@ export default class PeerConnection {
         data: {
           x: $('#user').position().left,
           y: $('#user').position().top,
-        }
+        },
       });
       
-      if (store.get('needEphemeralHistory')) {
-        store.sendToPeer(dataChannel, {type: 'requestEphemeralHistory'});
+      if (store.get('needRoomsInfo')) {
+        store.sendToPeer(dataChannel, {type: 'requestRooms'});
       }
     };
 

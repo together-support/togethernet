@@ -1,6 +1,7 @@
 import store from '../store/index.js';
 import throttle from 'lodash/throttle';
-import {keyboardEvent, renderUserAvatar} from './ephemeral.js';
+import {keyboardEvent, renderUserAvatar} from './animatedAvatar.js';
+import {renderIncomingEphemeralMessage} from './sendEphemeralText.js';
 
 export default class Room {
   constructor(options) {
@@ -10,6 +11,8 @@ export default class Room {
     this.roomId = options.roomId;
     this.$room = $(`#${this.roomId}`);
     this.$roomLink = $(`#${this.roomId}Link`);
+
+    this.ephemeralHistory = {};
   }
 
   initialize = () => {
@@ -56,8 +59,7 @@ export default class Room {
   }
 
   showRoom = () => {
-    store.set('room', this.roomId);
-    store.set('$room', this.$room);
+    store.set('currentRoomId', this.roomId);
 
     this.$room.show();
     $(window).on('resize', this.onResize);
@@ -66,6 +68,28 @@ export default class Room {
       renderUserAvatar();
       this.setBoundary();
     }
+    
+    this.renderHistory();
+  }
+
+  renderHistory = () => {
+    if (this.ephemeral) {
+      Object.keys(this.ephemeralHistory).forEach((messageRecordId) => {
+        if (!this.$room.find(`#${messageRecordId}`).length) {
+          renderIncomingEphemeralMessage({...messageRecord, room: this.roomId});
+        }
+      });
+    }
+  }
+
+  addEphemeralHistory = (data) => {
+    const {x, y, roomId} = data;
+    const id = `${roomId}-${x}-${y}`;
+    this.ephemeralHistory[id] = {...data};
+  }
+
+  removeEphemeralHistory = (messageId) => {
+    delete this.ephemeralHistory[messageId];
   }
 
   hideRoom = () => {

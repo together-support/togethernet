@@ -1,4 +1,4 @@
-import {removeMessage} from '../js/ephemeral.js';
+import {removeMessage} from '../js/sendEphemeralText.js';
 
 export const myTextRecord = (data) => {  
   return textRecord({
@@ -7,10 +7,10 @@ export const myTextRecord = (data) => {
   });
 }
 
-export const textRecord = ({x, y, message, name, avatar, isMine, room}) => {
-  const $textRecord = $(`<div class="textRecord ephemeral" id="${room}-${x}-${y}"></div>`);
+export const textRecord = ({x, y, message, name, avatar, isMine, roomId}) => {
+  const $textRecord = $(`<div class="textRecord ephemeral" id="${roomId}-${x}-${y}"></div>`);
   $textRecord.css({left: x, top: y, backgroundColor: avatar});
-  const $textBubble = $(`<div class="textBubble" id="textBubble-${room}-${x}-${y}"></div>`);
+  const $textBubble = $(`<div class="textBubble" id="textBubble-${roomId}-${x}-${y}"></div>`);
 
   if (isMine) {
     const $closeButton = $('<button>x</button>');

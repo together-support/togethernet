@@ -1,6 +1,6 @@
-import {textRecord} from '../components/message.js';
 import {peerAvatar} from '../components/users.js';
 import store from '../store/index.js'
+import {renderIncomingEphemeralMessage} from './ephemeral.js'
 
 export const handleData = ({event, peerId}) => {
   let data;
@@ -20,20 +20,15 @@ export const handleData = ({event, peerId}) => {
     updatePeerAvatar({...data.data, id: peerId})
   } else if (data.type === 'removeEphemeralMessage') {
     removeEphemeralPeerMessage(data.data);
-  } else if (data.type === 'requestEphemeralHistory') {
-    sendEphemeralHistory(peerId);
-  } else if (data.type === 'shareEphemeralHistory') {
-    receiveEphemeralHistory(data.data);
+  } else if (data.type === 'requestRooms') {
+    sendRooms(peerId);
+  } else if (data.type === 'shareRooms') {
+    receiveRooms(data.data);
   }
 }
 
-const renderIncomingEphemeralMessage = ({x, y, name, avatar, message, room}) => {
-  textRecord({x, y, name, avatar, message, room}).appendTo($(`#${room}`));
-  store.addEphemeralHistory({x, y, name, avatar, message, room});
-}
-
 const initPeer = (data) => {
-  peerAvatar(data).appendTo($(`#${data.room}`));
+  peerAvatar(data).appendTo($(`#${data.roomId}`));
 }
 
 const updatePeerPosition = ({id, x, y}) => {
@@ -44,28 +39,27 @@ const updatePeerAvatar = ({id, avatar}) => {
   $(`#peer-${id}`).finish().animate({backgroundColor: avatar});
 }
 
-const removeEphemeralPeerMessage = ({room, messageId}) => {
+const removeEphemeralPeerMessage = ({roomId, messageId}) => {
   $(`.textRecord#${messageId}`).finish().animate({opacity: 0}, {
     complete: () => {
       $(`textRecord#${messageId}`).remove();
-      store.removeEphemeralHistory({room, messageId});
+      store.get(roomId).removeEphemeralHistory(messageId);
     }
   })
 }
 
-const sendEphemeralHistory = (peerId) => {
+const sendRooms = (peerId) => {
   const dataChannel = store.getPeer(peerId).dataChannel;
   store.sendToPeer(dataChannel, {
-    type: 'shareEphemeralHistory',
-    data: store.get('ephemeralHistory'),
-  })
+    type: 'shareRooms',
+    data: {
+      rooms: store.get('rooms'),
+    }
+  });
 }
 
-const receiveEphemeralHistory = (data) => {
-  store.set('ephemeralHistory', {...store.get('ephemeralHistory'), ...data});
-  store.set('needEphemeralHistory', false);
-  const currentView = store.get('ephemeralHistory')[store.get('room')];
-  Object.keys(currentView).forEach(messageRecordId => {
-    renderIncomingEphemeralMessage({...currentView[messageRecordId], room: store.get('room')})
-  })
+const receiveRooms = ({rooms}) => {
+  Object.keys(rooms).forEach(roomId => {
+    store.updateOrInitializeRoom(roomId, rooms[roomId]);
+  });
 }

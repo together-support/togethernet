@@ -10,12 +10,12 @@ export const sendMessage = () => {
   }
 
   const {left, top} = $('#user').position();
-  if ($(`#${store.get('room')}-${left}-${top}`).length) {
+  if ($(`#${store.get('currentRoomId')}-${left}-${top}`).length) {
     alert("move to an empty spot to write the msg");
   } else {
-    if (store.get('room') === 'ephemeralSpace') {
+    if (store.getCurrentRoom().ephemeral) {
       ephemeralSendMessage(message);
-    } else if (store.get('room') === 'archivalSpace') {
+    } else {
       archivalSendMessage(message);
     }
   }
@@ -28,7 +28,7 @@ const ephemeralSendMessage = (message) => {
   const data = {message, x: left, y: top}
 
   store.sendToPeers({type: 'text', data});
-  store.addEphemeralHistory({...data, ...store.getProfile()});
+  store.getCurrentRoom().addEphemeralHistory({...data, ...store.getProfile()});
   renderOutgoingEphemeralMessage({...data, ...store.getProfile()});
 }
 

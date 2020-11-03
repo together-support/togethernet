@@ -6,7 +6,7 @@ $(window).load(() => {
   initAvatarColor();
   attachUIEvents();
   Object.values(store.get('rooms')).forEach(room => room.attachEvents());
-  store.get('rooms')['ephemeralSpace'].goToRoom();
+  store.getCurrentRoom().goToRoom();
   new PeerConnection().connect();
 });
 

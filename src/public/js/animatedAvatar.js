@@ -1,28 +1,5 @@
 import store from '../store/index.js';
-import {removeAllSystemMessage} from './systemMessage.js';
 import {userAvatar} from '../components/users.js';
-import {myTextRecord} from '../components/message.js';
-
-export const renderOutgoingEphemeralMessage = (data) => {
-  removeAllSystemMessage();
-  const outgoingMessage = myTextRecord(data);
-  outgoingMessage.appendTo($(`#${store.get('room')}`));
-}
-
-export const removeMessage = (event) => {
-  event.preventDefault();
-  const $messageRecord = $(event.target).parent().parent();
-  $messageRecord.finish().animate({opacity: 0}, {
-    complete: () => {
-      $messageRecord.remove();
-      store.sendToPeers({
-        type: 'removeEphemeralMessage',
-        data: {messageId: $messageRecord.attr('id')}
-      });
-      store.removeEphemeralHistory({room: store.get('room'), messageId: $messageRecord.attr('id')})
-    }
-  });  
-};
 
 export const keyboardEvent = (event) => {
   event.preventDefault();
@@ -69,7 +46,7 @@ const animationEvents = {
 }
 
 export const renderUserAvatar = () => {
-  userAvatar().appendTo(store.get('$room'));
+  userAvatar().appendTo(store.getCurrentRoom().$room);
   store.set('avatarSize', $("#user").width());
   makeDraggableUser();
 }
@@ -86,7 +63,7 @@ const makeDraggableUser = () => {
 }
 
 const hidePrivateMessage = () => {
-  store.get('$room').find('.textBubble').each((_, el) => {
+  store.getCurrentRoom().$room.find('.textBubble').each((_, el) => {
     $(el).hide();
   });
 }
@@ -106,7 +83,7 @@ const showAdjacentMessages = () => {
   ]
 
   adjacentPositions.forEach(position => {
-    $(`#${store.get('room')}-${position}`).trigger('adjacent');
+    $(`#${store.get('currentRoomId')}-${position}`).trigger('adjacent');
   })
 }  
 
@@ -116,7 +93,6 @@ const sendPositionToPeers = () => {
     data: {
       x: $('#user').position().left,
       y: $('#user').position().top,
-      room: store.get('room'),
     }
   });
 }

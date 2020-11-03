@@ -56,12 +56,12 @@ export default class RoomForm {
       roomId: this.roomId,
     });
 
-    store.set('room', this.roomId);
     store.rooms[this.roomId] = newRoom;
+    store.set('currentRoomId', this.roomId);
 
-    $('#configureRoom').hide();
     newRoom.initialize();
     newRoom.goToRoom();
+    $('#configureRoom').hide();
   }
 
   resetForm = () => {

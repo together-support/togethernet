@@ -1,17 +1,15 @@
 import {defaultRooms} from '../constants/index.js';
+import Room from '../js/Room.js';
 
 class Store {
   constructor() {
     this.name = 'Anonymous'
     this.avatar = '#000';
     this.socketId = '';
-    this.room = 'ephemeralSpace';
+    this.currentRoomId = 'ephemeralSpace';
 
     this.peers = {};
-    this.needEphemeralHistory = true;
-    this.ephemeralHistory = {
-      ephemeralSpace: {},
-    };
+    this.needRoomsInfo = true;
 
     this.rooms = {
       ...defaultRooms
@@ -23,8 +21,6 @@ class Store {
     this.bottomBoundary = 0;
 
     this.avatarSize = 0;
-
-    console.log('new store')
   }
 
   set(key, val) {
@@ -66,27 +62,34 @@ class Store {
       this.sendToPeer(peer.dataChannel, {type, data});
     });
   }
-
-  addEphemeralHistory = (data) => {
-    const {x, y, room} = data;
-    const id = `${room}-${x}-${y}`;
-    if (this.ephemeralHistory[room]) {
-      this.ephemeralHistory[room][id] = {...data};
-    } else {
-      this.ephemeralHistory[room] = {[id]: {...data}};
-    }
-  }
-
-  removeEphemeralHistory = ({room, messageId}) => {
-    delete this.ephemeralHistory[room][messageId];
-  }
-
+  
   getProfile = () => {
     return {
       socketId: this.socketId,
       name: $('#_nameInput').text(),
       avatar: $('#userProfile').val(),
-      room: this.room,
+      roomId: this.currentRoomId,
+    }
+  }
+
+  getCurrentRoom = () => {
+    return this.rooms[this.currentRoomId];
+  }
+
+  getRoom = (roomId) => {
+    return this.rooms[roomId];
+  }
+
+  updateOrInitializeRoom = (roomId, options) => {
+    let room = this.rooms[roomId];
+    if (Boolean(room)) {
+      room.mode = options.mode;
+      room.name = options.name;
+      room.ephemeral = options.ephemeral;
+    } else {
+      room = new Room(options)
+      this.rooms[roomId] = room;
+      room.initialize();
     }
   }
 }
