@@ -86,6 +86,7 @@ class Store {
       room.mode = options.mode;
       room.name = options.name;
       room.ephemeral = options.ephemeral;
+      room.ephemeralHistory = {...room.ephemeralHistory, ...options.ephemeralHistory}
     } else {
       room = new Room(options)
       this.rooms[roomId] = room;

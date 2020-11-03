@@ -83,7 +83,7 @@ export default class Room {
     if (this.ephemeral) {
       Object.keys(this.ephemeralHistory).forEach((messageRecordId) => {
         if (!this.$room.find(`#${messageRecordId}`).length) {
-          renderIncomingEphemeralMessage({...messageRecord, room: this.roomId});
+          renderIncomingEphemeralMessage({...this.ephemeralHistory[messageRecordId], roomId: this.roomId});
         }
       });
     }
