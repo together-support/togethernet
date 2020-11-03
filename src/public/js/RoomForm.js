@@ -21,6 +21,9 @@ export default class RoomForm {
     $('#newRoomName').on('change', this.updateRoomName);
     $('#meetingMode').on('change', this.changeMeetingMode);
     $('#createNewRoom').on('click', this.createNewRoom);
+
+    $('.modalOverlay').on('click', () => $('#configureRoom').hide());
+    $('.modalContent').on('click', (e) => e.stopPropagation());
     
     $("#addRoom").on('click', () => {
       $('#configureRoom').show();
