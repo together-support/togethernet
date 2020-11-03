@@ -22,7 +22,10 @@ export default class RoomForm {
     $('#meetingMode').on('change', this.changeMeetingMode);
     $('#createNewRoom').on('click', this.createNewRoom);
 
-    $('.modalOverlay').on('click', () => $('#configureRoom').hide());
+    $('.modalOverlay').on('click', () => {
+      $('#configureRoom').hide();
+      this.resetForm();
+    });
     $('.modalContent').on('click', (e) => e.stopPropagation());
     
     $("#addRoom").on('click', () => {
@@ -44,36 +47,61 @@ export default class RoomForm {
   updateRoomName = (e) => {
     e.preventDefault();
     this.name = e.target.value;
-    this.roomId = camelCase(e.target.value);
+    this.roomId = e.target.value;
   }
 
   createNewRoom = (e) => {
     e.preventDefault();
-    const newRoom = new Room({
+    const options = {
       mode: this.mode,
       ephemeral: this.ephemeral,
       name: this.name,
       roomId: this.roomId,
-    });
+    }
 
-    store.rooms[this.roomId] = newRoom;
-    store.set('currentRoomId', this.roomId);
-    store.sendToPeers({
-      type: 'newRoom',
-      data: { 
-        options: newRoom
-      }
-    });
+    if (this.validateOptions()) {
+      const newRoom = new Room(options);
+  
+      store.rooms[this.roomId] = newRoom;
+      store.set('currentRoomId', this.roomId);
+      store.sendToPeers({
+        type: 'newRoom',
+        data: { 
+          options: newRoom
+        }
+      });
+  
+      newRoom.initialize();
+      newRoom.goToRoom();
+      $('#configureRoom').hide();
+      this.resetForm()
+    }
+  }
 
-    newRoom.initialize();
-    newRoom.goToRoom();
-    $('#configureRoom').hide();
+  validateOptions = () => {
+    let isValid = true;
+    if (!Boolean(this.name)) {
+      alert('please enter a room name');
+      isValid = false;
+    }
+
+    if (Boolean(store.getRoom(this.name))) {
+      alert('room names must be unique');
+      isValid = false;
+    }
+
+    return isValid;
   }
 
   resetForm = () => {
     this.mode = EGALITARIAN_MODE;
+    $('#meetingMode').val(this.mode);
+
     this.name = '';
     this.roomId = '';
+    $('#newRoomName').val(this.name);
+
     this.ephemeral = true;
+    $('#configureRoom').find('.toggleContainer').removeClass('archival');
   }
 }
