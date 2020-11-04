@@ -83,10 +83,7 @@ class Store {
   updateOrInitializeRoom = (roomId, options) => {
     let room = this.rooms[roomId];
     if (Boolean(room)) {
-      room.mode = options.mode;
-      room.name = options.name;
-      room.ephemeral = options.ephemeral;
-      room.ephemeralHistory = {...room.ephemeralHistory, ...options.ephemeralHistory}
+      room.updateSelf(options);
     } else {
       room = new Room(options)
       this.rooms[roomId] = room;

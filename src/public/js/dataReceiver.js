@@ -51,8 +51,6 @@ const receiveRooms = ({rooms}) => {
   Object.keys(rooms).forEach(roomId => {
     store.updateOrInitializeRoom(roomId, rooms[roomId]);
   });
-
-  store.getCurrentRoom().goToRoom();
 }
 
 const addNewRoom = ({options}) => {

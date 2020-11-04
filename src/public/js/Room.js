@@ -113,4 +113,12 @@ export default class Room {
     store.set('rightBoundary', store.get('leftBoundary') + this.$room.width());
     store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
   }
+
+  updateSelf = ({mode, ephemeral, name, ephemeralHistory}) => {
+    this.mode = mode;
+    this.ephemeral = ephemeral
+    this.name = name;
+    this.ephemeralHistory = {...this.ephemeralHistory, ...ephemeralHistory}
+    this.renderHistory();
+  }
 }
