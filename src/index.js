@@ -17,6 +17,20 @@ const server = http.Server(app);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+if (process.env.BASIC_AUTH_ENABLED) {
+  app.use((req, res, next) => {      
+    const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
+    const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':')
+  
+    if (login === process.env.BASIC_AUTH_LOGIN && password === process.env.BASIC_AUTH_PASSWORD) {
+      return next();
+    }
+  
+    res.set('WWW-Authenticate', 'Basic realm="401"')
+    res.status(401).send('Authentication required.')
+  });
+}
+
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.get('/js/bundle.js',  browserify('src/public/js/index.js'))
