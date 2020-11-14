@@ -37,6 +37,7 @@
   text-align: left;
   border: 1px solid transparent;
   background-color: #f8f8f8;
+  z-index: 10;
 }
 
 .textBubble:after,
