@@ -1,6 +1,6 @@
 import {removeMessage} from '../js/ephemeralView.js';
 
-export const myTextRecord = (data) => {  
+export const myTextRecord = (data) => {
   return textRecord({
     ...data,
     isMine: true,
@@ -32,7 +32,7 @@ export const textRecord = ({x, y, message, name, avatar, isMine, roomId}) => {
     .mouseenter(() => $textBubble.show())
     .mouseleave(() => $textBubble.hide())
     .on('adjacent', () => $textBubble.show());
-  
+
   return $textRecord;
 }
 

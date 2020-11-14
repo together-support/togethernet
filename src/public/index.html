@@ -35,7 +35,7 @@
 
     <div id="configureRoom" class="modalOverlay">
       <!-- Modal content -->
-      <div class="modalContent">
+      <div class="modalContent configureRoomView" id="configureRoom-1">
         <div class="section">
           <h3>Create a room</h3>
           <p>Add additional rooms to communicate on different topics.</p>
@@ -65,13 +65,52 @@
         </div>
 
         <div class="section modalButtons">
-          <button>Customize</button>
+          <button id="customizeRoom">Customize</button>
           <button id="createNewRoom">Create</button>
         </div>
         <p>Learn more about Ephemeral / Archival Modes&nbsp;<a href="#">here</a>.</p>
       </div>
-    </div>       
-    
+      <div class="modalContent configureRoomView" id="configureRoom-2" style="display:none;">
+        <div class="section">
+          <h3>Customizing convening-on-the-beach</h3>
+          <p>Add additional rooms to communicate on different topics.</p>
+        </div>
+        <div class="section">
+          <h3>Add Facilitators</h3>
+          <p>Facilitators have the ability to create breakout zones, set meeting agendas, as well as creating polls. You may select up to three facilitators per meeting. And you may hand the facilitator role over to someone else during a meeting.</p>
+          <p>Add <input id="facilitatorCount" placeholder="2"/>facilitators to the meeting</p>
+        </div>
+        <div class="section">
+          <h3>Add Consentful Gestures</h3>
+          <p>Often used in direct action organizing, consentful gestures provides a way to respond to proposals and discussion through non-verbal cues.</p>
+          <div class="consentfulGesturesToggle">
+            <span>Yes</span>
+            <div class="toggleContainer">
+              <button class="toggleButton"></button>
+            </div>
+            <span>No</span>
+          </div>
+        </div>
+        <div class="section">
+          <h3>Add Majority Rule</h3>
+          <p>Add a voting feature that would favor decisions made by more than half of the team members</p>
+          <div class="majorityRulesToggle">
+            <span>Yes</span>
+            <div class="toggleContainer">
+              <button class="toggleButton"></button>
+            </div>
+            <span>No</span>
+          </div>
+        </div>
+
+        <div class="section modalButtons">
+          <button id="backToCreateRoom">Back</button>
+          <button id="createNewRoom">Create</button>
+        </div>
+        <p>Learn more room customization&nbsp;<a href="#">here</a>.</p>
+      </div>
+    </div>
+
     <div class="row" id="rooms">
       <div class="chat squaresView" id="ephemeralSpace" tabindex="0">
       </div>

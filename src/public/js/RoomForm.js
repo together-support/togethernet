@@ -21,13 +21,15 @@ export default class RoomForm {
     $('#newRoomName').on('change', this.updateRoomName);
     $('#meetingMode').on('change', this.changeMeetingMode);
     $('#createNewRoom').on('click', this.createNewRoom);
+    $('#customizeRoom').on('click', () => this.goToPage(2));
+    $('#backToCreateRoom').on('click', () => this.goToPage(1));
 
     $('.modalOverlay').on('click', () => {
       $('#configureRoom').hide();
       this.resetForm();
     });
     $('.modalContent').on('click', (e) => e.stopPropagation());
-    
+
     $("#addRoom").on('click', () => {
       $('#configureRoom').show();
     });
@@ -50,6 +52,11 @@ export default class RoomForm {
     this.roomId = e.target.value;
   }
 
+  goToPage = (pageNumber) => {
+    $('.configureRoomView').hide();
+    $(`#configureRoom-${pageNumber}`).show();
+  }
+
   createNewRoom = (e) => {
     e.preventDefault();
     const options = {
@@ -61,16 +68,16 @@ export default class RoomForm {
 
     if (this.validateOptions()) {
       const newRoom = new Room(options);
-  
+
       store.rooms[this.roomId] = newRoom;
       store.set('currentRoomId', this.roomId);
       store.sendToPeers({
         type: 'newRoom',
-        data: { 
+        data: {
           options: newRoom
         }
       });
-  
+
       newRoom.initialize();
       newRoom.goToRoom();
       $('#configureRoom').hide();
