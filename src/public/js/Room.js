@@ -11,7 +11,7 @@ export default class Room {
     this.ephemeral = options.ephemeral;
     this.enableConsentfulGestures = options.enableConsentfulGestures;
     this.enableMajorityRule = options.enableMajorityRule;
-    this.facilitators = options.facilitators;
+    this.facilitators = options.facilitators || [];
     this.$room = $(`#${this.roomId}`);
     this.$roomLink = $(`#${this.roomId}Link`);
 
@@ -59,6 +59,10 @@ export default class Room {
   goToRoom = () => {
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
     this.$room.trigger('showRoom');
+    $('#messageType').find('option[value="agenda"]').remove();
+    if (!this.facilitators.length || this.facilitators.includes(store.get('socketId'))) {
+      $('<option value="agenda">add an agenda</option>').appendTo($('#messageType'));
+    }
   }
 
   showRoom = () => {
