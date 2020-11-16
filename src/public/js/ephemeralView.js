@@ -1,22 +1,24 @@
 import store from '../store/index.js';
 import {removeAllSystemMessage} from './systemMessage.js';
-import {myTextRecord, textRecord} from '../components/message.js';
+import {myDisappearingTextRecord, myPersistentTextRecord, disappearingTextRecord, persistentTextRecord} from '../components/message.js';
 import {peerAvatar} from '../components/users.js';
 
 export const renderOutgoingEphemeralMessage = (data) => {
   removeAllSystemMessage();
-  const outgoingMessage = myTextRecord(data);
+  const outgoingMessage = data.messageType === 'message' ? myDisappearingTextRecord(data) : myPersistentTextRecord(data);
   outgoingMessage.appendTo(store.getCurrentRoom().$room);
 }
 
-export const renderIncomingEphemeralMessage = ({x, y, name, avatar, message, roomId}) => {
-  textRecord({x, y, name, avatar, message, roomId}).appendTo(store.getRoom(roomId).$room);
-  store.getRoom(roomId).addEphemeralHistory({x, y, name, avatar, message, roomId});
+export const renderIncomingEphemeralMessage = (data) => {
+  const {messageType, roomId} = data;
+  const incomingMessage = messageType === 'message' ? disappearingTextRecord(data) : persistentTextRecord(data);
+  incomingMessage.appendTo(store.getRoom(roomId).$room);
+  store.getRoom(roomId).addEphemeralHistory(data);
 }
 
 export const removeMessage = (event) => {
   event.preventDefault();
-  const $messageRecord = $(event.target).parent().parent();
+  const $messageRecord = $(event.target).closest('.textRecord');
   $messageRecord.finish().animate({opacity: 0}, {
     complete: () => {
       $messageRecord.remove();

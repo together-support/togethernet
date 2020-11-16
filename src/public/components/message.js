@@ -1,21 +1,50 @@
 import {removeMessage} from '../js/ephemeralView.js';
 
-export const myTextRecord = (data) => {
-  return textRecord({
+export const myDisappearingTextRecord = (data) => {
+  return disappearingTextRecord({
     ...data,
     isMine: true,
   });
 }
 
-export const textRecord = ({x, y, message, name, avatar, isMine, roomId}) => {
+export const myPersistentTextRecord = (data) => {
+  return persistentTextRecord({
+    ...data,
+    isMine: true,
+  });
+}
+
+export const disappearingTextRecord = (data) => {
+  const $textRecord = textRecord(data);
+  $textRecord
+    .mouseenter(() => $textRecord.find('.textBubble').show())
+    .mouseleave(() => $textRecord.find('.textBubble').hide())
+    .on('adjacent', () => $textRecord.find('.textBubble').show());
+
+  return $textRecord;
+}
+
+export const persistentTextRecord = (data) => {
+  const $textRecord = textRecord(data);
+
+  const $hideButton = $('<button>-</button>');
+  $hideButton.on('click', () => $textRecord.find('.textBubble').hide());
+  $hideButton.prependTo($textRecord.find('.textBubbleButtons'));
+
+  $textRecord.mouseenter(() => $textRecord.find('.textBubble').show())
+
+  return $textRecord;
+}
+
+const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId}) => {
   const $textRecord = $(`<div class="textRecord ephemeral" id="${roomId}-${x}-${y}"></div>`);
   $textRecord.css({left: x, top: y, backgroundColor: avatar});
-  const $textBubble = $(`<div class="textBubble" id="textBubble-${roomId}-${x}-${y}"></div>`);
+  const $textBubble = $(`<div class="textBubble ${messageType}" id="textBubble-${roomId}-${x}-${y}"><div class="textBubbleButtons"></div></div>`);
 
   if (isMine) {
     const $closeButton = $('<button>x</button>');
     $closeButton.on('click', removeMessage);
-    $closeButton.appendTo($textBubble);
+    $closeButton.appendTo($textBubble.find('.textBubbleButtons'));
   }
 
   const $name = $('<b></b>');
@@ -26,12 +55,7 @@ export const textRecord = ({x, y, message, name, avatar, isMine, roomId}) => {
 
   $name.appendTo($textBubble);
   $message.appendTo($textBubble);
-  $textBubble.appendTo($textRecord)
-
-  $textRecord
-    .mouseenter(() => $textBubble.show())
-    .mouseleave(() => $textBubble.hide())
-    .on('adjacent', () => $textBubble.show());
+  $textBubble.appendTo($textRecord);
 
   return $textRecord;
 }

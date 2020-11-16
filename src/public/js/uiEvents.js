@@ -10,8 +10,6 @@ export const attachUIEvents = () => {
       e.preventDefault();
     }
   });
-
-  $('#_sendBtn').on('click', sendMessage);
   
   $('#_messageInput').on('keyup', (e) => {
     if (e.key === 'Enter') {
@@ -31,7 +29,7 @@ export const attachUIEvents = () => {
   });
 
   $('#changeMessageType').on('click', () => {
-    $('#messageTypes').show();
+    $('#messageType').show();
   });
 
   new RoomForm().initialize();

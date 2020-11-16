@@ -5,7 +5,7 @@ export const keyboardEvent = (event) => {
   event.preventDefault();
 
   if(['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(event.key)) {
-    hidePrivateMessage();
+    hideEphemeralMessageText();
     animationEvents[event.key]();
   }
 };
@@ -58,12 +58,12 @@ const makeDraggableUser = () => {
   });
 
   $("#user").on('dragstart', () => {
-    hidePrivateMessage();
+    hideEphemeralMessageText();
   });
 }
 
-const hidePrivateMessage = () => {
-  store.getCurrentRoom().$room.find('.textBubble').each((_, el) => {
+const hideEphemeralMessageText = () => {
+  store.getCurrentRoom().$room.find('.textBubble.message').each((_, el) => {
     $(el).hide();
   });
 }
