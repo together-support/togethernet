@@ -318,3 +318,28 @@ button p {
 .toggleContainer.right {
   justify-content: flex-end;
 }
+
+#addFacilitator {
+  margin-top: 15px;
+  padding: 10px 5px;
+  background-color: white;
+}
+
+.facilitatorOption {
+  display: flex;
+  padding: 10px;
+}
+
+.facilitatorOption div {
+  height: 25px;
+  width: 25px;
+  margin-right: 5px;
+}
+
+.facilitatorOption span {
+  align-self: center;
+}
+
+.facilitatorOption.selected {
+  background-color: #ead1dcff;
+}

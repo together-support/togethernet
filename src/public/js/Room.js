@@ -6,9 +6,12 @@ import {renderIncomingEphemeralMessage} from './ephemeralView.js';
 export default class Room {
   constructor(options) {
     this.mode = options.mode;
-    this.ephemeral = options.ephemeral;
     this.name = options.name;
     this.roomId = options.roomId;
+    this.ephemeral = options.ephemeral;
+    this.enableConsentfulGestures = options.enableConsentfulGestures;
+    this.enableMajorityRule = options.enableMajorityRule;
+    this.facilitators = options.facilitators;
     this.$room = $(`#${this.roomId}`);
     this.$roomLink = $(`#${this.roomId}Link`);
 

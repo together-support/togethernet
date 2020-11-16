@@ -2,7 +2,7 @@ import store from '../store/index.js'
 import {
   removeEphemeralPeerMessage, 
   renderIncomingEphemeralMessage, 
-  initPeer, 
+  renderPeer, 
   updatePeerPosition, 
   updatePeerAvatar,
   updatePeerRoom
@@ -55,4 +55,11 @@ const receiveRooms = ({rooms}) => {
 
 const addNewRoom = ({options}) => {
   store.updateOrInitializeRoom(options.roomId, options);
+}
+
+const initPeer = (data) => {
+  const {id, avatar, name} = data
+  const peer = store.getPeer(id)
+  peer.profile = {avatar, name}  
+  renderPeer(data);
 }

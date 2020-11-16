@@ -38,7 +38,7 @@ export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
   })
 }
 
-export const initPeer = (data) => {
+export const renderPeer = (data) => {
   peerAvatar(data).appendTo($(`#${data.roomId}`));
 }
 

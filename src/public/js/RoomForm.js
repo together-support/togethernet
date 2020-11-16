@@ -2,6 +2,8 @@ import {roomModes} from '../constants/index.js';
 import store from '../store/index.js';
 import Room from './Room.js';
 import publicConfig from '../config/index.js';
+import {renderFacilitator, facilitatorOption} from '../components/room.js';
+import pull from 'lodash/pull';
 
 const defaultOptions = {
   mode: publicConfig.defaultMode,
@@ -10,6 +12,7 @@ const defaultOptions = {
   ephemeral: true,
   enableConsentfulGestures: true,
   enableMajorityRule: true,
+  facilitators: [],
 }
 
 export default class RoomForm {
@@ -30,7 +33,9 @@ export default class RoomForm {
     $('.createNewRoom').on('click', this.createNewRoom);
     $('#customizeRoom').on('click', () => this.goToPage(2));
     $('#backToCreateRoom').on('click', () => this.goToPage(1));
-
+    $('#backToCustomize').on('click', () => this.goToPage(2));
+    $('#addFacilitator').on('click', () => this.goToPage(3));
+    
     $('.modalOverlay').on('click', () => {
       $('#configureRoom').hide();
       this.resetForm();
@@ -38,12 +43,33 @@ export default class RoomForm {
     $('.modalContent').on('click', (e) => e.stopPropagation());
 
     $("#addRoom").on('click', () => {
+      this.listFacilitatorOptions();
       $('#configureRoom').show();
     });
   }
 
-  togglePrivacy = (e) => {
-    e.preventDefault();
+  listFacilitatorOptions = () => {
+    const profiles = [store.getProfile(), ...Object.values(store.get('peers')).map(peer => peer.profile)];
+    profiles.forEach((profile) => {
+      facilitatorOption({
+        profile, 
+        onClick: () => this.toggleFacilitator(profile),
+      }).insertBefore($("#configureRoom-3 .modalButtons"));
+    });
+  };
+
+  toggleFacilitator = (profile) => {
+    const {socketId} = profile;
+    if (this.options.facilitators.includes(socketId)) {
+      pull(this.options.facilitators, socketId);
+      $('#currentFacilitators').find(`div[data-socketId="${socketId}"]`).remove();
+    } else if (this.options.facilitators.length < 3) {
+      renderFacilitator(profile).appendTo($('#currentFacilitators'));
+      this.options.facilitators.push(socketId);
+    }
+  }
+
+  togglePrivacy = () => {
     this.options.ephemeral = !this.options.ephemeral;
     $('#ephemeralArchivalToggle').find('.toggleContainer').toggleClass('right');
   }
@@ -116,6 +142,8 @@ export default class RoomForm {
     $('#meetingMode').val(defaultOptions.mode);
     $('#newRoomName').val(defaultOptions.name);
     $('#configureRoom').find('.toggleContainer').removeClass('right');
+    $('#configureRoom-3').find('.facilitatorOption').remove();
+    $('#currentFacilitators').find('.facilitatorOption').remove();
     
     this.goToPage(1);
   }
