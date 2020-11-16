@@ -19,7 +19,7 @@ export default class RoomForm {
   constructor () {
     this.options = defaultOptions;
 
-    roomModes.forEach((mode) => {
+    Object.values(roomModes).forEach((mode) => {
       $('#meetingMode').append($('<option>').val(mode).text(mode));
     });
   }
@@ -31,7 +31,14 @@ export default class RoomForm {
     $('#newRoomName').on('change', this.updateRoomName);
     $('#meetingMode').on('change', this.changeMeetingMode);
     $('.createNewRoom').on('click', this.createNewRoom);
-    $('#customizeRoom').on('click', () => this.goToPage(2));
+    $('#customizeRoom').on('click', () => {
+      if (this.options.mode === roomModes.directAction || this.options.mode === roomModes.facilitated) {
+        $('#configureFacilitators').show();
+      } else {
+        $('#configureFacilitators').hide();
+      }
+      this.goToPage(2)
+    });
     $('#backToCreateRoom').on('click', () => this.goToPage(1));
     $('#backToCustomize').on('click', () => this.goToPage(2));
     $('#addFacilitator').on('click', () => this.goToPage(3));
@@ -87,13 +94,16 @@ export default class RoomForm {
   changeMeetingMode = (e) => {
     e.preventDefault();
     this.options.mode = $('#meetingMode option:selected').val();
+    if (this.options.mode === roomModes.egalitarian) {
+      this.clearFacilitators();
+    };
   }
 
   updateRoomName = (e) => {
     e.preventDefault();
     this.options.name = e.target.value;
     this.options.roomId = e.target.value;
-  }
+  };
 
   goToPage = (pageNumber) => {
     $('.configureRoomView').hide();
@@ -143,8 +153,14 @@ export default class RoomForm {
     $('#newRoomName').val(defaultOptions.name);
     $('#configureRoom').find('.toggleContainer').removeClass('right');
     $('#configureRoom-3').find('.facilitatorOption').remove();
-    $('#currentFacilitators').find('.facilitatorOption').remove();
-    
+    this.clearFacilitators();
+
     this.goToPage(1);
+  }
+
+  clearFacilitators = () => {
+    this.options.facilitators = [];
+    $('.facilitatorOption').removeClass('selected');
+    $('#currentFacilitators').find('.facilitatorOption').remove();
   }
 }
