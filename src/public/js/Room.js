@@ -15,7 +15,7 @@ export default class Room {
     this.$room = $(`#${this.roomId}`);
     this.$roomLink = $(`#${this.roomId}Link`);
 
-    this.ephemeralHistory = {};
+    this.ephemeralHistory = {...options.ephemeralHistory};
   }
 
   initialize = () => {
