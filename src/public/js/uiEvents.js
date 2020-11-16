@@ -27,7 +27,7 @@ export const attachUIEvents = () => {
 
   $('#userProfile').on('change', (e) => {
     $('#user').css('background-color', e.target.value);
-    store.sendToPeers({type: 'changeAvatar'});
+    store.sendToPeers({type: 'profileUpdated'});
   });
 
   new RoomForm().initialize();
@@ -38,4 +38,5 @@ const setMyUserName = () => {
   if (Boolean(name)) {
     $("#_nameInput").text(DOMPurify.sanitize(name));
   }
+  store.sendToPeers({type: 'profileUpdated'});
 };
