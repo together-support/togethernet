@@ -17,7 +17,7 @@ const defaultOptions = {
 
 export default class RoomForm {
   constructor () {
-    this.options = defaultOptions;
+    this.options = {...defaultOptions};
 
     Object.values(roomModes).forEach((mode) => {
       $('#meetingMode').append($('<option>').val(mode).text(mode));
@@ -95,8 +95,28 @@ export default class RoomForm {
     e.preventDefault();
     this.options.mode = $('#meetingMode option:selected').val();
     if (this.options.mode === roomModes.egalitarian) {
+      $('#configureMajorityRules').hide();
+      $('#configureConsentfulGestures').hide();
       this.clearFacilitators();
-    };
+    } else if (this.options.mode === roomModes.directAction) {
+      $('#configureMajorityRules').hide();
+      $('#configureConsentfulGestures').show();
+      this.enableConsentfulGesture();
+    } else if (this.options.mode === roomModes.facilitated) {
+      $('#configureConsentfulGestures').hide();
+      $('#configureMajorityRules').show();
+      this.enableMajorityRule();
+    }
+  }
+
+  enableMajorityRule = () => {
+    this.options.enableMajorityRule = true;
+    $('#majorityRulesToggle').find('.toggleContainer').removeClass('right');
+  }
+
+  enableConsentfulGesture = () => {
+    this.options.enableConsentfulGestures = true;
+    $('#consentfulGesturesToggle').find('.toggleContainer').removeClass('right');
   }
 
   updateRoomName = (e) => {
@@ -148,7 +168,7 @@ export default class RoomForm {
   }
 
   resetForm = () => {
-    this.options = defaultOptions;
+    this.options = {...defaultOptions};
     $('#meetingMode').val(defaultOptions.mode);
     $('#newRoomName').val(defaultOptions.name);
     $('#configureRoom').find('.toggleContainer').removeClass('right');
