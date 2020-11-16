@@ -35,7 +35,7 @@
 
     <div id="configureRoom" class="modalOverlay">
       <!-- Modal content -->
-      <div class="modalContent">
+      <div class="modalContent configureRoomView" id="configureRoom-1">
         <div class="section">
           <h3>Create a room</h3>
           <p>Add additional rooms to communicate on different topics.</p>
@@ -43,7 +43,7 @@
         <div class="section">
           <h3>Ephemeral/Archival Mode</h3>
           <p>When a room is set to ephemeral mode, conversations will not be stored on the server without collective consent. When a room is set to archival mode, conversations will be archived on the server automatically.</p>
-          <div class="ephemeralArchivalToggle">
+          <div class="toggleOption" id="ephemeralArchivalToggle">
             <span>Ephemeral Mode</span>
             <div class="toggleContainer">
               <button class="toggleButton"></button>
@@ -65,13 +65,58 @@
         </div>
 
         <div class="section modalButtons">
-          <button>Customize</button>
-          <button id="createNewRoom">Create</button>
+          <button id="customizeRoom">Customize</button>
+          <button class="createNewRoom">Create</button>
         </div>
         <p>Learn more about Ephemeral / Archival Modes&nbsp;<a href="#">here</a>.</p>
       </div>
-    </div>       
-    
+      <div class="modalContent configureRoomView" id="configureRoom-2" style="display:none;">
+        <div class="section">
+          <h3>Customizing convening-on-the-beach</h3>
+          <p>Add additional rooms to communicate on different topics.</p>
+        </div>
+        <div class="section" id="configureFacilitators" style="display:none;">
+          <h3>Add Facilitators</h3>
+          <p>Facilitators have the ability to create breakout zones, set meeting agendas, as well as creating polls. You may select up to three facilitators per meeting. And you may hand the facilitator role over to someone else during a meeting.</p>
+          <button id="addFacilitator">+Add facilitators</button>
+          <div id="currentFacilitators"></div>
+        </div>
+        <div class="section">
+          <h3>Add Consentful Gestures</h3>
+          <p>Often used in direct action organizing, consentful gestures provides a way to respond to proposals and discussion through non-verbal cues.</p>
+          <div class="toggleOption" id="consentfulGesturesToggle">
+            <span>Yes</span>
+            <div class="toggleContainer">
+              <button class="toggleButton"></button>
+            </div>
+            <span>No</span>
+          </div>
+        </div>
+        <div class="section">
+          <h3>Add Majority Rule</h3>
+          <p>Add a voting feature that would favor decisions made by more than half of the team members</p>
+          <div class="toggleOption" id="majorityRulesToggle">
+            <span>Yes</span>
+            <div class="toggleContainer">
+              <button class="toggleButton"></button>
+            </div>
+            <span>No</span>
+          </div>
+        </div>
+
+        <div class="section modalButtons">
+          <button id="backToCreateRoom">Back</button>
+          <button class="createNewRoom">Create</button>
+        </div>
+        <p>Learn more room customization&nbsp;<a href="#">here</a>.</p>
+      </div>
+      <div class="modalContent configureRoomView" id="configureRoom-3" style="display:none;">
+        <div class="section modalButtons">
+          <button id="backToCustomize">Back</button>
+        </div>
+      </div>
+    </div>
+
     <div class="row" id="rooms">
       <div class="chat squaresView" id="ephemeralSpace" tabindex="0">
       </div>
@@ -81,17 +126,16 @@
     </div>
 
     <div class="sendMessageDiv row">
-      <input type="color" id="userProfile" class="slit" title="change avatar color" name="userProfile">
-      <button id="_nameInput" title="change name">Anonymous</button>
+      <input type="color" id="userAvatar" class="slit" title="change avatar color" name="userAvatar">
+      <button id="userName" title="change name"></button>
       <input type="text" id="_messageInput" name="text" placeholder=" Type your message here" />
-      <button type="button" class="btn icon" title="send message" id="_sendBtn" name="">
-        <i class="fas fa-paper-plane"></i>
-      </button>
+      <select id="messageType">
+        <option value="message">send message</option>
+        <option value="question">ask a question</option>
+        <option value="idea">propose an idea</option>
+      </select>
       <button type="button" class="btn icon" title="hold down to record audio" id="_recordBtn" name="">
         <i class="fas fa-microphone-alt"></i>
-      </button>
-      <button type="button" class="btn icon" title="create breakout zones" id="_breakoutZone" name="">
-        <i class="far fa-object-ungroup"></i>
       </button>
     </div>
     <script src="/js/bundle.js"></script>

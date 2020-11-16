@@ -2,10 +2,11 @@ import store from '../store/index.js'
 import {
   removeEphemeralPeerMessage, 
   renderIncomingEphemeralMessage, 
-  initPeer, 
+  renderPeer, 
+  setAgendaHidden,
   updatePeerPosition, 
   updatePeerAvatar,
-  updatePeerRoom
+  updatePeerRoom,
 } from './ephemeralView.js'
 
 export const handleData = ({event, peerId}) => {
@@ -26,15 +27,23 @@ export const handleData = ({event, peerId}) => {
     addNewRoom(data.data);
   } else if (data.type === 'joinedRoom') {
     updatePeerRoom(data.data);
-  } else if (data.type === 'changeAvatar') {
-    updatePeerAvatar({...data.data, id: peerId})
+  } else if (data.type === 'profileUpdated') {
+    updatePeerProfile({...data.data, id: peerId})
   } else if (data.type === 'removeEphemeralMessage') {
     removeEphemeralPeerMessage(data.data);
   } else if (data.type === 'requestRooms') {
     sendRooms(peerId);
   } else if (data.type === 'shareRooms') {
     receiveRooms(data.data);
+  } else if (data.type === 'setAgendaHidden') {
+    setAgendaHidden(data.data);
   }
+}
+
+const updatePeerProfile = ({id, name, avatar}) => {
+  const peer = store.getPeer(id);
+  peer.profile = {name, avatar};
+  updatePeerAvatar({id, avatar});
 }
 
 const sendRooms = (peerId) => {
@@ -55,4 +64,11 @@ const receiveRooms = ({rooms}) => {
 
 const addNewRoom = ({options}) => {
   store.updateOrInitializeRoom(options.roomId, options);
+}
+
+const initPeer = (data) => {
+  const {id, avatar, name} = data
+  const peer = store.getPeer(id)
+  peer.profile = {avatar, name}  
+  renderPeer(data);
 }

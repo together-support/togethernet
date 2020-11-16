@@ -1,22 +1,31 @@
 import store from '../store/index.js';
 import {removeAllSystemMessage} from './systemMessage.js';
-import {myTextRecord, textRecord} from '../components/message.js';
+import {disappearingTextRecord, persistentTextRecord, agendaTextRecord} from '../components/message.js';
 import {peerAvatar} from '../components/users.js';
 
 export const renderOutgoingEphemeralMessage = (data) => {
   removeAllSystemMessage();
-  const outgoingMessage = myTextRecord(data);
-  outgoingMessage.appendTo(store.getCurrentRoom().$room);
+  renderMessageRecord({...data, isMine: true}).appendTo(store.getCurrentRoom().$room);
 }
 
-export const renderIncomingEphemeralMessage = ({x, y, name, avatar, message, roomId}) => {
-  textRecord({x, y, name, avatar, message, roomId}).appendTo(store.getRoom(roomId).$room);
-  store.getRoom(roomId).addEphemeralHistory({x, y, name, avatar, message, roomId});
+export const renderIncomingEphemeralMessage = (data) => {
+  store.getRoom(data.roomId).addEphemeralHistory(data);
+  renderMessageRecord(data).appendTo(store.getRoom(data.roomId).$room);
+}
+
+const renderMessageRecord = (data) => {
+  if (data.messageType === 'agenda') {
+    return agendaTextRecord(data)
+  } else if (data.messsageType === 'message') {
+    return disappearingTextRecord(data)
+  } else {
+    return persistentTextRecord(data);
+  }
 }
 
 export const removeMessage = (event) => {
   event.preventDefault();
-  const $messageRecord = $(event.target).parent().parent();
+  const $messageRecord = $(event.target).closest('.textRecord');
   $messageRecord.finish().animate({opacity: 0}, {
     complete: () => {
       $messageRecord.remove();
@@ -29,6 +38,21 @@ export const removeMessage = (event) => {
   });  
 };
 
+export const hideAgendaForPeers = ({agendaId, shouldHide}) => {
+  store.sendToPeers({
+    type: 'setAgendaHidden',
+    data: {agendaId, shouldHide}
+  });
+};
+
+export const setAgendaHidden = ({agendaId, shouldHide}) => {
+  if (shouldHide) {
+    $(`#${agendaId}`).find('.textBubble').hide();
+  } else {
+    $(`#${agendaId}`).find('.textBubble').show();
+  }
+}
+
 export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
   $(`.textRecord#${messageId}`).finish().animate({opacity: 0}, {
     complete: () => {
@@ -38,7 +62,7 @@ export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
   })
 }
 
-export const initPeer = (data) => {
+export const renderPeer = (data) => {
   peerAvatar(data).appendTo($(`#${data.roomId}`));
 }
 

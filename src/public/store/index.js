@@ -3,7 +3,6 @@ import Room from '../js/Room.js';
 
 class Store {
   constructor() {
-    this.name = 'Anonymous'
     this.avatar = '#000';
     this.socketId = '';
     this.currentRoomId = 'ephemeralSpace';
@@ -66,8 +65,8 @@ class Store {
   getProfile = () => {
     return {
       socketId: this.socketId,
-      name: $('#_nameInput').text(),
-      avatar: $('#userProfile').val(),
+      name: $('#userName').text(),
+      avatar: $('#userAvatar').val(),
       roomId: this.currentRoomId,
     }
   }

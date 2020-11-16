@@ -37,6 +37,7 @@
   text-align: left;
   border: 1px solid transparent;
   background-color: #f8f8f8;
+  z-index: 10;
 }
 
 .textBubble:after,
@@ -56,7 +57,6 @@
   border-right-color: #f8f8f8;
 }
 
-
 .systemBubble p,
 .textBubble p {
   font-family: sans-serif;
@@ -73,10 +73,25 @@
   flex-direction: column;
 }
 
-.textBubble button {
-  background-color:  #f8f8f8;
-  width: 100%;
-  text-align: right;
+.textBubble.agenda p {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.textBubbleButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-bottom: 5px;
+}
+
+.textBubbleButtons > button {
+  margin-left: 5px;
+  width: 15px;
+  height: 15px;
+  font-size: 10px;
+  padding: 2px;
+  border: 1px solid #efefef;
 }
 
 .draggable {
