@@ -1,15 +1,20 @@
-import {EGALITARIAN_MODE, roomModes} from '../constants/index.js';
-import camelCase from 'lodash/camelCase';
+import {roomModes} from '../constants/index.js';
 import store from '../store/index.js';
 import Room from './Room.js';
 import publicConfig from '../config/index.js';
 
+const defaultOptions = {
+  mode: publicConfig.defaultMode,
+  name: '',
+  roomId: '',
+  ephemeral: true,
+  enableConsentfulGestures: true,
+  enableMajorityRule: true,
+}
+
 export default class RoomForm {
   constructor () {
-    this.mode = publicConfig.defaultMode;
-    this.name = '';
-    this.roomId = '';
-    this.ephemeral = true;
+    this.options = defaultOptions;
 
     roomModes.forEach((mode) => {
       $('#meetingMode').append($('<option>').val(mode).text(mode));
@@ -17,10 +22,12 @@ export default class RoomForm {
   }
 
   initialize = () => {
-    $('#configureRoom').find('.toggleButton').on('click', this.togglePrivacy);
+    $('#ephemeralArchivalToggle').find('.toggleButton').on('click', this.togglePrivacy);
+    $('#consentfulGesturesToggle').find('.toggleButton').on('click', this.toggleConsentfulGestures);
+    $('#majorityRulesToggle').find('.toggleButton').on('click', this.toggleMajorityRule);
     $('#newRoomName').on('change', this.updateRoomName);
     $('#meetingMode').on('change', this.changeMeetingMode);
-    $('#createNewRoom').on('click', this.createNewRoom);
+    $('.createNewRoom').on('click', this.createNewRoom);
     $('#customizeRoom').on('click', () => this.goToPage(2));
     $('#backToCreateRoom').on('click', () => this.goToPage(1));
 
@@ -37,19 +44,29 @@ export default class RoomForm {
 
   togglePrivacy = (e) => {
     e.preventDefault();
-    this.ephemeral = !this.ephemeral;
-    $('#configureRoom').find('.toggleContainer').toggleClass('archival');
+    this.options.ephemeral = !this.options.ephemeral;
+    $('#ephemeralArchivalToggle').find('.toggleContainer').toggleClass('right');
+  }
+
+  toggleConsentfulGestures = () => {
+    this.options.enableConsentfulGestures = !this.options.enableConsentfulGestures;
+    $('#consentfulGesturesToggle').find('.toggleContainer').toggleClass('right');
+  }
+
+  toggleMajorityRule = () => {
+    this.options.enableMajorityRule = !this.options.enableMajorityRule;
+    $('#majorityRulesToggle').find('.toggleContainer').toggleClass('right');
   }
 
   changeMeetingMode = (e) => {
     e.preventDefault();
-    this.mode = $('#meetingMode option:selected').val();
+    this.options.mode = $('#meetingMode option:selected').val();
   }
 
   updateRoomName = (e) => {
     e.preventDefault();
-    this.name = e.target.value;
-    this.roomId = e.target.value;
+    this.options.name = e.target.value;
+    this.options.roomId = e.target.value;
   }
 
   goToPage = (pageNumber) => {
@@ -59,18 +76,12 @@ export default class RoomForm {
 
   createNewRoom = (e) => {
     e.preventDefault();
-    const options = {
-      mode: this.mode,
-      ephemeral: this.ephemeral,
-      name: this.name,
-      roomId: this.roomId,
-    }
 
     if (this.validateOptions()) {
-      const newRoom = new Room(options);
+      const newRoom = new Room(this.options);
 
-      store.rooms[this.roomId] = newRoom;
-      store.set('currentRoomId', this.roomId);
+      store.rooms[this.options.roomId] = newRoom;
+      store.set('currentRoomId', this.options.roomId);
       store.sendToPeers({
         type: 'newRoom',
         data: {
@@ -87,12 +98,12 @@ export default class RoomForm {
 
   validateOptions = () => {
     let isValid = true;
-    if (!Boolean(this.name)) {
+    if (!Boolean(this.options.name)) {
       alert('please enter a room name');
       isValid = false;
     }
 
-    if (Boolean(store.getRoom(this.name))) {
+    if (Boolean(store.getRoom(this.options.name))) {
       alert('room names must be unique');
       isValid = false;
     }
@@ -101,14 +112,11 @@ export default class RoomForm {
   }
 
   resetForm = () => {
-    this.mode = EGALITARIAN_MODE;
-    $('#meetingMode').val(this.mode);
-
-    this.name = '';
-    this.roomId = '';
-    $('#newRoomName').val(this.name);
-
-    this.ephemeral = true;
-    $('#configureRoom').find('.toggleContainer').removeClass('archival');
+    this.options = defaultOptions;
+    $('#meetingMode').val(defaultOptions.mode);
+    $('#newRoomName').val(defaultOptions.name);
+    $('#configureRoom').find('.toggleContainer').removeClass('right');
+    
+    this.goToPage(1);
   }
 }

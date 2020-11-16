@@ -10,7 +10,6 @@ body {
 }
 
 p {
-  display: flex;
   font: 14px "Courier New", Courier, "Lucida Sans Typewriter",
     "Lucida Typewriter", monospace;
 }
@@ -256,10 +255,17 @@ button p {
   padding: 25px;
   border: 1px solid #888;
   width: 450px;
-  height: 480px;
   font-family: sans-serif;
   line-height: 2;
 }
+
+#configureRoom-1 {
+  height: 530px;
+};
+
+#configureRoom-2 {
+  height: 650px;
+};
 
 .modalContent p {
   font-family: sans-serif;
@@ -281,11 +287,14 @@ button p {
   padding: 0 0 20px 0;
 }
 
-.ephemeralArchivalToggle {
+.toggleOption {
   display: flex;
-  width: 100%;
-  justify-content: space-between;
+  justify-content: start;
   padding-top: 20px;
+}
+
+.toggleOption > * {
+  margin-right: 20px;
 }
 
 .toggleContainer {
@@ -306,6 +315,6 @@ button p {
   background-color: darkgray;
 }
 
-.toggleContainer.archival {
+.toggleContainer.right {
   justify-content: flex-end;
 }

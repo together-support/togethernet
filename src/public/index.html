@@ -43,7 +43,7 @@
         <div class="section">
           <h3>Ephemeral/Archival Mode</h3>
           <p>When a room is set to ephemeral mode, conversations will not be stored on the server without collective consent. When a room is set to archival mode, conversations will be archived on the server automatically.</p>
-          <div class="ephemeralArchivalToggle">
+          <div class="toggleOption" id="ephemeralArchivalToggle">
             <span>Ephemeral Mode</span>
             <div class="toggleContainer">
               <button class="toggleButton"></button>
@@ -66,7 +66,7 @@
 
         <div class="section modalButtons">
           <button id="customizeRoom">Customize</button>
-          <button id="createNewRoom">Create</button>
+          <button class="createNewRoom">Create</button>
         </div>
         <p>Learn more about Ephemeral / Archival Modes&nbsp;<a href="#">here</a>.</p>
       </div>
@@ -78,12 +78,11 @@
         <div class="section">
           <h3>Add Facilitators</h3>
           <p>Facilitators have the ability to create breakout zones, set meeting agendas, as well as creating polls. You may select up to three facilitators per meeting. And you may hand the facilitator role over to someone else during a meeting.</p>
-          <p>Add <input id="facilitatorCount" placeholder="2"/>facilitators to the meeting</p>
         </div>
         <div class="section">
           <h3>Add Consentful Gestures</h3>
           <p>Often used in direct action organizing, consentful gestures provides a way to respond to proposals and discussion through non-verbal cues.</p>
-          <div class="consentfulGesturesToggle">
+          <div class="toggleOption" id="consentfulGesturesToggle">
             <span>Yes</span>
             <div class="toggleContainer">
               <button class="toggleButton"></button>
@@ -94,7 +93,7 @@
         <div class="section">
           <h3>Add Majority Rule</h3>
           <p>Add a voting feature that would favor decisions made by more than half of the team members</p>
-          <div class="majorityRulesToggle">
+          <div class="toggleOption" id="majorityRulesToggle">
             <span>Yes</span>
             <div class="toggleContainer">
               <button class="toggleButton"></button>
@@ -105,7 +104,7 @@
 
         <div class="section modalButtons">
           <button id="backToCreateRoom">Back</button>
-          <button id="createNewRoom">Create</button>
+          <button class="createNewRoom">Create</button>
         </div>
         <p>Learn more room customization&nbsp;<a href="#">here</a>.</p>
       </div>
