@@ -21,10 +21,12 @@ export const attachUIEvents = () => {
   $('#_recordBtn').on('mousedown', startRecordingAudio)
   $('#_recordBtn').on('mouseup', sendAudio)
 
-  $('#_nameInput').on('click', setMyUserName);
+  $('#userName').on('click', setMyUserName);
 
-  $('#userProfile').on('change', (e) => {
-    $('#user').css('background-color', e.target.value);
+  $('#userAvatar').on('change', (e) => {
+    const avatar = e.target.value
+    $('#user').css('background-color', avatar);
+    localStorage.setItem('tnAvatar', avatar);
     store.sendToPeers({type: 'profileUpdated'});
   });
 
@@ -36,9 +38,10 @@ export const attachUIEvents = () => {
 }
 
 const setMyUserName = () => {
-  const name = prompt("Please enter your name:");
+  const name = DOMPurify.sanitize(prompt("Please enter your name:"));
   if (Boolean(name)) {
-    $("#_nameInput").text(DOMPurify.sanitize(name));
+    $("#userName").text(name);
   }
   store.sendToPeers({type: 'profileUpdated'});
+  localStorage.setItem('tnName', name);
 };
