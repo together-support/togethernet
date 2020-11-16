@@ -11,15 +11,18 @@ $(window).load(() => {
 });
 
 const initUserProfile = () => {
-  const avatar = localStorage.getItem('tnAvatar') || getRandomColor();
-  const name = localStorage.getItem('tnName') || 'Anonymous';
+  // const avatar = localStorage.getItem('tnAvatar') || getRandomColor();
+  // const name = localStorage.getItem('tnName') || 'Anonymous';
 
-  localStorage.setItem('tnAvatar', avatar);
-  localStorage.setItem('tnName', name);
+  // localStorage.setItem('tnAvatar', avatar);
+  // localStorage.setItem('tnName', name);
 
+  const avatar = getRandomColor();
   store.set('avatar', avatar);
-  store.set('name', name);
   $('#userAvatar').val(avatar);
+  
+  const name = 'Anonymous';
+  store.set('name', name);
   $('#userName').text(name);
 }
 

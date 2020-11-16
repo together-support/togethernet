@@ -3,9 +3,10 @@ import {
   removeEphemeralPeerMessage, 
   renderIncomingEphemeralMessage, 
   renderPeer, 
+  setAgendaHidden,
   updatePeerPosition, 
   updatePeerAvatar,
-  updatePeerRoom
+  updatePeerRoom,
 } from './ephemeralView.js'
 
 export const handleData = ({event, peerId}) => {
@@ -34,6 +35,8 @@ export const handleData = ({event, peerId}) => {
     sendRooms(peerId);
   } else if (data.type === 'shareRooms') {
     receiveRooms(data.data);
+  } else if (data.type === 'setAgendaHidden') {
+    setAgendaHidden(data.data);
   }
 }
 

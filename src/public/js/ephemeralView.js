@@ -1,19 +1,26 @@
 import store from '../store/index.js';
 import {removeAllSystemMessage} from './systemMessage.js';
-import {myDisappearingTextRecord, myPersistentTextRecord, disappearingTextRecord, persistentTextRecord} from '../components/message.js';
+import {disappearingTextRecord, persistentTextRecord, agendaTextRecord} from '../components/message.js';
 import {peerAvatar} from '../components/users.js';
 
 export const renderOutgoingEphemeralMessage = (data) => {
   removeAllSystemMessage();
-  const outgoingMessage = data.messageType === 'message' ? myDisappearingTextRecord(data) : myPersistentTextRecord(data);
-  outgoingMessage.appendTo(store.getCurrentRoom().$room);
+  renderMessageRecord({...data, isMine: true}).appendTo(store.getCurrentRoom().$room);
 }
 
 export const renderIncomingEphemeralMessage = (data) => {
-  const {messageType, roomId} = data;
-  const incomingMessage = messageType === 'message' ? disappearingTextRecord(data) : persistentTextRecord(data);
-  incomingMessage.appendTo(store.getRoom(roomId).$room);
-  store.getRoom(roomId).addEphemeralHistory(data);
+  store.getRoom(data.roomId).addEphemeralHistory(data);
+  renderMessageRecord(data).appendTo(store.getRoom(data.roomId).$room);
+}
+
+const renderMessageRecord = (data) => {
+  if (data.messageType === 'agenda') {
+    return agendaTextRecord(data)
+  } else if (data.messsageType === 'message') {
+    return disappearingTextRecord(data)
+  } else {
+    return persistentTextRecord(data);
+  }
 }
 
 export const removeMessage = (event) => {
@@ -30,6 +37,21 @@ export const removeMessage = (event) => {
     }
   });  
 };
+
+export const hideAgendaForPeers = ({agendaId, shouldHide}) => {
+  store.sendToPeers({
+    type: 'setAgendaHidden',
+    data: {agendaId, shouldHide}
+  });
+};
+
+export const setAgendaHidden = ({agendaId, shouldHide}) => {
+  if (shouldHide) {
+    $(`#${agendaId}`).find('.textBubble').hide();
+  } else {
+    $(`#${agendaId}`).find('.textBubble').show();
+  }
+}
 
 export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
   $(`.textRecord#${messageId}`).finish().animate({opacity: 0}, {

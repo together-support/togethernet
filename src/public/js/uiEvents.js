@@ -26,7 +26,7 @@ export const attachUIEvents = () => {
   $('#userAvatar').on('change', (e) => {
     const avatar = e.target.value
     $('#user').css('background-color', avatar);
-    localStorage.setItem('tnAvatar', avatar);
+    // localStorage.setItem('tnAvatar', avatar);
     store.sendToPeers({type: 'profileUpdated'});
   });
 
@@ -43,5 +43,5 @@ const setMyUserName = () => {
     $("#userName").text(name);
   }
   store.sendToPeers({type: 'profileUpdated'});
-  localStorage.setItem('tnName', name);
+  // localStorage.setItem('tnName', name);
 };

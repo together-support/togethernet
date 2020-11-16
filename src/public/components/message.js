@@ -1,18 +1,4 @@
-import {removeMessage} from '../js/ephemeralView.js';
-
-export const myDisappearingTextRecord = (data) => {
-  return disappearingTextRecord({
-    ...data,
-    isMine: true,
-  });
-}
-
-export const myPersistentTextRecord = (data) => {
-  return persistentTextRecord({
-    ...data,
-    isMine: true,
-  });
-}
+import {removeMessage, hideAgendaForPeers} from '../js/ephemeralView.js';
 
 export const disappearingTextRecord = (data) => {
   const $textRecord = textRecord(data);
@@ -32,6 +18,30 @@ export const persistentTextRecord = (data) => {
   $hideButton.prependTo($textRecord.find('.textBubbleButtons'));
 
   $textRecord.mouseenter(() => $textRecord.find('.textBubble').show())
+
+  return $textRecord;
+}
+
+export const agendaTextRecord = (data) => {
+  const $textRecord = textRecord(data);
+  const $textBubble = $textRecord.find('.textBubble');
+  const {isMine} = data;
+
+  if (isMine) {
+    const $hideButton = $('<button>-</button>');
+    $hideButton.on('click', () => {
+      $textRecord.find('.textBubble').hide();
+      hideAgendaForPeers({agendaId: $textRecord.attr('id'), shouldHide: true});
+    });
+    $hideButton.prependTo($textRecord.find('.textBubbleButtons'));
+  }
+
+  $textRecord.mouseenter(() => {
+    if (isMine && $textBubble.is(':hidden')) {
+      $textBubble.show();
+      hideAgendaForPeers({agendaId: $textRecord.attr('id'), shouldHide: false});
+    }
+  });
 
   return $textRecord;
 }
