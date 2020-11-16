@@ -30,6 +30,10 @@ export const attachUIEvents = () => {
     store.sendToPeers({type: 'profileUpdated'});
   });
 
+  $('#changeMessageType').on('click', () => {
+    $('#messageTypes').show();
+  });
+
   new RoomForm().initialize();
 }
 

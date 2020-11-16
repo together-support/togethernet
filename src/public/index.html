@@ -129,14 +129,13 @@
       <input type="color" id="userProfile" class="slit" title="change avatar color" name="userProfile">
       <button id="_nameInput" title="change name">Anonymous</button>
       <input type="text" id="_messageInput" name="text" placeholder=" Type your message here" />
-      <button type="button" class="btn icon" title="send message" id="_sendBtn" name="">
-        <i class="fas fa-paper-plane"></i>
-      </button>
+      <select id="messageTypes">
+        <option value="message">send message</option>
+        <option value="question">ask a question</option>
+        <option value="idea">propose an idea</option>
+      </select>
       <button type="button" class="btn icon" title="hold down to record audio" id="_recordBtn" name="">
         <i class="fas fa-microphone-alt"></i>
-      </button>
-      <button type="button" class="btn icon" title="create breakout zones" id="_breakoutZone" name="">
-        <i class="far fa-object-ungroup"></i>
       </button>
     </div>
     <script src="/js/bundle.js"></script>
