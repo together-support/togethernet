@@ -1,22 +1,25 @@
 import {removeMessage, hideAgendaForPeers} from '../js/ephemeralView.js';
 import store from '../store/index.js';
 import {roomModes} from '../constants/index.js'
-import {castVote} from '../js/majorityRule.js';
+import {createPoll, castVote} from '../js/majorityRule.js';
 
 export const disappearingTextRecord = (data) => {
   const $textRecord = textRecord(data);
-  const $textBubble = $textRecord.find('.textBubble'); 
-  const {isMine, roomId} = data;
-  const room = store.getRoom(roomId);
+  const $textBubble = $textRecord.find('.textBubble');
 
-  if (isMine && room.mode === roomModes.facilitated && room.enableMajorityRule) {
+  const {isMine, roomId, isPoll, votes} = data;
+  const room = store.getRoom(roomId);
+  const majorityRuleEnabled = room.mode === roomModes.facilitated && room.enableMajorityRule;
+
+  if (isMine && majorityRuleEnabled && !isPoll) {
     const $createPoll = $('<button id="makeVote">Vote</button>');
-    $createPoll.on('click', () => {
-      $textBubble.addClass('poll');
-      voteButtons().appendTo($textBubble);
-      $createPoll.remove();
-    })
+    $createPoll.on('click', createPoll);
     $createPoll.prependTo($textRecord.find('.textBubbleButtons'));
+  }
+
+  if (majorityRuleEnabled && isPoll) {
+    $textBubble.addClass('poll');
+    voteButtons(votes).appendTo($textBubble);
   }
 
   $textRecord
@@ -27,11 +30,11 @@ export const disappearingTextRecord = (data) => {
   return $textRecord;
 }
 
-const voteButtons = () => {
+export const voteButtons = (votes) => {
   const $voteButtonsContainer = $('<div class="votingButtons"></div>');
-  ['yes', 'no', 'neutral'].forEach(option => {
-    const $optionButton = $(`<button>${option}</button>`);
-    $optionButton.on('click', (e) => castVote(option));
+  Object.keys(votes).forEach(option => {
+    const $optionButton = $(`<button class="voteOption" data-value="${option}">${option}<span class="voteCount">${votes[option]}</span></button>`);
+    $optionButton.on('click', castVote);
     $optionButton.appendTo($voteButtonsContainer);
   });
   return $voteButtonsContainer;
