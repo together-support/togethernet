@@ -24,6 +24,8 @@ const initUserProfile = () => {
   const name = 'Anonymous';
   store.set('name', name);
   $('#userName').text(name);
+
+  window.debugStore = store
 }
 
 const getRandomColor = () => {

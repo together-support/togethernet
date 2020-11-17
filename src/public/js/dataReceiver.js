@@ -9,6 +9,8 @@ import {
   updatePeerRoom,
 } from './ephemeralView.js'
 
+import {pollCreated, voteReceived} from './majorityRule.js';
+
 export const handleData = ({event, peerId}) => {
   let data;
   try {
@@ -37,6 +39,10 @@ export const handleData = ({event, peerId}) => {
     receiveRooms(data.data);
   } else if (data.type === 'setAgendaHidden') {
     setAgendaHidden(data.data);
+  } else if (data.type === 'pollCreated') {
+    pollCreated(data.data);
+  } else if (data.type === 'voteCasted') {
+    voteReceived(data.data);
   }
 }
 

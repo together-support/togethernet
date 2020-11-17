@@ -16,8 +16,8 @@ export const renderIncomingEphemeralMessage = (data) => {
 const renderMessageRecord = (data) => {
   if (data.messageType === 'agenda') {
     return agendaTextRecord(data)
-  } else if (data.messsageType === 'message') {
-    return disappearingTextRecord(data)
+  } else if (data.messageType === 'message') {
+    return disappearingTextRecord(data);
   } else {
     return persistentTextRecord(data);
   }

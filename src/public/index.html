@@ -81,7 +81,7 @@
           <button id="addFacilitator">+Add facilitators</button>
           <div id="currentFacilitators"></div>
         </div>
-        <div class="section">
+        <div class="section" id="configureConsentfulGestures" style="display: none;">
           <h3>Add Consentful Gestures</h3>
           <p>Often used in direct action organizing, consentful gestures provides a way to respond to proposals and discussion through non-verbal cues.</p>
           <div class="toggleOption" id="consentfulGesturesToggle">
@@ -92,7 +92,7 @@
             <span>No</span>
           </div>
         </div>
-        <div class="section">
+        <div class="section" id="configureMajorityRules" style="display: none;">
           <h3>Add Majority Rule</h3>
           <p>Add a voting feature that would favor decisions made by more than half of the team members</p>
           <div class="toggleOption" id="majorityRulesToggle">
@@ -139,5 +139,13 @@
       </button>
     </div>
     <script src="/js/bundle.js"></script>
+    <template id="consentfulGesturesTemplate">
+      <div class="consentfulGestures">
+        <button class="icon"><img src="/svg/agree.svg"/></button>
+        <button class="icon"><img src="/svg/disagree.svg"/></button>
+        <button class="icon"><img src="/svg/stand.svg"/></button>
+        <button class="icon"><img src="/svg/block.svg"/></button>
+      </div>
+    </template>
   </body>
 </html>
