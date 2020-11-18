@@ -256,21 +256,13 @@ button p {
 
 .modalContent {
   background-color: #EEEEEE;
-  margin: 120px auto;
+  margin: 100px auto;
   padding: 25px;
   border: 1px solid #888;
   width: 450px;
   font-family: sans-serif;
   line-height: 2;
 }
-
-#configureRoom-1 {
-  height: 530px;
-};
-
-#configureRoom-2 {
-  height: 650px;
-};
 
 .modalContent p {
   font-family: sans-serif;
@@ -289,13 +281,13 @@ button p {
 }
 
 .modalContent .section {
-  padding: 0 0 20px 0;
+  padding: 0 0 10px 0;
 }
 
 .toggleOption {
   display: flex;
   justify-content: start;
-  padding-top: 20px;
+  padding: 10px 0;
 }
 
 .toggleOption > * {

@@ -10,8 +10,6 @@ const defaultOptions = {
   name: '',
   roomId: '',
   ephemeral: true,
-  enableConsentfulGestures: true,
-  enableMajorityRule: true,
   facilitators: [],
 }
 
@@ -26,10 +24,11 @@ export default class RoomForm {
 
   initialize = () => {
     $('#ephemeralArchivalToggle').find('.toggleButton').on('click', this.togglePrivacy);
-    $('#consentfulGesturesToggle').find('.toggleButton').on('click', this.toggleConsentfulGestures);
-    $('#majorityRulesToggle').find('.toggleButton').on('click', this.toggleMajorityRule);
     $('#newRoomName').on('change', this.updateRoomName);
+
+    $('#meetingMode').on('privacyChanged', this.privacyChanged);
     $('#meetingMode').on('change', this.changeMeetingMode);
+
     $('.createNewRoom').on('click', this.createNewRoom);
     $('#customizeRoom').on('click', () => {
       if (this.options.mode === roomModes.directAction || this.options.mode === roomModes.facilitated) {
@@ -79,16 +78,18 @@ export default class RoomForm {
   togglePrivacy = () => {
     this.options.ephemeral = !this.options.ephemeral;
     $('#ephemeralArchivalToggle').find('.toggleContainer').toggleClass('right');
+    $('#meetingMode').trigger({type: 'privacyChanged', ephemeral: this.options.ephemeral})
   }
 
-  toggleConsentfulGestures = () => {
-    this.options.enableConsentfulGestures = !this.options.enableConsentfulGestures;
-    $('#consentfulGesturesToggle').find('.toggleContainer').toggleClass('right');
-  }
+  privacyChanged = (e) => {
+    const $meetingMode = $(e.target);
 
-  toggleMajorityRule = () => {
-    this.options.enableMajorityRule = !this.options.enableMajorityRule;
-    $('#majorityRulesToggle').find('.toggleContainer').toggleClass('right');
+    if (e.ephemeral) {
+      $('#configureMeetingMode').show();
+    } else {
+      $('#configureMeetingMode').hide();
+      $('#meetingMode').val(publicConfig.defaultMode).trigger('change');
+    }
   }
 
   changeMeetingMode = (e) => {
@@ -98,25 +99,16 @@ export default class RoomForm {
       $('#configureMajorityRules').hide();
       $('#configureConsentfulGestures').hide();
       this.clearFacilitators();
+      $('#customizeRoom').hide();
     } else if (this.options.mode === roomModes.directAction) {
       $('#configureMajorityRules').hide();
       $('#configureConsentfulGestures').show();
-      this.enableConsentfulGesture();
+      $('#customizeRoom').show();
     } else if (this.options.mode === roomModes.facilitated) {
       $('#configureConsentfulGestures').hide();
       $('#configureMajorityRules').show();
-      this.enableMajorityRule();
+      $('#customizeRoom').show();
     }
-  }
-
-  enableMajorityRule = () => {
-    this.options.enableMajorityRule = true;
-    $('#majorityRulesToggle').find('.toggleContainer').removeClass('right');
-  }
-
-  enableConsentfulGesture = () => {
-    this.options.enableConsentfulGestures = true;
-    $('#consentfulGesturesToggle').find('.toggleContainer').removeClass('right');
   }
 
   updateRoomName = (e) => {
