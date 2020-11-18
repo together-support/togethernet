@@ -7,20 +7,6 @@ export const disappearingTextRecord = (data) => {
   const $textRecord = textRecord(data);
   const $textBubble = $textRecord.find('.textBubble');
 
-  const {isMine, roomId, isPoll, votes} = data;
-  const room = store.getRoom(roomId);
-
-  if (room.mode === roomModes.facilitated && !isPoll) {
-    const $createPoll = $('<button id="makeVote">Vote</button>');
-    $createPoll.on('click', createPoll);
-    $createPoll.prependTo($textRecord.find('.textBubbleButtons'));
-  }
-
-  if (majorityRuleEnabled && isPoll) {
-    $textBubble.addClass('poll');
-    voteButtons(votes).appendTo($textBubble);
-  }
-
   $textRecord
     .mouseenter(() => $textRecord.find('.textBubble').show())
     .mouseleave(() => $textRecord.find('.textBubble').hide())
@@ -29,31 +15,30 @@ export const disappearingTextRecord = (data) => {
   return $textRecord;
 }
 
-export const voteButtons = (votes) => {
-  const $voteButtonsContainer = $('<div class="votingButtons"></div>');
-  Object.keys(votes).forEach(option => {
-    const $optionButton = $(`<button class="voteOption" data-value="${option}">${option}<span class="voteCount">${votes[option]}</span></button>`);
-    $optionButton.on('click', castVote);
-    $optionButton.appendTo($voteButtonsContainer);
-  });
-  return $voteButtonsContainer;
-}
-
 export const persistentTextRecord = (data) => {
   const $textRecord = textRecord(data);
   const $textBubble = $textRecord.find('.textBubble'); 
   const $textBubbleButtons = $textBubble.find('.textBubbleButtons');
 
+  const {roomId, isPoll, votes} = data;
+  const room = store.getRoom(roomId);
+
   const $hideButton = $('<button class="icon">-</button>');
   $hideButton.on('click', () => $textBubble.hide());
   $hideButton.prependTo($textBubbleButtons);
 
-  $textRecord.mouseenter(() => $textBubble.show());
-
-  const room = store.getRoom(data.roomId);
-  if (room.mode === roomModes.directAction) {
-    consentfulGestures().prependTo($textBubbleButtons);
+  if (room.mode === roomModes.facilitated) {
+    if (isPoll) {
+      $textBubble.addClass('poll');
+      voteButtons(votes).appendTo($textBubble);
+    } else {
+      const $createPoll = $('<button id="makeVote">Vote</button>');
+      $createPoll.on('click', createPoll);
+      $createPoll.prependTo($textRecord.find('.textBubbleButtons'));  
+    }
   }
+
+  $textRecord.mouseenter(() => $textBubble.show());
 
   return $textRecord;
 }
@@ -63,9 +48,7 @@ export const agendaTextRecord = (data) => {
   const $textBubble = $textRecord.find('.textBubble'); 
   const $textBubbleButtons = $textBubble.find('.textBubbleButtons');
 
-  const {isMine, roomId} = data;
-
-  if (isMine) {
+  if (data.isMine) {
     const $hideButton = $('<button class="icon">-</button>');
     $hideButton.on('click', () => {
       $textBubble.hide();
@@ -80,17 +63,7 @@ export const agendaTextRecord = (data) => {
     });
   }
 
-  const room = store.getRoom(roomId);
-  if (room.mode === roomModes.directAction) {
-    consentfulGestures().prependTo($textBubbleButtons);
-  }
-
   return $textRecord;
-}
-
-const consentfulGestures = () => {
-  const $consentfulGesturesClone = $(document.getElementById('consentfulGesturesTemplate').content.cloneNode(true));
-  return $consentfulGesturesClone;
 }
 
 const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId}) => {
@@ -114,7 +87,27 @@ const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId}) 
   $message.appendTo($textBubble);
   $textBubble.appendTo($textRecord);
 
+  const room = store.getRoom(roomId);
+  if (room.mode === roomModes.directAction)  {
+    consentfulGestures().appendTo($textBubble);
+  }
+
   return $textRecord;
+}
+
+const consentfulGestures = () => {
+  const $consentfulGesturesClone = $(document.getElementById('consentfulGesturesTemplate').content.cloneNode(true));
+  return $consentfulGesturesClone;
+}
+
+export const voteButtons = (votes) => {
+  const $voteButtonsContainer = $('<div class="votingButtons"></div>');
+  Object.keys(votes).forEach(option => {
+    const $optionButton = $(`<button class="voteOption" data-value="${option}">${option}<span class="voteCount">${votes[option]}</span></button>`);
+    $optionButton.on('click', castVote);
+    $optionButton.appendTo($voteButtonsContainer);
+  });
+  return $voteButtonsContainer;
 }
 
 export const systemBubble = (message) => {
