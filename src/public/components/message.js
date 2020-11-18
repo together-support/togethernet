@@ -7,9 +7,6 @@ export const disappearingTextRecord = (data) => {
   const $textRecord = textRecord(data);
   const $textBubble = $textRecord.find('.textBubble');
 
-  const {isMine, roomId, isPoll, votes} = data;
-  const room = store.getRoom(roomId);
-
   $textRecord
     .mouseenter(() => $textRecord.find('.textBubble').show())
     .mouseleave(() => $textRecord.find('.textBubble').hide())
@@ -18,22 +15,12 @@ export const disappearingTextRecord = (data) => {
   return $textRecord;
 }
 
-export const voteButtons = (votes) => {
-  const $voteButtonsContainer = $('<div class="votingButtons"></div>');
-  Object.keys(votes).forEach(option => {
-    const $optionButton = $(`<button class="voteOption" data-value="${option}">${option}<span class="voteCount">${votes[option]}</span></button>`);
-    $optionButton.on('click', castVote);
-    $optionButton.appendTo($voteButtonsContainer);
-  });
-  return $voteButtonsContainer;
-}
-
 export const persistentTextRecord = (data) => {
   const $textRecord = textRecord(data);
   const $textBubble = $textRecord.find('.textBubble'); 
   const $textBubbleButtons = $textBubble.find('.textBubbleButtons');
 
-  const {roomId, isPoll} = data;
+  const {roomId, isPoll, votes} = data;
   const room = store.getRoom(roomId);
 
   const $hideButton = $('<button class="icon">-</button>');
@@ -79,11 +66,6 @@ export const agendaTextRecord = (data) => {
   return $textRecord;
 }
 
-const consentfulGestures = () => {
-  const $consentfulGesturesClone = $(document.getElementById('consentfulGesturesTemplate').content.cloneNode(true));
-  return $consentfulGesturesClone;
-}
-
 const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId}) => {
   const $textRecord = $(`<div class="textRecord ephemeral" id="${roomId}-${x}-${y}"></div>`);
   $textRecord.css({left: x, top: y, backgroundColor: avatar});
@@ -111,6 +93,21 @@ const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId}) 
   }
 
   return $textRecord;
+}
+
+const consentfulGestures = () => {
+  const $consentfulGesturesClone = $(document.getElementById('consentfulGesturesTemplate').content.cloneNode(true));
+  return $consentfulGesturesClone;
+}
+
+export const voteButtons = (votes) => {
+  const $voteButtonsContainer = $('<div class="votingButtons"></div>');
+  Object.keys(votes).forEach(option => {
+    const $optionButton = $(`<button class="voteOption" data-value="${option}">${option}<span class="voteCount">${votes[option]}</span></button>`);
+    $optionButton.on('click', castVote);
+    $optionButton.appendTo($voteButtonsContainer);
+  });
+  return $voteButtonsContainer;
 }
 
 export const systemBubble = (message) => {
