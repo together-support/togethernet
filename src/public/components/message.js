@@ -10,17 +10,6 @@ export const disappearingTextRecord = (data) => {
   const {isMine, roomId, isPoll, votes} = data;
   const room = store.getRoom(roomId);
 
-  if (room.mode === roomModes.facilitated && !isPoll) {
-    const $createPoll = $('<button id="makeVote">Vote</button>');
-    $createPoll.on('click', createPoll);
-    $createPoll.prependTo($textRecord.find('.textBubbleButtons'));
-  }
-
-  if (majorityRuleEnabled && isPoll) {
-    $textBubble.addClass('poll');
-    voteButtons(votes).appendTo($textBubble);
-  }
-
   $textRecord
     .mouseenter(() => $textRecord.find('.textBubble').show())
     .mouseleave(() => $textRecord.find('.textBubble').hide())
@@ -44,16 +33,25 @@ export const persistentTextRecord = (data) => {
   const $textBubble = $textRecord.find('.textBubble'); 
   const $textBubbleButtons = $textBubble.find('.textBubbleButtons');
 
+  const {roomId, isPoll} = data;
+  const room = store.getRoom(roomId);
+
   const $hideButton = $('<button class="icon">-</button>');
   $hideButton.on('click', () => $textBubble.hide());
   $hideButton.prependTo($textBubbleButtons);
 
-  $textRecord.mouseenter(() => $textBubble.show());
-
-  const room = store.getRoom(data.roomId);
-  if (room.mode === roomModes.directAction) {
-    consentfulGestures().prependTo($textBubbleButtons);
+  if (room.mode === roomModes.facilitated) {
+    if (isPoll) {
+      $textBubble.addClass('poll');
+      voteButtons(votes).appendTo($textBubble);
+    } else {
+      const $createPoll = $('<button id="makeVote">Vote</button>');
+      $createPoll.on('click', createPoll);
+      $createPoll.prependTo($textRecord.find('.textBubbleButtons'));  
+    }
   }
+
+  $textRecord.mouseenter(() => $textBubble.show());
 
   return $textRecord;
 }
@@ -63,9 +61,7 @@ export const agendaTextRecord = (data) => {
   const $textBubble = $textRecord.find('.textBubble'); 
   const $textBubbleButtons = $textBubble.find('.textBubbleButtons');
 
-  const {isMine, roomId} = data;
-
-  if (isMine) {
+  if (data.isMine) {
     const $hideButton = $('<button class="icon">-</button>');
     $hideButton.on('click', () => {
       $textBubble.hide();
@@ -78,11 +74,6 @@ export const agendaTextRecord = (data) => {
         hideAgendaForPeers({agendaId: $textRecord.attr('id'), shouldHide: false});
       }
     });
-  }
-
-  const room = store.getRoom(roomId);
-  if (room.mode === roomModes.directAction) {
-    consentfulGestures().prependTo($textBubbleButtons);
   }
 
   return $textRecord;
@@ -113,6 +104,11 @@ const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId}) 
   $name.appendTo($textBubble);
   $message.appendTo($textBubble);
   $textBubble.appendTo($textRecord);
+
+  const room = store.getRoom(roomId);
+  if (room.mode === roomModes.directAction)  {
+    consentfulGestures().appendTo($textBubble);
+  }
 
   return $textRecord;
 }
