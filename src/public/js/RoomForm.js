@@ -10,8 +10,6 @@ const defaultOptions = {
   name: '',
   roomId: '',
   ephemeral: true,
-  enableConsentfulGestures: true,
-  enableMajorityRule: true,
   facilitators: [],
 }
 

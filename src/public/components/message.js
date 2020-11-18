@@ -9,9 +9,8 @@ export const disappearingTextRecord = (data) => {
 
   const {isMine, roomId, isPoll, votes} = data;
   const room = store.getRoom(roomId);
-  const majorityRuleEnabled = room.mode === roomModes.facilitated && room.enableMajorityRule;
 
-  if (isMine && majorityRuleEnabled && !isPoll) {
+  if (room.mode === roomModes.facilitated && !isPoll) {
     const $createPoll = $('<button id="makeVote">Vote</button>');
     $createPoll.on('click', createPoll);
     $createPoll.prependTo($textRecord.find('.textBubbleButtons'));
@@ -52,7 +51,7 @@ export const persistentTextRecord = (data) => {
   $textRecord.mouseenter(() => $textBubble.show());
 
   const room = store.getRoom(data.roomId);
-  if (room.mode === roomModes.directAction && room.enableConsentfulGestures) {
+  if (room.mode === roomModes.directAction) {
     consentfulGestures().prependTo($textBubbleButtons);
   }
 
@@ -82,7 +81,7 @@ export const agendaTextRecord = (data) => {
   }
 
   const room = store.getRoom(roomId);
-  if (room.mode === roomModes.directAction && room.enableConsentfulGestures) {
+  if (room.mode === roomModes.directAction) {
     consentfulGestures().prependTo($textBubbleButtons);
   }
 
