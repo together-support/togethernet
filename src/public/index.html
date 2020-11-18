@@ -40,23 +40,6 @@
           <h3>Create a room</h3>
           <p>Add additional rooms to communicate on different topics.</p>
         </div>
-        <div class="section">
-          <h3>Ephemeral/Archival Mode</h3>
-          <p>When a room is set to ephemeral mode, conversations will not be stored on the server without collective consent. When a room is set to archival mode, conversations will be archived on the server automatically.</p>
-          <div class="toggleOption" id="ephemeralArchivalToggle">
-            <span>Ephemeral Mode</span>
-            <div class="toggleContainer">
-              <button class="toggleButton"></button>
-            </div>
-            <span>Archival Mode</span>
-          </div>
-        </div>
-
-        <div class="section">
-          <h3>Mode</h3>
-          <select name="meetingMode" id="meetingMode">
-          </select>
-        </div>
 
         <div class="section">
           <h3>Name</h3>
@@ -64,11 +47,36 @@
           <input id="newRoomName"type="text" placeholder="convening-on-the-beach"/>
         </div>
 
+        <div class="section">
+          <div class="toggleOption" id="ephemeralArchivalToggle">
+            <span>Ephemeral Mode</span>
+            <div class="toggleContainer">
+              <button class="toggleButton"></button>
+            </div>
+            <span>Archival Mode</span>
+          </div>
+          <p>When a room is set to ephemeral mode, conversations will not be stored on the server without collective consent. When a room is set to archival mode, conversations will be archived on the server automatically.</p>
+          <p>Learn more about Ephemeral / Archival Modes&nbsp;<a href="#">here</a>.</p>
+        </div>
+
+        <div class="section" id="configureMeetingMode">
+          <h3>Mode</h3>
+          <select name="meetingMode" id="meetingMode">
+          </select>
+        </div>
+
+        <div class="section" id="configureConsentfulGestures" style="display: none;">
+          <p>Adds Consentful Gestures. Often used in direct action organizing, consentful gestures provides a way to respond to proposals and discussion through non-verbal cues.</p>
+        </div>
+
+        <div class="section" id="configureMajorityRules" style="display: none;">
+          <p>Adds a voting feature that would favor decisions made by more than half of the team members</p>
+        </div>
+
         <div class="section modalButtons">
-          <button id="customizeRoom">Customize</button>
+          <button id="customizeRoom" style="display:none;">Customize</button>
           <button class="createNewRoom">Create</button>
         </div>
-        <p>Learn more about Ephemeral / Archival Modes&nbsp;<a href="#">here</a>.</p>
       </div>
       <div class="modalContent configureRoomView" id="configureRoom-2" style="display:none;">
         <div class="section">
@@ -81,29 +89,6 @@
           <button id="addFacilitator">+Add facilitators</button>
           <div id="currentFacilitators"></div>
         </div>
-        <div class="section" id="configureConsentfulGestures" style="display: none;">
-          <h3>Add Consentful Gestures</h3>
-          <p>Often used in direct action organizing, consentful gestures provides a way to respond to proposals and discussion through non-verbal cues.</p>
-          <div class="toggleOption" id="consentfulGesturesToggle">
-            <span>Yes</span>
-            <div class="toggleContainer">
-              <button class="toggleButton"></button>
-            </div>
-            <span>No</span>
-          </div>
-        </div>
-        <div class="section" id="configureMajorityRules" style="display: none;">
-          <h3>Add Majority Rule</h3>
-          <p>Add a voting feature that would favor decisions made by more than half of the team members</p>
-          <div class="toggleOption" id="majorityRulesToggle">
-            <span>Yes</span>
-            <div class="toggleContainer">
-              <button class="toggleButton"></button>
-            </div>
-            <span>No</span>
-          </div>
-        </div>
-
         <div class="section modalButtons">
           <button id="backToCreateRoom">Back</button>
           <button class="createNewRoom">Create</button>
