@@ -81,7 +81,7 @@ const renderPeer = (data) => {
 
 const renderUserAvatar = () => {
   if ($('#user').length) {
-    $('#user').appendTo(store.getCurrentRoom().$room)
+    $('#user').appendTo(store.getCurrentRoom().$room);
   } else {
     userAvatar().appendTo(store.getCurrentRoom().$room);
     store.set('avatarSize', $("#user").width());

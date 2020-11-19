@@ -81,7 +81,7 @@ class Store {
     return this.rooms[roomId];
   }
 
-  updateOrInitializeRoom = (roomId, options) => {
+  updateOrInitializeRoom = (roomId, options = {roomId, name: roomId}) => {
     let room = this.rooms[roomId];
     if (Boolean(room)) {
       room.updateSelf(options);
@@ -90,6 +90,7 @@ class Store {
       this.rooms[roomId] = room;
       room.initialize();
     }
+    return room;
   }
 
   isMe = (id) => {

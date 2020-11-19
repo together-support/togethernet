@@ -69,7 +69,7 @@ export default class PeerConnection {
 
     if (initiator) {
       const dataChannel = peerConnection.createDataChannel('tn', {reliable: true});
-      peerConnection.dataChannel = this.setUpDataChannel({dataChannel, peerId});
+      peerConnection.dataChannel = this.setUpDataChannel({dataChannel, peerId, initiator});
     } else {
       peerConnection.ondatachannel = (event) => {
         store.setDataChannel(peerId, this.setUpDataChannel({dataChannel: event.channel, peerId}));
@@ -79,7 +79,7 @@ export default class PeerConnection {
     return peerConnection
   }
 
-  setUpDataChannel = ({dataChannel, peerId}) => {
+  setUpDataChannel = ({dataChannel, peerId, initiator}) => {
     dataChannel.onclose = () => {
       console.log("channel close"); 
     };
@@ -93,12 +93,13 @@ export default class PeerConnection {
       store.sendToPeer(dataChannel, {
         type: 'initPeer', 
         data: {
+          room: store.getCurrentRoom(),
           x: $('#user').position().left,
           y: $('#user').position().top,
         },
       });
       
-      if (store.get('needRoomsInfo')) {
+      if (initiator && store.get('needRoomsInfo')) {
         store.sendToPeer(dataChannel, {type: 'requestRooms'});
       }
     };

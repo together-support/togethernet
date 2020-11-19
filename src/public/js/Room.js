@@ -94,7 +94,7 @@ export default class Room {
   }
 
   renderAvatars = () => {
-    Object.values(this.members).forEach(member => renderAvatar(member));
+    Object.values(this.members).forEach(member => renderAvatar({...member, roomId: this.roomId}));
   }
 
   renderHistory = () => {
@@ -132,11 +132,12 @@ export default class Room {
     store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
   }
 
-  updateSelf = ({mode, ephemeral, name, ephemeralHistory}) => {
+  updateSelf = ({mode, ephemeral, name, ephemeralHistory, members}) => {
     this.mode = mode;
     this.ephemeral = ephemeral
     this.name = name;
     this.ephemeralHistory = {...this.ephemeralHistory, ...ephemeralHistory}
+    this.members = {...this.members, ...members}
     this.renderHistory();
   }
 }
