@@ -1,7 +1,9 @@
 import store from '../store/index.js';
 import {removeAllSystemMessage} from './systemMessage.js';
 import {disappearingTextRecord, persistentTextRecord, agendaTextRecord} from '../components/message.js';
-import {peerAvatar} from '../components/users.js';
+import {peerAvatar, userAvatar} from '../components/users.js';
+import {makeDraggableUser} from './animatedAvatar.js';
+import merge from 'lodash/merge';
 
 export const renderOutgoingEphemeralMessage = (data) => {
   removeAllSystemMessage();
@@ -62,22 +64,45 @@ export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
   })
 }
 
-export const renderPeer = (data) => {
-  peerAvatar(data).appendTo($(`#${data.roomId}`));
+export const renderAvatar = (data) => {
+  if (store.isMe(data.socketId)) {
+    renderUserAvatar();
+  } else {
+    renderPeer(data);
+  }
 }
 
-export const updatePeerPosition = ({id, x, y}) => {
-  $(`#peer-${id}`).finish().animate({left: x, top: y})
+const renderPeer = (data) => {
+  const {roomId, socketId} = data;
+
+  const avatar = $(`#peer-${socketId}`).length ? $(`#peer-${socketId}`) : peerAvatar(data);
+  avatar.appendTo($(`#${roomId}`));
+}
+
+const renderUserAvatar = () => {
+  if ($('#user').length) {
+    $('#user').appendTo(store.getCurrentRoom().$room);
+  } else {
+    userAvatar().appendTo(store.getCurrentRoom().$room);
+    store.set('avatarSize', $("#user").width());
+    makeDraggableUser();
+  }
+}
+
+export const updatePeerPosition = ({socketId, x, y, roomId}) => {
+  merge(store.getRoom(roomId).members[socketId], {x, y});
+  $(`#peer-${socketId}`).finish().animate({left: x, top: y})
 }
 
 export const updatePeerAvatar = ({id, avatar}) => {
   $(`#peer-${id}`).finish().animate({backgroundColor: avatar});
 }
 
-export const updatePeerRoom = ({socketId, joinedRoomId}) => {
+export const updatePeerRoom = (data) => {
+  const {socketId, joinedRoomId} = data;
   $(`#peer-${socketId}`).finish().animate({opacity: 0}, {
     complete: () => {
-      $(`#peer-${socketId}`).appendTo(store.getRoom(joinedRoomId).$room);
+      store.getRoom(joinedRoomId).addMember(data);
       $(`#peer-${socketId}`).css({
         left: 0,
         top: 0,

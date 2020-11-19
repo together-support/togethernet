@@ -47,13 +47,15 @@ class Store {
   }
 
   sendToPeer = (dataChannel, {type, data}) => {
-    dataChannel.send(JSON.stringify({
-      type,
-      data: {
-        ...data, 
-        ...this.getProfile(),
-      }
-    }));
+    if (dataChannel.readyState === 'open') {
+      dataChannel.send(JSON.stringify({
+        type,
+        data: {
+          ...data, 
+          ...this.getProfile(),
+        }
+      }));
+    }
   }
 
   sendToPeers = ({type, data}) => {
@@ -79,7 +81,7 @@ class Store {
     return this.rooms[roomId];
   }
 
-  updateOrInitializeRoom = (roomId, options) => {
+  updateOrInitializeRoom = (roomId, options = {roomId, name: roomId}) => {
     let room = this.rooms[roomId];
     if (Boolean(room)) {
       room.updateSelf(options);
@@ -88,6 +90,11 @@ class Store {
       this.rooms[roomId] = room;
       room.initialize();
     }
+    return room;
+  }
+
+  isMe = (id) => {
+    return id === this.socketId;
   }
 }
 

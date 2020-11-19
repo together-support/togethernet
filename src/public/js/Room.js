@@ -1,7 +1,7 @@
 import store from '../store/index.js';
 import throttle from 'lodash/throttle';
-import {keyboardEvent, renderUserAvatar} from './animatedAvatar.js';
-import {renderIncomingEphemeralMessage} from './ephemeralView.js';
+import {keyboardEvent} from './animatedAvatar.js';
+import {renderIncomingEphemeralMessage, renderAvatar} from './ephemeralView.js';
 
 export default class Room {
   constructor(options) {
@@ -12,6 +12,7 @@ export default class Room {
     this.facilitators = options.facilitators || [];
     this.$room = $(`#${this.roomId}`);
     this.$roomLink = $(`#${this.roomId}Link`);
+    this.members = {...options.members};
 
     this.ephemeralHistory = {...options.ephemeralHistory};
   }
@@ -44,23 +45,38 @@ export default class Room {
 
   attachEvents = () => {
     this.$roomLink.on('click', this.goToRoom);
+    this.$room.on('showRoom', this.showRoom);
+    this.$room.on('hideRoom', this.hideRoom);
 
     if (this.ephemeral) {
       this.setBoundary();
       this.$room.on('keydown', keyboardEvent)
     };
-
-    this.$room.on('showRoom', this.showRoom);
-    this.$room.on('hideRoom', this.hideRoom);
   }
 
   goToRoom = () => {
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
-    this.$room.trigger('showRoom');
     $('#messageType').find('option[value="agenda"]').remove();
     if (!this.facilitators.length || this.facilitators.includes(store.get('socketId'))) {
       $('<option value="agenda">add an agenda</option>').appendTo($('#messageType'));
     }
+
+    this.addMember(store.getProfile());
+    this.$room.trigger('showRoom');
+
+    store.sendToPeers({
+      type: 'joinedRoom',
+      data: {
+        joinedRoomId: this.roomId
+      }
+    });
+  }
+
+  addMember = (profile) => {
+    const {socketId} = profile;
+    Object.values(store.get('rooms')).forEach(room => delete room.members[socketId]);
+    this.members[socketId] = profile;
+    renderAvatar(profile);
   }
 
   showRoom = () => {
@@ -70,18 +86,15 @@ export default class Room {
     $(window).on('resize', this.onResize);
     
     if (this.ephemeral) {
-      renderUserAvatar();
+      this.renderAvatars();
       this.setBoundary();
     }
     
     this.renderHistory();
+  }
 
-    store.sendToPeers({
-      type: 'joinedRoom',
-      data: {
-        joinedRoomId: this.roomId
-      }
-    });
+  renderAvatars = () => {
+    Object.values(this.members).forEach(member => renderAvatar({...member, roomId: this.roomId}));
   }
 
   renderHistory = () => {
@@ -119,11 +132,12 @@ export default class Room {
     store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
   }
 
-  updateSelf = ({mode, ephemeral, name, ephemeralHistory}) => {
+  updateSelf = ({mode, ephemeral, name, ephemeralHistory, members}) => {
     this.mode = mode;
     this.ephemeral = ephemeral
     this.name = name;
     this.ephemeralHistory = {...this.ephemeralHistory, ...ephemeralHistory}
+    this.members = {...this.members, ...members}
     this.renderHistory();
   }
 }

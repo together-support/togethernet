@@ -2,7 +2,6 @@ import store from '../store/index.js'
 import {
   removeEphemeralPeerMessage, 
   renderIncomingEphemeralMessage, 
-  renderPeer, 
   setAgendaHidden,
   updatePeerPosition, 
   updatePeerAvatar,
@@ -22,9 +21,9 @@ export const handleData = ({event, peerId}) => {
   if (data.type === 'text') {
     renderIncomingEphemeralMessage(data.data);
   } else if (data.type === 'initPeer') {
-    initPeer({...data.data, id: peerId});
+    initPeer({...data.data});
   } else if (data.type === 'position') {
-    updatePeerPosition({...data.data, id: peerId}) 
+    updatePeerPosition({...data.data}) 
   } else if (data.type === 'newRoom') {
     addNewRoom(data.data);
   } else if (data.type === 'joinedRoom') {
@@ -73,8 +72,8 @@ const addNewRoom = ({options}) => {
 }
 
 const initPeer = (data) => {
-  const {id, avatar, name} = data
-  const peer = store.getPeer(id)
-  peer.profile = {avatar, name}  
-  renderPeer(data);
+  const {socketId, avatar, name, roomId, room} = data
+  const peer = store.getPeer(socketId)
+  peer.profile = {avatar, name}
+  store.updateOrInitializeRoom(roomId, room).addMember(data)
 }
