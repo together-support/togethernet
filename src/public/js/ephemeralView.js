@@ -1,7 +1,8 @@
 import store from '../store/index.js';
 import {removeAllSystemMessage} from './systemMessage.js';
 import {disappearingTextRecord, persistentTextRecord, agendaTextRecord} from '../components/message.js';
-import {peerAvatar} from '../components/users.js';
+import {peerAvatar, userAvatar} from '../components/users.js';
+import {makeDraggableUser} from './animatedAvatar.js';
 
 export const renderOutgoingEphemeralMessage = (data) => {
   removeAllSystemMessage();
@@ -62,8 +63,29 @@ export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
   })
 }
 
-export const renderPeer = (data) => {
-  peerAvatar(data).appendTo($(`#${data.roomId}`));
+export const renderAvatar = (data) => {
+  if (store.isMe(data.socketId)) {
+    renderUserAvatar();
+  } else {
+    renderPeer(data);
+  }
+}
+
+const renderPeer = (data) => {
+  const {roomId, id} = data;
+
+  const avatar = $(`#peer-${id}`).length ? $(`#peer-${id}`) : peerAvatar(data);
+  avatar.appendTo($(`#${roomId}`));
+}
+
+const renderUserAvatar = () => {
+  if ($('#user').length) {
+    $('#user').appendTo(store.getCurrentRoom().$room)
+  } else {
+    userAvatar().appendTo(store.getCurrentRoom().$room);
+    store.set('avatarSize', $("#user").width());
+    makeDraggableUser();
+  }
 }
 
 export const updatePeerPosition = ({id, x, y}) => {
@@ -74,10 +96,10 @@ export const updatePeerAvatar = ({id, avatar}) => {
   $(`#peer-${id}`).finish().animate({backgroundColor: avatar});
 }
 
-export const updatePeerRoom = ({socketId, joinedRoomId}) => {
+export const updatePeerRoom = (data) => {
   $(`#peer-${socketId}`).finish().animate({opacity: 0}, {
     complete: () => {
-      $(`#peer-${socketId}`).appendTo(store.getRoom(joinedRoomId).$room);
+      store.getRoom(joinedRoomId).addMember(data);
       $(`#peer-${socketId}`).css({
         left: 0,
         top: 0,

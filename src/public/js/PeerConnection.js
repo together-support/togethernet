@@ -13,9 +13,11 @@ export default class PeerConnection {
 
   connect = () => {
     this.socket.on('connect', () => {
-      addSystemMessage('Searching for peers...');
       store.set('socketId', this.socket.id);
-    })
+      Object.values(store.get('rooms')).forEach(room => room.attachEvents());
+      store.getCurrentRoom().goToRoom();
+      addSystemMessage('Searching for peers...');
+    });
     this.socket.on('initConnections', this.initConnections)
     this.socket.on('offer', this.handleReceivedOffer);
     this.socket.on('answer', this.handleReceivedAnswer);

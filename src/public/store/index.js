@@ -89,6 +89,10 @@ class Store {
       room.initialize();
     }
   }
+
+  isMe = (id) => {
+    return id === this.socketId;
+  }
 }
 
 const store = new Store();

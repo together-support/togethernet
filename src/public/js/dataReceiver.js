@@ -2,7 +2,6 @@ import store from '../store/index.js'
 import {
   removeEphemeralPeerMessage, 
   renderIncomingEphemeralMessage, 
-  renderPeer, 
   setAgendaHidden,
   updatePeerPosition, 
   updatePeerAvatar,
@@ -73,8 +72,8 @@ const addNewRoom = ({options}) => {
 }
 
 const initPeer = (data) => {
-  const {id, avatar, name} = data
+  const {id, avatar, name, roomId} = data
   const peer = store.getPeer(id)
-  peer.profile = {avatar, name}  
-  renderPeer(data);
+  peer.profile = {avatar, name}
+  store.getRoom(roomId).addMember(data)
 }

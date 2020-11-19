@@ -1,5 +1,4 @@
 import store from '../store/index.js';
-import {userAvatar} from '../components/users.js';
 
 export const keyboardEvent = (event) => {
   event.preventDefault();
@@ -45,13 +44,7 @@ const animationEvents = {
   'ArrowDown': moveDown
 }
 
-export const renderUserAvatar = () => {
-  userAvatar().appendTo(store.getCurrentRoom().$room);
-  store.set('avatarSize', $("#user").width());
-  makeDraggableUser();
-}
-
-const makeDraggableUser = () => {
+export const makeDraggableUser = () => {
   $("#user").draggable({
     grid: [store.get('avatarSize'), store.get('avatarSize')],
     stop: onAnimationComplete,
