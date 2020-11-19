@@ -23,7 +23,7 @@ export const handleData = ({event, peerId}) => {
   } else if (data.type === 'initPeer') {
     initPeer({...data.data});
   } else if (data.type === 'position') {
-    updatePeerPosition({...data.data, id: peerId}) 
+    updatePeerPosition({...data.data}) 
   } else if (data.type === 'newRoom') {
     addNewRoom(data.data);
   } else if (data.type === 'joinedRoom') {

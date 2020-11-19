@@ -3,6 +3,7 @@ import {removeAllSystemMessage} from './systemMessage.js';
 import {disappearingTextRecord, persistentTextRecord, agendaTextRecord} from '../components/message.js';
 import {peerAvatar, userAvatar} from '../components/users.js';
 import {makeDraggableUser} from './animatedAvatar.js';
+import merge from 'lodash/merge';
 
 export const renderOutgoingEphemeralMessage = (data) => {
   removeAllSystemMessage();
@@ -88,8 +89,9 @@ const renderUserAvatar = () => {
   }
 }
 
-export const updatePeerPosition = ({id, x, y}) => {
-  $(`#peer-${id}`).finish().animate({left: x, top: y})
+export const updatePeerPosition = ({socketId, x, y, roomId}) => {
+  merge(store.getRoom(roomId).members[socketId], {x, y});
+  $(`#peer-${socketId}`).finish().animate({left: x, top: y})
 }
 
 export const updatePeerAvatar = ({id, avatar}) => {

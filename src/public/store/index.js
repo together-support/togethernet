@@ -47,13 +47,15 @@ class Store {
   }
 
   sendToPeer = (dataChannel, {type, data}) => {
-    dataChannel.send(JSON.stringify({
-      type,
-      data: {
-        ...data, 
-        ...this.getProfile(),
-      }
-    }));
+    if (dataChannel.readyState === 'open') {
+      dataChannel.send(JSON.stringify({
+        type,
+        data: {
+          ...data, 
+          ...this.getProfile(),
+        }
+      }));
+    }
   }
 
   sendToPeers = ({type, data}) => {
