@@ -21,7 +21,7 @@ export const handleData = ({event, peerId}) => {
   if (data.type === 'text') {
     renderIncomingEphemeralMessage(data.data);
   } else if (data.type === 'initPeer') {
-    initPeer({...data.data, id: peerId});
+    initPeer({...data.data});
   } else if (data.type === 'position') {
     updatePeerPosition({...data.data, id: peerId}) 
   } else if (data.type === 'newRoom') {
@@ -72,8 +72,8 @@ const addNewRoom = ({options}) => {
 }
 
 const initPeer = (data) => {
-  const {id, avatar, name, roomId} = data
-  const peer = store.getPeer(id)
+  const {socketId, avatar, name, roomId} = data
+  const peer = store.getPeer(socketId)
   peer.profile = {avatar, name}
   store.getRoom(roomId).addMember(data)
 }

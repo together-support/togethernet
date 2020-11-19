@@ -72,9 +72,9 @@ export const renderAvatar = (data) => {
 }
 
 const renderPeer = (data) => {
-  const {roomId, id} = data;
+  const {roomId, socketId} = data;
 
-  const avatar = $(`#peer-${id}`).length ? $(`#peer-${id}`) : peerAvatar(data);
+  const avatar = $(`#peer-${socketId}`).length ? $(`#peer-${socketId}`) : peerAvatar(data);
   avatar.appendTo($(`#${roomId}`));
 }
 
@@ -97,6 +97,7 @@ export const updatePeerAvatar = ({id, avatar}) => {
 }
 
 export const updatePeerRoom = (data) => {
+  const {socketId, joinedRoomId} = data;
   $(`#peer-${socketId}`).finish().animate({opacity: 0}, {
     complete: () => {
       store.getRoom(joinedRoomId).addMember(data);
