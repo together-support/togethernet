@@ -22,3 +22,9 @@ export const participantAvatar = ({avatar, socketId}) => {
   $avatar.css('background-color', avatar);
   return $avatar;
 }
+
+export const makeFacilitatorButton = (makeFacilitator) => {
+  const $button = $('<button>Make Facilitator</button>');
+  $button.on('click', makeFacilitator);
+  return $button;
+}

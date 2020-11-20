@@ -1,8 +1,9 @@
 import store from '../store/index.js';
 import throttle from 'lodash/throttle';
 import {keyboardEvent} from './animatedAvatar.js';
-import {renderIncomingEphemeralMessage, renderAvatar, renderParticipant} from './ephemeralView.js';
+import {renderIncomingEphemeralMessage, renderAvatar} from './ephemeralView.js';
 import {participantAvatar} from '../components/users.js'
+import { roomModes } from '../constants/index.js';
 
 export default class Room {
   constructor(options) {
@@ -107,6 +108,20 @@ export default class Room {
     Object.values(this.members).forEach(member => renderAvatar({...member, roomId: this.roomId}));
   }
 
+  hasFeature = (feature) => {
+    if (feature === 'facilitators') {
+      return this.mode === roomModes.directAction || this.mode === roomModes.facilitated;
+    }
+  }
+
+  hasFacilitator = (socketId) => {
+    return this.facilitators.includes(socketId);
+  }
+
+  makeFacilitator = (e) => {
+
+  }
+  
   renderHistory = () => {
     if (this.ephemeral) {
       Object.keys(this.ephemeralHistory).forEach((messageRecordId) => {
