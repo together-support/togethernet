@@ -1,8 +1,11 @@
 import store from '../store/index.js';
 import throttle from 'lodash/throttle';
+import pull from 'lodash/pull';
 import {keyboardEvent} from './animatedAvatar.js';
-import {renderIncomingEphemeralMessage, renderAvatar, renderParticipant} from './ephemeralView.js';
+import {renderIncomingEphemeralMessage, renderAvatar} from './ephemeralView.js';
 import {participantAvatar} from '../components/users.js'
+import { roomModes } from '../constants/index.js';
+import {addSystemMessage} from './systemMessage.js';
 
 export default class Room {
   constructor(options) {
@@ -62,11 +65,7 @@ export default class Room {
 
   goToRoom = () => {
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
-    $('#messageType').find('option[value="agenda"]').remove();
-    if (!this.facilitators.length || this.facilitators.includes(store.get('socketId'))) {
-      $('<option value="agenda">add an agenda</option>').appendTo($('#messageType'));
-    }
-
+    this.updateMessageTypes();
     this.addMember(store.getProfile());
     this.$room.trigger('showRoom');
 
@@ -107,6 +106,35 @@ export default class Room {
     Object.values(this.members).forEach(member => renderAvatar({...member, roomId: this.roomId}));
   }
 
+  hasFeature = (feature) => {
+    if (feature === 'facilitators') {
+      return this.mode === roomModes.directAction || this.mode === roomModes.facilitated;
+    }
+  }
+
+  hasFacilitator = (socketId) => {
+    return this.facilitators.includes(socketId);
+  }
+
+  onTransferFacilitator = (e) => {
+    const $peerAvatar = $(e.target).closest('.avatar');
+    $peerAvatar.empty();
+    const peerId = $peerAvatar.attr('id').split('peer-')[1];
+    addSystemMessage(`${store.getPeer(peerId).profile.name} stepped in as a new facilitator`);
+    pull(this.facilitators, store.get('socketId'));
+    this.facilitators.push(peerId);
+
+    store.sendToPeers({
+      type: 'updateFacilitators',
+      data: {
+        roomId: this.roomId,
+        facilitators: this.facilitators,
+      }
+    });
+
+    this.updateMessageTypes();
+  }
+  
   renderHistory = () => {
     if (this.ephemeral) {
       Object.keys(this.ephemeralHistory).forEach((messageRecordId) => {
@@ -144,10 +172,33 @@ export default class Room {
 
   updateSelf = ({mode, ephemeral, name, ephemeralHistory, members}) => {
     this.mode = mode;
-    this.ephemeral = ephemeral
+    this.ephemeral = ephemeral;
     this.name = name;
     this.ephemeralHistory = {...this.ephemeralHistory, ...ephemeralHistory}
     this.members = {...this.members, ...members}
     this.renderHistory();
+  }
+
+  updateFacilitators = (facilitators) => {
+    facilitators.forEach(facilitator => {
+      if (!this.hasFacilitator(facilitator)) {
+        const name = facilitator === store.get('socketId') ? store.getProfile().name : store.getPeer(facilitator).profile.name;
+        addSystemMessage(`${name} stepped in as the new facilitator`);
+      }
+    });
+
+    this.facilitators = facilitators;
+    this.updateMessageTypes();
+
+    if (this.hasFacilitator(store.get('socketId'))) {
+      this.renderAvatars();
+    }
+  }
+
+  updateMessageTypes = () => {
+    $('#messageType').find('option[value="agenda"]').remove();
+    if (!this.facilitators.length || this.facilitators.includes(store.get('socketId'))) {
+      $('<option value="agenda">add an agenda</option>').appendTo($('#messageType'));
+    }
   }
 }

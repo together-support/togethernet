@@ -35,6 +35,8 @@ export const attachUIEvents = () => {
   });
 
   new RoomForm().initialize();
+
+  $(document).on('mouseup', () => $('.makeFacilitator').hide());
 }
 
 const setMyUserName = () => {

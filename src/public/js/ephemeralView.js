@@ -1,9 +1,10 @@
 import store from '../store/index.js';
 import {removeAllSystemMessage} from './systemMessage.js';
 import {disappearingTextRecord, persistentTextRecord, agendaTextRecord} from '../components/message.js';
-import {peerAvatar, userAvatar} from '../components/users.js';
+import {peerAvatar, userAvatar, makeFacilitatorButton} from '../components/users.js';
 import {makeDraggableUser} from './animatedAvatar.js';
 import merge from 'lodash/merge';
+import { divide } from 'lodash';
 
 export const renderOutgoingEphemeralMessage = (data) => {
   removeAllSystemMessage();
@@ -74,9 +75,13 @@ export const renderAvatar = (data) => {
 
 const renderPeer = (data) => {
   const {roomId, socketId} = data;
-
-  const avatar = $(`#peer-${socketId}`).length ? $(`#peer-${socketId}`) : peerAvatar(data);
-  avatar.appendTo($(`#${roomId}`));
+  const $avatar = $(`#peer-${socketId}`).length ? $(`#peer-${socketId}`) : peerAvatar(data);
+  
+  const room = store.getRoom(roomId);
+  if (room.hasFeature('facilitators') && room.hasFacilitator(store.get('socketId')) && !room.hasFacilitator(socketId)) {
+    makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
+  }
+  $avatar.appendTo($(`#${roomId}`));
 }
 
 const renderUserAvatar = () => {
@@ -94,8 +99,8 @@ export const updatePeerPosition = ({socketId, x, y, roomId}) => {
   $(`#peer-${socketId}`).finish().animate({left: x, top: y})
 }
 
-export const updatePeerAvatar = ({id, avatar}) => {
-  $(`#peer-${id}`).finish().animate({backgroundColor: avatar});
+export const updatePeerAvatar = ({socketId, avatar}) => {
+  $(`#peer-${socketId}`).finish().animate({backgroundColor: avatar});
 }
 
 export const updatePeerRoom = (data) => {
@@ -110,4 +115,9 @@ export const updatePeerRoom = (data) => {
       });
     }
   });
+}
+
+export const updateFacilitators = ({roomId, facilitators}) => {
+  console.log(facilitators)
+  store.getRoom(roomId).updateFacilitators(facilitators);
 }

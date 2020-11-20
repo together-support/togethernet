@@ -2,6 +2,7 @@ import store from '../store/index.js'
 import {
   removeEphemeralPeerMessage, 
   renderIncomingEphemeralMessage, 
+  updateFacilitators,
   setAgendaHidden,
   updatePeerPosition, 
   updatePeerAvatar,
@@ -29,7 +30,7 @@ export const handleData = ({event, peerId}) => {
   } else if (data.type === 'joinedRoom') {
     updatePeerRoom(data.data);
   } else if (data.type === 'profileUpdated') {
-    updatePeerProfile({...data.data, id: peerId})
+    updatePeerProfile({...data.data})
   } else if (data.type === 'removeEphemeralMessage') {
     removeEphemeralPeerMessage(data.data);
   } else if (data.type === 'requestRooms') {
@@ -42,13 +43,15 @@ export const handleData = ({event, peerId}) => {
     pollCreated(data.data);
   } else if (data.type === 'voteCasted') {
     voteReceived(data.data);
+  } else if (data.type === 'updateFacilitators') {
+    updateFacilitators(data.data);
   }
 }
 
-const updatePeerProfile = ({id, name, avatar}) => {
-  const peer = store.getPeer(id);
-  peer.profile = {name, avatar};
-  updatePeerAvatar({id, avatar});
+const updatePeerProfile = ({socketId, name, avatar}) => {
+  const peer = store.getPeer(socketId);
+  peer.profile = {socketId, name, avatar};
+  updatePeerAvatar({socketId, avatar});
 }
 
 const sendRooms = (peerId) => {
@@ -74,6 +77,6 @@ const addNewRoom = ({options}) => {
 const initPeer = (data) => {
   const {socketId, avatar, name, roomId, room} = data
   const peer = store.getPeer(socketId)
-  peer.profile = {avatar, name}
+  peer.profile = {socketId, avatar, name}
   store.updateOrInitializeRoom(roomId, room).addMember(data)
 }

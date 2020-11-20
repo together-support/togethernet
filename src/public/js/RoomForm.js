@@ -50,6 +50,8 @@ export default class RoomForm {
 
     $("#addRoom").on('click', () => {
       this.listFacilitatorOptions();
+      renderFacilitator(store.getProfile()).appendTo($('#currentFacilitators'));
+      this.options.facilitators.push(store.get('socketId'));
       $('#configureRoom').show();
     });
   }
