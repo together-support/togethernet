@@ -4,6 +4,7 @@ import {disappearingTextRecord, persistentTextRecord, agendaTextRecord} from '..
 import {peerAvatar, userAvatar, makeFacilitatorButton} from '../components/users.js';
 import {makeDraggableUser} from './animatedAvatar.js';
 import merge from 'lodash/merge';
+import { divide } from 'lodash';
 
 export const renderOutgoingEphemeralMessage = (data) => {
   removeAllSystemMessage();

@@ -24,7 +24,9 @@ export const participantAvatar = ({avatar, socketId}) => {
 }
 
 export const makeFacilitatorButton = (makeFacilitator) => {
+  const $makeFacilitatorContainer = $('<div class="makeFacilitator" style="display:none"><div class="shortLine"/></div>');
   const $button = $('<button>Make Facilitator</button>');
   $button.on('click', makeFacilitator);
-  return $button;
+  $button.appendTo($makeFacilitatorContainer);
+  return $makeFacilitatorContainer;
 }

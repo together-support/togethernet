@@ -137,3 +137,24 @@
   display: flex;
 }
 
+.makeFacilitator {
+  position: absolute;
+  top: -30px;
+  width: 95px;
+  left: -20px;
+}
+
+.makeFacilitator > button {
+  padding: 5px 0;
+  border-radius: 5px;
+  font-size: 10px;
+  width: 95px;
+}
+
+.shortLine {
+  position: absolute;
+  height: 10px;
+  width: 1px;
+  background-color: black;
+  left: 42.5px;
+}
