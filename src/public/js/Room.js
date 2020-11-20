@@ -1,7 +1,8 @@
 import store from '../store/index.js';
 import throttle from 'lodash/throttle';
 import {keyboardEvent} from './animatedAvatar.js';
-import {renderIncomingEphemeralMessage, renderAvatar} from './ephemeralView.js';
+import {renderIncomingEphemeralMessage, renderAvatar, renderParticipant} from './ephemeralView.js';
+import {participantAvatar} from '../components/users.js'
 
 export default class Room {
   constructor(options) {
@@ -28,10 +29,15 @@ export default class Room {
   }
 
   renderMenuButton = () => {
-    const $roomLink = $('<button type="button" class="tab icon"></button>')
+    const $roomLink = $('<button type="button" class="roomLink icon"></button>');
+
     const $roomTitle = $('<p></p>');
     $roomTitle.text(this.name);
     $roomTitle.appendTo($roomLink);
+
+    const $participantsContainer = $('<div class="participantsContainer"></div>');
+    $participantsContainer.appendTo($roomLink);
+
     $roomLink.insertBefore($('#addRoom'));
     this.$roomLink = $roomLink;
   }
@@ -76,7 +82,11 @@ export default class Room {
     const {socketId} = profile;
     Object.values(store.get('rooms')).forEach(room => delete room.members[socketId]);
     this.members[socketId] = profile;
-    renderAvatar(profile);
+    if (this.ephemeral) {
+      renderAvatar(profile);
+    }
+    const participantDisplay = $(`#participant-${socketId}`).length ? $(`#participant-${socketId}`) : participantAvatar(profile);
+    participantDisplay.appendTo(this.$roomLink.find('.participantsContainer'))
   }
 
   showRoom = () => {
