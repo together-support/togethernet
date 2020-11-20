@@ -16,3 +16,9 @@ export const userAvatar = () => {
   $user.css('background-color', store.get('avatar'));
   return $user;
 }
+
+export const participantAvatar = ({avatar, socketId}) => {
+  const $avatar = $(`<div class="participant" id="participant-${socketId}"></div>`);
+  $avatar.css('background-color', avatar);
+  return $avatar;
+}

@@ -126,7 +126,7 @@ p {
   width: 50px;
 }
 
-.tab {
+.roomLink {
   padding: 20px;
   margin: 0 2px 0 0;
   width: auto;
@@ -139,6 +139,18 @@ p {
   border-right: 0.5px solid gray;
   border-bottom: 0px transparent;
   background-color: #efefef;
+  display: flex;
+  flex-direction: column;
+}
+
+.participantsContainer {
+  display: flex;
+  height: 10px;
+}
+
+.participant {
+  height: 10px;
+  width: 10px;
 }
 
 .icon {
