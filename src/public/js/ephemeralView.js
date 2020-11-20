@@ -79,7 +79,7 @@ const renderPeer = (data) => {
 
   const room = store.getRoom(roomId);
   if (room.hasFeature('facilitators') && room.hasFacilitator(store.get('socketId')) && !room.hasFacilitator(socketId)) {
-    makeFacilitatorButton(room.makeFacilitator).appendTo($avatar);
+    makeFacilitatorButton(room.onAddFacilitator).appendTo($avatar);
   }
   $avatar.appendTo($(`#${roomId}`));
 }
@@ -115,4 +115,8 @@ export const updatePeerRoom = (data) => {
       });
     }
   });
+}
+
+export const roomUpdated = (data) => {
+  store.getRoom(data.roomId).updateSelf(data)
 }

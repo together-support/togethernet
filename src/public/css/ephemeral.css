@@ -149,6 +149,8 @@
   border-radius: 5px;
   font-size: 10px;
   width: 95px;
+  cursor: pointer;
+  user-select: none;
 }
 
 .shortLine {
@@ -157,4 +159,5 @@
   width: 1px;
   background-color: black;
   left: 42.5px;
+  bottom: -10px;
 }

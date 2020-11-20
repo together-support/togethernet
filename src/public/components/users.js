@@ -8,6 +8,8 @@ export const peerAvatar = ({x, y, avatar, socketId}) => {
     backgroundColor: avatar,
   });
 
+  $peer.on('mousedown', () => $peer.find('.makeFacilitator').show());
+
   return $peer;
 }
 
@@ -23,10 +25,10 @@ export const participantAvatar = ({avatar, socketId}) => {
   return $avatar;
 }
 
-export const makeFacilitatorButton = (makeFacilitator) => {
+export const makeFacilitatorButton = (onAddFacilitator) => {
   const $makeFacilitatorContainer = $('<div class="makeFacilitator" style="display:none"><div class="shortLine"/></div>');
   const $button = $('<button>Make Facilitator</button>');
-  $button.on('click', makeFacilitator);
+  $button.on('mouseup', onAddFacilitator);
   $button.appendTo($makeFacilitatorContainer);
   return $makeFacilitatorContainer;
 }

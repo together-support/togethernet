@@ -4,6 +4,7 @@ import {keyboardEvent} from './animatedAvatar.js';
 import {renderIncomingEphemeralMessage, renderAvatar} from './ephemeralView.js';
 import {participantAvatar} from '../components/users.js'
 import { roomModes } from '../constants/index.js';
+import {addSystemMessage} from './systemMessage.js';
 
 export default class Room {
   constructor(options) {
@@ -118,8 +119,21 @@ export default class Room {
     return this.facilitators.includes(socketId);
   }
 
-  makeFacilitator = (e) => {
+  onAddFacilitator = (e) => {
+    if (this.facilitators.length < 3) {
+      const $peerAvatar = $(e.target).closest('.avatar');
+      $peerAvatar.empty();
+      const peerId = $peerAvatar.attr('id').split('peer-')[1];
+      this.facilitators.push(peerId);
 
+      store.sendToPeers({
+        type: 'roomUpdated',
+        data: {
+          roomId: this.roomId,
+          facilitators: this.facilitators,
+        }
+      });
+    }
   }
   
   renderHistory = () => {
@@ -157,12 +171,27 @@ export default class Room {
     store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
   }
 
-  updateSelf = ({mode, ephemeral, name, ephemeralHistory, members}) => {
+  updateSelf = ({mode, ephemeral, name, ephemeralHistory, facilitators, members}) => {
     this.mode = mode;
-    this.ephemeral = ephemeral
+    this.ephemeral = ephemeral;
     this.name = name;
     this.ephemeralHistory = {...this.ephemeralHistory, ...ephemeralHistory}
     this.members = {...this.members, ...members}
     this.renderHistory();
+    this.updateFacilitators(facilitators);
+  }
+
+  updateFacilitators = (facilitators) => {
+    // facilitators.forEach(facilitator => {
+    //   if (!this.hasFacilitator(facilitator)) {
+    //     addSystemMessage(`${store.getProfile().name} stepped in as a new facilitator`);
+    //   }
+    // });
+
+    // this.facilitators = facilitators;
+    // $('#messageType').find('option[value="agenda"]').remove();
+    // if (!this.facilitators.length || this.facilitators.includes(store.get('socketId'))) {
+    //   $('<option value="agenda">add an agenda</option>').appendTo($('#messageType'));
+    // }
   }
 }
