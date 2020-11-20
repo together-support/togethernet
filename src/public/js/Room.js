@@ -1,5 +1,6 @@
 import store from '../store/index.js';
 import throttle from 'lodash/throttle';
+import pull from 'lodash/pull';
 import {keyboardEvent} from './animatedAvatar.js';
 import {renderIncomingEphemeralMessage, renderAvatar} from './ephemeralView.js';
 import {participantAvatar} from '../components/users.js'
@@ -115,24 +116,23 @@ export default class Room {
     return this.facilitators.includes(socketId);
   }
 
-  onAddFacilitator = (e) => {
-    if (this.facilitators.length < 3) {
-      const $peerAvatar = $(e.target).closest('.avatar');
-      $peerAvatar.empty();
-      const peerId = $peerAvatar.attr('id').split('peer-')[1];
-      addSystemMessage(`${store.getPeer(peerId).profile.name} stepped in as a new facilitator`);
-      this.facilitators.push(peerId);
+  onTransferFacilitator = (e) => {
+    const $peerAvatar = $(e.target).closest('.avatar');
+    $peerAvatar.empty();
+    const peerId = $peerAvatar.attr('id').split('peer-')[1];
+    addSystemMessage(`${store.getPeer(peerId).profile.name} stepped in as a new facilitator`);
+    pull(this.facilitators, store.get('socketId'));
+    this.facilitators.push(peerId);
 
-      store.sendToPeers({
-        type: 'updateFacilitators',
-        data: {
-          roomId: this.roomId,
-          facilitators: this.facilitators,
-        }
-      });
-    } else {
-      alert('Number of facilitators limit reached')
-    }
+    store.sendToPeers({
+      type: 'updateFacilitators',
+      data: {
+        roomId: this.roomId,
+        facilitators: this.facilitators,
+      }
+    });
+
+    this.updateMessageTypes();
   }
   
   renderHistory = () => {
@@ -183,12 +183,16 @@ export default class Room {
     facilitators.forEach(facilitator => {
       if (!this.hasFacilitator(facilitator)) {
         const name = facilitator === store.get('socketId') ? store.getProfile().name : store.getPeer(facilitator).profile.name;
-        addSystemMessage(`${name} stepped in as a new facilitator`);
+        addSystemMessage(`${name} stepped in as the new facilitator`);
       }
     });
 
     this.facilitators = facilitators;
     this.updateMessageTypes();
+
+    if (this.hasFacilitator(store.get('socketId'))) {
+      this.renderAvatars();
+    }
   }
 
   updateMessageTypes = () => {
