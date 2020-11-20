@@ -130,6 +130,8 @@ export default class Room {
           facilitators: this.facilitators,
         }
       });
+    } else {
+      alert('Number of facilitators limit reached')
     }
   }
   
