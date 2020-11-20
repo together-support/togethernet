@@ -136,6 +136,9 @@ export default class PeerConnection {
     $(`#peer-${leavingUser}`).finish().animate({opacity: 0}, {
       complete: () => {
         $(`#peer-${leavingUser}`).remove();
+        $(`#participant-${leavingUser}`).animate({opacity: 0}, {
+          complete: () => $(`#participant-${leavingUser}`).remove()
+        });
         store.removePeer(leavingUser);
       }
     });
