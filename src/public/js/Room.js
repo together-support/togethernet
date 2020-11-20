@@ -64,11 +64,7 @@ export default class Room {
 
   goToRoom = () => {
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
-    $('#messageType').find('option[value="agenda"]').remove();
-    if (!this.facilitators.length || this.facilitators.includes(store.get('socketId'))) {
-      $('<option value="agenda">add an agenda</option>').appendTo($('#messageType'));
-    }
-
+    this.updateMessageTypes();
     this.addMember(store.getProfile());
     this.$room.trigger('showRoom');
 
@@ -124,13 +120,16 @@ export default class Room {
       const $peerAvatar = $(e.target).closest('.avatar');
       $peerAvatar.empty();
       const peerId = $peerAvatar.attr('id').split('peer-')[1];
+      addSystemMessage(`${store.getPeer(peerId).profile.name} stepped in as a new facilitator`);
       this.facilitators.push(peerId);
 
       store.sendToPeers({
         type: 'roomUpdated',
         data: {
           roomId: this.roomId,
-          facilitators: this.facilitators,
+          newOptions: {
+            facilitators: this.facilitators,
+          }
         }
       });
     }
@@ -182,16 +181,21 @@ export default class Room {
   }
 
   updateFacilitators = (facilitators) => {
-    // facilitators.forEach(facilitator => {
-    //   if (!this.hasFacilitator(facilitator)) {
-    //     addSystemMessage(`${store.getProfile().name} stepped in as a new facilitator`);
-    //   }
-    // });
+    facilitators.forEach(facilitator => {
+      if (!this.hasFacilitator(facilitator)) {
+        const name = facilitator === store.get('socketId') ? store.getProfile().name : store.getPeer(facilitator).profile.name;
+        addSystemMessage(`${name} stepped in as a new facilitator`);
+      }
+    });
 
-    // this.facilitators = facilitators;
-    // $('#messageType').find('option[value="agenda"]').remove();
-    // if (!this.facilitators.length || this.facilitators.includes(store.get('socketId'))) {
-    //   $('<option value="agenda">add an agenda</option>').appendTo($('#messageType'));
-    // }
+    this.facilitators = facilitators;
+    this.updateMessageTypes();
+  }
+
+  updateMessageTypes = () => {
+    $('#messageType').find('option[value="agenda"]').remove();
+    if (!this.facilitators.length || this.facilitators.includes(store.get('socketId'))) {
+      $('<option value="agenda">add an agenda</option>').appendTo($('#messageType'));
+    }
   }
 }
