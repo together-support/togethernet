@@ -2,7 +2,7 @@ import store from '../store/index.js'
 import {
   removeEphemeralPeerMessage, 
   renderIncomingEphemeralMessage, 
-  roomUpdated,
+  updateFacilitators,
   setAgendaHidden,
   updatePeerPosition, 
   updatePeerAvatar,
@@ -43,8 +43,8 @@ export const handleData = ({event, peerId}) => {
     pollCreated(data.data);
   } else if (data.type === 'voteCasted') {
     voteReceived(data.data);
-  } else if (data.type === 'roomUpdated') {
-    roomUpdated(data.data);
+  } else if (data.type === 'updateFacilitators') {
+    updateFacilitators(data.data);
   }
 }
 

@@ -117,6 +117,7 @@ export const updatePeerRoom = (data) => {
   });
 }
 
-export const roomUpdated = ({roomId, newOptions}) => {
-  store.getRoom(roomId).updateSelf(newOptions);
+export const updateFacilitators = ({roomId, facilitators}) => {
+  console.log(facilitators)
+  store.getRoom(roomId).updateFacilitators(facilitators);
 }

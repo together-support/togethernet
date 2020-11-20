@@ -124,12 +124,10 @@ export default class Room {
       this.facilitators.push(peerId);
 
       store.sendToPeers({
-        type: 'roomUpdated',
+        type: 'updateFacilitators',
         data: {
           roomId: this.roomId,
-          newOptions: {
-            facilitators: this.facilitators,
-          }
+          facilitators: this.facilitators,
         }
       });
     }
@@ -170,14 +168,13 @@ export default class Room {
     store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
   }
 
-  updateSelf = ({mode, ephemeral, name, ephemeralHistory, facilitators, members}) => {
+  updateSelf = ({mode, ephemeral, name, ephemeralHistory, members}) => {
     this.mode = mode;
     this.ephemeral = ephemeral;
     this.name = name;
     this.ephemeralHistory = {...this.ephemeralHistory, ...ephemeralHistory}
     this.members = {...this.members, ...members}
     this.renderHistory();
-    this.updateFacilitators(facilitators);
   }
 
   updateFacilitators = (facilitators) => {

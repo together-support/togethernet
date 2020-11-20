@@ -1,9 +1,10 @@
 import {systemBubble} from '../components/message.js';
+import store from '../store/index.js';
 
 export const addSystemMessage = (systemMsg) => {
   removeAllSystemMessage();
   systemBubble(systemMsg).appendTo($('#user'));
-  $("#ephemeralSpace").one('keydown', removeAllSystemMessage);
+  store.getCurrentRoom().$room.one('keydown', removeAllSystemMessage);
   $("#user").one('dragstart', removeAllSystemMessage);
 }
 
