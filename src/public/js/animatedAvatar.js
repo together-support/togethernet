@@ -1,5 +1,6 @@
 import store from '../store/index.js';
 import compact from 'lodash/compact';
+import { find } from 'lodash';
 
 export const keyboardEvent = (event) => {
   event.preventDefault();

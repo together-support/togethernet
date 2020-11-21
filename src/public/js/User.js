@@ -9,7 +9,7 @@ export default class User {
     this.$avatar = null;
   }
 
-  initialize = () => {
+  initialize = async () => {
     store.set('currentUser', this);
 
     $('#userAvatar').val(this.getRandomColor());
@@ -27,7 +27,7 @@ export default class User {
     $avatar.css('background-color', $('#userAvatar').val());
     this.$avatar = $avatar;
 
-    this.renderInRoom(store.currentRoomId);
+    await this.renderInRoom(store.currentRoomId);
     makeDraggableUser();
   }
 
@@ -56,7 +56,7 @@ export default class User {
     store.sendToPeers({type: 'profileUpdated'});
   };
 
-  renderInRoom (roomId) {
+  renderInRoom = async (roomId) => {
     const $room = store.getRoom(roomId).$room;
     this.$avatar.appendTo($room);
   }
