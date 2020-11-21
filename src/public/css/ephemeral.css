@@ -1,3 +1,7 @@
+button {
+  cursor: pointer;
+}
+
 .squaresView {
   float: left;
   background-color: #ead1dcff;
@@ -101,6 +105,11 @@
   width: 15px;
 }
 
+.draggable {
+  margin: 0;
+  font-size: 0.9em;
+}
+
 #makeVote {
   background-color: #C4C4C4;
   padding: 2px 5px;
@@ -113,7 +122,7 @@
   justify-content: space-between;
 }
 
-.votingButtons button{
+.votingButtons > button {
   padding: 2px;
   border-radius: 3px;
   text-transform: capitalize;
@@ -123,18 +132,30 @@
   width: calc((100% - 10px) / 3);
 }
 
-.consentfulGestures img {
-  height: 10px;
-  width: 10px;
-}
-
-.draggable {
-  margin: 0;
-  font-size: 0.9em;
+.votingButtons > button.myVote {
+  background-color: #C4C4C4;
+  color: #000;
 }
 
 .consentfulGestures {
   display: flex;
+  justify-content: space-between;
+}
+
+.consentfulGestures > button {
+  width: 30px;
+  display: flex;
+  padding: 2px;
+  border-radius: 4px;
+  justify-content: space-around;
+}
+.consentfulGestures span {
+  font-size: 10px;
+}
+
+.consentfulGestures img {
+  height: 10px;
+  width: 10px;
 }
 
 .makeFacilitator {
@@ -150,7 +171,6 @@
   border-radius: 5px;
   font-size: 10px;
   width: 95px;
-  cursor: pointer;
   user-select: none;
 }
 

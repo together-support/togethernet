@@ -9,7 +9,12 @@ import {
   updatePeerRoom,
 } from './ephemeralView.js'
 
-import {pollCreated, voteReceived} from './majorityRule.js';
+import {
+  pollCreated, 
+  voteReceived,
+  retractVote,
+  changeVoteTo
+} from './voting.js';
 
 export const handleData = ({event, peerId}) => {
   let data;
@@ -43,6 +48,10 @@ export const handleData = ({event, peerId}) => {
     pollCreated(data.data);
   } else if (data.type === 'voteCasted') {
     voteReceived(data.data);
+  } else if (data.type === 'voteRetracted') {
+    retractVote(data.data);
+  } else if (data.type === 'voteChanged') {
+    changeVoteTo(data.data);
   } else if (data.type === 'updateFacilitators') {
     updateFacilitators(data.data);
   }
