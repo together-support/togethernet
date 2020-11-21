@@ -19,7 +19,7 @@ export default class Room {
     this.$roomLink = $(`#${this.roomId}Link`);
     this.members = {...options.members};
 
-    this.ephemeralHistory = {...options.ephemeralHistory};
+    this.ephemeralHistory = {...this.createMessageRecords(options.ephemeralHistory)};
   }
 
   initialize = () => {
@@ -174,15 +174,18 @@ export default class Room {
     this.updateEphemeralHistory(ephemeralHistory);
   }
 
-  updateEphemeralHistory = (ephemeralHistory = {}) => {
-    let newEphemeralHistory = {};
-    Object.values(ephemeralHistory).forEach(({messageData}) => {
-      const newMessageRecord = new EphemeralMessageRecord(messageData);
-      newEphemeralHistory[newMessageRecord.id] = newMessageRecord;
-    })
-
-    this.ephemeralHistory = {...this.ephemeralHistory, ...newEphemeralHistory}
+  updateEphemeralHistory = (ephemeralHistoryData = {}) => {
+    this.ephemeralHistory = {...this.ephemeralHistory, ...this.createMessageRecords(ephemeralHistoryData)}
     this.renderHistory();
+  }
+
+  createMessageRecords = (ephemeralHistoryData = {}) => {
+    let ephemeralHistory = {};
+    Object.values(ephemeralHistoryData).forEach(({messageData}) => {
+      const newMessageRecord = new EphemeralMessageRecord(messageData);
+      ephemeralHistory[newMessageRecord.id] = newMessageRecord;
+    });
+    return ephemeralHistory;
   }
 
   updateFacilitators = (facilitators) => {
