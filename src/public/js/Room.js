@@ -145,7 +145,8 @@ export default class Room {
   }
 
   addEphemeralHistory = (textRecord) => {
-    this.ephemeralHistory[textRecord.id] = textRecord;
+    const {id} = textRecord.messageData;
+    this.ephemeralHistory[id] = textRecord;
     return this.ephemeralHistory[id];
   }
 

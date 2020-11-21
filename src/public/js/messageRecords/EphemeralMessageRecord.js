@@ -13,7 +13,7 @@ export default class EphemeralMessageRecord {
   constructor (props) {
     const messageData = {
       ...props,
-      id: `${messageData.roomId}-${messageData.left}-${messageData.top}`,
+      id: `${props.roomId}-${props.left}-${props.top}`,
       votingRecord: props.votingRecord || {},
     };
 
@@ -46,16 +46,15 @@ export default class EphemeralMessageRecord {
   }
 
   getBaseTextRecord = () => {
-    const room = store.getRoom(this.props.roomId)
+    const {id, left, top, avatar, messageType, votes, name, message, roomId} = this.messageData;
+
+    const room = store.getRoom(roomId)
     const $textRecordTemplate = $(document.getElementById('textRecordTemplate').content.cloneNode(true));
     const $textRecord = $textRecordTemplate.find('.textRecord');
     const $textBubble = $textRecord.find('.textBubble');
 
-    const {id, position, backgroundColor, messageType, votes, name, message} = this;
-    const {left, top} = position;
-
     $textRecord.attr('id', id);
-    $textRecord.css({left, top, backgroundColor});
+    $textRecord.css({left, top, backgroundColor: avatar});
 
     $textBubble.addClass(messageType);
     $textBubble.attr('id', `textBubble-${id}`);
@@ -64,7 +63,7 @@ export default class EphemeralMessageRecord {
     $textBubble.find('.content').text(message);
 
 
-    if (this.props.isMine) {
+    if (this.messageData.isMine) {
       const $closeButton = $('<button class="close icon">x</button>');
       $closeButton.on('click', this.purgeSelf());
       $closeButton.appendTo($textBubble.find('.textBubbleButtons'));
@@ -78,7 +77,7 @@ export default class EphemeralMessageRecord {
   }
 
   purgeSelf = () => {
-    const room = store.getRoom(this.props.roomId);
+    const room = store.getRoom(this.messageData.roomId);
     const $textRecord = $(`#${this.id}`);
 
     $textRecord.finish().animate({opacity: 0}, {
@@ -94,7 +93,7 @@ export default class EphemeralMessageRecord {
   }
 
   render = () => {
-    const recordType = messageTypeToComponent[props.messageType]
+    const recordType = messageTypeToComponent[this.messageData.messageType]
     
     new recordType({
       ...this.messageData,
