@@ -1,3 +1,5 @@
+import store from '../../../store/index.js';
+
 export default class DisappearingTextRecord {
   constructor(props) {
     this.props = props;

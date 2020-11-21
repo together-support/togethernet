@@ -14,8 +14,6 @@ export default class EphemeralMessageRecord {
     this.props = props;
 
     const recordType = messageTypeToComponent[props.messageType];
-    console.log(props.messageType)
-    console.log(recordType);
 
     this.record = new recordType({
       ...props,
@@ -46,6 +44,7 @@ export default class EphemeralMessageRecord {
   }
 
   getBaseTextRecord = () => {
+    const room = store.getRoom(this.props.roomId)
     const $textRecordTemplate = $(document.getElementById('textRecordTemplate').content.cloneNode(true));
     const $textRecord = $textRecordTemplate.find('.textRecord');
     const $textBubble = $textRecord.find('.textBubble');
@@ -68,22 +67,24 @@ export default class EphemeralMessageRecord {
       $closeButton.appendTo($textBubble.find('.textBubbleButtons'));
     }
 
-    if (this.room().mode === roomModes.directAction) {
+    if (room.mode === roomModes.directAction) {
       this.renderVotingButtons('consentfulGestures', votes).appendTo($textBubble);
     }
-
-    $textRecord.appendTo(this.$room());
+    return $textRecord;
   }
 
   purgeSelf = () => {
-    this.$textRecord.finish().animate({opacity: 0}, {
+    const room = store.getRoom(this.props.roomId);
+    const $textRecord = $(`#${this.getId()}`);
+
+    $textRecord.finish().animate({opacity: 0}, {
       complete: () => {
-        this.$textRecord.remove();
+        $textRecord.remove();
         store.sendToPeers({
           type: 'removeEphemeralMessage',
           data: {messageId: this.getId()}
         });
-        this.room().removeEphemeralHistory($messageRecord.attr('id'));
+        room.removeEphemeralHistory(this.getId());
       }
     });  
   }
