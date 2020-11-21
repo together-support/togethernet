@@ -6,6 +6,7 @@ import {renderIncomingEphemeralMessage, renderAvatarInRoom} from './ephemeralVie
 import {participantAvatar} from '../components/users.js'
 import { roomModes } from '../constants/index.js';
 import {addSystemMessage} from './systemMessage.js';
+import EphemeralMessageRecord from './messageRecords/EphemeralMessageRecord.js';
 
 export default class Room {
   constructor(options) {
@@ -136,11 +137,7 @@ export default class Room {
   
   renderHistory = () => {
     if (this.ephemeral) {
-      Object.keys(this.ephemeralHistory).forEach((messageRecordId) => {
-        if (!this.$room.find(`#${messageRecordId}`).length) {
-          renderIncomingEphemeralMessage({...this.ephemeralHistory[messageRecordId], roomId: this.roomId});
-        }
-      });
+      Object.values(this.ephemeralHistory).forEach((messageRecord) => messageRecord.render());
     }
   }
 
@@ -173,8 +170,18 @@ export default class Room {
     this.mode = mode;
     this.ephemeral = ephemeral;
     this.name = name;
-    this.ephemeralHistory = {...this.ephemeralHistory, ...ephemeralHistory}
     this.members = {...this.members, ...members}
+    this.updateEphemeralHistory(ephemeralHistory);
+  }
+
+  updateEphemeralHistory = (ephemeralHistory = {}) => {
+    let newEphemeralHistory = {};
+    Object.values(ephemeralHistory).forEach(({messageData}) => {
+      const newMessageRecord = new EphemeralMessageRecord(messageData);
+      newEphemeralHistory[newMessageRecord.id] = newMessageRecord;
+    })
+
+    this.ephemeralHistory = {...this.ephemeralHistory, ...newEphemeralHistory}
     this.renderHistory();
   }
 
