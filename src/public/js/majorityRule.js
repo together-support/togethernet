@@ -23,50 +23,82 @@ export const pollCreated = ({roomId, textRecordId}) => {
   const pollRecord = store.getRoom(roomId).ephemeralHistory[textRecordId];
   pollRecord.isPoll = true;
   pollRecord.votes = {yes: 0, neutral: 0, no: 0};
+  pollRecord.votingRecords = {};
 
   $textBubble.addClass('poll');
   voteButtons(pollRecord.votes).appendTo($textBubble);
 }
 
 export const castVote = (e) => {
-  const $option = $(e.target);
+  const $option = $(e.target).closest('.voteOption');
   const option = $option.data('value');
   const textRecordId = $option.closest('.textRecord').attr('id');
   const pollRecord = store.getCurrentRoom().ephemeralHistory[textRecordId];
 
-  const voteData = {roomId: store.currentRoomId, textRecordId, option};
+  const myProfile = store.getProfile();
+  const myVote = pollRecord.votingRecords[myProfile.socketId]
+  const voteData = {textRecordId, option, ...myProfile};
 
-  if (pollRecord.iVoted) {
+  if (Boolean(myVote)) {
+    if (myVote === option) {
+      store.sendToPeers({
+        type: 'voteRetracted',
+        data: voteData,
+      });
+    
+      retractVote(voteData);
+      $option.removeClass('iVoted');
+    } else {
+      store.sendToPeers({
+        type: 'voteChanged',
+        data: voteData,
+      });
+    
+      changeVoteTo(voteData);
+      $option.closest('.votingButtons').find(`.voteOption[data-value="${myVote}"]`).removeClass('iVoted');
+      $option.addClass('iVoted');
+    }
+  } else {
     store.sendToPeers({
       type: 'voteCasted',
       data: voteData,
     });
   
     voteReceived(voteData);
-  } else {
-    store.sendToPeers({
-      type: 'retractVote',
-      data: voteData,
-    });
-  
-    retractVote(voteData);
+    $option.addClass('iVoted');
   }
 }
 
-export const voteReceived = ({roomId, textRecordId, option}) => {
+export const voteReceived = ({roomId, textRecordId, option, socketId}) => {
   const $pollRecord = $(`#${textRecordId}`);
 
   const pollRecord = store.getRoom(roomId).ephemeralHistory[textRecordId];
   pollRecord.votes[option] += 1;
+  pollRecord.votingRecords[socketId] = option;
 
   $pollRecord.find(`.voteOption[data-value="${option}"]`).find('.voteCount').text(pollRecord.votes[option]);
 }
 
-export const retractVote = ({roomId, textRecordId, option}) => {
+export const retractVote = ({roomId, textRecordId, option, socketId}) => {
   const $pollRecord = $(`#${textRecordId}`);
 
   const pollRecord = store.getRoom(roomId).ephemeralHistory[textRecordId];
-  pollRecord.votes[option] += 1;
+  pollRecord.votes[option] -= 1;
+  delete pollRecord.votingRecords[socketId];
 
+  $pollRecord.find(`.voteOption[data-value="${option}"]`).find('.voteCount').text(pollRecord.votes[option]);
+}
+
+export const changeVoteTo = ({roomId, textRecordId, option, socketId}) => {
+  const $pollRecord = $(`#${textRecordId}`);
+
+  const pollRecord = store.getRoom(roomId).ephemeralHistory[textRecordId];
+
+  const currentVote = pollRecord.votingRecords[socketId];
+  pollRecord.votes[currentVote] -= 1;
+  $pollRecord.find(`.voteOption[data-value="${currentVote}"]`).find('.voteCount').text(pollRecord.votes[currentVote]);
+
+  pollRecord.votes[option] += 1;
+  pollRecord.votingRecords[socketId] = option;
   $pollRecord.find(`.voteOption[data-value="${option}"]`).find('.voteCount').text(pollRecord.votes[option]);
 }

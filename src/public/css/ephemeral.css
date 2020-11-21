@@ -1,3 +1,7 @@
+.button {
+  cursor: pointer;
+}
+
 .squaresView {
   float: left;
   background-color: #ead1dcff;
@@ -113,7 +117,7 @@
   justify-content: space-between;
 }
 
-.votingButtons button{
+.votingButtons > button {
   padding: 2px;
   border-radius: 3px;
   text-transform: capitalize;
@@ -121,6 +125,12 @@
   background: #EEEEEE;
   color: #919191;
   width: calc((100% - 10px) / 3);
+  cursor: pointer;
+}
+
+.votingButtons > button.iVoted {
+  background-color: #C4C4C4;
+  color: #000;
 }
 
 .consentfulGestures img {

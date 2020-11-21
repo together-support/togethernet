@@ -118,6 +118,5 @@ export const updatePeerRoom = (data) => {
 }
 
 export const updateFacilitators = ({roomId, facilitators}) => {
-  console.log(facilitators)
   store.getRoom(roomId).updateFacilitators(facilitators);
 }
