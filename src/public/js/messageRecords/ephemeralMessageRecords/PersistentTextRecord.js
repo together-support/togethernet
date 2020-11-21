@@ -1,6 +1,5 @@
 import store from '../../../store/index.js';
 import {roomModes} from '../../../constants/index.js'
-import {pollCreated, voteReceived, voteChanged, voteRetracted} from '../../voting.js';
 
 export default class PersistentTextRecord {
   constructor(props) {
@@ -16,49 +15,21 @@ export default class PersistentTextRecord {
       data: {roomId, textRecordId},
     });
   
-    pollCreated({roomId, textRecordId});
+    this.pollCreated({roomId, textRecordId});
     e.target.remove();
-  }  
+  }
 
-  castVote = (e) => {
-    const $option = $(e.target).closest('.voteOption');
-    const option = $option.data('value');
-    const textRecordId = this.props.id;
-    const pollRecord = store.getCurrentRoom().ephemeralHistory[textRecordId];
+  pollCreated = () => {
+    // const $textBubble = $textRecord.find('.textBubble');
   
-    const myProfile = store.getCurrentUser().getProfile();
-    const myVote = pollRecord.votingRecords[myProfile.socketId]
-    const voteData = {textRecordId, option, ...myProfile};
+    // const pollRecord = store.getRoom(roomId).ephemeralHistory[this.props.id];
+    // pollRecord.isPoll = true;
+    // pollRecord.messageData.votes = {yes: 0, neutral: 0, no: 0};
+    // pollRecord.messageData.votingRecords = {};
   
-    if (Boolean(myVote)) {
-      if (myVote === option) {
-        store.sendToPeers({
-          type: 'voteRetracted',
-          data: voteData,
-        });
-      
-        voteRetracted(voteData);
-        $option.removeClass('myVote');
-      } else {
-        store.sendToPeers({
-          type: 'voteChanged',
-          data: voteData,
-        });
-      
-        voteChanged(voteData);
-        $option.closest('.votingButtons').find(`.voteOption[data-value="${myVote}"]`).removeClass('myVote');
-        $option.addClass('myVote');
-      }
-    } else {
-      store.sendToPeers({
-        type: 'voteCasted',
-        data: voteData,
-      });
-    
-      voteReceived(voteData);
-      $option.addClass('myVote');
-    }
-  }  
+    // $textBubble.addClass('poll');
+    // votingButtons('majorityRules', pollRecord.messageData.votes).appendTo($textBubble);
+  }
 
   render = () => {
     const room = store.getRoom(this.props.roomId);

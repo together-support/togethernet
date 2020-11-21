@@ -14,7 +14,7 @@ export default class EphemeralMessageRecord {
     const messageData = {
       ...props,
       id: `${props.roomId}-${props.left}-${props.top}`,
-      votingRecord: props.votingRecord || {},
+      votingRecords: props.votingRecords || {},
     };
 
     const room = store.getRoom(props.roomId);
@@ -31,7 +31,7 @@ export default class EphemeralMessageRecord {
   }
 
   getElement = () => {
-    return $(`#${this.id}`)[0];
+    return $(`#${this.messageData.id}`);
   }
 
   renderVotingButtons = (template, votes) => {
@@ -39,10 +39,73 @@ export default class EphemeralMessageRecord {
     $votingButtons.find('.votingButtons').children().each((_, el) => {
       const option = $(el).data('value');
       $(el).find('.voteCount').text(votes[option]);
-      $(el).on('click', castVote);
+      $(el).on('click', this.castVote);
     })
   
     return $votingButtons;
+  }
+
+  castVote = (e) => {
+    const $option = $(e.target).closest('.voteOption');
+    const option = $option.data('value');
+
+    const myProfile = store.getCurrentUser().getProfile();
+    const myCurrentVote = this.messageData.votingRecords[myProfile.socketId]
+    const voteData = {textRecordId: this.messageData.id, option, ...myProfile};
+  
+    if (Boolean(myCurrentVote)) {
+      if (myCurrentVote === option) {
+        store.sendToPeers({
+          type: 'voteRetracted',
+          data: voteData,
+        });
+      
+        this.voteRetracted(voteData);
+        $option.removeClass('myVote');
+      } else {
+        store.sendToPeers({
+          type: 'voteChanged',
+          data: voteData,
+        });
+      
+        this.voteChanged(voteData);
+        $option.closest('.votingButtons').find(`.voteOption[data-value="${myCurrentVote}"]`).removeClass('myVote');
+        $option.addClass('myVote');
+      }
+    } else {
+      store.sendToPeers({
+        type: 'voteCasted',
+        data: voteData,
+      });
+    
+      this.voteReceived(voteData);
+      $option.addClass('myVote');
+    }
+  }
+
+  voteReceived = ({option, socketId}) => {
+    this.messageData.votes[option] += 1;
+    this.messageData.votingRecords[socketId] = option;
+    this.getElement()
+      .find(`.voteOption[data-value="${option}"]`)
+      .find('.voteCount')
+      .text(this.messageData.votes[option]);
+  }
+  
+  voteRetracted = ({option, socketId}) => {  
+    this.messageData.votes[option] -= 1;
+    delete this.messageData.votingRecords[socketId];
+    this.getElement()
+      .find(`.voteOption[data-value="${option}"]`)
+      .find('.voteCount')
+      .text(this.messageData.votes[option]);
+  }
+  
+  voteChanged = ({option, socketId}) => {
+    const currentVote = this.messageData.votingRecords[socketId]
+
+    this.voteRetracted({option: currentVote, socketId});
+    this.voteReceived({option, socketId});
   }
 
   getBaseTextRecord = () => {
