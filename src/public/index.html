@@ -22,15 +22,15 @@
 <body>
   <div class="container">
     <div class="menu row">
-      <button type="button" class="roomLink icon" id="ephemeralSpaceLink">
+      <button type="button" class="roomLink" id="ephemeralSpaceLink">
         <p>sitting-at-the-park</p>
         <div class="participantsContainer"></div>
       </button>
-      <button type="button" class="roomLink icon" id="archivalSpaceLink">
+      <button type="button" class="roomLink" id="archivalSpaceLink">
         <p>speaking-on-the-stage</p>
         <div class="participantsContainer"></div>
       </button>
-      <button type="button" class="roomLink icon" id="addRoom">
+      <button type="button" class="roomLink" id="addRoom">
         <p>+</p>
       </button>
     </div>
@@ -128,10 +128,10 @@
     <script src="/js/bundle.js"></script>
     <template id="consentfulGesturesTemplate">
       <div class="consentfulGestures">
-        <button class="icon"><img src="/svg/agree.svg"/></button>
-        <button class="icon"><img src="/svg/disagree.svg"/></button>
-        <button class="icon"><img src="/svg/stand.svg"/></button>
-        <button class="icon"><img src="/svg/block.svg"/></button>
+        <button class="consentfulGesture"><img src="/svg/agree.svg"/><span class="voteCount">0</span></button>
+        <button class="consentfulGesture"><img src="/svg/disagree.svg"/><span class="voteCount">0</span></button>
+        <button class="consentfulGesture"><img src="/svg/stand.svg"/><span class="voteCount">0</span></button>
+        <button class="consentfulGesture"><img src="/svg/block.svg"/><span class="voteCount">0</span></button>
       </div>
     </template>
   </body>
