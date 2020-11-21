@@ -28,7 +28,7 @@ export const sendMessage = () => {
 }
 
 const ephemeralSendMessage = (messageData) => {
-  const ephemeralMessageRecord = new EphemeralMessageRecord({...messageData, ...store.getCurrentUser().getProfile()});
+  const ephemeralMessageRecord = new EphemeralMessageRecord({...messageData, ...store.getCurrentUser().getProfile(), isMine: true});
   store.getCurrentRoom().addEphemeralHistory(ephemeralMessageRecord);
   store.sendToPeers({type: 'text', messageData});
   removeAllSystemMessage();

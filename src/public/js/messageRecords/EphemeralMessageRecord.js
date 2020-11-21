@@ -61,7 +61,7 @@ export default class EphemeralMessageRecord {
     $textBubble.find('.content').text(message);
 
 
-    if (this.isMine) {
+    if (this.props.isMine) {
       const $closeButton = $('<button class="close icon">x</button>');
       $closeButton.on('click', this.purgeSelf());
       $closeButton.appendTo($textBubble.find('.textBubbleButtons'));
