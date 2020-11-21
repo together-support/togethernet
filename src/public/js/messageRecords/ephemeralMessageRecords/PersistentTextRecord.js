@@ -8,7 +8,7 @@ export default class PersistentTextRecord {
   }
 
   createPoll = (e) => {
-    const textRecordId = this.props.getId();
+    const textRecordId = this.props.id;
     const roomId = store.getCurrentUser().currentRoomId;
   
     store.sendToPeers({
@@ -23,7 +23,7 @@ export default class PersistentTextRecord {
   castVote = (e) => {
     const $option = $(e.target).closest('.voteOption');
     const option = $option.data('value');
-    const textRecordId = this.props.getId();
+    const textRecordId = this.props.id;
     const pollRecord = store.getCurrentRoom().ephemeralHistory[textRecordId];
   
     const myProfile = store.getCurrentUser().getProfile();

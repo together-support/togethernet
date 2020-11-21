@@ -11,25 +11,27 @@ const messageTypeToComponent = {
 
 export default class EphemeralMessageRecord {
   constructor (props) {
-    this.props = props;
-
-    const recordType = messageTypeToComponent[props.messageType];
-
-    this.record = new recordType({
+    const messageData = {
       ...props,
-      getId: this.getId,
-      getElement: this.getElement,
-      getBaseTextRecord: this.getBaseTextRecord,
-      renderVotingButtons: this.renderVotingButtons
-    });
-  }
+      id: `${messageData.roomId}-${messageData.left}-${messageData.top}`,
+      votingRecord: props.votingRecord || {},
+    };
 
-  getId = () => {
-    return `${this.props.roomId}-${this.props.left}-${this.props.top}`;
+    const room = store.getRoom(props.roomId);
+    if (room.ephemeral && room.mode === roomModes.directAction) {
+      messageData.votes = props.votes || {
+        agree: 0,
+        disagree: 0,
+        stand: 0,
+        block: 0,
+      };
+    }
+
+    this.messageData = messageData;
   }
 
   getElement = () => {
-    return $(`#${this.getId()}`)[0];
+    return $(`#${this.id}`)[0];
   }
 
   renderVotingButtons = (template, votes) => {
@@ -49,13 +51,14 @@ export default class EphemeralMessageRecord {
     const $textRecord = $textRecordTemplate.find('.textRecord');
     const $textBubble = $textRecord.find('.textBubble');
 
-    const {left, top, avatar, messageType, votes, name, message} = this.props;
+    const {id, position, backgroundColor, messageType, votes, name, message} = this;
+    const {left, top} = position;
 
-    $textRecord.attr('id', this.getId());
-    $textRecord.css({left, top, backgroundColor: avatar});
+    $textRecord.attr('id', id);
+    $textRecord.css({left, top, backgroundColor});
 
     $textBubble.addClass(messageType);
-    $textBubble.attr('id', `textBubble-${this.getId()}`);
+    $textBubble.attr('id', `textBubble-${id}`);
 
     $textBubble.find('.name').text(name);
     $textBubble.find('.content').text(message);
@@ -69,27 +72,34 @@ export default class EphemeralMessageRecord {
 
     if (room.mode === roomModes.directAction) {
       this.renderVotingButtons('consentfulGestures', votes).appendTo($textBubble);
-    }
+    };
+
     return $textRecord;
   }
 
   purgeSelf = () => {
     const room = store.getRoom(this.props.roomId);
-    const $textRecord = $(`#${this.getId()}`);
+    const $textRecord = $(`#${this.id}`);
 
     $textRecord.finish().animate({opacity: 0}, {
       complete: () => {
         $textRecord.remove();
         store.sendToPeers({
           type: 'removeEphemeralMessage',
-          data: {messageId: this.getId()}
+          data: {messageId: this.id}
         });
-        room.removeEphemeralHistory(this.getId());
+        room.removeEphemeralHistory(this.id);
       }
     });  
   }
 
   render = () => {
-    this.record.render();
+    const recordType = messageTypeToComponent[props.messageType]
+    
+    new recordType({
+      ...this.messageData,
+      getBaseTextRecord: this.getBaseTextRecord,
+      renderVotingButtons: this.renderVotingButtons
+    }).render();
   }
 }
