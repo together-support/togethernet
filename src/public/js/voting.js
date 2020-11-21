@@ -47,7 +47,7 @@ export const castVote = (e) => {
       });
     
       retractVote(voteData);
-      $option.removeClass('iVoted');
+      $option.removeClass('myVote');
     } else {
       store.sendToPeers({
         type: 'voteChanged',
@@ -55,8 +55,8 @@ export const castVote = (e) => {
       });
     
       changeVoteTo(voteData);
-      $option.closest('.votingButtons').find(`.voteOption[data-value="${myVote}"]`).removeClass('iVoted');
-      $option.addClass('iVoted');
+      $option.closest('.votingButtons').find(`.voteOption[data-value="${myVote}"]`).removeClass('myVote');
+      $option.addClass('myVote');
     }
   } else {
     store.sendToPeers({
@@ -65,7 +65,7 @@ export const castVote = (e) => {
     });
   
     voteReceived(voteData);
-    $option.addClass('iVoted');
+    $option.addClass('myVote');
   }
 }
 

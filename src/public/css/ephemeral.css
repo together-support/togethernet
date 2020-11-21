@@ -132,7 +132,7 @@ button {
   width: calc((100% - 10px) / 3);
 }
 
-.votingButtons > button.iVoted {
+.votingButtons > button.myVote {
   background-color: #C4C4C4;
   color: #000;
 }

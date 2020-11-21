@@ -149,6 +149,15 @@ export default class Room {
     const {x, y, roomId} = data;
     const id = `${roomId}-${x}-${y}`;
     this.ephemeralHistory[id] = {...data};
+    if (this.ephemeral && this.mode === roomModes.directAction) {
+      this.ephemeralHistory[id]['votingRecords'] = {};
+      this.ephemeralHistory[id]['votes'] = {
+        agree: 0,
+        disagree: 0,
+        stand: 0,
+        block: 0,
+      };
+    } 
   }
 
   removeEphemeralHistory = (messageId) => {
