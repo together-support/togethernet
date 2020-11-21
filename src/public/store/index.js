@@ -39,6 +39,7 @@ class Store {
   }
 
   removePeer = (id) => {
+    Object.values(this.rooms).forEach(room => delete room.members[id])
     delete this.peers[id];
   }
 
@@ -79,6 +80,7 @@ class Store {
     } else {
       const optionsClone = {...options};
       delete optionsClone['ephemeralHistory'];
+      delete optionsClone['members'];
       room = new Room(optionsClone)
       this.rooms[roomId] = room;
       room.initialize();
