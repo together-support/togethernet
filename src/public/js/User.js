@@ -1,11 +1,11 @@
+import DOMPurify from 'dompurify';
+
 import store from '../store/index.js';
 import {makeDraggableUser} from './animatedAvatar.js';
 
 export default class User {
   constructor (socketId) {
     this.socketId = socketId;
-    this.avatarSize = 0;
-
     this.$avatar = null;
   }
 
@@ -28,7 +28,6 @@ export default class User {
     this.$avatar = $avatar;
 
     this.renderInRoom(store.currentRoomId);
-    this.avatarSize = $("#user").width();
     makeDraggableUser();
   }
 
