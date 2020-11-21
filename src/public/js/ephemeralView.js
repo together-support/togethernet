@@ -64,9 +64,9 @@ export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
 }
 
 export const renderAvatarInRoom = (data) => {
-  if (store.currentUser.socketId === data.socketId) {
-    store.currentUser.currentRoomId = data.roomId
-    store.currentUser.render();
+  if (store.getCurrentUser().isMe(data.socketId)) {
+    store.getCurrentUser().currentRoomId = data.roomId
+    store.getCurrentUser().render();
   } else {
     renderPeer(data);
   }

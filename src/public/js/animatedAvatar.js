@@ -69,15 +69,7 @@ const onAnimationComplete = () => {
 }
 
 const showAdjacentMessages = () => {
-  const {left, top} = $('#user').position();
-
-  const adjacentMessages = compact([
-    `${left}-${top + $('#user').width()}`,
-    `${left}-${top - $('#user').width()}`,
-    `${left - $('#user').width()}-${top}`,
-    `${left + $('#user').width()}-${top}`,
-  ].map(position => $(`#${store.get('currentRoomId')}-${position}`)[0]));
-
+  const adjacentMessages = store.getCurrentUser().getAdjacentMessages();
   adjacentMessages.forEach(messageRecord => $(messageRecord).trigger('adjacent'));
 
   $('#messageType').trigger({

@@ -3,8 +3,6 @@ import Room from '../js/Room.js';
 
 class Store {
   constructor() {
-    this.currentRoomId = 'ephemeralSpace';
-
     this.peers = {};
     this.needRoomsInfo = true;
 
@@ -51,7 +49,6 @@ class Store {
         data: {
           ...data, 
           ...this.currentUser.getProfile(),
-          roomId: this.currentRoomId,
         }
       }));
     }
@@ -68,7 +65,7 @@ class Store {
   }
 
   getCurrentRoom = () => {
-    return this.rooms[this.currentRoomId];
+    return this.rooms[this.currentUser.state.currentRoomId];
   }
 
   getRoom = (roomId) => {

@@ -2,11 +2,16 @@ import DOMPurify from 'dompurify';
 
 import store from '../store/index.js';
 import {makeDraggableUser} from './animatedAvatar.js';
+import compact from 'lodash/compact';
 
 export default class User {
   constructor (socketId) {
     this.socketId = socketId;
-    this.currentRoomId = 'ephemeralSpace';
+
+    this.state = {
+      currentRoomId: 'ephemeralSpace',
+    }
+
     this.$avatar = null;
   }
 
@@ -35,9 +40,9 @@ export default class User {
   getProfile = () => {
     return {
       socketId: this.socketId,
+      roomId: this.state.currentRoomId,
       name: $('#userName').text(),
       avatar: $('#userAvatar').val(),
-      roomId: this.currentRoomId,
     }
   }
 
@@ -46,8 +51,18 @@ export default class User {
     return `#${randomColorString}${'0'.repeat(6 - randomColorString.length)}`.substring(0, 7);
   }
 
-  adjacentPositions = () => {
-    
+  getAdjacentMessages = () => {
+    const {left, top} = $('#user').position();
+    const avatarSize = $('#user').width();
+
+    return compact([
+      `${left}-${top + avatarSize}`,
+      `${left}-${top - avatarSize}`,
+      `${left - avatarSize}-${top}`,
+      `${left + avatarSize}-${top}`,
+    ]).map((position) => {
+      return $(`#${this.state.currentRoomId}-${position}`)[0]
+    });
   }
   
   setMyUserName = () => {
@@ -58,8 +73,16 @@ export default class User {
     store.sendToPeers({type: 'profileUpdated'});
   };
 
+  isMe = (socketId) => {
+    return this.socketId === socketId;
+  }
+
+  updateState = ({currentRoomId}) => {
+    this.state = {...this.state, currentRoomId}
+  }
+
   render = async () => {
-    const $room = store.getRoom(this.currentRoomId).$room;
+    const $room = store.getRoom(this.state.currentRoomId).$room;
     this.$avatar.appendTo($room);
   }
 }

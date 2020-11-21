@@ -3,16 +3,17 @@ import store from '../store/index.js';
 
 export const createPoll = (e) => {
   const textRecordId = $(e.target.closest('.textRecord')).attr('id');
+  const roomId = store.getCurrentUser().currentRoomId;
 
   store.sendToPeers({
     type: 'pollCreated',
     data: {
-      roomId: store.currentUser.currentRoomId,
+      roomId,
       textRecordId,
     }
   });
 
-  pollCreated({roomId: store.get('currentRoomId'), textRecordId});
+  pollCreated({roomId, textRecordId});
   e.target.remove();
 }
 
@@ -35,9 +36,9 @@ export const castVote = (e) => {
   const textRecordId = $option.closest('.textRecord').attr('id');
   const pollRecord = store.getCurrentRoom().ephemeralHistory[textRecordId];
 
-  const myProfile = store.currentUser.getProfile();
+  const myProfile = store.getCurrentUser().getProfile();
   const myVote = pollRecord.votingRecords[myProfile.socketId]
-  const voteData = {textRecordId, option, ...myProfile, roomId: store.get('currentRoomId')};
+  const voteData = {textRecordId, option, ...myProfile};
 
   if (Boolean(myVote)) {
     if (myVote === option) {

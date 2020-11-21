@@ -66,7 +66,7 @@ export default class Room {
   goToRoom = () => {
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
-    this.addMember(store.currentUser.getProfile());
+    this.addMember(store.getCurrentUser().getProfile());
     this.$room.trigger('showRoom');
 
     store.sendToPeers({
@@ -89,8 +89,7 @@ export default class Room {
   }
 
   showRoom = () => {
-    store.set('currentRoomId', this.roomId);
-
+    store.getCurrentUser().updateState({currentRoomId: this.roomId});
     this.$room.show();
     $(window).on('resize', this.onResize);
     
@@ -191,9 +190,10 @@ export default class Room {
   }
 
   updateFacilitators = (facilitators) => {
+    const me = store.getCurrentUser();
     facilitators.forEach(facilitator => {
       if (!this.hasFacilitator(facilitator)) {
-        const name = facilitator === store.get('socketId') ? store.currentUser.getProfile().name : store.getPeer(facilitator).profile.name;
+        const name = me.isMe(facilitator) ? me.getProfile().name : store.getPeer(facilitator).profile.name;
         addSystemMessage(`${name} stepped in as the new facilitator`);
       }
     });

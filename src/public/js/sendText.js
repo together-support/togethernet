@@ -18,7 +18,7 @@ export const sendMessage = () => {
   //   threadStart = 
   // }
 
-  if ($(`#${store.get('currentRoomId')}-${left}-${top}`).length) {
+  if ($(`#${store.getCurrentUser().currentRoomId}-${left}-${top}`).length) {
     alert("move to an empty spot to write the msg");
   } else {
     if (store.getCurrentRoom().ephemeral) {
@@ -34,8 +34,7 @@ export const sendMessage = () => {
 const ephemeralSendMessage = (message) => {
   const data = store.getCurrentRoom().addEphemeralHistory({
     ...message, 
-    ...store.currentUser.getProfile(), 
-    roomId: store.get('currentRoomId')
+    ...store.getCurrentUser().getProfile(), 
   });
   store.sendToPeers({type: 'text', data});
   renderOutgoingEphemeralMessage(data);
