@@ -66,9 +66,15 @@ export const agendaTextRecord = (data) => {
 }
 
 const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId, votes}) => {
-  const $textRecord = $(`<div class="textRecord ephemeral" id="${roomId}-${x}-${y}"></div>`);
+  const $textRecordClone = $(document.getElementById('textRecordTemplate').content.cloneNode(true));
+  
+  const $textRecord = $textRecordClone.find('.textRecord');
+  $textRecord.attr('id', `${roomId}-${x}-${y}`);
   $textRecord.css({left: x, top: y, backgroundColor: avatar});
-  const $textBubble = $(`<div class="textBubble ${messageType}" id="textBubble-${roomId}-${x}-${y}"><div class="textBubbleButtons"></div></div>`);
+
+  const $textBubble = $textRecord.find('.textBubble');
+  $textBubble.addClass(messageType);
+  $textBubble.attr('id', `textBubble-${roomId}-${x}-${y}`);
 
   if (isMine) {
     const $closeButton = $('<button class="close icon">x</button>');
@@ -76,15 +82,8 @@ const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId, v
     $closeButton.appendTo($textBubble.find('.textBubbleButtons'));
   }
 
-  const $name = $('<b></b>');
-  $name.text(name);
-
-  const $message = $('<p></p>');
-  $message.text(message)
-
-  $name.appendTo($textBubble);
-  $message.appendTo($textBubble);
-  $textBubble.appendTo($textRecord);
+  $textBubble.find('.name').text(name);
+  $textBubble.find('.content').text(message);
 
   const room = store.getRoom(roomId);
   if (room.mode === roomModes.directAction) {
@@ -95,21 +94,18 @@ const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId, v
 }
 
 export const votingButtons = (template, votes) => {
-  const $votingButtonsTemplate = $(document.getElementById(template).content.cloneNode(true));
-  $votingButtonsTemplate.find('.votingButtons').children().each((_, el) => {
+  const $votingButtons = $(document.getElementById(`${template}Template`).content.cloneNode(true));
+  $votingButtons.find('.votingButtons').children().each((_, el) => {
     const option = $(el).data('value');
     $(el).find('.voteCount').text(votes[option]);
     $(el).on('click', castVote);
   })
 
-  return $votingButtonsTemplate;
+  return $votingButtons;
 }
 
 export const systemBubble = (message) => {
-  const $systemBubble = $(`<div class="systemBubble"></div>`);
-  const $message = $('<p></p>');
-  $message.text(message);
-
-  $message.appendTo($systemBubble);
+  const $systemBubble = $(document.getElementById(`systemBubbleTemplate`).content.cloneNode(true));
+  $systemBubble.find('p').text(message);
   return $systemBubble;
 }

@@ -3,8 +3,9 @@ import {removeAllSystemMessage} from './systemMessage.js';
 import {disappearingTextRecord, persistentTextRecord, agendaTextRecord} from '../components/message.js';
 import {peerAvatar, makeFacilitatorButton} from '../components/users.js';
 import merge from 'lodash/merge';
+import TextRecord from './TextRecord.js';
 
-export const renderOutgoingEphemeralMessage = (data) => {
+export const renderOutgoingEphemeralMessage = async (data) => {
   removeAllSystemMessage();
   renderMessageRecord({...data, isMine: true}).appendTo(store.getCurrentRoom().$room);
 }
