@@ -81,9 +81,6 @@ const showAdjacentMessages = () => {
 const sendPositionToPeers = () => {
   store.sendToPeers({
     type: 'position', 
-    data: {
-      x: $('#user').position().left,
-      y: $('#user').position().top,
-    }
+    data: $('#user').position(),
   });
 }

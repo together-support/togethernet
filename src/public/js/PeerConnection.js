@@ -97,8 +97,7 @@ export default class PeerConnection {
         type: 'initPeer', 
         data: {
           room: store.getCurrentRoom(),
-          x: $('#user').position().left,
-          y: $('#user').position().top,
+          ...$('#user').position(),
         },
       });
       

@@ -144,10 +144,10 @@ export default class Room {
     }
   }
 
-  addEphemeralHistory = (data) => {
-    const {x, y, roomId, votes, votingRecords} = data;
-    const id = `${roomId}-${x}-${y}`;
-    this.ephemeralHistory[id] = {...data};
+  addEphemeralHistory = (textRecord) => {
+    const {left, top, roomId, votes, votingRecords} = textRecord;
+    const id = `${roomId}-${left}-${top}`;
+    this.ephemeralHistory[id] = textRecord;
     if (this.ephemeral && this.mode === roomModes.directAction) {
       this.ephemeralHistory[id]['votingRecords'] = votingRecords || {};
       this.ephemeralHistory[id]['votes'] = votes || {
