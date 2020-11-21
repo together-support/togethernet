@@ -6,7 +6,7 @@ import merge from 'lodash/merge';
 
 export const renderOutgoingEphemeralMessage = (data) => {
   removeAllSystemMessage();
-  renderMessageRecord({...data, isMine: true, roomId: store.currentRoomId}).appendTo(store.getCurrentRoom().$room);
+  renderMessageRecord({...data, isMine: true}).appendTo(store.getCurrentRoom().$room);
 }
 
 export const renderIncomingEphemeralMessage = (data) => {

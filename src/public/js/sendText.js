@@ -31,10 +31,14 @@ export const sendMessage = () => {
   $messageInput.val('');
 }
 
-const ephemeralSendMessage = (data) => {
+const ephemeralSendMessage = (message) => {
+  const data = store.getCurrentRoom().addEphemeralHistory({
+    ...message, 
+    ...store.currentUser.getProfile(), 
+    roomId: store.get('currentRoomId')
+  });
   store.sendToPeers({type: 'text', data});
-  const messageData = store.getCurrentRoom().addEphemeralHistory({...data, ...store.currentUser.getProfile()});
-  renderOutgoingEphemeralMessage({...messageData, ...store.currentUser.getProfile()});
+  renderOutgoingEphemeralMessage(data);
 }
 
 const archivalSendMessage = () => {
