@@ -96,7 +96,7 @@ const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId, v
 
 const consentfulGestures = (votes) => {
   const $consentfulGesturesClone = $(document.getElementById('consentfulGesturesTemplate').content.cloneNode(true));
-  $consentfulGesturesClone.children().each((_, el) => {
+  $consentfulGesturesClone.find('.consentfulGestures').children().each((_, el) => {
     const option = $(el).data('value');
     $(el).find('.voteCount').text(votes[option]);
     $(el).on('click', castVote);
