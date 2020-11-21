@@ -1,11 +1,10 @@
 import {removeMessage, hideAgendaForPeers} from '../js/ephemeralView.js';
 import store from '../store/index.js';
 import {roomModes} from '../constants/index.js'
-import {createPoll, castVote} from '../js/majorityRule.js';
+import {createPoll, castVote} from '../js/voting.js';
 
 export const disappearingTextRecord = (data) => {
   const $textRecord = textRecord(data);
-  const $textBubble = $textRecord.find('.textBubble');
 
   $textRecord
     .mouseenter(() => $textRecord.find('.textBubble').show())
@@ -66,7 +65,7 @@ export const agendaTextRecord = (data) => {
   return $textRecord;
 }
 
-const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId}) => {
+const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId, votes}) => {
   const $textRecord = $(`<div class="textRecord ephemeral" id="${roomId}-${x}-${y}"></div>`);
   $textRecord.css({left: x, top: y, backgroundColor: avatar});
   const $textBubble = $(`<div class="textBubble ${messageType}" id="textBubble-${roomId}-${x}-${y}"><div class="textBubbleButtons"></div></div>`);
@@ -88,16 +87,18 @@ const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId}) 
   $textBubble.appendTo($textRecord);
 
   const room = store.getRoom(roomId);
-  if (room.mode === roomModes.directAction)  {
-    consentfulGestures().appendTo($textBubble);
+  if (room.mode === roomModes.directAction) {
+    consentfulGestures(votes).appendTo($textBubble);
   }
 
   return $textRecord;
 }
 
-const consentfulGestures = () => {
+const consentfulGestures = (votes) => {
   const $consentfulGesturesClone = $(document.getElementById('consentfulGesturesTemplate').content.cloneNode(true));
   $consentfulGesturesClone.children().each((_, el) => {
+    const option = $(el).data('value');
+    $(el).find('.voteCount').text(votes[option]);
     $(el).on('click', castVote);
   })
   return $consentfulGesturesClone;

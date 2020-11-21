@@ -14,7 +14,7 @@ import {
   voteReceived,
   retractVote,
   changeVoteTo
-} from './majorityRule.js';
+} from './voting.js';
 
 export const handleData = ({event, peerId}) => {
   let data;

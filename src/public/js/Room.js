@@ -158,6 +158,8 @@ export default class Room {
         block: 0,
       };
     } 
+
+    return this.ephemeralHistory[id];
   }
 
   removeEphemeralHistory = (messageId) => {
