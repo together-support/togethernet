@@ -26,12 +26,15 @@ export const attachUIEvents = () => {
   $('#userAvatar').on('change', (e) => {
     const avatar = e.target.value
     $('#user').css('background-color', avatar);
-    // localStorage.setItem('tnAvatar', avatar);
     store.sendToPeers({type: 'profileUpdated'});
   });
 
-  $('#changeMessageType').on('click', () => {
-    $('#messageType').show();
+  $('#messageType').on('messageThread', (e) => {
+    if (e.shouldCreateThread) {
+      $(e.target).attr('data-threadedMessage', true)
+    } else {
+      $(e.target).attr('data-threadedMessage', false)
+    }
   });
 
   new RoomForm().initialize();

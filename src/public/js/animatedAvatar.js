@@ -1,4 +1,5 @@
 import store from '../store/index.js';
+import compact from 'lodash/compact';
 
 export const keyboardEvent = (event) => {
   event.preventDefault();
@@ -68,16 +69,20 @@ const onAnimationComplete = () => {
 
 const showAdjacentMessages = () => {
   const {left, top} = $('#user').position();
-  const adjacentPositions = [
+
+  const adjacentMessages = compact([
     `${left}-${top + store.get('avatarSize')}`,
     `${left}-${top - store.get('avatarSize')}`,
     `${left - store.get('avatarSize')}-${top}`,
     `${left + store.get('avatarSize')}-${top}`,
-  ]
+  ].map(position => $(`#${store.get('currentRoomId')}-${position}`)[0]));
 
-  adjacentPositions.forEach(position => {
-    $(`#${store.get('currentRoomId')}-${position}`).trigger('adjacent');
-  })
+  adjacentMessages.forEach(messageRecord => $(messageRecord).trigger('adjacent'));
+
+  $('#messageType').trigger({
+    type: 'messageThread', 
+    shouldCreateThread: adjacentMessages.length === 1
+  });
 }  
 
 const sendPositionToPeers = () => {
