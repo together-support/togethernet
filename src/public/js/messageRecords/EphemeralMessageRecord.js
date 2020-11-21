@@ -29,6 +29,10 @@ export default class EphemeralMessageRecord {
 
     this.messageData = messageData;
   }
+   
+  $textRecord = () => {
+    return $(`#${this.messageData.id}`);
+  }
 
   renderVotingButtons = (template, votes) => {
     const $votingButtons = $(document.getElementById(`${template}Template`).content.cloneNode(true));
@@ -39,6 +43,13 @@ export default class EphemeralMessageRecord {
     })
   
     return $votingButtons;
+  }
+
+  updateMessageData = (newState) => {
+    this.messageData = {
+      ...this.messageData,
+      ...newState
+    }
   }
 
   castVote = (e) => {
@@ -138,13 +149,22 @@ export default class EphemeralMessageRecord {
     });  
   }
 
+  pollCreated = () => {
+    this.messageData.isPoll = true;
+    this.messageData.votes = {yes: 0, neutral: 0, no: 0};
+    const $textBubble = this.$textRecord().find('.textBubble');
+    $textBubble.addClass('poll');
+    this.renderVotingButtons('majorityRules', this.messageData.votes).appendTo($textBubble);
+  }
+
   render = () => {
     const recordType = messageTypeToComponent[this.messageData.messageType]
     
     new recordType({
       ...this.messageData,
       getBaseTextRecord: this.getBaseTextRecord,
-      renderVotingButtons: this.renderVotingButtons
+      renderVotingButtons: this.renderVotingButtons,
+      pollCreated: this.pollCreated,
     }).render();
   }
 }

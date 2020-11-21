@@ -15,28 +15,21 @@ export default class PersistentTextRecord {
       data: {roomId, textRecordId},
     });
   
-    this.pollCreated({roomId, textRecordId});
+    this.props.pollCreated();
     e.target.remove();
   }
 
-  pollCreated = () => {
-    // const $textBubble = $textRecord.find('.textBubble');
-  
-    // const pollRecord = store.getRoom(roomId).ephemeralHistory[this.props.id];
-    // pollRecord.isPoll = true;
-    // pollRecord.messageData.votes = {yes: 0, neutral: 0, no: 0};
-    // pollRecord.messageData.votingRecords = {};
-  
-    // $textBubble.addClass('poll');
-    // votingButtons('majorityRules', pollRecord.messageData.votes).appendTo($textBubble);
+  $textRecord = () => {
+    return $(`#${this.props.id}`);
   }
 
   render = () => {
-    const room = store.getRoom(this.props.roomId);
+    const {id, votes, roomId, isPoll} = this.props;
+    const room = store.getRoom(roomId);
 
     let $textRecord;
-    if ($(`#${this.props.id}`).length) {
-      $textRecord = $(`#${this.props.id}`);
+    if (this.$textRecord().length) {
+      $textRecord = this.$textRecord();
     } else {
       $textRecord = this.props.getBaseTextRecord();
       const $textBubble = $textRecord.find('.textBubble'); 
@@ -47,12 +40,12 @@ export default class PersistentTextRecord {
       $hideButton.prependTo($textBubbleButtons);
     
       if (room.mode === roomModes.facilitated) {
-        if (this.props.isPoll) {
+        if (isPoll) {
           $textBubble.addClass('poll');
           this.props.renderVotingButtons('majorityRules', votes).appendTo($textBubble);
         } else {
           const $createPoll = $('<button id="makeVote">Vote</button>');
-          $createPoll.on('click', createPoll);
+          $createPoll.on('click', this.createPoll);
           $createPoll.prependTo($textRecord.find('.textBubbleButtons'));  
         }
       }
