@@ -33,26 +33,32 @@ export default class PersistentTextRecord {
 
   render = () => {
     const room = store.getRoom(this.props.roomId);
-    const $textRecord = this.props.getBaseTextRecord();
-    const $textBubble = $textRecord.find('.textBubble'); 
-    const $textBubbleButtons = $textBubble.find('.textBubbleButtons');
-  
-    const $hideButton = $('<button class="icon">-</button>');
-    $hideButton.on('click', () => $textBubble.hide());
-    $hideButton.prependTo($textBubbleButtons);
-  
-    if (room.mode === roomModes.facilitated) {
-      if (this.props.isPoll) {
-        $textBubble.addClass('poll');
-        this.props.renderVotingButtons('majorityRules', votes).appendTo($textBubble);
-      } else {
-        const $createPoll = $('<button id="makeVote">Vote</button>');
-        $createPoll.on('click', createPoll);
-        $createPoll.prependTo($textRecord.find('.textBubbleButtons'));  
+
+    let $textRecord;
+    if ($(`#${this.props.id}`).length) {
+      $textRecord = $(`#${this.props.id}`);
+    } else {
+      $textRecord = this.props.getBaseTextRecord();
+      const $textBubble = $textRecord.find('.textBubble'); 
+      const $textBubbleButtons = $textBubble.find('.textBubbleButtons');
+    
+      const $hideButton = $('<button class="icon">-</button>');
+      $hideButton.on('click', () => $textBubble.hide());
+      $hideButton.prependTo($textBubbleButtons);
+    
+      if (room.mode === roomModes.facilitated) {
+        if (this.props.isPoll) {
+          $textBubble.addClass('poll');
+          this.props.renderVotingButtons('majorityRules', votes).appendTo($textBubble);
+        } else {
+          const $createPoll = $('<button id="makeVote">Vote</button>');
+          $createPoll.on('click', createPoll);
+          $createPoll.prependTo($textRecord.find('.textBubbleButtons'));  
+        }
       }
+    
+      $textRecord.mouseenter(() => $textBubble.show());
     }
-  
-    $textRecord.mouseenter(() => $textBubble.show());
 
     $textRecord.appendTo(store.getRoom(this.props.roomId).$room);
   }

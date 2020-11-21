@@ -77,7 +77,9 @@ class Store {
     if (Boolean(room)) {
       room.updateSelf(options);
     } else {
-      room = new Room(options)
+      const optionsClone = {...options};
+      delete optionsClone['ephemeralHistory'];
+      room = new Room(optionsClone)
       this.rooms[roomId] = room;
       room.initialize();
     }

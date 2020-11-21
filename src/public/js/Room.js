@@ -183,7 +183,7 @@ export default class Room {
     let ephemeralHistory = {};
     Object.values(ephemeralHistoryData).forEach(({messageData}) => {
       const newMessageRecord = new EphemeralMessageRecord(messageData);
-      ephemeralHistory[newMessageRecord.id] = newMessageRecord;
+      ephemeralHistory[newMessageRecord.messageData.id] = newMessageRecord;
     });
     return ephemeralHistory;
   }
