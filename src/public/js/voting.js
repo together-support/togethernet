@@ -35,7 +35,7 @@ export const castVote = (e) => {
   const textRecordId = $option.closest('.textRecord').attr('id');
   const pollRecord = store.getCurrentRoom().ephemeralHistory[textRecordId];
 
-  const myProfile = store.getProfile();
+  const myProfile = store.currentUser.getProfile();
   const myVote = pollRecord.votingRecords[myProfile.socketId]
   const voteData = {textRecordId, option, ...myProfile};
 
