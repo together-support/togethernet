@@ -29,7 +29,7 @@ export const persistentTextRecord = (data) => {
   if (room.mode === roomModes.facilitated) {
     if (isPoll) {
       $textBubble.addClass('poll');
-      voteButtons(votes).appendTo($textBubble);
+      votingButtons('majorityRules', votes).appendTo($textBubble);
     } else {
       const $createPoll = $('<button id="makeVote">Vote</button>');
       $createPoll.on('click', createPoll);
@@ -88,30 +88,21 @@ const textRecord = ({x, y, message, messageType, name, avatar, isMine, roomId, v
 
   const room = store.getRoom(roomId);
   if (room.mode === roomModes.directAction) {
-    consentfulGestures(votes).appendTo($textBubble);
+    votingButtons('consentfulGestures', votes).appendTo($textBubble);
   }
 
   return $textRecord;
 }
 
-const consentfulGestures = (votes) => {
-  const $consentfulGesturesClone = $(document.getElementById('consentfulGesturesTemplate').content.cloneNode(true));
-  $consentfulGesturesClone.find('.consentfulGestures').children().each((_, el) => {
+export const votingButtons = (template, votes) => {
+  const $votingButtonsTemplate = $(document.getElementById(template).content.cloneNode(true));
+  $votingButtonsTemplate.find('.votingButtons').children().each((_, el) => {
     const option = $(el).data('value');
     $(el).find('.voteCount').text(votes[option]);
     $(el).on('click', castVote);
   })
-  return $consentfulGesturesClone;
-}
 
-export const voteButtons = (votes) => {
-  const $voteButtonsContainer = $('<div class="votingButtons"></div>');
-  Object.keys(votes).forEach(option => {
-    const $optionButton = $(`<button class="voteOption" data-value="${option}">${option}<span class="voteCount">${votes[option]}</span></button>`);
-    $optionButton.on('click', castVote);
-    $optionButton.appendTo($voteButtonsContainer);
-  });
-  return $voteButtonsContainer;
+  return $votingButtonsTemplate;
 }
 
 export const systemBubble = (message) => {

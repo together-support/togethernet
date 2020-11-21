@@ -1,4 +1,4 @@
-import {voteButtons} from '../components/message.js'
+import {votingButtons} from '../components/message.js'
 import store from '../store/index.js';
 
 export const createPoll = (e) => {
@@ -7,7 +7,7 @@ export const createPoll = (e) => {
   store.sendToPeers({
     type: 'pollCreated',
     data: {
-      roomId: store.get('currentRoomId'),
+      roomId: store.currentUser.currentRoomId,
       textRecordId,
     }
   });
@@ -26,7 +26,7 @@ export const pollCreated = ({roomId, textRecordId}) => {
   pollRecord.votingRecords = {};
 
   $textBubble.addClass('poll');
-  voteButtons(pollRecord.votes).appendTo($textBubble);
+  votingButtons('majorityRules', pollRecord.votes).appendTo($textBubble);
 }
 
 export const castVote = (e) => {
