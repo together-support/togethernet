@@ -26,6 +26,8 @@ button {
 
 #user {
   z-index: 5;
+  margin: 0;
+  font-size: 0.9em;
 }
 
 .textBubble,
@@ -103,11 +105,6 @@ button {
 
 .textBubbleButtons button.icon {
   width: 15px;
-}
-
-.draggable {
-  margin: 0;
-  font-size: 0.9em;
 }
 
 #makeVote {

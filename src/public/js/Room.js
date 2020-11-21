@@ -2,7 +2,7 @@ import store from '../store/index.js';
 import throttle from 'lodash/throttle';
 import pull from 'lodash/pull';
 import {keyboardEvent} from './animatedAvatar.js';
-import {renderIncomingEphemeralMessage, renderAvatar} from './ephemeralView.js';
+import {renderIncomingEphemeralMessage, renderAvatarInRoom} from './ephemeralView.js';
 import {participantAvatar} from '../components/users.js'
 import { roomModes } from '../constants/index.js';
 import {addSystemMessage} from './systemMessage.js';
@@ -66,7 +66,7 @@ export default class Room {
   goToRoom = () => {
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
-    this.addMember(store.getProfile());
+    this.addMember(store.currentUser.getProfile());
     this.$room.trigger('showRoom');
 
     store.sendToPeers({
@@ -82,7 +82,7 @@ export default class Room {
     Object.values(store.get('rooms')).forEach(room => delete room.members[socketId]);
     this.members[socketId] = profile;
     if (this.ephemeral) {
-      renderAvatar(profile);
+      renderAvatarInRoom({...profile, roomId: this.roomId});
     }
     const participantDisplay = $(`#participant-${socketId}`).length ? $(`#participant-${socketId}`) : participantAvatar(profile);
     participantDisplay.appendTo(this.$roomLink.find('.participantsContainer'))
@@ -103,7 +103,7 @@ export default class Room {
   }
 
   renderAvatars = () => {
-    Object.values(this.members).forEach(member => renderAvatar({...member, roomId: this.roomId}));
+    Object.values(this.members).forEach(member => renderAvatarInRoom({...member, roomId: this.roomId}));
   }
 
   hasFeature = (feature) => {
@@ -193,7 +193,7 @@ export default class Room {
   updateFacilitators = (facilitators) => {
     facilitators.forEach(facilitator => {
       if (!this.hasFacilitator(facilitator)) {
-        const name = facilitator === store.get('socketId') ? store.getProfile().name : store.getPeer(facilitator).profile.name;
+        const name = facilitator === store.get('socketId') ? store.currentUser.getProfile().name : store.getPeer(facilitator).profile.name;
         addSystemMessage(`${name} stepped in as the new facilitator`);
       }
     });

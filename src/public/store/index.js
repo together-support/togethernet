@@ -3,8 +3,6 @@ import Room from '../js/Room.js';
 
 class Store {
   constructor() {
-    this.avatar = '#000';
-    this.socketId = '';
     this.currentRoomId = 'ephemeralSpace';
 
     this.peers = {};
@@ -19,7 +17,7 @@ class Store {
     this.rightBoundary = 0;
     this.bottomBoundary = 0;
 
-    this.avatarSize = 0;
+    this.currentUser = null;
   }
 
   set(key, val) {
@@ -52,7 +50,8 @@ class Store {
         type,
         data: {
           ...data, 
-          ...this.getProfile(),
+          ...this.currentUser.getProfile(),
+          roomId: this.currentRoomId,
         }
       }));
     }
@@ -63,14 +62,9 @@ class Store {
       this.sendToPeer(peer.dataChannel, {type, data});
     });
   }
-  
-  getProfile = () => {
-    return {
-      socketId: this.socketId,
-      name: $('#userName').text(),
-      avatar: $('#userAvatar').val(),
-      roomId: this.currentRoomId,
-    }
+
+  getCurrentUser = () => {
+    return this.currentUser;
   }
 
   getCurrentRoom = () => {

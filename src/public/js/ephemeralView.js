@@ -1,8 +1,7 @@
 import store from '../store/index.js';
 import {removeAllSystemMessage} from './systemMessage.js';
 import {disappearingTextRecord, persistentTextRecord, agendaTextRecord} from '../components/message.js';
-import {peerAvatar, userAvatar, makeFacilitatorButton} from '../components/users.js';
-import {makeDraggableUser} from './animatedAvatar.js';
+import {peerAvatar, makeFacilitatorButton} from '../components/users.js';
 import merge from 'lodash/merge';
 
 export const renderOutgoingEphemeralMessage = (data) => {
@@ -64,9 +63,9 @@ export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
   })
 }
 
-export const renderAvatar = (data) => {
-  if (store.isMe(data.socketId)) {
-    renderUserAvatar();
+export const renderAvatarInRoom = (data) => {
+  if (store.currentUser.socketId === data.socketId) {
+    store.currentUser.renderInRoom(data.roomId);
   } else {
     renderPeer(data);
   }
@@ -81,16 +80,6 @@ const renderPeer = (data) => {
     makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
   }
   $avatar.appendTo($(`#${roomId}`));
-}
-
-const renderUserAvatar = () => {
-  if ($('#user').length) {
-    $('#user').appendTo(store.getCurrentRoom().$room);
-  } else {
-    userAvatar().appendTo(store.getCurrentRoom().$room);
-    store.set('avatarSize', $("#user").width());
-    makeDraggableUser();
-  }
 }
 
 export const updatePeerPosition = ({socketId, x, y, roomId}) => {

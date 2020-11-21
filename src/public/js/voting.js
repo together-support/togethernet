@@ -7,7 +7,7 @@ export const createPoll = (e) => {
   store.sendToPeers({
     type: 'pollCreated',
     data: {
-      roomId: store.currentRoomId,
+      roomId: store.get('currentRoomId'),
       textRecordId,
     }
   });
@@ -35,9 +35,9 @@ export const castVote = (e) => {
   const textRecordId = $option.closest('.textRecord').attr('id');
   const pollRecord = store.getCurrentRoom().ephemeralHistory[textRecordId];
 
-  const myProfile = store.getProfile();
+  const myProfile = store.currentUser.getProfile();
   const myVote = pollRecord.votingRecords[myProfile.socketId]
-  const voteData = {textRecordId, option, ...myProfile};
+  const voteData = {textRecordId, option, ...myProfile, roomId: store.get('currentRoomId')};
 
   if (Boolean(myVote)) {
     if (myVote === option) {

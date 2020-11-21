@@ -13,12 +13,6 @@ export const peerAvatar = ({x, y, avatar, socketId}) => {
   return $peer;
 }
 
-export const userAvatar = () => {
-  const $user = $('<div id="user" class="avatar draggabble ui-widget-content"></div>');
-  $user.css('background-color', store.get('avatar'));
-  return $user;
-}
-
 export const participantAvatar = ({avatar, socketId}) => {
   const $avatar = $(`<div class="participant" id="participant-${socketId}"></div>`);
   $avatar.css('background-color', avatar);

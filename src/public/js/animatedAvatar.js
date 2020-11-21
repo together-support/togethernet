@@ -1,4 +1,6 @@
 import store from '../store/index.js';
+import compact from 'lodash/compact';
+import { find } from 'lodash';
 
 export const keyboardEvent = (event) => {
   event.preventDefault();
@@ -10,30 +12,30 @@ export const keyboardEvent = (event) => {
 };
 
 const moveUp = () => {
-  const newY = $('#user').position().top - store.get('avatarSize');
+  const newY = $('#user').position().top - $('#user').width();
   if (newY >= store.get('topBoundary')) {
-    $("#user").finish().animate({top: `-=${store.get('avatarSize')}`}, {complete: onAnimationComplete});
+    $("#user").finish().animate({top: `-=${$('#user').width()}`}, {complete: onAnimationComplete});
   }
 }
 
 const moveDown = () => {
-  const newY = $('#user').position().top + store.get('avatarSize');
-  if (newY + store.get('avatarSize') <= store.get('bottomBoundary')) {
-    $("#user").finish().animate({top: `+=${store.get('avatarSize')}`}, {complete: onAnimationComplete});
+  const newY = $('#user').position().top + $('#user').width();
+  if (newY + $('#user').width() <= store.get('bottomBoundary')) {
+    $("#user").finish().animate({top: `+=${$('#user').width()}`}, {complete: onAnimationComplete});
   }
 }
 
 const moveLeft = () => {
-  const newX = $('#user').position().left - store.get('avatarSize');
+  const newX = $('#user').position().left - $('#user').width();
   if (newX >= store.get('leftBoundary')) {
-    $("#user").finish().animate({left: `-=${store.get('avatarSize')}`}, {complete: onAnimationComplete});
+    $("#user").finish().animate({left: `-=${$('#user').width()}`}, {complete: onAnimationComplete});
   }
 }
 
 const moveRight = () => {
-  const newX = $('#user').position().left + store.get('avatarSize');
-  if (newX + store.get('avatarSize') <= store.get('rightBoundary')) {
-    $("#user").finish().animate({left: `+=${store.get('avatarSize')}`}, {complete: onAnimationComplete});
+  const newX = $('#user').position().left + $('#user').width();
+  if (newX + $('#user').width() <= store.get('rightBoundary')) {
+    $("#user").finish().animate({left: `+=${$('#user').width()}`}, {complete: onAnimationComplete});
   }
 }
 
@@ -46,7 +48,7 @@ const animationEvents = {
 
 export const makeDraggableUser = () => {
   $("#user").draggable({
-    grid: [store.get('avatarSize'), store.get('avatarSize')],
+    grid: [$("#user").width(), $("#user").width()],
     stop: onAnimationComplete,
   });
 
@@ -68,16 +70,20 @@ const onAnimationComplete = () => {
 
 const showAdjacentMessages = () => {
   const {left, top} = $('#user').position();
-  const adjacentPositions = [
-    `${left}-${top + store.get('avatarSize')}`,
-    `${left}-${top - store.get('avatarSize')}`,
-    `${left - store.get('avatarSize')}-${top}`,
-    `${left + store.get('avatarSize')}-${top}`,
-  ]
 
-  adjacentPositions.forEach(position => {
-    $(`#${store.get('currentRoomId')}-${position}`).trigger('adjacent');
-  })
+  const adjacentMessages = compact([
+    `${left}-${top + $('#user').width()}`,
+    `${left}-${top - $('#user').width()}`,
+    `${left - $('#user').width()}-${top}`,
+    `${left + $('#user').width()}-${top}`,
+  ].map(position => $(`#${store.get('currentRoomId')}-${position}`)[0]));
+
+  adjacentMessages.forEach(messageRecord => $(messageRecord).trigger('adjacent'));
+
+  $('#messageType').trigger({
+    type: 'messageThread', 
+    shouldCreateThread: adjacentMessages.length === 1
+  });
 }  
 
 const sendPositionToPeers = () => {

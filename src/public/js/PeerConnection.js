@@ -3,6 +3,7 @@ import store from '../store/index.js';
 import {getBrowserRTC} from './ensureWebRTC.js'
 import {handleData} from './dataReceiver.js';
 import {addSystemMessage} from './systemMessage.js';
+import User from './User.js';
 
 export default class PeerConnection {
   constructor () {
@@ -13,11 +14,13 @@ export default class PeerConnection {
 
   connect = () => {
     this.socket.on('connect', () => {
-      store.set('socketId', this.socket.id);
+      new User(this.socket.id).initialize();
+      
       Object.values(store.get('rooms')).forEach(room => room.attachEvents());
-      store.getCurrentRoom().goToRoom();
       addSystemMessage('Searching for peers...');
+      store.getCurrentRoom().goToRoom();
     });
+
     this.socket.on('initConnections', this.initConnections)
     this.socket.on('offer', this.handleReceivedOffer);
     this.socket.on('answer', this.handleReceivedAnswer);

@@ -50,14 +50,14 @@ export default class RoomForm {
 
     $("#addRoom").on('click', () => {
       this.listFacilitatorOptions();
-      renderFacilitator(store.getProfile()).appendTo($('#currentFacilitators'));
+      renderFacilitator(store.currentUser.getProfile()).appendTo($('#currentFacilitators'));
       this.options.facilitators.push(store.get('socketId'));
       $('#configureRoom').show();
     });
   }
 
   listFacilitatorOptions = () => {
-    const profiles = [store.getProfile(), ...Object.values(store.get('peers')).map(peer => peer.profile)];
+    const profiles = [store.currentUser.getProfile(), ...Object.values(store.get('peers')).map(peer => peer.profile)];
     profiles.forEach((profile) => {
       facilitatorOption({
         profile, 
