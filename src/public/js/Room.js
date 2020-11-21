@@ -2,7 +2,7 @@ import store from '../store/index.js';
 import throttle from 'lodash/throttle';
 import pull from 'lodash/pull';
 import {keyboardEvent} from './animatedAvatar.js';
-import {renderIncomingEphemeralMessage, renderAvatarInRoom} from './ephemeralView.js';
+import {renderAvatarInRoom} from './ephemeralView.js';
 import {participantAvatar} from '../components/users.js'
 import { roomModes } from '../constants/index.js';
 import {addSystemMessage} from './systemMessage.js';
