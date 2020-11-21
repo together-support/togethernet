@@ -6,6 +6,7 @@ import {makeDraggableUser} from './animatedAvatar.js';
 export default class User {
   constructor (socketId) {
     this.socketId = socketId;
+    this.currentRoomId = 'ephemeralSpace';
     this.$avatar = null;
   }
 
@@ -27,7 +28,7 @@ export default class User {
     $avatar.css('background-color', $('#userAvatar').val());
     this.$avatar = $avatar;
 
-    await this.renderInRoom(store.currentRoomId);
+    await this.render();
     makeDraggableUser();
   }
 
@@ -36,6 +37,7 @@ export default class User {
       socketId: this.socketId,
       name: $('#userName').text(),
       avatar: $('#userAvatar').val(),
+      roomId: this.currentRoomId,
     }
   }
 
@@ -56,8 +58,8 @@ export default class User {
     store.sendToPeers({type: 'profileUpdated'});
   };
 
-  renderInRoom = async (roomId) => {
-    const $room = store.getRoom(roomId).$room;
+  render = async () => {
+    const $room = store.getRoom(this.currentRoomId).$room;
     this.$avatar.appendTo($room);
   }
 }
