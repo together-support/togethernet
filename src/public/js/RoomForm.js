@@ -50,14 +50,14 @@ export default class RoomForm {
 
     $("#addRoom").on('click', () => {
       this.listFacilitatorOptions();
-      renderFacilitator(store.currentUser.getProfile()).appendTo($('#currentFacilitators'));
-      this.options.facilitators.push(store.get('socketId'));
+      renderFacilitator(store.getCurrentUser().getProfile()).appendTo($('#currentFacilitators'));
+      this.options.facilitators.push(store.getCurrentUser().socketId);
       $('#configureRoom').show();
     });
   }
 
   listFacilitatorOptions = () => {
-    const profiles = [store.currentUser.getProfile(), ...Object.values(store.get('peers')).map(peer => peer.profile)];
+    const profiles = [store.getCurrentUser().getProfile(), ...Object.values(store.get('peers')).map(peer => peer.profile)];
     profiles.forEach((profile) => {
       facilitatorOption({
         profile, 
@@ -129,9 +129,10 @@ export default class RoomForm {
 
     if (this.validateOptions()) {
       const newRoom = new Room(this.options);
+      const {roomId} = this.options;
 
-      store.rooms[this.options.roomId] = newRoom;
-      store.set('currentRoomId', this.options.roomId);
+      store.rooms[roomId] = newRoom;
+      store.getCurrentUser().updateState({currentRoomId: roomId});
       store.sendToPeers({
         type: 'newRoom',
         data: {

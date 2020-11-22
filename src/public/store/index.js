@@ -3,8 +3,6 @@ import Room from '../js/Room.js';
 
 class Store {
   constructor() {
-    this.currentRoomId = 'ephemeralSpace';
-
     this.peers = {};
     this.needRoomsInfo = true;
 
@@ -41,6 +39,7 @@ class Store {
   }
 
   removePeer = (id) => {
+    Object.values(this.rooms).forEach(room => delete room.members[id])
     delete this.peers[id];
   }
 
@@ -51,7 +50,6 @@ class Store {
         data: {
           ...data, 
           ...this.currentUser.getProfile(),
-          roomId: this.currentRoomId,
         }
       }));
     }
@@ -68,7 +66,7 @@ class Store {
   }
 
   getCurrentRoom = () => {
-    return this.rooms[this.currentRoomId];
+    return this.rooms[this.currentUser.state.currentRoomId];
   }
 
   getRoom = (roomId) => {
@@ -80,7 +78,10 @@ class Store {
     if (Boolean(room)) {
       room.updateSelf(options);
     } else {
-      room = new Room(options)
+      const optionsClone = {...options};
+      delete optionsClone['ephemeralHistory'];
+      delete optionsClone['members'];
+      room = new Room(optionsClone)
       this.rooms[roomId] = room;
       room.initialize();
     }

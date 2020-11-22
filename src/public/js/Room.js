@@ -2,10 +2,11 @@ import store from '../store/index.js';
 import throttle from 'lodash/throttle';
 import pull from 'lodash/pull';
 import {keyboardEvent} from './animatedAvatar.js';
-import {renderIncomingEphemeralMessage, renderAvatarInRoom} from './ephemeralView.js';
+import {renderAvatarInRoom} from './ephemeralView.js';
 import {participantAvatar} from '../components/users.js'
 import { roomModes } from '../constants/index.js';
 import {addSystemMessage} from './systemMessage.js';
+import EphemeralMessageRecord from './messageRecords/EphemeralMessageRecord.js';
 
 export default class Room {
   constructor(options) {
@@ -18,7 +19,7 @@ export default class Room {
     this.$roomLink = $(`#${this.roomId}Link`);
     this.members = {...options.members};
 
-    this.ephemeralHistory = {...options.ephemeralHistory};
+    this.ephemeralHistory = {...this.createMessageRecords(options.ephemeralHistory)};
   }
 
   initialize = () => {
@@ -66,7 +67,7 @@ export default class Room {
   goToRoom = () => {
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
-    this.addMember(store.currentUser.getProfile());
+    this.addMember(store.getCurrentUser().getProfile());
     this.$room.trigger('showRoom');
 
     store.sendToPeers({
@@ -89,8 +90,7 @@ export default class Room {
   }
 
   showRoom = () => {
-    store.set('currentRoomId', this.roomId);
-
+    store.getCurrentUser().updateState({currentRoomId: this.roomId});
     this.$room.show();
     $(window).on('resize', this.onResize);
     
@@ -121,7 +121,7 @@ export default class Room {
     $peerAvatar.empty();
     const peerId = $peerAvatar.attr('id').split('peer-')[1];
     addSystemMessage(`${store.getPeer(peerId).profile.name} stepped in as a new facilitator`);
-    pull(this.facilitators, store.get('socketId'));
+    pull(this.facilitators, store.getCurrentUser().socketId);
     this.facilitators.push(peerId);
 
     store.sendToPeers({
@@ -137,28 +137,13 @@ export default class Room {
   
   renderHistory = () => {
     if (this.ephemeral) {
-      Object.keys(this.ephemeralHistory).forEach((messageRecordId) => {
-        if (!this.$room.find(`#${messageRecordId}`).length) {
-          renderIncomingEphemeralMessage({...this.ephemeralHistory[messageRecordId], roomId: this.roomId});
-        }
-      });
+      Object.values(this.ephemeralHistory).forEach((messageRecord) => messageRecord.render());
     }
   }
 
-  addEphemeralHistory = (data) => {
-    const {x, y, roomId, votes, votingRecords} = data;
-    const id = `${roomId}-${x}-${y}`;
-    this.ephemeralHistory[id] = {...data};
-    if (this.ephemeral && this.mode === roomModes.directAction) {
-      this.ephemeralHistory[id]['votingRecords'] = votingRecords || {};
-      this.ephemeralHistory[id]['votes'] = votes || {
-        agree: 0,
-        disagree: 0,
-        stand: 0,
-        block: 0,
-      };
-    } 
-
+  addEphemeralHistory = (textRecord) => {
+    const {id} = textRecord.messageData;
+    this.ephemeralHistory[id] = textRecord;
     return this.ephemeralHistory[id];
   }
 
@@ -185,15 +170,29 @@ export default class Room {
     this.mode = mode;
     this.ephemeral = ephemeral;
     this.name = name;
-    this.ephemeralHistory = {...this.ephemeralHistory, ...ephemeralHistory}
     this.members = {...this.members, ...members}
+    this.updateEphemeralHistory(ephemeralHistory);
+  }
+
+  updateEphemeralHistory = (ephemeralHistoryData = {}) => {
+    this.ephemeralHistory = {...this.ephemeralHistory, ...this.createMessageRecords(ephemeralHistoryData)}
     this.renderHistory();
   }
 
+  createMessageRecords = (ephemeralHistoryData = {}) => {
+    let ephemeralHistory = {};
+    Object.values(ephemeralHistoryData).forEach(({messageData}) => {
+      const newMessageRecord = new EphemeralMessageRecord(messageData);
+      ephemeralHistory[newMessageRecord.messageData.id] = newMessageRecord;
+    });
+    return ephemeralHistory;
+  }
+
   updateFacilitators = (facilitators) => {
+    const me = store.getCurrentUser();
     facilitators.forEach(facilitator => {
       if (!this.hasFacilitator(facilitator)) {
-        const name = facilitator === store.get('socketId') ? store.currentUser.getProfile().name : store.getPeer(facilitator).profile.name;
+        const name = me.isMe(facilitator) ? me.getProfile().name : store.getPeer(facilitator).profile.name;
         addSystemMessage(`${name} stepped in as the new facilitator`);
       }
     });
@@ -201,14 +200,14 @@ export default class Room {
     this.facilitators = facilitators;
     this.updateMessageTypes();
 
-    if (this.hasFacilitator(store.get('socketId'))) {
+    if (this.hasFacilitator(store.getCurrentUser().socketId)) {
       this.renderAvatars();
     }
   }
 
   updateMessageTypes = () => {
     $('#messageType').find('option[value="agenda"]').remove();
-    if (!this.facilitators.length || this.facilitators.includes(store.get('socketId'))) {
+    if (!this.facilitators.length || this.facilitators.includes(store.getCurrentUser().socketId)) {
       $('<option value="agenda">add an agenda</option>').appendTo($('#messageType'));
     }
   }

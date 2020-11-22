@@ -12,8 +12,8 @@ import {
 import {
   pollCreated, 
   voteReceived,
-  retractVote,
-  changeVoteTo
+  voteRetracted,
+  voteChanged,
 } from './voting.js';
 
 export const handleData = ({event, peerId}) => {
@@ -49,9 +49,9 @@ export const handleData = ({event, peerId}) => {
   } else if (data.type === 'voteCasted') {
     voteReceived(data.data);
   } else if (data.type === 'voteRetracted') {
-    retractVote(data.data);
+    voteRetracted(data.data);
   } else if (data.type === 'voteChanged') {
-    changeVoteTo(data.data);
+    voteChanged(data.data);
   } else if (data.type === 'updateFacilitators') {
     updateFacilitators(data.data);
   }

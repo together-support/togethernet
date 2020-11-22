@@ -1,10 +1,10 @@
 import store from '../store/index.js';
 
-export const peerAvatar = ({x, y, avatar, socketId}) => {
+export const peerAvatar = ({left, top, avatar, socketId}) => {
   const $peer = $(`<div class="avatar" id="peer-${socketId}"></div>`);
   $peer.css({
-    left: x,
-    top: y,
+    left,
+    top,
     backgroundColor: avatar,
   });
 
