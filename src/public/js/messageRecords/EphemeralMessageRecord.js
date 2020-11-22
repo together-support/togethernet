@@ -1,6 +1,6 @@
 import store from '../../store/index.js';
 import {roomModes} from '../../constants/index.js';
-import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord} from './EphemeralMessageRecords/index.js';
+import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord} from './ephemeralMessageRecords/index.js';
 
 const messageTypeToComponent = {
   'question': PersistentTextRecord,
