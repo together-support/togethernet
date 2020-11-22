@@ -11,9 +11,9 @@ export const replyThread = (event, textRecordNumber) => {
   // }, 0);
 
   // if (event.keyCode == 13) {
-    // event.preventDefault();
+  // event.preventDefault();
   //   console.log("MAKE THREAD");
   // }
   // // allow user to reply thread
   // stopSendMsg = false;
-}
+};

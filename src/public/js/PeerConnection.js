@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import store from '../store/index.js';
-import {getBrowserRTC} from './ensureWebRTC.js'
+import {getBrowserRTC} from './ensureWebRTC.js';
 import {handleData} from './dataReceiver.js';
 import {addSystemMessage} from './systemMessage.js';
 import User from './User.js';
@@ -21,7 +21,7 @@ export default class PeerConnection {
       store.getCurrentRoom().goToRoom();
     });
 
-    this.socket.on('initConnections', this.initConnections)
+    this.socket.on('initConnections', this.initConnections);
     this.socket.on('offer', this.handleReceivedOffer);
     this.socket.on('answer', this.handleReceivedAnswer);
     this.socket.on('candidate', this.addCandidate);
@@ -36,9 +36,9 @@ export default class PeerConnection {
         offerToReceiveAudio: true
       });
       await peerConnection.setLocalDescription(offer); 
-      this.send({type: "sendOffers", offer, peerId});
+      this.send({type: 'sendOffers', offer, peerId});
     } catch (e) {
-      console.log("error creating offer to connect to peers", e); 
+      console.log('error creating offer to connect to peers', e); 
     }
   }
 
@@ -48,15 +48,15 @@ export default class PeerConnection {
       await peerConnection.setRemoteDescription(new this._wrtc.RTCSessionDescription(offer)); 
       const answer = await peerConnection.createAnswer();
       await peerConnection.setLocalDescription(answer); 
-      this.send({type: "sendAnswer", answer, offerInitiator});
+      this.send({type: 'sendAnswer', answer, offerInitiator});
     } catch (err) {
-      console.log('error receiving offer', err)
+      console.log('error receiving offer', err);
     }
   }
 
   initPeerConnection = (peerId, {initiator}) => {
     const peerConnection = new this._wrtc.RTCPeerConnection({ 
-      "iceServers": [{
+      'iceServers': [{
         url: 'stun:stun.l.google.com:19302'
       }],
       sdpSemantics: 'unified-plan'
@@ -65,8 +65,8 @@ export default class PeerConnection {
     store.addPeer(peerId, peerConnection);
 
     peerConnection.onicecandidate = (event) => { 
-      if (Boolean(event.candidate)) { 
-        this.send({type: "trickleCandidate", candidate: new this._wrtc.RTCIceCandidate(event.candidate)}); 
+      if (event.candidate) { 
+        this.send({type: 'trickleCandidate', candidate: new this._wrtc.RTCIceCandidate(event.candidate)}); 
       } 
     };
 
@@ -76,15 +76,15 @@ export default class PeerConnection {
     } else {
       peerConnection.ondatachannel = (event) => {
         store.setDataChannel(peerId, this.setUpDataChannel({dataChannel: event.channel, peerId}));
-      }
+      };
     }
 
-    return peerConnection
+    return peerConnection;
   }
 
   setUpDataChannel = ({dataChannel, peerId, initiator}) => {
     dataChannel.onclose = () => {
-      console.log("channel close"); 
+      console.log('channel close'); 
     };
 
     dataChannel.onmessage = (event) => {
@@ -92,7 +92,7 @@ export default class PeerConnection {
     };
 
     dataChannel.onopen = () => {
-      addSystemMessage("Peer connection established. You're now ready to chat in the p2p mode");
+      addSystemMessage('Peer connection established. You\'re now ready to chat in the p2p mode');
       store.sendToPeer(dataChannel, {
         type: 'initPeer', 
         data: {
@@ -111,7 +111,7 @@ export default class PeerConnection {
       addSystemMessage(event.error.message);
     };
     
-    return dataChannel
+    return dataChannel;
   }
 
   handleReceivedAnswer = async ({fromSocket, answer}) => {
@@ -124,11 +124,11 @@ export default class PeerConnection {
       const peerConnection = store.getPeer(fromSocket);
       await peerConnection.addIceCandidate(candidate); 
     } catch (e) {
-      console.log('error adding received ice candidate', e)
+      console.log('error adding received ice candidate', e);
     }
   }
 
-  handleError = (e) => {
+  handleError = () => {
     this.socket.disconnect();
   }
 

@@ -1,3 +1,5 @@
+import store from '../store/index.js';
+
 export default class Peer {
   constructor (socketId, dataChannel) {
     this.socketId = socketId;

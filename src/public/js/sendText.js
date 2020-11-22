@@ -1,4 +1,4 @@
-import store from '../store/index.js'
+import store from '../store/index.js';
 import EphemeralMessageRecord from './messageRecords/EphemeralMessageRecord.js';
 import {removeAllSystemMessage} from './systemMessage.js';
 
@@ -6,7 +6,7 @@ export const sendMessage = () => {
   const $messageInput = $('#_messageInput');
   const message = $messageInput.val();
 
-  if (!Boolean(message)) {
+  if (!message) {
     return;
   }
 
@@ -15,7 +15,7 @@ export const sendMessage = () => {
   const isThreaded = messageType === 'message' && $('#messageType').data('threaded-message');
   
   if ($(`#${store.getCurrentUser().currentRoomId}-${left}-${top}`).length) {
-    alert("move to an empty spot to write the msg");
+    alert('move to an empty spot to write the msg');
   } else {
     if (store.getCurrentRoom().ephemeral) {
       ephemeralSendMessage({message, messageType, left, top, isThreaded});
@@ -25,7 +25,7 @@ export const sendMessage = () => {
   }
 
   $messageInput.val('');
-}
+};
 
 const ephemeralSendMessage = (messageData) => {
   const ephemeralMessageRecord = new EphemeralMessageRecord({...messageData, ...store.getCurrentUser().getProfile(), isMine: true});
@@ -33,7 +33,7 @@ const ephemeralSendMessage = (messageData) => {
   store.sendToPeers({type: 'text', data: ephemeralMessageRecord.messageData});
   removeAllSystemMessage();
   ephemeralMessageRecord.render();
-}
+};
 
 const archivalSendMessage = () => {
   //       socket.emit("public message", {
@@ -42,4 +42,4 @@ const archivalSendMessage = () => {
   //       });
   //       archivePublicMsg(name, outgoingMsg);
   //       addPublicMsg(name, outgoingMsg);
-}
+};

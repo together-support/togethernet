@@ -1,5 +1,5 @@
 import store from '../../../store/index.js';
-import {roomModes} from '../../../constants/index.js'
+import {roomModes} from '../../../constants/index.js';
 
 export default class PersistentTextRecord {
   constructor(props) {
@@ -24,7 +24,7 @@ export default class PersistentTextRecord {
   }
 
   render = () => {
-    const {id, votes, roomId, isPoll} = this.props;
+    const {votes, roomId, isPoll} = this.props;
     const room = store.getRoom(roomId);
 
     let $textRecord;

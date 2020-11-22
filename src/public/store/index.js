@@ -27,7 +27,7 @@ class Store {
   }
 
   addPeer = (id, peer) => {
-    this.peers[id] = peer
+    this.peers[id] = peer;
   }
   
   getPeer = (id) => {
@@ -39,7 +39,7 @@ class Store {
   }
 
   removePeer = (id) => {
-    Object.values(this.rooms).forEach(room => delete room.members[id])
+    Object.values(this.rooms).forEach(room => delete room.members[id]);
     delete this.peers[id];
   }
 
@@ -75,13 +75,13 @@ class Store {
 
   updateOrInitializeRoom = (roomId, options = {roomId, name: roomId}) => {
     let room = this.rooms[roomId];
-    if (Boolean(room)) {
+    if (room) {
       room.updateSelf(options);
     } else {
       const optionsClone = {...options};
       delete optionsClone['ephemeralHistory'];
       delete optionsClone['members'];
-      room = new Room(optionsClone)
+      room = new Room(optionsClone);
       this.rooms[roomId] = room;
       room.initialize();
     }

@@ -11,7 +11,7 @@ const defaultOptions = {
   roomId: '',
   ephemeral: true,
   facilitators: [],
-}
+};
 
 export default class RoomForm {
   constructor () {
@@ -36,7 +36,7 @@ export default class RoomForm {
       } else {
         $('#configureFacilitators').hide();
       }
-      this.goToPage(2)
+      this.goToPage(2);
     });
     $('#backToCreateRoom').on('click', () => this.goToPage(1));
     $('#backToCustomize').on('click', () => this.goToPage(2));
@@ -48,7 +48,7 @@ export default class RoomForm {
     });
     $('.modalContent').on('click', (e) => e.stopPropagation());
 
-    $("#addRoom").on('click', () => {
+    $('#addRoom').on('click', () => {
       this.listFacilitatorOptions();
       renderFacilitator(store.getCurrentUser().getProfile()).appendTo($('#currentFacilitators'));
       this.options.facilitators.push(store.getCurrentUser().socketId);
@@ -62,7 +62,7 @@ export default class RoomForm {
       facilitatorOption({
         profile, 
         onClick: () => this.toggleFacilitator(profile),
-      }).insertBefore($("#configureRoom-3 .modalButtons"));
+      }).insertBefore($('#configureRoom-3 .modalButtons'));
     });
   };
 
@@ -80,12 +80,10 @@ export default class RoomForm {
   togglePrivacy = () => {
     this.options.ephemeral = !this.options.ephemeral;
     $('#ephemeralArchivalToggle').find('.toggleContainer').toggleClass('right');
-    $('#meetingMode').trigger({type: 'privacyChanged', ephemeral: this.options.ephemeral})
+    $('#meetingMode').trigger({type: 'privacyChanged', ephemeral: this.options.ephemeral});
   }
 
   privacyChanged = (e) => {
-    const $meetingMode = $(e.target);
-
     if (e.ephemeral) {
       $('#configureMeetingMode').show();
     } else {
@@ -143,18 +141,18 @@ export default class RoomForm {
       newRoom.initialize();
       newRoom.goToRoom();
       $('#configureRoom').hide();
-      this.resetForm()
+      this.resetForm();
     }
   }
 
   validateOptions = () => {
     let isValid = true;
-    if (!Boolean(this.options.name)) {
+    if (!this.options.name) {
       alert('please enter a room name');
       isValid = false;
     }
 
-    if (Boolean(store.getRoom(this.options.name))) {
+    if (store.getRoom(this.options.name)) {
       alert('room names must be unique');
       isValid = false;
     }

@@ -1,13 +1,13 @@
 import store from '../../store/index.js';
-import {roomModes} from '../../constants/index.js'
-import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord} from './EphemeralMessageRecords/index.js'
+import {roomModes} from '../../constants/index.js';
+import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord} from './EphemeralMessageRecords/index.js';
 
 const messageTypeToComponent = {
   'question': PersistentTextRecord,
   'idea': PersistentTextRecord,
   'message': DisappearingTextRecord,
   'agenda': AgendaTextRecord,
-}
+};
 
 export default class EphemeralMessageRecord {
   constructor (props) {
@@ -40,7 +40,7 @@ export default class EphemeralMessageRecord {
       const option = $(el).data('value');
       $(el).find('.voteCount').text(votes[option]);
       $(el).on('click', this.castVote);
-    })
+    });
   
     return $votingButtons;
   }
@@ -49,7 +49,7 @@ export default class EphemeralMessageRecord {
     this.messageData = {
       ...this.messageData,
       ...newState
-    }
+    };
   }
 
   castVote = (e) => {
@@ -60,7 +60,7 @@ export default class EphemeralMessageRecord {
     const myCurrentVote = this.messageData.votingRecords[myProfile.socketId];
     const data = {textRecordId: this.messageData.id, option, ...myProfile};
   
-    if (Boolean(myCurrentVote)) {
+    if (myCurrentVote) {
       if (myCurrentVote === option) {
         store.sendToPeers({type: 'voteRetracted', data});
         this.voteRetracted(data);
@@ -84,7 +84,7 @@ export default class EphemeralMessageRecord {
     $(`#${this.messageData.id}`)
       .find(`.voteOption[data-value="${option}"]`)
       .find('span')
-      .text(this.messageData.votes[option])
+      .text(this.messageData.votes[option]);
   }
   
   voteRetracted = ({option, socketId}) => {  
@@ -105,7 +105,7 @@ export default class EphemeralMessageRecord {
   getBaseTextRecord = () => {
     const {id, left, top, avatar, messageType, votes, name, message, roomId} = this.messageData;
 
-    const room = store.getRoom(roomId)
+    const room = store.getRoom(roomId);
     const $textRecordTemplate = $(document.getElementById('textRecordTemplate').content.cloneNode(true));
     const $textRecord = $textRecordTemplate.find('.textRecord');
     const $textBubble = $textRecord.find('.textBubble');
@@ -128,7 +128,7 @@ export default class EphemeralMessageRecord {
 
     if (room.mode === roomModes.directAction) {
       this.renderVotingButtons('consentfulGestures', votes).appendTo($textBubble);
-    };
+    }
 
     return $textRecord;
   }
@@ -158,7 +158,7 @@ export default class EphemeralMessageRecord {
   }
 
   render = () => {
-    const recordType = messageTypeToComponent[this.messageData.messageType]
+    const recordType = messageTypeToComponent[this.messageData.messageType];
     
     new recordType({
       ...this.messageData,

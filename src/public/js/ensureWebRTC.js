@@ -1,5 +1,5 @@
 export const getBrowserRTC = () => {
-  if (typeof window === 'undefined') return null
+  if (typeof window === 'undefined') return null;
   var wrtc = {
     RTCPeerConnection: window.RTCPeerConnection || window.mozRTCPeerConnection ||
       window.webkitRTCPeerConnection,
@@ -7,7 +7,7 @@ export const getBrowserRTC = () => {
       window.mozRTCSessionDescription || window.webkitRTCSessionDescription,
     RTCIceCandidate: window.RTCIceCandidate || window.mozRTCIceCandidate ||
       window.webkitRTCIceCandidate
-  }
-  if (!wrtc.RTCPeerConnection) return null
-  return wrtc
-}
+  };
+  if (!wrtc.RTCPeerConnection) return null;
+  return wrtc;
+};

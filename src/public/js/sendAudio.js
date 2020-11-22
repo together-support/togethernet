@@ -43,14 +43,14 @@ const onData = (e) => {
   //   mediaRecorder.stop();
   //   stopped = true;
   // }
-}
+};
 
 const stopRecording = (recordedChunks) => {
   // const blob = new Blob(recordedChunks)
   // audioMessage();
   // stream.getTracks().forEach(track => track.stop());
   // sendBlob(blob);
-}
+};
 
 // export const audioMessage = (blob) => {
 //   // privateChatBox.appendChild(audioMessage({
@@ -70,7 +70,7 @@ export const sendBlob = (blob) => {
   //     peer.send(buffer);
   //   });
   // });
-}
+};
 
 // recordButton.addEventListener("mousedown", captureAudio);
 

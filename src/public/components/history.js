@@ -1,3 +1,5 @@
+/* eslint-disable no-eval */
+
 export const historyMessage = ({author, time, msg}, idx) => {
   // const entry = document.createElement("div");
   // entry.setAttribute(`id`, `entry${idx}`);
@@ -15,4 +17,4 @@ export const historyMessage = ({author, time, msg}, idx) => {
   // ));
 
   // return entry;
-}
+};

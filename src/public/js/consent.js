@@ -1,4 +1,4 @@
-import {addSystemMessage} from './systemMessage.js'
+import {addSystemMessage} from './systemMessage.js';
 
 export const getConsent = (e) => {
   // addSystemMsg('Ask for Consent?');
@@ -10,4 +10,4 @@ export const getConsent = (e) => {
   //   });
   // }
   // stopSendMsg = true;
-}
+};

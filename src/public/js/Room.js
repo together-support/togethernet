@@ -3,7 +3,7 @@ import throttle from 'lodash/throttle';
 import pull from 'lodash/pull';
 import {keyboardEvent} from './animatedAvatar.js';
 import {renderAvatarInRoom} from './ephemeralView.js';
-import {participantAvatar} from '../components/users.js'
+import {participantAvatar} from '../components/users.js';
 import { roomModes } from '../constants/index.js';
 import {addSystemMessage} from './systemMessage.js';
 import EphemeralMessageRecord from './messageRecords/EphemeralMessageRecord.js';
@@ -60,8 +60,8 @@ export default class Room {
 
     if (this.ephemeral) {
       this.setBoundary();
-      this.$room.on('keydown', keyboardEvent)
-    };
+      this.$room.on('keydown', keyboardEvent);
+    }
   }
 
   goToRoom = () => {
@@ -86,7 +86,7 @@ export default class Room {
       renderAvatarInRoom({...profile, roomId: this.roomId});
     }
     const participantDisplay = $(`#participant-${socketId}`).length ? $(`#participant-${socketId}`) : participantAvatar(profile);
-    participantDisplay.appendTo(this.$roomLink.find('.participantsContainer'))
+    participantDisplay.appendTo(this.$roomLink.find('.participantsContainer'));
   }
 
   showRoom = () => {
@@ -154,11 +154,11 @@ export default class Room {
   hideRoom = () => {
     $(window).off('resize', this.onResize);
     this.$room.hide();
-    $("#user").remove();
+    $('#user').remove();
   }
 
   onResize = throttle(() => { 
-    this.setBoundary()
+    this.setBoundary();
   }, 500);
 
   setBoundary = () => {   
@@ -170,12 +170,12 @@ export default class Room {
     this.mode = mode;
     this.ephemeral = ephemeral;
     this.name = name;
-    this.members = {...this.members, ...members}
+    this.members = {...this.members, ...members};
     this.updateEphemeralHistory(ephemeralHistory);
   }
 
   updateEphemeralHistory = (ephemeralHistoryData = {}) => {
-    this.ephemeralHistory = {...this.ephemeralHistory, ...this.createMessageRecords(ephemeralHistoryData)}
+    this.ephemeralHistory = {...this.ephemeralHistory, ...this.createMessageRecords(ephemeralHistoryData)};
     this.renderHistory();
   }
 
