@@ -121,7 +121,7 @@ export default class Room {
     $peerAvatar.empty();
     const peerId = $peerAvatar.attr('id').split('peer-')[1];
     addSystemMessage(`${store.getPeer(peerId).profile.name} stepped in as a new facilitator`);
-    pull(this.facilitators, store.get('socketId'));
+    pull(this.facilitators, store.getCurrentUser().socketId);
     this.facilitators.push(peerId);
 
     store.sendToPeers({
@@ -200,14 +200,14 @@ export default class Room {
     this.facilitators = facilitators;
     this.updateMessageTypes();
 
-    if (this.hasFacilitator(store.get('socketId'))) {
+    if (this.hasFacilitator(store.getCurrentUser().socketId)) {
       this.renderAvatars();
     }
   }
 
   updateMessageTypes = () => {
     $('#messageType').find('option[value="agenda"]').remove();
-    if (!this.facilitators.length || this.facilitators.includes(store.get('socketId'))) {
+    if (!this.facilitators.length || this.facilitators.includes(store.getCurrentUser().socketId)) {
       $('<option value="agenda">add an agenda</option>').appendTo($('#messageType'));
     }
   }

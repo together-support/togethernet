@@ -40,7 +40,7 @@ const renderPeer = (data) => {
   const $avatar = $(`#peer-${socketId}`).length ? $(`#peer-${socketId}`) : peerAvatar(data);
   
   const room = store.getRoom(roomId);
-  if (room.hasFeature('facilitators') && room.hasFacilitator(store.get('socketId')) && !room.hasFacilitator(socketId)) {
+  if (room.hasFeature('facilitators') && room.hasFacilitator(store.getCurrentUser().socketId) && !room.hasFacilitator(socketId)) {
     makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
   }
   $avatar.appendTo($(`#${roomId}`));
