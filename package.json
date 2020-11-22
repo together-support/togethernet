@@ -9,7 +9,9 @@
     "start": "node src/index.js"
   },
   "dependencies": {
+    "@babel/core": "^7.12.3",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-syntax-class-properties": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.1",
@@ -28,8 +30,6 @@
     "socket.io-client": "^2.3.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.3",
-    "@babel/plugin-syntax-class-properties": "^7.12.1",
     "debug": "^4.2.0",
     "eslint": "^7.11.0"
   },
