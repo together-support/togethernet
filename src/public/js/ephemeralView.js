@@ -51,8 +51,9 @@ export const updatePeerPosition = ({socketId, left, top, roomId}) => {
   $(`#peer-${socketId}`).finish().animate({left, top});
 };
 
-export const updatePeerAvatar = ({socketId, avatar}) => {
+export const updatePeerAvatar = ({name, socketId, avatar}) => {
   $(`#peer-${socketId}`).finish().animate({backgroundColor: avatar});
+  $(`#peer-${socketId}`).find('span').text(String(name).slice(0, 2));
   $(`#participant-${socketId}`).finish().animate({backgroundColor: avatar});
 };
 

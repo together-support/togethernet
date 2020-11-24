@@ -30,7 +30,8 @@ export default class User {
       store.sendToPeers({type: 'profileUpdated'});
     });
 
-    const $avatar = $('<div id="user" class="avatar draggabble ui-widget-content"></div>');
+    const initials = $('#userName').text().slice(0, 2);
+    const $avatar = $(`<div id="user" class="avatar draggabble ui-widget-content"><span>${initials}<span></div>`);
     $avatar.css('background-color', $('#userAvatar').val());
     this.$avatar = $avatar;
 
@@ -70,6 +71,7 @@ export default class User {
     const name = DOMPurify.sanitize(prompt('Please enter your name:'));
     if (name) {
       $('#userName').text(name);
+      $('#user').find('span').text(name.slice(0,2));
     }
     store.sendToPeers({type: 'profileUpdated'});
   };

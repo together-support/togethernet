@@ -60,7 +60,7 @@ export const handleData = ({event, peerId}) => {
 const updatePeerProfile = ({socketId, name, avatar}) => {
   const peer = store.getPeer(socketId);
   peer.profile = {socketId, name, avatar};
-  updatePeerAvatar({socketId, avatar});
+  updatePeerAvatar({socketId, avatar, name});
 };
 
 const sendRooms = (peerId) => {

@@ -1,5 +1,6 @@
-export const peerAvatar = ({left, top, avatar, socketId}) => {
-  const $peer = $(`<div class="avatar" id="peer-${socketId}"></div>`);
+export const peerAvatar = ({left, top, avatar, name, socketId}) => {
+  const displayName = name.slice(0, 2);
+  const $peer = $(`<div class="avatar" id="peer-${socketId}"><span>${displayName}<span></div>`);
   $peer.css({
     left,
     top,
