@@ -26,6 +26,7 @@ export default class User {
     $('#userAvatar').on('change', (e) => {
       const avatar = e.target.value;
       $('#user').css('background-color', avatar);
+      $(`#participant-${store.getCurrentUser().socketId}`).css('background-color', avatar);
       store.sendToPeers({type: 'profileUpdated'});
     });
 
