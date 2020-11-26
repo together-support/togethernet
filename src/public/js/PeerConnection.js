@@ -134,7 +134,6 @@ export default class PeerConnection {
   }
 
   handlePeerLeaveSocket = ({leavingUser}) => {
-    store.getPeer(leavingUser).dataChannel.close();
     $(`#peer-${leavingUser}`).finish().animate({opacity: 0}, {
       complete: () => {
         $(`#peer-${leavingUser}`).remove();

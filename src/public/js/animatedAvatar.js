@@ -10,30 +10,30 @@ export const keyboardEvent = (event) => {
 };
 
 const moveUp = () => {
-  const newY = $('#user').position().top - $('#user').width();
+  const newY = $('#user').position().top - $('#user').outerWidth();
   if (newY >= store.get('topBoundary')) {
-    $('#user').finish().animate({top: `-=${$('#user').width()}`}, {complete: onAnimationComplete});
+    $('#user').finish().animate({top: `-=${$('#user').outerWidth()}`}, {complete: onAnimationComplete});
   }
 };
 
 const moveDown = () => {
-  const newY = $('#user').position().top + $('#user').width();
-  if (newY + $('#user').width() <= store.get('bottomBoundary')) {
-    $('#user').finish().animate({top: `+=${$('#user').width()}`}, {complete: onAnimationComplete});
+  const newY = $('#user').position().top + $('#user').outerWidth();
+  if (newY + $('#user').outerWidth() <= store.get('bottomBoundary')) {
+    $('#user').finish().animate({top: `+=${$('#user').outerWidth()}`}, {complete: onAnimationComplete});
   }
 };
 
 const moveLeft = () => {
-  const newX = $('#user').position().left - $('#user').width();
+  const newX = $('#user').position().left - $('#user').outerWidth();
   if (newX >= store.get('leftBoundary')) {
-    $('#user').finish().animate({left: `-=${$('#user').width()}`}, {complete: onAnimationComplete});
+    $('#user').finish().animate({left: `-=${$('#user').outerWidth()}`}, {complete: onAnimationComplete});
   }
 };
 
 const moveRight = () => {
-  const newX = $('#user').position().left + $('#user').width();
-  if (newX + $('#user').width() <= store.get('rightBoundary')) {
-    $('#user').finish().animate({left: `+=${$('#user').width()}`}, {complete: onAnimationComplete});
+  const newX = $('#user').position().left + $('#user').outerWidth();
+  if (newX + $('#user').outerWidth() <= store.get('rightBoundary')) {
+    $('#user').finish().animate({left: `+=${$('#user').outerWidth()}`}, {complete: onAnimationComplete});
   }
 };
 
@@ -46,7 +46,7 @@ const animationEvents = {
 
 export const makeDraggableUser = () => {
   $('#user').draggable({
-    grid: [$('#user').width(), $('#user').width()],
+    grid: [$('#user').outerWidth(), $('#user').outerWidth()],
     stop: onAnimationComplete,
   });
 

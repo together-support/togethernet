@@ -55,7 +55,7 @@ export default class User {
 
   getAdjacentMessages = () => {
     const {left, top} = $('#user').position();
-    const avatarSize = $('#user').width();
+    const avatarSize = $('#user').outerWidth();
 
     return compact([
       `${left}-${top + avatarSize}`,
