@@ -26,7 +26,8 @@ class Store {
     return this[key];
   }
 
-  addPeer = (id, peer) => {
+  addPeer = (id, dataChannel) => {
+    const peer = new Peer(id, dataChannel);
     this.peers[id] = peer;
   }
   

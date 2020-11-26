@@ -267,13 +267,15 @@ button p {
 }
 
 .modalContent {
-  background-color: #EEEEEE;
-  margin: 100px auto;
+  background-color: rgba(0,0,0,0.8);
+  color: white;
   padding: 25px;
   border: 1px solid #888;
-  width: 450px;
   font-family: sans-serif;
   line-height: 2;
+  width: 900px;
+  height: 550px;
+  margin: 100px auto 50px auto;
 }
 
 .modalContent p {
