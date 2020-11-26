@@ -268,14 +268,38 @@ button p {
 
 .modalContent {
   background-color: rgba(0,0,0,0.8);
-  color: white;
-  padding: 25px;
   border: 1px solid #888;
+  width: 900px;
+  margin: 100px auto 50px auto;
+}
+
+.modalContent.long {
+  height: 550px;
+}
+
+.modalContent.short {
+  height: 500px;
+}
+
+.configureRoomView {
+  padding: 25px;
+  background-color: rgba(0,0,0,0.8);
   font-family: sans-serif;
   line-height: 2;
-  width: 900px;
-  height: 550px;
-  margin: 100px auto 50px auto;
+  color: white;
+}
+
+#systemMessage > .modalContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#systemMessage span {
+  color: white;
+  margin: auto;
+  font-family: sans-serif;
+  font-size: 24px;
 }
 
 .modalContent p {

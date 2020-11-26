@@ -2,12 +2,12 @@ import {systemBubble} from '../components/message.js';
 import store from '../store/index.js';
 
 export const addSystemMessage = (systemMsg) => {
-  removeAllSystemMessage();
-  systemBubble(systemMsg).appendTo($('#user'));
-  store.getCurrentRoom().$room.one('keydown', removeAllSystemMessage);
-  $('#user').one('dragstart', removeAllSystemMessage);
+  $('#systemMessage').find('span').text(systemMsg);
+  $('#systemMessage').show();
+  $(document).one('click', clearSystemMessage);
+  $(document).one('keydown', clearSystemMessage);
 };
 
-export const removeAllSystemMessage = () => {
-  $('.systemBubble').each((_, el) => $(el).remove());
+export const clearSystemMessage = () => {
+  $('#systemMessage').hide();
 };

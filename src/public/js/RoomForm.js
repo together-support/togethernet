@@ -41,7 +41,7 @@ export default class RoomForm {
       $('#configureRoom').hide();
       this.resetForm();
     });
-    $('.modalContent').on('click', (e) => e.stopPropagation());
+    $('.configureRoomView').on('click', (e) => e.stopPropagation());
 
     $('#addRoom').on('click', () => {
       $('#configureRoom').show();
