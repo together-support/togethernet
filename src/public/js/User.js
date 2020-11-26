@@ -55,7 +55,7 @@ export default class User {
 
   getAdjacentMessages = () => {
     const {left, top} = $('#user').position();
-    const avatarSize = $('#user').width();
+    const avatarSize = $('#user').outerWidth();
 
     return compact([
       `${left}-${top + avatarSize}`,
@@ -82,6 +82,13 @@ export default class User {
 
   updateState = ({currentRoomId}) => {
     this.state = {...this.state, currentRoomId};
+  }
+
+  renderParticipantAvatar = () => {
+    const $roomLink = store.getRoom(this.state.currentRoomId).$roomLink;
+    const $avatar = $(`#participant-${this.socketId}`).length ? $(`#participant-${this.socketId}`) : $(`<div class="participant" id="participant-${this.socketId}"></div>`);
+    $avatar.css('background-color', $('#userAvatar').val());
+    $avatar.appendTo($roomLink.find('.participantsContainer'));
   }
 
   render = async () => {

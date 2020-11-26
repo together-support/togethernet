@@ -2,8 +2,6 @@ import store from '../store/index.js';
 import throttle from 'lodash/throttle';
 import pull from 'lodash/pull';
 import {keyboardEvent} from './animatedAvatar.js';
-import {renderAvatarInRoom} from './ephemeralView.js';
-import {participantAvatar} from '../components/users.js';
 import { roomModes } from '../constants/index.js';
 import {addSystemMessage} from './systemMessage.js';
 import EphemeralMessageRecord from './messageRecords/EphemeralMessageRecord.js';
@@ -67,7 +65,7 @@ export default class Room {
   goToRoom = () => {
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
-    this.addMember(store.getCurrentUser().getProfile());
+    this.addMember(store.getCurrentUser());
     this.$room.trigger('showRoom');
 
     store.sendToPeers({
@@ -78,15 +76,13 @@ export default class Room {
     });
   }
 
-  addMember = (profile) => {
-    const {socketId} = profile;
+  addMember = (member) => {
+    const {socketId} = member;
     Object.values(store.get('rooms')).forEach(room => delete room.members[socketId]);
-    this.members[socketId] = profile;
-    if (this.ephemeral) {
-      renderAvatarInRoom({...profile, roomId: this.roomId});
-    }
-    const participantDisplay = $(`#participant-${socketId}`).length ? $(`#participant-${socketId}`) : participantAvatar(profile);
-    participantDisplay.appendTo(this.$roomLink.find('.participantsContainer'));
+    member.state.currentRoomId = this.roomId;
+    this.members[socketId] = member
+    member.render();
+    member.renderParticipantAvatar();
   }
 
   showRoom = () => {
@@ -103,7 +99,10 @@ export default class Room {
   }
 
   renderAvatars = () => {
-    Object.values(this.members).forEach(member => renderAvatarInRoom({...member, roomId: this.roomId}));
+    Object.values(this.members).forEach(member => {
+      member.currentRoomId = this.roomId;
+      member.render()
+    });
   }
 
   hasFeature = (feature) => {
@@ -120,7 +119,7 @@ export default class Room {
     const $peerAvatar = $(e.target).closest('.avatar');
     $peerAvatar.empty();
     const peerId = $peerAvatar.attr('id').split('peer-')[1];
-    addSystemMessage(`${store.getPeer(peerId).profile.name} stepped in as a new facilitator`);
+    addSystemMessage(`${store.getPeer(peerId).state.name} stepped in as a new facilitator`);
     pull(this.facilitators, store.getCurrentUser().socketId);
     this.facilitators.push(peerId);
 
@@ -166,11 +165,10 @@ export default class Room {
     store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
   }
 
-  updateSelf = ({mode, ephemeral, name, ephemeralHistory, members}) => {
+  updateSelf = ({mode, ephemeral, name, ephemeralHistory}) => {
     this.mode = mode;
     this.ephemeral = ephemeral;
     this.name = name;
-    this.members = {...this.members, ...members};
     this.updateEphemeralHistory(ephemeralHistory);
   }
 
@@ -192,7 +190,7 @@ export default class Room {
     const me = store.getCurrentUser();
     facilitators.forEach(facilitator => {
       if (!this.hasFacilitator(facilitator)) {
-        const name = me.isMe(facilitator) ? me.getProfile().name : store.getPeer(facilitator).profile.name;
+        const name = me.isMe(facilitator) ? me.getProfile().name : store.getPeer(facilitator).state.name;
         addSystemMessage(`${name} stepped in as the new facilitator`);
       }
     });

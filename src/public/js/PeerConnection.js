@@ -57,12 +57,15 @@ export default class PeerConnection {
   initPeerConnection = (peerId, {initiator}) => {
     const peerConnection = new this._wrtc.RTCPeerConnection({ 
       'iceServers': [{
-        url: 'stun:stun.l.google.com:19302'
+        urls: [
+          'stun:stun.l.google.com:19302',
+          'stun:global.stun.twilio.com:3478',
+        ]
       }],
       sdpSemantics: 'unified-plan'
     });
 
-    store.addPeer(peerId, peerConnection);
+    const peer = store.addPeer(peerId, peerConnection);
 
     peerConnection.onicecandidate = (event) => { 
       if (event.candidate) { 
@@ -72,10 +75,10 @@ export default class PeerConnection {
 
     if (initiator) {
       const dataChannel = peerConnection.createDataChannel('tn', {reliable: true});
-      peerConnection.dataChannel = this.setUpDataChannel({dataChannel, peerId, initiator});
+      peer.dataChannel = this.setUpDataChannel({dataChannel, peerId, initiator});
     } else {
       peerConnection.ondatachannel = (event) => {
-        store.setDataChannel(peerId, this.setUpDataChannel({dataChannel: event.channel, peerId}));
+        peer.dataChannel = this.setUpDataChannel({dataChannel: event.channel, peerId});
       };
     }
 
@@ -115,14 +118,12 @@ export default class PeerConnection {
   }
 
   handleReceivedAnswer = async ({fromSocket, answer}) => {
-    const peerConnection = store.getPeer(fromSocket);
-    await peerConnection.setRemoteDescription(new this._wrtc.RTCSessionDescription(answer)); 
+    await store.getPeer(fromSocket).peerConnection.setRemoteDescription(new this._wrtc.RTCSessionDescription(answer)); 
   } 
 
   addCandidate = async ({candidate, fromSocket}) => { 
     try {
-      const peerConnection = store.getPeer(fromSocket);
-      await peerConnection.addIceCandidate(candidate); 
+      await store.getPeer(fromSocket).peerConnection.addIceCandidate(candidate); 
     } catch (e) {
       console.log('error adding received ice candidate', e);
     }
@@ -133,8 +134,6 @@ export default class PeerConnection {
   }
 
   handlePeerLeaveSocket = ({leavingUser}) => {
-    const peerConnection = store.getPeer(leavingUser);
-    peerConnection.dataChannel.close();
     $(`#peer-${leavingUser}`).finish().animate({opacity: 0}, {
       complete: () => {
         $(`#peer-${leavingUser}`).remove();

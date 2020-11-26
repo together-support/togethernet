@@ -30,7 +30,7 @@ export default class RoomForm {
   initialize = () => {
     $('#newRoomName').on('change', this.updateRoomName);
     $('input[type=radio][name=roomMode]').on('change', this.changeMeetingMode);
-    $('.createNewRoom').on('click', this.createNewRoom);
+    $('#createNewRoom').on('click', this.createNewRoom);
     $('#backToCustomize').on('click', () => this.goToPage(1));
     $('#addFacilitator').on('click', () => {
       this.listFacilitatorOptions();
@@ -50,7 +50,7 @@ export default class RoomForm {
 
   listFacilitatorOptions = () => {
     $('#configureRoom-2').find('.facilitatorOption').remove();
-    const profiles = [store.getCurrentUser().getProfile(), ...Object.values(store.get('peers')).map(peer => peer.profile)];
+    const profiles = [store.getCurrentUser().getProfile(), ...Object.values(store.get('peers')).map(peer => peer.getProfile())];
     profiles.forEach((profile) => {
       facilitatorOption({
         profile, 

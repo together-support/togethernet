@@ -4,8 +4,6 @@ import {
   renderIncomingEphemeralMessage, 
   updateFacilitators,
   setAgendaHidden,
-  updatePeerPosition, 
-  updatePeerAvatar,
   updatePeerRoom,
 } from './ephemeralView.js';
 
@@ -29,7 +27,7 @@ export const handleData = ({event, peerId}) => {
   } else if (data.type === 'initPeer') {
     initPeer({...data.data});
   } else if (data.type === 'position') {
-    updatePeerPosition({...data.data}); 
+    store.getPeer(data.data.socketId).updatePosition(data.data)
   } else if (data.type === 'newRoom') {
     addNewRoom(data.data);
   } else if (data.type === 'joinedRoom') {
@@ -59,8 +57,7 @@ export const handleData = ({event, peerId}) => {
 
 const updatePeerProfile = ({socketId, name, avatar}) => {
   const peer = store.getPeer(socketId);
-  peer.profile = {socketId, name, avatar};
-  updatePeerAvatar({socketId, avatar, name});
+  peer.updateState({name, avatar});
 };
 
 const sendRooms = (peerId) => {
@@ -84,8 +81,8 @@ const addNewRoom = ({options}) => {
 };
 
 const initPeer = (data) => {
-  const {socketId, avatar, name, roomId, room} = data;
+  const {socketId, avatar, name, roomId, room, left, top} = data;
   const peer = store.getPeer(socketId);
-  peer.profile = {socketId, avatar, name};
-  store.updateOrInitializeRoom(roomId, room).addMember(data);
+  peer.updateState({avatar, name, currentRoomId: roomId, left, top});
+  store.updateOrInitializeRoom(roomId, room).addMember(peer);
 };
