@@ -1,5 +1,4 @@
 import store from '../store/index.js';
-import {peerAvatar, makeFacilitatorButton} from '../components/users.js';
 import merge from 'lodash/merge';
 import EphemeralTextRecord from './messageRecords/EphemeralMessageRecord.js';
 
@@ -24,11 +23,6 @@ export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
       store.get(roomId).removeEphemeralHistory(messageId);
     }
   });
-};
-
-export const updatePeerPosition = ({socketId, left, top, roomId}) => {
-  merge(store.getRoom(roomId).members[socketId], {left, top});
-  $(`#peer-${socketId}`).finish().animate({left, top});
 };
 
 export const updatePeerAvatar = ({name, socketId, avatar}) => {
