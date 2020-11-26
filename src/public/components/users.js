@@ -12,12 +12,6 @@ export const peerAvatar = ({left, top, avatar, name, socketId}) => {
   return $peer;
 };
 
-export const participantAvatar = ({avatar, socketId}) => {
-  const $avatar = $(`<div class="participant" id="participant-${socketId}"></div>`);
-  $avatar.css('background-color', avatar);
-  return $avatar;
-};
-
 export const makeFacilitatorButton = (onTransferFacilitator) => {
   const $makeFacilitatorContainer = $('<div class="makeFacilitator" style="display:none"><div class="shortLine"/></div>');
   const $button = $('<button>Make Facilitator</button>');

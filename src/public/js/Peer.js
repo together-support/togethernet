@@ -10,7 +10,7 @@ export default class Peer {
       avatar: '',
       currentRoomId: '',
       left: 0,
-      y: 0,
+      top: 0,
     }
 
     this.dataChannel = {};
@@ -32,7 +32,7 @@ export default class Peer {
     this.profile = profile;
   }
 
-  updatePeerProfile = (options) => {
+  updateProfile = (options) => {
     this.profile = {
       ...this.profile,
       ...options,
@@ -41,6 +41,13 @@ export default class Peer {
 
   updateDataChannel = (dataChannel) => {
     this.dataChannel = dataChannel;
+  }
+
+  renderParticipantAvatar = () => {
+    const $roomLink = store.getRoom(this.currentRoomId).$roomLink;
+    const $avatar = $(`<div class="participant" id="participant-${this.socketId}"></div>`);
+    $avatar.css('background-color', this.avatar);
+    $avatar.appendTo($roomLink.find('.participantsContainer'));
   }
 
   render = () => {

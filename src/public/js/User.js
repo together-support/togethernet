@@ -84,6 +84,14 @@ export default class User {
     this.state = {...this.state, currentRoomId};
   }
 
+  renderParticipantAvatar = () => {
+    console.log('ok')
+    const $roomLink = store.getRoom(this.currentRoomId).$roomLink;
+    const $avatar = $(`<div class="participant" id="participant-${this.socketId}"></div>`);
+    $avatar.css('background-color', $('#userAvatar').val());
+    $avatar.appendTo($roomLink.find('.participantsContainer'));
+  }
+
   render = async () => {
     const $room = store.getRoom(this.state.currentRoomId).$room;
     this.$avatar.appendTo($room);

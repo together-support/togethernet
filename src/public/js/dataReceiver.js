@@ -84,8 +84,8 @@ const addNewRoom = ({options}) => {
 };
 
 const initPeer = (data) => {
-  const {socketId, avatar, name, roomId, room} = data;
+  const {socketId, avatar, name, roomId, room, left, top} = data;
   const peer = store.getPeer(socketId);
-  peer.profile = {socketId, avatar, name};
-  store.updateOrInitializeRoom(roomId, room).addMember(data);
+  peer.updateProfile({avatar, name, currentRoomId: roomId, left, top});
+  store.updateOrInitializeRoom(roomId, room).addMember(peer);
 };

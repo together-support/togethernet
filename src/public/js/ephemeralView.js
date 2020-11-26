@@ -26,15 +26,6 @@ export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
   });
 };
 
-export const renderAvatarInRoom = (data) => {
-  if (store.getCurrentUser().isMe(data.socketId)) {
-    store.getCurrentUser().currentRoomId = data.roomId;
-    store.getCurrentUser().render();
-  } else {
-    renderPeer(data);
-  }
-};
-
 const renderPeer = (data) => {
   const {roomId, socketId} = data;
   const $avatar = $(`#peer-${socketId}`).length ? $(`#peer-${socketId}`) : peerAvatar(data);
