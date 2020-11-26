@@ -18,29 +18,24 @@ export default class RoomForm {
     this.options = {...defaultOptions};
 
     Object.values(roomModes).forEach((mode) => {
-      $('#meetingMode').append($('<option>').val(mode).text(mode));
+      $('#meetingMode').append($(`\
+        <div>\
+          <input type="radio" id="roomMode-${mode}" name="roomMode" value="${mode}" ${mode === publicConfig.defaultMode && 'checked="checked"'}></input>\
+          <label for="${mode}">${mode}</label>\
+        </div>\
+      `));
     });
   }
 
   initialize = () => {
-    $('#ephemeralArchivalToggle').find('.toggleButton').on('click', this.togglePrivacy);
     $('#newRoomName').on('change', this.updateRoomName);
-
-    $('#meetingMode').on('privacyChanged', this.privacyChanged);
-    $('#meetingMode').on('change', this.changeMeetingMode);
-
+    $('input[type=radio][name=roomMode]').on('change', this.changeMeetingMode);
     $('.createNewRoom').on('click', this.createNewRoom);
-    $('#customizeRoom').on('click', () => {
-      if (this.options.mode === roomModes.directAction || this.options.mode === roomModes.facilitated) {
-        $('#configureFacilitators').show();
-      } else {
-        $('#configureFacilitators').hide();
-      }
-      this.goToPage(2);
+    $('#backToCustomize').on('click', () => this.goToPage(1));
+    $('#addFacilitator').on('click', () => {
+      this.listFacilitatorOptions();
+      this.goToPage(2)
     });
-    $('#backToCreateRoom').on('click', () => this.goToPage(1));
-    $('#backToCustomize').on('click', () => this.goToPage(2));
-    $('#addFacilitator').on('click', () => this.goToPage(3));
     
     $('.modalOverlay').on('click', () => {
       $('#configureRoom').hide();
@@ -49,20 +44,19 @@ export default class RoomForm {
     $('.modalContent').on('click', (e) => e.stopPropagation());
 
     $('#addRoom').on('click', () => {
-      this.listFacilitatorOptions();
-      renderFacilitator(store.getCurrentUser().getProfile()).appendTo($('#currentFacilitators'));
-      this.options.facilitators.push(store.getCurrentUser().socketId);
       $('#configureRoom').show();
     });
   }
 
   listFacilitatorOptions = () => {
+    $('#configureRoom-2').find('.facilitatorOption').remove();
     const profiles = [store.getCurrentUser().getProfile(), ...Object.values(store.get('peers')).map(peer => peer.profile)];
     profiles.forEach((profile) => {
       facilitatorOption({
         profile, 
         onClick: () => this.toggleFacilitator(profile),
-      }).insertBefore($('#configureRoom-3 .modalButtons'));
+        selected: this.options.facilitators.includes(profile.socketId)
+      }).insertBefore($('#configureRoom-2 .modalButtons'));
     });
   };
 
@@ -77,37 +71,29 @@ export default class RoomForm {
     }
   }
 
-  togglePrivacy = () => {
-    this.options.ephemeral = !this.options.ephemeral;
-    $('#ephemeralArchivalToggle').find('.toggleContainer').toggleClass('right');
-    $('#meetingMode').trigger({type: 'privacyChanged', ephemeral: this.options.ephemeral});
-  }
-
-  privacyChanged = (e) => {
-    if (e.ephemeral) {
-      $('#configureMeetingMode').show();
-    } else {
-      $('#configureMeetingMode').hide();
-      $('#meetingMode').val(publicConfig.defaultMode).trigger('change');
-    }
-  }
-
   changeMeetingMode = (e) => {
-    e.preventDefault();
-    this.options.mode = $('#meetingMode option:selected').val();
+    this.options.mode = e.target.value;
     if (this.options.mode === roomModes.egalitarian) {
-      $('#configureMajorityRules').hide();
-      $('#configureConsentfulGestures').hide();
       this.clearFacilitators();
-      $('#customizeRoom').hide();
-    } else if (this.options.mode === roomModes.directAction) {
-      $('#configureMajorityRules').hide();
-      $('#configureConsentfulGestures').show();
-      $('#customizeRoom').show();
+      $('#configureFacilitators').hide();
+      $('#votingModuleInfo').hide();
+      $('#consentfulGestureInfo').hide();
     } else if (this.options.mode === roomModes.facilitated) {
-      $('#configureConsentfulGestures').hide();
-      $('#configureMajorityRules').show();
-      $('#customizeRoom').show();
+      $('#currentFacilitators').html('');
+      renderFacilitator(store.getCurrentUser().getProfile()).appendTo($('#currentFacilitators'));
+      this.options.facilitators = [store.getCurrentUser().socketId];
+      $('#configureFacilitatorsDA').hide();
+      $('#configureFacilitatorsFac').show();
+      $('#configureFacilitators').show();
+      $('#consentfulGestureInfo').hide();
+      $('#votingModuleInfo').show();
+    } else if (this.options.mode === roomModes.directAction){
+      this.clearFacilitators();
+      $('#configureFacilitatorsFac').hide();
+      $('#configureFacilitatorsDA').show();
+      $('#configureFacilitators').show();
+      $('#votingModuleInfo').hide();
+      $('#consentfulGestureInfo').show();
     }
   }
 
@@ -162,10 +148,11 @@ export default class RoomForm {
 
   resetForm = () => {
     this.options = {...defaultOptions};
-    $('#meetingMode').val(defaultOptions.mode);
+    $(`#roomMode-${defaultOptions.mode}`).prop('checked', true).trigger('click');
+
+    $('#configureFacilitators').hide();
     $('#newRoomName').val(defaultOptions.name);
-    $('#configureRoom').find('.toggleContainer').removeClass('right');
-    $('#configureRoom-3').find('.facilitatorOption').remove();
+    $('#configureRoom-2').find('.facilitatorOption').remove();
     this.clearFacilitators();
 
     this.goToPage(1);

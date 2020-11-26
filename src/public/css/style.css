@@ -267,13 +267,15 @@ button p {
 }
 
 .modalContent {
-  background-color: #EEEEEE;
-  margin: 100px auto;
+  background-color: rgba(0,0,0,0.8);
+  color: white;
   padding: 25px;
   border: 1px solid #888;
-  width: 450px;
   font-family: sans-serif;
   line-height: 2;
+  width: 900px;
+  height: 550px;
+  margin: 100px auto 50px auto;
 }
 
 .modalContent p {
@@ -294,6 +296,24 @@ button p {
 
 .modalContent .section {
   padding: 0 0 10px 0;
+}
+
+#meetingMode {
+  display: flex;
+  flex-direction: column;
+}
+
+#meetingMode input {
+  margin-right: 10px;
+}
+
+.facilitatorsContainer {
+  display: flex;
+  padding: 15px 0;
+}
+
+.facilitatorsContainer > children {
+  margin-right: 5px;
 }
 
 .toggleOption {
@@ -329,7 +349,6 @@ button p {
 }
 
 #addFacilitator {
-  margin-top: 15px;
   padding: 10px 5px;
   background-color: white;
 }

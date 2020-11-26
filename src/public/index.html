@@ -39,65 +39,46 @@
       <!-- Modal content -->
       <div class="modalContent configureRoomView" id="configureRoom-1">
         <div class="section">
-          <h3>Create a room</h3>
-          <p>Add additional rooms to communicate on different topics.</p>
+          <h2>Create a room</h2>
         </div>
 
         <div class="section">
-          <h3>Name</h3>
+          <h3>Room Title</h3>
           <p>Customize the name of your room around a topic.</p>
           <input id="newRoomName"type="text" placeholder="convening-on-the-beach"/>
         </div>
 
-        <div class="section">
-          <div class="toggleOption" id="ephemeralArchivalToggle">
-            <span>Ephemeral Mode</span>
-            <div class="toggleContainer">
-              <button class="toggleButton"></button>
-            </div>
-            <span>Archival Mode</span>
-          </div>
-          <p>When a room is set to ephemeral mode, conversations will not be stored on the server without collective consent. When a room is set to archival mode, conversations will be archived on the server automatically.</p>
-          <p>Learn more about Ephemeral / Archival Modes&nbsp;<a href="#">here</a>.</p>
-        </div>
-
         <div class="section" id="configureMeetingMode">
-          <h3>Mode</h3>
-          <select name="meetingMode" id="meetingMode">
-          </select>
+          <h3>Select a mode of Communication</h3>
+          <div name="meetingMode" id="meetingMode"></div>
         </div>
 
-        <div class="section" id="configureConsentfulGestures" style="display: none;">
-          <p>Adds Consentful Gestures. Often used in direct action organizing, consentful gestures provides a way to respond to proposals and discussion through non-verbal cues.</p>
-        </div>
+        <p>Learn more about the modes of communication&nbsp;<a href="#">here</a>.</p>
 
-        <div class="section" id="configureMajorityRules" style="display: none;">
-          <p>Adds a voting feature that would favor decisions made by more than half of the team members</p>
-        </div>
-
-        <div class="section modalButtons">
-          <button id="customizeRoom" style="display:none;">Customize</button>
-          <button class="createNewRoom">Create</button>
-        </div>
-      </div>
-      <div class="modalContent configureRoomView" id="configureRoom-2" style="display:none;">
-        <div class="section">
-          <h3>Customizing convening-on-the-beach</h3>
-          <p>Add additional rooms to communicate on different topics.</p>
-        </div>
         <div class="section" id="configureFacilitators" style="display:none;">
-          <h3>Add Facilitators</h3>
-          <p>Facilitators have the ability to create breakout zones, set meeting agendas, as well as creating polls. You may select up to three facilitators per meeting. And you may hand the facilitator role over to someone else during a meeting.</p>
-          <button id="addFacilitator">+Add facilitators</button>
-          <div id="currentFacilitators"></div>
+          <h3>Facilitator Module</h3>
+          <p id="configureFacilitatorsDA">You have the option to add 0-3 facilitattors for your room. You may hand the facilitator role to someone else at a later point.</p>
+          <p id="configureFacilitatorsFac">You have the option to add 1-3 facilitattors for your room. You may hand the facilitator role to someone else at a later point.</p>
+          <div class="facilitatorsContainer">
+            <button id="addFacilitator">Set facilitators</button>
+            <div id="currentFacilitators"></div>
+          </div>
+        </div>
+
+        <div class="section" id="votingModuleInfo" style="display:none;">
+          <h3>Voting Module</h3>
+          <p>A voting module will be added to your room, favoring decisions made by more than half of the team members.</p>
+        </div>
+        <div class="section" id="consentfulGestureInfo" style="display:none;">
+          <h3>Consentful Gesture Module</h3>
+          <p>The consentful gesture module includes "Agree", "Disagree", "Oppose", "Block", making it possible to express feedback and needs through non-verbal means.</p>
         </div>
         <div class="section modalButtons">
-          <button id="backToCreateRoom">Back</button>
-          <button class="createNewRoom">Create</button>
+          <button id="createNewRoom">Create</button>
         </div>
-        <p>Learn more room customization&nbsp;<a href="#">here</a>.</p>
       </div>
-      <div class="modalContent configureRoomView" id="configureRoom-3" style="display:none;">
+
+      <div class="modalContent configureRoomView" id="configureRoom-2" style="display:none;">
         <div class="section modalButtons">
           <button id="backToCustomize">Back</button>
         </div>
