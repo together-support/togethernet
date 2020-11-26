@@ -1,6 +1,6 @@
 import store from '../store/index.js';
 import EphemeralMessageRecord from './messageRecords/EphemeralMessageRecord.js';
-import {removeAllSystemMessage} from './systemMessage.js';
+import {clearSystemMessage} from './systemMessage.js';
 
 export const sendMessage = () => {
   const $messageInput = $('#_messageInput');
@@ -31,7 +31,7 @@ const ephemeralSendMessage = (messageData) => {
   const ephemeralMessageRecord = new EphemeralMessageRecord({...messageData, ...store.getCurrentUser().getProfile(), isMine: true});
   store.getCurrentRoom().addEphemeralHistory(ephemeralMessageRecord);
   store.sendToPeers({type: 'text', data: ephemeralMessageRecord.messageData});
-  removeAllSystemMessage();
+  clearSystemMessage();
   ephemeralMessageRecord.render();
 };
 
