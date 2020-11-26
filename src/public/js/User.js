@@ -39,7 +39,7 @@ export default class User {
     makeDraggableUser();
   }
 
-  getProfile = () => {
+  getState = () => {
     return {
       socketId: this.socketId,
       roomId: this.state.currentRoomId,
@@ -85,7 +85,7 @@ export default class User {
   }
 
   renderParticipantAvatar = () => {
-    const $roomLink = store.getRoom(this.currentRoomId).$roomLink;
+    const $roomLink = store.getRoom(this.state.currentRoomId).$roomLink;
     const $avatar = $(`#participant-${this.socketId}`).length ? $(`#participant-${this.socketId}`) : $(`<div class="participant" id="participant-${this.socketId}"></div>`);
     $avatar.css('background-color', $('#userAvatar').val());
     $avatar.appendTo($roomLink.find('.participantsContainer'));

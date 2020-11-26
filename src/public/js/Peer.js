@@ -5,7 +5,7 @@ export default class Peer {
     this.socketId = socketId;
     this.peerConnection = peerConnection;
 
-    this.profile = {
+    this.state = {
       name: '',
       avatar: '',
       currentRoomId: '',
@@ -16,7 +16,7 @@ export default class Peer {
     this.dataChannel = {};
   }
 
-  getProfile = () => {
+  getState = () => {
     return {
       name: this.name,
       avatar: this.avatar,
@@ -33,7 +33,7 @@ export default class Peer {
   }
 
   initAvatar = () => {
-    const {name, left, top, avatar, currentRoomId} = this.profile;
+    const {name, left, top, avatar, currentRoomId} = this.state;
     const room = store.getRoom(currentRoomId);
     const displayName = name.slice(0, 2);
     const $avatar = $(`<div class="avatar" id="peer-${this.socketId}"><span>${displayName}<span></div>`);
@@ -67,16 +67,16 @@ export default class Peer {
     return $makeFacilitatorContainer;
   };
 
-  initialize = (profile) => {
-    this.profile = profile;
+  initialize = (state) => {
+    this.state = state;
   }
 
-  updateProfile = (options) => {
-    this.profile = {
-      ...this.profile,
+  updateState = (options) => {
+    this.state = {
+      ...this.state,
       ...options,
     }
-    const {name, avatar} = this.profile;
+    const {name, avatar} = this.state;
     this.getAvatarEl().finish().animate({backgroundColor: avatar}).find('span').text(String(name).slice(0, 2));
     this.getParticipantAvatarEl().finish().animate({backgroundColor: avatar});
   }
@@ -86,22 +86,22 @@ export default class Peer {
   }
 
   updatePosition = ({left, top}) => {
-    this.profile = {...this.profile, left, top}
+    this.state = {...this.state, left, top}
     this.getAvatarEl().finish().animate({left, top});
   }
 
   initParticipantAvatar = () => {
     const $avatar = $(`<div class="participant" id="participant-${this.socketId}"></div>`);
-    $avatar.css('background-color', this.profile.avatar);
+    $avatar.css('background-color', this.state.avatar);
     return $avatar;
   }
 
   renderParticipantAvatar = () => {
-    const $roomLink = store.getRoom(this.profile.currentRoomId).$roomLink;
+    const $roomLink = store.getRoom(this.state.currentRoomId).$roomLink;
     this.getParticipantAvatarEl().appendTo($roomLink.find('.participantsContainer'));
   }
 
   render = () => {
-    this.getAvatarEl().appendTo(store.getRoom(this.currentRoomId).$room);
+    this.getAvatarEl().appendTo(store.getRoom(this.state.currentRoomId).$room);
   }
 }

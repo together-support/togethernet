@@ -79,7 +79,7 @@ export default class Room {
   addMember = (member) => {
     const {socketId} = member;
     Object.values(store.get('rooms')).forEach(room => delete room.members[socketId]);
-    member.currentRoomId = this.roomId;
+    member.state.currentRoomId = this.roomId;
     this.members[socketId] = member
     member.render();
     member.renderParticipantAvatar();
@@ -119,7 +119,7 @@ export default class Room {
     const $peerAvatar = $(e.target).closest('.avatar');
     $peerAvatar.empty();
     const peerId = $peerAvatar.attr('id').split('peer-')[1];
-    addSystemMessage(`${store.getPeer(peerId).profile.name} stepped in as a new facilitator`);
+    addSystemMessage(`${store.getPeer(peerId).state.name} stepped in as a new facilitator`);
     pull(this.facilitators, store.getCurrentUser().socketId);
     this.facilitators.push(peerId);
 
@@ -191,7 +191,7 @@ export default class Room {
     const me = store.getCurrentUser();
     facilitators.forEach(facilitator => {
       if (!this.hasFacilitator(facilitator)) {
-        const name = me.isMe(facilitator) ? me.getProfile().name : store.getPeer(facilitator).profile.name;
+        const name = me.isMe(facilitator) ? me.getState().name : store.getPeer(facilitator).state.name;
         addSystemMessage(`${name} stepped in as the new facilitator`);
       }
     });

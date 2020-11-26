@@ -28,7 +28,7 @@ export const updatePeerRoom = (data) => {
   const {socketId, joinedRoomId} = data;
   $(`#peer-${socketId}`).finish().animate({opacity: 0}, {
     complete: () => {
-      store.getRoom(joinedRoomId).addMember(data);
+      store.getRoom(joinedRoomId).addMember(store.getPeer(socketId));
       $(`#peer-${socketId}`).css({
         left: 0,
         top: 0,

@@ -56,7 +56,7 @@ export default class EphemeralMessageRecord {
     const $option = $(e.target).closest('.voteOption');
     const option = $option.data('value');
 
-    const myProfile = store.getCurrentUser().getProfile();
+    const myProfile = store.getCurrentUser().getState();
     const myCurrentVote = this.messageData.votingRecords[myProfile.socketId];
     const data = {textRecordId: this.messageData.id, option, ...myProfile};
   

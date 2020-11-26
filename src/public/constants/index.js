@@ -18,10 +18,4 @@ export const defaultRooms = {
     name: 'sitting-in-the-park',
     roomId: 'ephemeralSpace',
   }),
-  archivalSpace: new Room({
-    mode: publicConfig.defaultMode || EGALITARIAN_MODE,
-    ephemeral: false,
-    name: 'speaking-on-a-stage',
-    roomId: 'archivalSpace',
-  }),
 };

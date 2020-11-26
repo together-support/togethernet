@@ -4,7 +4,6 @@ import {
   renderIncomingEphemeralMessage, 
   updateFacilitators,
   setAgendaHidden,
-  updatePeerAvatar,
   updatePeerRoom,
 } from './ephemeralView.js';
 
@@ -58,7 +57,7 @@ export const handleData = ({event, peerId}) => {
 
 const updatePeerProfile = ({socketId, name, avatar}) => {
   const peer = store.getPeer(socketId);
-  peer.updateProfile({name, avatar});
+  peer.updateState({name, avatar});
 };
 
 const sendRooms = (peerId) => {
@@ -84,6 +83,6 @@ const addNewRoom = ({options}) => {
 const initPeer = (data) => {
   const {socketId, avatar, name, roomId, room, left, top} = data;
   const peer = store.getPeer(socketId);
-  peer.updateProfile({avatar, name, currentRoomId: roomId, left, top});
+  peer.updateState({avatar, name, currentRoomId: roomId, left, top});
   store.updateOrInitializeRoom(roomId, room).addMember(peer);
 };
