@@ -30,7 +30,7 @@ export default class RoomForm {
   initialize = () => {
     $('#newRoomName').on('change', this.updateRoomName);
     $('input[type=radio][name=roomMode]').on('change', this.changeMeetingMode);
-    $('.createNewRoom').on('click', this.createNewRoom);
+    $('#createNewRoom').on('click', this.createNewRoom);
     $('#backToCustomize').on('click', () => this.goToPage(1));
     $('#addFacilitator').on('click', () => {
       this.listFacilitatorOptions();
