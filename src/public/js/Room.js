@@ -165,11 +165,10 @@ export default class Room {
     store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
   }
 
-  updateSelf = ({mode, ephemeral, name, ephemeralHistory, members}) => {
+  updateSelf = ({mode, ephemeral, name, ephemeralHistory}) => {
     this.mode = mode;
     this.ephemeral = ephemeral;
     this.name = name;
-    this.members = {...this.members, ...members};
     this.updateEphemeralHistory(ephemeralHistory);
   }
 

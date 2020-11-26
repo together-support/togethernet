@@ -17,11 +17,7 @@ export default class Peer {
   }
 
   getState = () => {
-    return {
-      name: this.name,
-      avatar: this.avatar,
-      socketId: this.socketId,
-    }
+    return this.state
   }
 
   getAvatarEl = () => {
@@ -33,8 +29,7 @@ export default class Peer {
   }
 
   initAvatar = () => {
-    const {name, left, top, avatar, currentRoomId} = this.state;
-    const room = store.getRoom(currentRoomId);
+    const {name, left, top, avatar} = this.state;
     const displayName = name.slice(0, 2);
     const $avatar = $(`<div class="avatar" id="peer-${this.socketId}"><span>${displayName}<span></div>`);
     $avatar.css({
@@ -43,9 +38,6 @@ export default class Peer {
       backgroundColor: avatar,
     });
 
-    if (room.hasFeature('facilitators') && room.hasFacilitator(store.getCurrentUser().socketId) && !room.hasFacilitator(this.socketId)) {
-      this.makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
-    }
     $avatar.on('mousedown', () => $avatar.find('.makeFacilitator').show());
   
     return $avatar;
@@ -102,6 +94,13 @@ export default class Peer {
   }
 
   render = () => {
-    this.getAvatarEl().appendTo(store.getRoom(this.state.currentRoomId).$room);
+    const room = store.getRoom(this.state.currentRoomId);
+    const $avatar = this.getAvatarEl();
+
+    if (room.hasFeature('facilitators') && room.hasFacilitator(store.getCurrentUser().socketId) && !room.hasFacilitator(this.socketId)) {
+      this.makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
+    }
+
+    $avatar.appendTo(room.$room);
   }
 }

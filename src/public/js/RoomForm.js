@@ -50,7 +50,7 @@ export default class RoomForm {
 
   listFacilitatorOptions = () => {
     $('#configureRoom-2').find('.facilitatorOption').remove();
-    const profiles = [store.getCurrentUser().getState(), ...Object.values(store.get('peers')).map(peer => peer.profile)];
+    const profiles = [store.getCurrentUser().getState(), ...Object.values(store.get('peers')).map(peer => peer.getState())];
     profiles.forEach((profile) => {
       facilitatorOption({
         profile, 
