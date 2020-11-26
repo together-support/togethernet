@@ -85,9 +85,8 @@ export default class User {
   }
 
   renderParticipantAvatar = () => {
-    console.log('ok')
     const $roomLink = store.getRoom(this.currentRoomId).$roomLink;
-    const $avatar = $(`<div class="participant" id="participant-${this.socketId}"></div>`);
+    const $avatar = $(`#participant-${this.socketId}`).length ? $(`#participant-${this.socketId}`) : $(`<div class="participant" id="participant-${this.socketId}"></div>`);
     $avatar.css('background-color', $('#userAvatar').val());
     $avatar.appendTo($roomLink.find('.participantsContainer'));
   }

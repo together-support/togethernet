@@ -26,17 +26,6 @@ export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
   });
 };
 
-const renderPeer = (data) => {
-  const {roomId, socketId} = data;
-  const $avatar = $(`#peer-${socketId}`).length ? $(`#peer-${socketId}`) : peerAvatar(data);
-  
-  const room = store.getRoom(roomId);
-  if (room.hasFeature('facilitators') && room.hasFacilitator(store.getCurrentUser().socketId) && !room.hasFacilitator(socketId)) {
-    makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
-  }
-  $avatar.appendTo($(`#${roomId}`));
-};
-
 export const updatePeerPosition = ({socketId, left, top, roomId}) => {
   merge(store.getRoom(roomId).members[socketId], {left, top});
   $(`#peer-${socketId}`).finish().animate({left, top});
