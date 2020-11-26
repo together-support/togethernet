@@ -28,22 +28,34 @@ export default class Peer {
     if ($(`#peer-${this.socketId}`).length === 1) {
       return $(`#peer-${this.socketId}`);
     } else {
-      const {name, left, top, avatar, currentRoomId} = this.profile;
-      const room = store.getRoom(currentRoomId);
-      const displayName = name.slice(0, 2);
-      const $peer = $(`<div class="avatar" id="peer-${this.socketId}"><span>${displayName}<span></div>`);
-      $peer.css({
-        left,
-        top,
-        backgroundColor: avatar,
-      });
+      return this.initAvatar();
+    }
+  }
 
-      if (room.hasFeature('facilitators') && room.hasFacilitator(store.getCurrentUser().socketId) && !room.hasFacilitator(this.socketId)) {
-        this.makeFacilitatorButton(room.onTransferFacilitator).appendTo($peer);
-      }
-      $peer.on('mousedown', () => $peer.find('.makeFacilitator').show());
-    
-      return $peer;
+  initAvatar = () => {
+    const {name, left, top, avatar, currentRoomId} = this.profile;
+    const room = store.getRoom(currentRoomId);
+    const displayName = name.slice(0, 2);
+    const $avatar = $(`<div class="avatar" id="peer-${this.socketId}"><span>${displayName}<span></div>`);
+    $avatar.css({
+      left,
+      top,
+      backgroundColor: avatar,
+    });
+
+    if (room.hasFeature('facilitators') && room.hasFacilitator(store.getCurrentUser().socketId) && !room.hasFacilitator(this.socketId)) {
+      this.makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
+    }
+    $avatar.on('mousedown', () => $avatar.find('.makeFacilitator').show());
+  
+    return $avatar;
+  }
+
+  getParticipantAvatarEl = () => {
+    if ($(`#participant-${this.socketId}`).length === 1) {
+      return $(`#participant-${this.socketId}`);
+    } else {
+      return this.initParticipantAvatar();
     }
   }
 
@@ -64,6 +76,9 @@ export default class Peer {
       ...this.profile,
       ...options,
     }
+    const {name, avatar} = this.profile;
+    this.getAvatarEl().finish().animate({backgroundColor: avatar}).find('span').text(String(name).slice(0, 2));
+    this.getParticipantAvatarEl().finish().animate({backgroundColor: avatar});
   }
 
   updateDataChannel = (dataChannel) => {
@@ -75,17 +90,18 @@ export default class Peer {
     this.getAvatarEl().finish().animate({left, top});
   }
 
+  initParticipantAvatar = () => {
+    const $avatar = $(`<div class="participant" id="participant-${this.socketId}"></div>`);
+    $avatar.css('background-color', this.profile.avatar);
+    return $avatar;
+  }
+
   renderParticipantAvatar = () => {
-    const {currentRoomId, avatar} = this.profile;
-    const $roomLink = store.getRoom(currentRoomId).$roomLink;
-    const $avatar = $(`#participant-${this.socketId}`).length ? $(`#participant-${this.socketId}`) : $(`<div class="participant" id="participant-${this.socketId}"></div>`);
-    $avatar.css('background-color', avatar);
-    $avatar.appendTo($roomLink.find('.participantsContainer'));
+    const $roomLink = store.getRoom(this.profile.currentRoomId).$roomLink;
+    this.getParticipantAvatarEl().appendTo($roomLink.find('.participantsContainer'));
   }
 
   render = () => {
-    const room = store.getRoom(this.currentRoomId);
-    const $room = room.$room;
-    this.getAvatarEl().appendTo($room);
+    this.getAvatarEl().appendTo(store.getRoom(this.currentRoomId).$room);
   }
 }

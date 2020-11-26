@@ -1,5 +1,4 @@
 import store from '../store/index.js';
-import merge from 'lodash/merge';
 import EphemeralTextRecord from './messageRecords/EphemeralMessageRecord.js';
 
 export const renderIncomingEphemeralMessage = (data) => {
@@ -23,12 +22,6 @@ export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
       store.get(roomId).removeEphemeralHistory(messageId);
     }
   });
-};
-
-export const updatePeerAvatar = ({name, socketId, avatar}) => {
-  $(`#peer-${socketId}`).finish().animate({backgroundColor: avatar});
-  $(`#peer-${socketId}`).find('span').text(String(name).slice(0, 2));
-  $(`#participant-${socketId}`).finish().animate({backgroundColor: avatar});
 };
 
 export const updatePeerRoom = (data) => {
