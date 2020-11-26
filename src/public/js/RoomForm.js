@@ -32,7 +32,10 @@ export default class RoomForm {
     $('input[type=radio][name=roomMode]').on('change', this.changeMeetingMode);
     $('.createNewRoom').on('click', this.createNewRoom);
     $('#backToCustomize').on('click', () => this.goToPage(1));
-    $('#addFacilitator').on('click', () => this.goToPage(2));
+    $('#addFacilitator').on('click', () => {
+      this.listFacilitatorOptions();
+      this.goToPage(2)
+    });
     
     $('.modalOverlay').on('click', () => {
       $('#configureRoom').hide();
@@ -41,17 +44,18 @@ export default class RoomForm {
     $('.modalContent').on('click', (e) => e.stopPropagation());
 
     $('#addRoom').on('click', () => {
-      this.listFacilitatorOptions();
       $('#configureRoom').show();
     });
   }
 
   listFacilitatorOptions = () => {
+    $('#configureRoom-2').find('.facilitatorOption').remove();
     const profiles = [store.getCurrentUser().getProfile(), ...Object.values(store.get('peers')).map(peer => peer.profile)];
     profiles.forEach((profile) => {
       facilitatorOption({
         profile, 
         onClick: () => this.toggleFacilitator(profile),
+        selected: this.options.facilitators.includes(profile.socketId)
       }).insertBefore($('#configureRoom-2 .modalButtons'));
     });
   };
@@ -73,16 +77,23 @@ export default class RoomForm {
       this.clearFacilitators();
       $('#configureFacilitators').hide();
       $('#votingModuleInfo').hide();
+      $('#consentfulGestureInfo').hide();
     } else if (this.options.mode === roomModes.facilitated) {
-      $('#currentFacilitators').html(renderFacilitator(store.getCurrentUser().getProfile()));
+      $('#currentFacilitators').html('');
+      renderFacilitator(store.getCurrentUser().getProfile()).appendTo($('#currentFacilitators'));
       this.options.facilitators = [store.getCurrentUser().socketId];
+      $('#configureFacilitatorsDA').hide();
+      $('#configureFacilitatorsFac').show();
       $('#configureFacilitators').show();
+      $('#consentfulGestureInfo').hide();
       $('#votingModuleInfo').show();
     } else if (this.options.mode === roomModes.directAction){
-      $('#currentFacilitators').html(renderFacilitator(store.getCurrentUser().getProfile()));
-      this.options.facilitators = [store.getCurrentUser().socketId];
+      this.clearFacilitators();
+      $('#configureFacilitatorsFac').hide();
+      $('#configureFacilitatorsDA').show();
       $('#configureFacilitators').show();
       $('#votingModuleInfo').hide();
+      $('#consentfulGestureInfo').show();
     }
   }
 
