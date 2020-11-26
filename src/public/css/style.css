@@ -298,6 +298,15 @@ button p {
   padding: 0 0 10px 0;
 }
 
+#meetingMode {
+  display: flex;
+  flex-direction: column;
+}
+
+#meetingMode input {
+  margin-right: 10px;
+}
+
 .toggleOption {
   display: flex;
   justify-content: start;
