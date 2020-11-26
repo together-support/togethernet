@@ -16,8 +16,11 @@ export default class Peer {
     this.dataChannel = {};
   }
 
-  getState = () => {
-    return this.state
+  getProfile = () => {
+    return {
+      ...this.state,
+      socketId: this.socketId,
+    }
   }
 
   getAvatarEl = () => {

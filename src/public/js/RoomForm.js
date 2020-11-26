@@ -50,7 +50,7 @@ export default class RoomForm {
 
   listFacilitatorOptions = () => {
     $('#configureRoom-2').find('.facilitatorOption').remove();
-    const profiles = [store.getCurrentUser().getState(), ...Object.values(store.get('peers')).map(peer => peer.getState())];
+    const profiles = [store.getCurrentUser().getProfile(), ...Object.values(store.get('peers')).map(peer => peer.getProfile())];
     profiles.forEach((profile) => {
       facilitatorOption({
         profile, 
@@ -80,7 +80,7 @@ export default class RoomForm {
       $('#consentfulGestureInfo').hide();
     } else if (this.options.mode === roomModes.facilitated) {
       $('#currentFacilitators').html('');
-      renderFacilitator(store.getCurrentUser().getState()).appendTo($('#currentFacilitators'));
+      renderFacilitator(store.getCurrentUser().getProfile()).appendTo($('#currentFacilitators'));
       this.options.facilitators = [store.getCurrentUser().socketId];
       $('#configureFacilitatorsDA').hide();
       $('#configureFacilitatorsFac').show();

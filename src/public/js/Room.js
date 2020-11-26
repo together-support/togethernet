@@ -190,7 +190,7 @@ export default class Room {
     const me = store.getCurrentUser();
     facilitators.forEach(facilitator => {
       if (!this.hasFacilitator(facilitator)) {
-        const name = me.isMe(facilitator) ? me.getState().name : store.getPeer(facilitator).state.name;
+        const name = me.isMe(facilitator) ? me.getProfile().name : store.getPeer(facilitator).state.name;
         addSystemMessage(`${name} stepped in as the new facilitator`);
       }
     });

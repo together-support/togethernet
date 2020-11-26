@@ -48,7 +48,7 @@ class Store {
         type,
         data: {
           ...data, 
-          ...this.currentUser.getState(),
+          ...this.currentUser.getProfile(),
         }
       }));
     }

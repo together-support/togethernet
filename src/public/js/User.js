@@ -39,7 +39,7 @@ export default class User {
     makeDraggableUser();
   }
 
-  getState = () => {
+  getProfile = () => {
     return {
       socketId: this.socketId,
       roomId: this.state.currentRoomId,

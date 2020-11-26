@@ -331,11 +331,6 @@ button p {
   margin-right: 10px;
 }
 
-.facilitatorsContainer {
-  display: flex;
-  padding: 15px 0;
-}
-
 .facilitatorsContainer > children {
   margin-right: 5px;
 }
@@ -372,9 +367,20 @@ button p {
   justify-content: flex-end;
 }
 
+.facilitatorsContainer {
+  display: flex;
+  padding: 15px 0;
+  display: flex;
+}
+
 #addFacilitator {
   padding: 10px 5px;
   background-color: white;
+}
+
+#currentFacilitators {
+  display: flex;
+  flex-grow: 2;
 }
 
 .facilitatorOption {
