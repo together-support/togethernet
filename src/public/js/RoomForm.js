@@ -29,7 +29,7 @@ export default class RoomForm {
 
   initialize = () => {
     $('#newRoomName').on('change', this.updateRoomName);
-    $('input[type=radio][name=roomMode]').change(this.changeMeetingMode);
+    $('input[type=radio][name=roomMode]').on('change', this.changeMeetingMode);
     $('.createNewRoom').on('click', this.createNewRoom);
     $('#backToCustomize').on('click', () => this.goToPage(1));
     $('#addFacilitator').on('click', () => this.goToPage(2));
@@ -52,7 +52,7 @@ export default class RoomForm {
       facilitatorOption({
         profile, 
         onClick: () => this.toggleFacilitator(profile),
-      }).insertBefore($('#configureRoom-3 .modalButtons'));
+      }).insertBefore($('#configureRoom-2 .modalButtons'));
     });
   };
 
@@ -72,10 +72,17 @@ export default class RoomForm {
     if (this.options.mode === roomModes.egalitarian) {
       this.clearFacilitators();
       $('#configureFacilitators').hide();
-    } else {
+      $('#votingModuleInfo').hide();
+    } else if (this.options.mode === roomModes.facilitated) {
       $('#currentFacilitators').html(renderFacilitator(store.getCurrentUser().getProfile()));
       this.options.facilitators = [store.getCurrentUser().socketId];
       $('#configureFacilitators').show();
+      $('#votingModuleInfo').show();
+    } else if (this.options.mode === roomModes.directAction){
+      $('#currentFacilitators').html(renderFacilitator(store.getCurrentUser().getProfile()));
+      this.options.facilitators = [store.getCurrentUser().socketId];
+      $('#configureFacilitators').show();
+      $('#votingModuleInfo').hide();
     }
   }
 
@@ -130,13 +137,7 @@ export default class RoomForm {
 
   resetForm = () => {
     this.options = {...defaultOptions};
-    $('#meetingMode').find('input').each((_, el) => {
-      if ($(el).val() === defaultOptions.mode) {
-        $(el).prop('checked', true);
-      } else {
-        $(el).removeAttr('checked');
-      }
-    });
+    $(`#roomMode-${defaultOptions.mode}`).prop('checked', true).trigger('click');
 
     $('#configureFacilitators').hide();
     $('#newRoomName').val(defaultOptions.name);

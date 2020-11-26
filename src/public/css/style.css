@@ -307,6 +307,15 @@ button p {
   margin-right: 10px;
 }
 
+.facilitatorsContainer {
+  display: flex;
+  padding: 15px 0;
+}
+
+.facilitatorsContainer > children {
+  margin-right: 5px;
+}
+
 .toggleOption {
   display: flex;
   justify-content: start;
@@ -340,7 +349,6 @@ button p {
 }
 
 #addFacilitator {
-  margin-top: 15px;
   padding: 10px 5px;
   background-color: white;
 }
