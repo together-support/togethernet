@@ -1,5 +1,6 @@
 import {defaultRooms} from '../constants/index.js';
 import Room from '../js/Room.js';
+import Peer from '../js/Peer.js'
 
 class Store {
   constructor() {
@@ -26,17 +27,14 @@ class Store {
     return this[key];
   }
 
-  addPeer = (id, dataChannel) => {
-    const peer = new Peer(id, dataChannel);
+  addPeer = (id, peerConnection) => {
+    const peer = new Peer(id, peerConnection);
     this.peers[id] = peer;
+    return peer;
   }
   
   getPeer = (id) => {
     return this.peers[id];
-  }
-
-  setDataChannel = (id, channel) => {
-    this.peers[id].dataChannel = channel;
   }
 
   removePeer = (id) => {

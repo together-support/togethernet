@@ -5,12 +5,15 @@ export default class Peer {
     this.socketId = socketId;
     this.peerConnection = peerConnection;
 
-    this.name = '';
-    this.avatar = '';
-    this.currentRoomId = '';
-    this.dataChannel = {};
+    this.profile = {
+      name: '',
+      avatar: '',
+      currentRoomId: '',
+      left: 0,
+      y: 0,
+    }
 
-    this.$avatar = null;
+    this.dataChannel = {};
   }
 
   getProfile = () => {
@@ -21,8 +24,23 @@ export default class Peer {
     }
   }
 
-  initialize = () => {
+  getAvatarEl = () => {
+    return $(`#peer-${this.socketId}`);
+  }
 
+  initialize = (profile) => {
+    this.profile = profile;
+  }
+
+  updatePeerProfile = (options) => {
+    this.profile = {
+      ...this.profile,
+      ...options,
+    }
+  }
+
+  updateDataChannel = (dataChannel) => {
+    this.dataChannel = dataChannel;
   }
 
   render = () => {
