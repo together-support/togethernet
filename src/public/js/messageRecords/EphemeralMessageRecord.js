@@ -163,11 +163,7 @@ export default class EphemeralMessageRecord {
 
     $textRecord.finish().animate({opacity: 0}, {
       complete: () => {
-        if (this.messageData.threadNextMessageId) {
-          const nextMessage = room.ephemeralHistory[this.messageData.threadNextMessageId];
-          delete nextMessage.messageData.threadPreviousMessageId;
-          $textRecord.find('.textBubble').appendTo($(`#${nextMessage.messageData.id}`))
-        }
+        this.handleRemoveMessageInThread();
         $textRecord.remove();
         store.sendToPeers({
           type: 'removeEphemeralMessage',
@@ -181,6 +177,29 @@ export default class EphemeralMessageRecord {
     });  
   }
 
+  handleRemoveMessageInThread = () => {
+    const room = store.getRoom(this.messageData.roomId);
+    const $textRecord = this.$textRecord();
+
+    const nextMessage = room.ephemeralHistory[this.messageData.threadNextMessageId];
+    const prevMessage = room.ephemeralHistory[this.messageData.threadPreviousMessageId];
+  
+    if (Boolean(nextMessage)) {
+      delete nextMessage.messageData.threadPreviousMessageId;
+    }
+
+    if (nextMessage && prevMessage) {
+      prevMessage.messageData.threadNextMessageId = nextMessage.messageData.id
+      nextMessage.messageData.threadPreviousMessageId = prevMessage.messageData.id
+    }
+    
+    if (!Boolean(prevMessage)) {
+      $textRecord.find('.textBubble').appendTo($(`#${nextMessage.messageData.id}`))
+    }
+
+    $(`#textMessageContent-${this.messageData.id}`).text('[removed]')
+  }
+ 
   pollCreated = () => {
     this.messageData.isPoll = true;
     this.messageData.votes = {yes: 0, neutral: 0, no: 0};
