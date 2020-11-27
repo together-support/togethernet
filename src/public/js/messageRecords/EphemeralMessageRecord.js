@@ -1,12 +1,13 @@
 import store from '../../store/index.js';
 import {roomModes} from '../../constants/index.js';
-import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord} from './ephemeralMessageRecords/index.js';
+import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord, ThreadedTextRecord} from './ephemeralMessageRecords/index.js';
 
 const messageTypeToComponent = {
   'question': PersistentTextRecord,
   'idea': PersistentTextRecord,
   'message': DisappearingTextRecord,
   'agenda': AgendaTextRecord,
+  'threadedMessage': ThreadedTextRecord,
 };
 
 export default class EphemeralMessageRecord {
@@ -15,6 +16,7 @@ export default class EphemeralMessageRecord {
       ...props,
       id: `${props.roomId}-${props.left}-${props.top}`,
       votingRecords: props.votingRecords || {},
+      threadNextMessageId: ''
     };
 
     const room = store.getRoom(props.roomId);
@@ -28,6 +30,12 @@ export default class EphemeralMessageRecord {
     }
 
     this.messageData = messageData;
+
+    if (messageData.messageType === 'threadedMessage') {
+      const threadPreviousMessage = room.ephemeralHistory[props.threadPreviousMessageId];
+      threadPreviousMessage.messageData.threadNextMessageId = messageData.id;
+      threadPreviousMessage.messageData.messageType = 'threadedMessage';
+    }
   }
    
   $textRecord = () => {
@@ -116,6 +124,7 @@ export default class EphemeralMessageRecord {
     $textBubble.addClass(messageType);
     $textBubble.attr('id', `textBubble-${id}`);
 
+    $textBubble.find('.textContentContainer').attr('id', `textMessageContent-${id}`);
     $textBubble.find('.name').text(name);
     $textBubble.find('.content').text(message);
 

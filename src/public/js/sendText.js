@@ -11,14 +11,18 @@ export const sendMessage = () => {
   }
 
   const {left, top} = $('#user').position();
-  const messageType = $('#messageType option:selected').val();
-  const isThreaded = messageType === 'message' && $('#messageType').data('threaded-message');
+  let messageType = $('#messageType option:selected').val();
+  
+  const threadPreviousMessageId = $('#messageType').data('threaded-previous-message')
+  if (messageType === 'message' && Boolean(threadPreviousMessageId)) {
+    messageType = 'threadedMessage';
+  }
   
   if ($(`#${store.getCurrentUser().currentRoomId}-${left}-${top}`).length) {
     alert('move to an empty spot to write the msg');
   } else {
     if (store.getCurrentRoom().ephemeral) {
-      ephemeralSendMessage({message, messageType, left, top, isThreaded});
+      ephemeralSendMessage({message, messageType, left, top, threadPreviousMessageId});
     } else {
       archivalSendMessage({message, messageType});
     }

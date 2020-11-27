@@ -20,10 +20,10 @@ export const attachUIEvents = () => {
   $('#_recordBtn').on('mouseup', sendAudio);
 
   $('#messageType').on('messageThread', (e) => {
-    if (e.shouldCreateThread) {
-      $(e.target).attr('data-threaded-message', true);
+    if (Boolean(e.threadPreviousMessage)) {
+      $(e.target).attr('data-threaded-previous-message', e.threadPreviousMessage.id);
     } else {
-      $(e.target).attr('data-threaded-message', false);
+      $(e.target).removeAttr('data-threaded-previous-message');
     }
   });
 
