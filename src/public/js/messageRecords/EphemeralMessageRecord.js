@@ -120,9 +120,9 @@ export default class EphemeralMessageRecord {
     $textBubble.find('.content').text(message);
 
 
-    if (this.messageData.isMine) {
+    if (this.messageData.socketId === store.getCurrentUser().socketId) {
       const $closeButton = $('<button class="close icon">x</button>');
-      $closeButton.on('click', this.purgeSelf());
+      $closeButton.on('click', this.purgeSelf);
       $closeButton.appendTo($textBubble.find('.textBubbleButtons'));
     }
 
@@ -135,16 +135,19 @@ export default class EphemeralMessageRecord {
 
   purgeSelf = () => {
     const room = store.getRoom(this.messageData.roomId);
-    const $textRecord = $(`#${this.id}`);
+    const $textRecord = this.$textRecord();
 
     $textRecord.finish().animate({opacity: 0}, {
       complete: () => {
         $textRecord.remove();
         store.sendToPeers({
           type: 'removeEphemeralMessage',
-          data: {messageId: this.id}
+          data: {
+            messageId: this.messageData.id,
+            roomId: this.messageData.roomId,
+          }
         });
-        room.removeEphemeralHistory(this.id);
+        room.removeEphemeralHistory(this.messageData.id);
       }
     });  
   }
