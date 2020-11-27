@@ -72,7 +72,7 @@ const showAdjacentMessages = () => {
 
   $('#messageType').trigger({
     type: 'messageThread', 
-    shouldCreateThread: adjacentMessages.length === 1
+    threadPreviousMessage: adjacentMessages.length === 1 && adjacentMessages[0],
   });
 };  
 

@@ -15,6 +15,10 @@ export const setAgendaHidden = ({agendaId, shouldHide}) => {
   }
 };
 
+export const removeEphemeralPeerMessageInThread = ({messageId}) => {
+  $(`#textMessageContent-${messageId}`).text('[removed]')
+};
+
 export const removeEphemeralPeerMessage = ({roomId, messageId}) => {
   $(`.textRecord#${messageId}`).finish().animate({opacity: 0}, {
     complete: () => {

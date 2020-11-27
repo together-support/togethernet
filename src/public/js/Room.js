@@ -205,6 +205,7 @@ export default class Room {
 
   updateMessageTypes = () => {
     $('#messageType').find('option[value="agenda"]').remove();
+    $('#messageType').removeAttr('data-thread-entry-message');
     if (!this.facilitators.length || this.facilitators.includes(store.getCurrentUser().socketId)) {
       $('<option value="agenda">add an agenda</option>').appendTo($('#messageType'));
     }

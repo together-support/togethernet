@@ -1,12 +1,13 @@
 import store from '../../store/index.js';
 import {roomModes} from '../../constants/index.js';
-import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord} from './ephemeralMessageRecords/index.js';
+import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord, ThreadedTextRecord} from './ephemeralMessageRecords/index.js';
 
 const messageTypeToComponent = {
   'question': PersistentTextRecord,
   'idea': PersistentTextRecord,
   'message': DisappearingTextRecord,
   'agenda': AgendaTextRecord,
+  'threadedMessage': ThreadedTextRecord,
 };
 
 export default class EphemeralMessageRecord {
@@ -28,6 +29,28 @@ export default class EphemeralMessageRecord {
     }
 
     this.messageData = messageData;
+
+    if (props.messageType === 'threadedMessage' && (!props.threadPreviousMessageId) && (!props.threadNextMessageId)) {
+      const entryMessage = room.ephemeralHistory[props.threadEntryMessageId];
+      const threadTail = entryMessage.getThreadTail()
+      threadTail.messageData.threadNextMessageId = messageData.id;
+      messageData.threadPreviousMessageId = threadTail.messageData.id;
+    }
+  }
+
+  getThreadTail = () => {
+    const {roomId, threadNextMessageId} = this.messageData;
+    if (!threadNextMessageId) {
+      return this;
+    };
+
+    const ephemeralHistory = store.getRoom(roomId).ephemeralHistory;
+    let threadNextMessage = ephemeralHistory[threadNextMessageId];
+    while (Boolean(threadNextMessage.messageData.threadNextMessageId)) {
+      threadNextMessage = ephemeralHistory[threadNextMessage.messageData.threadNextMessageId];
+    }
+
+    return threadNextMessage;
   }
    
   $textRecord = () => {
@@ -116,6 +139,7 @@ export default class EphemeralMessageRecord {
     $textBubble.addClass(messageType);
     $textBubble.attr('id', `textBubble-${id}`);
 
+    $textBubble.find('.textContentContainer').attr('id', `textMessageContent-${id}`);
     $textBubble.find('.name').text(name);
     $textBubble.find('.content').text(message);
 
@@ -134,6 +158,14 @@ export default class EphemeralMessageRecord {
   }
 
   purgeSelf = () => {
+    if (this.messageData.threadNextMessageId || this.messageData.threadPreviousMessageId) {
+      this.handleRemoveMessageInThread();
+    } else {
+      this.handleRemoveSingleMessage();
+    }
+  }
+
+  handleRemoveSingleMessage = () => {
     const room = store.getRoom(this.messageData.roomId);
     const $textRecord = this.$textRecord();
 
@@ -152,6 +184,15 @@ export default class EphemeralMessageRecord {
     });  
   }
 
+  handleRemoveMessageInThread = () => {
+    $(`#textMessageContent-${this.messageData.id}`).text('[removed]')
+  
+    store.sendToPeers({
+      type: 'removeMessageInThread',
+      data: {messageId: this.messageData.id}
+    });
+  }
+ 
   pollCreated = () => {
     this.messageData.isPoll = true;
     this.messageData.votes = {yes: 0, neutral: 0, no: 0};
@@ -165,6 +206,7 @@ export default class EphemeralMessageRecord {
     
     new recordType({
       ...this.messageData,
+      getThreadTail: this.getThreadTail,
       getBaseTextRecord: this.getBaseTextRecord,
       renderVotingButtons: this.renderVotingButtons,
       pollCreated: this.pollCreated,

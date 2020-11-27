@@ -62,9 +62,9 @@ export default class User {
       `${left}-${top - avatarSize}`,
       `${left - avatarSize}-${top}`,
       `${left + avatarSize}-${top}`,
-    ]).map((position) => {
+    ].map((position) => {
       return $(`#${this.state.currentRoomId}-${position}`)[0];
-    });
+    }));
   }
   
   setMyUserName = () => {
