@@ -16,7 +16,6 @@ export default class EphemeralMessageRecord {
       ...props,
       id: `${props.roomId}-${props.left}-${props.top}`,
       votingRecords: props.votingRecords || {},
-      threadNextMessageId: '',
     };
 
     const room = store.getRoom(props.roomId);
@@ -30,6 +29,28 @@ export default class EphemeralMessageRecord {
     }
 
     this.messageData = messageData;
+
+    if (props.messageType === 'threadedMessage' && (!props.threadPreviousMessageId) && (!props.threadNextMessageId)) {
+      const entryMessage = room.ephemeralHistory[props.threadEntryMessageId];
+      const threadTail = entryMessage.getThreadTail()
+      threadTail.messageData.threadNextMessageId = messageData.id;
+      messageData.threadPreviousMessageId = threadTail.messageData.id;
+    }
+  }
+
+  getThreadTail = () => {
+    const {roomId, threadNextMessageId} = this.messageData;
+    if (!threadNextMessageId) {
+      return this;
+    };
+
+    const ephemeralHistory = store.getRoom(roomId).ephemeralHistory;
+    let threadNextMessage = ephemeralHistory[threadNextMessageId];
+    while (Boolean(threadNextMessage.messageData.threadNextMessageId)) {
+      threadNextMessage = ephemeralHistory[threadNextMessage.messageData.threadNextMessageId];
+    }
+
+    return threadNextMessage;
   }
    
   $textRecord = () => {
@@ -185,6 +206,7 @@ export default class EphemeralMessageRecord {
     
     new recordType({
       ...this.messageData,
+      getThreadTail: this.getThreadTail,
       getBaseTextRecord: this.getBaseTextRecord,
       renderVotingButtons: this.renderVotingButtons,
       pollCreated: this.pollCreated,

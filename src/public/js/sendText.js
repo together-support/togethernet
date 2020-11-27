@@ -13,15 +13,15 @@ export const sendMessage = () => {
   const {left, top} = $('#user').position();
   let messageType = $('#messageType option:selected').val();
   
-  const threadPreviousMessageId = $('#messageType').attr('data-threaded-previous-message')
-  if (messageType === 'message' && Boolean(threadPreviousMessageId)) {
+  const threadEntryMessageId = $('#messageType').attr('data-thread-entry-message')
+  if (messageType === 'message' && Boolean(threadEntryMessageId)) {
     messageType = 'threadedMessage';
   }
   
   if ($(`#${store.getCurrentUser().currentRoomId}-${left}-${top}`).length) {
     alert('move to an empty spot to write the msg');
   } else {
-    const ephemeralMessageRecord = new EphemeralMessageRecord({message, messageType, left, top, threadPreviousMessageId, ...store.getCurrentUser().getProfile()});
+    const ephemeralMessageRecord = new EphemeralMessageRecord({message, messageType, left, top, threadEntryMessageId, ...store.getCurrentUser().getProfile()});
     store.getCurrentRoom().addEphemeralHistory(ephemeralMessageRecord);
     store.sendToPeers({type: 'text', data: ephemeralMessageRecord.messageData});
     clearSystemMessage();

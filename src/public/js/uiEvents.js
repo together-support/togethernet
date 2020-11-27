@@ -21,9 +21,9 @@ export const attachUIEvents = () => {
 
   $('#messageType').on('messageThread', (e) => {
     if (Boolean(e.threadPreviousMessage)) {
-      $(e.target).attr('data-threaded-previous-message', e.threadPreviousMessage.id);
+      $(e.target).attr('data-thread-entry-message', e.threadPreviousMessage.id);
     } else {
-      $(e.target).removeAttr('data-threaded-previous-message');
+      $(e.target).removeAttr('data-thread-entry-message');
     }
   });
 
