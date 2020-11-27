@@ -9,8 +9,23 @@ export default class ThreadedTextRecord {
     return $(`#${this.props.id}`);
   }
 
+  getThreadHeadId = () => {
+    const {roomId, threadPreviousMessageId} = this.props;
+    if (!threadPreviousMessageId) {
+      return this.props.id
+    }
+
+    const ephemeralHistory = store.getRoom(roomId).ephemeralHistory;
+    let threadPreviousMessage = ephemeralHistory[threadPreviousMessageId];
+    while (Boolean(threadPreviousMessage.messageData.threadPreviousMessageId)) {
+      threadPreviousMessage = ephemeralHistory[threadPreviousMessage.messageData.threadPreviousMessageId];
+    }
+
+    return threadPreviousMessage.messageData.id;
+  }
+
   getThreadHead = () => {
-    return $(`#${this.props.getThreadHeadId()}`);
+    return $(`#${this.getThreadHeadId()}`);
   }
 
   initTextRecord = () => {
