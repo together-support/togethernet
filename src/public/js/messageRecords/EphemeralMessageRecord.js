@@ -144,6 +144,10 @@ export default class EphemeralMessageRecord {
 
   getThreadHeadId = () => {
     const {roomId, threadPreviousMessageId} = this.messageData;
+    if (!threadPreviousMessageId) {
+      return this.messageData.id
+    }
+
     const ephemeralHistory = store.getRoom(roomId).ephemeralHistory;
     let threadPreviousMessage = ephemeralHistory[threadPreviousMessageId];
     while (Boolean(threadPreviousMessage.messageData.threadPreviousMessageId)) {
@@ -159,6 +163,11 @@ export default class EphemeralMessageRecord {
 
     $textRecord.finish().animate({opacity: 0}, {
       complete: () => {
+        if (this.messageData.threadNextMessageId) {
+          const nextMessage = room.ephemeralHistory[this.messageData.threadNextMessageId];
+          delete nextMessage.messageData.threadPreviousMessageId;
+          $textRecord.find('.textBubble').appendTo($(`#${nextMessage.messageData.id}`))
+        }
         $textRecord.remove();
         store.sendToPeers({
           type: 'removeEphemeralMessage',

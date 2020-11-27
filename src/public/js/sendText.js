@@ -13,7 +13,7 @@ export const sendMessage = () => {
   const {left, top} = $('#user').position();
   let messageType = $('#messageType option:selected').val();
   
-  const threadPreviousMessageId = $('#messageType').data('threaded-previous-message')
+  const threadPreviousMessageId = $('#messageType').attr('data-threaded-previous-message')
   if (messageType === 'message' && Boolean(threadPreviousMessageId)) {
     messageType = 'threadedMessage';
   }
