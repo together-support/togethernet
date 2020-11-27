@@ -1,3 +1,4 @@
+import { roomModes } from '../constants/index.js';
 import store from '../store/index.js';
 import EphemeralMessageRecord from './messageRecords/EphemeralMessageRecord.js';
 import {clearSystemMessage} from './systemMessage.js';
@@ -14,7 +15,7 @@ export const sendMessage = () => {
   let messageType = $('#messageType option:selected').val();
   
   const threadEntryMessageId = $('#messageType').attr('data-thread-entry-message')
-  if (messageType === 'message' && Boolean(threadEntryMessageId)) {
+  if (messageType === 'message' && Boolean(threadEntryMessageId) && store.getCurrentRoom().mode === roomModes.egalitarian) {
     messageType = 'threadedMessage';
   }
   
