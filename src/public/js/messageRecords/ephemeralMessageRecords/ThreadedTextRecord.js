@@ -9,18 +9,18 @@ export default class ThreadedTextRecord {
     return $(`#${this.props.id}`);
   }
 
-  getThreadHeadId = () => {
-    const ephemeralHistory = store.getRoom(this.props.roomId).ephemeralHistory;
-    let threadPreviousMessage = ephemeralHistory[this.props.threadPreviousMessageId];
-    while (Boolean(threadPreviousMessage.messageData.threadPreviousMessageId)) {
-      threadPreviousMessage = ephemeralHistory[threadPreviousMessage.messageData.threadPreviousMessageId];
-    }
-
-    return threadPreviousMessage.messageData.id;
+  getThreadHead = () => {
+    return $(`#${this.props.getThreadHeadId()}`);
   }
 
   initTextRecord = () => {
     const $textRecord = this.props.getBaseTextRecord();
+
+    $textRecord
+      .mouseenter(() => this.getThreadHead().find('.textBubble').show())
+      .mouseleave(() => this.getThreadHead().find('.textBubble').hide())
+      .on('adjacent', () => this.getThreadHead().find('.textBubble').show());
+
     return $textRecord;
   }
 
@@ -34,7 +34,7 @@ export default class ThreadedTextRecord {
 
     $textRecord.appendTo(store.getRoom(this.props.roomId).$room);
     const $content = $textRecord.find('.textContentContainer');
-    $content.appendTo($(`#${this.getThreadHeadId()}`).find('.textBubble'));
+    $content.appendTo(this.getThreadHead().find('.textBubble'));
     $textRecord.find('.textBubble').hide();
   }
 }

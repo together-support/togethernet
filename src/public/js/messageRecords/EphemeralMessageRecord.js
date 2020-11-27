@@ -142,6 +142,17 @@ export default class EphemeralMessageRecord {
     return $textRecord;
   }
 
+  getThreadHeadId = () => {
+    const {roomId, threadPreviousMessageId} = this.messageData;
+    const ephemeralHistory = store.getRoom(roomId).ephemeralHistory;
+    let threadPreviousMessage = ephemeralHistory[threadPreviousMessageId];
+    while (Boolean(threadPreviousMessage.messageData.threadPreviousMessageId)) {
+      threadPreviousMessage = ephemeralHistory[threadPreviousMessage.messageData.threadPreviousMessageId];
+    }
+
+    return threadPreviousMessage.messageData.id;
+  }
+
   purgeSelf = () => {
     const room = store.getRoom(this.messageData.roomId);
     const $textRecord = this.$textRecord();
@@ -174,6 +185,7 @@ export default class EphemeralMessageRecord {
     
     new recordType({
       ...this.messageData,
+      getThreadHeadId: this.getThreadHeadId,
       getBaseTextRecord: this.getBaseTextRecord,
       renderVotingButtons: this.renderVotingButtons,
       pollCreated: this.pollCreated,
