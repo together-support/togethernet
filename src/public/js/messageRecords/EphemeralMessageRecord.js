@@ -16,7 +16,7 @@ export default class EphemeralMessageRecord {
       ...props,
       id: `${props.roomId}-${props.left}-${props.top}`,
       votingRecords: props.votingRecords || {},
-      threadNextMessageId: ''
+      threadNextMessageId: '',
     };
 
     const room = store.getRoom(props.roomId);
@@ -30,12 +30,6 @@ export default class EphemeralMessageRecord {
     }
 
     this.messageData = messageData;
-
-    if (messageData.messageType === 'threadedMessage') {
-      const threadPreviousMessage = room.ephemeralHistory[props.threadPreviousMessageId];
-      threadPreviousMessage.messageData.threadNextMessageId = messageData.id;
-      threadPreviousMessage.messageData.messageType = 'threadedMessage';
-    }
   }
    
   $textRecord = () => {
@@ -158,12 +152,19 @@ export default class EphemeralMessageRecord {
   }
 
   purgeSelf = () => {
+    if (this.messageData.threadNextMessageId || this.messageData.threadPreviousMessageId) {
+      this.handleRemoveMessageInThread();
+    } else {
+      this.handleRemoveSingleMessage();
+    }
+  }
+
+  handleRemoveSingleMessage = () => {
     const room = store.getRoom(this.messageData.roomId);
     const $textRecord = this.$textRecord();
 
     $textRecord.finish().animate({opacity: 0}, {
       complete: () => {
-        this.handleRemoveMessageInThread();
         $textRecord.remove();
         store.sendToPeers({
           type: 'removeEphemeralMessage',
@@ -178,26 +179,12 @@ export default class EphemeralMessageRecord {
   }
 
   handleRemoveMessageInThread = () => {
-    const room = store.getRoom(this.messageData.roomId);
-    const $textRecord = this.$textRecord();
-
-    const nextMessage = room.ephemeralHistory[this.messageData.threadNextMessageId];
-    const prevMessage = room.ephemeralHistory[this.messageData.threadPreviousMessageId];
-  
-    if (Boolean(nextMessage)) {
-      delete nextMessage.messageData.threadPreviousMessageId;
-    }
-
-    if (nextMessage && prevMessage) {
-      prevMessage.messageData.threadNextMessageId = nextMessage.messageData.id
-      nextMessage.messageData.threadPreviousMessageId = prevMessage.messageData.id
-    }
-    
-    if (!Boolean(prevMessage)) {
-      $textRecord.find('.textBubble').appendTo($(`#${nextMessage.messageData.id}`))
-    }
-
     $(`#textMessageContent-${this.messageData.id}`).text('[removed]')
+  
+    store.sendToPeers({
+      type: 'removeMessageInThread',
+      data: {messageId: this.messageData.id}
+    });
   }
  
   pollCreated = () => {

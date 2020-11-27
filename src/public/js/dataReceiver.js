@@ -1,6 +1,7 @@
 import store from '../store/index.js';
 import {
   removeEphemeralPeerMessage, 
+  removeEphemeralPeerMessageInThread,
   renderIncomingEphemeralMessage, 
   updateFacilitators,
   setAgendaHidden,
@@ -36,6 +37,8 @@ export const handleData = ({event, peerId}) => {
     updatePeerProfile({...data.data});
   } else if (data.type === 'removeEphemeralMessage') {
     removeEphemeralPeerMessage(data.data);
+  } else if (data.type === 'removeMessageInThread') {
+    removeEphemeralPeerMessageInThread(data.data);
   } else if (data.type === 'requestRooms') {
     sendRooms(peerId);
   } else if (data.type === 'shareRooms') {
