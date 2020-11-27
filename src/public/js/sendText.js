@@ -21,29 +21,12 @@ export const sendMessage = () => {
   if ($(`#${store.getCurrentUser().currentRoomId}-${left}-${top}`).length) {
     alert('move to an empty spot to write the msg');
   } else {
-    if (store.getCurrentRoom().ephemeral) {
-      ephemeralSendMessage({message, messageType, left, top, threadPreviousMessageId});
-    } else {
-      archivalSendMessage({message, messageType});
-    }
+    const ephemeralMessageRecord = new EphemeralMessageRecord({message, messageType, left, top, threadPreviousMessageId, ...store.getCurrentUser().getProfile()});
+    store.getCurrentRoom().addEphemeralHistory(ephemeralMessageRecord);
+    store.sendToPeers({type: 'text', data: ephemeralMessageRecord.messageData});
+    clearSystemMessage();
+    ephemeralMessageRecord.render();
   }
 
   $messageInput.val('');
-};
-
-const ephemeralSendMessage = (messageData) => {
-  const ephemeralMessageRecord = new EphemeralMessageRecord({...messageData, ...store.getCurrentUser().getProfile()});
-  store.getCurrentRoom().addEphemeralHistory(ephemeralMessageRecord);
-  store.sendToPeers({type: 'text', data: ephemeralMessageRecord.messageData});
-  clearSystemMessage();
-  ephemeralMessageRecord.render();
-};
-
-const archivalSendMessage = () => {
-  //       socket.emit("public message", {
-  //         name: name,
-  //         outgoingMsg: outgoingMsg,
-  //       });
-  //       archivePublicMsg(name, outgoingMsg);
-  //       addPublicMsg(name, outgoingMsg);
 };

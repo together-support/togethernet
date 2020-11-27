@@ -32,9 +32,9 @@ export default class ThreadedTextRecord {
       $textRecord = this.initTextRecord();
     }
 
-    $textRecord.appendTo(store.getRoom(this.props.roomId).$room);
+    $textRecord.appendTo(store.getRoom(this.props.roomId).$room)
     const $content = $textRecord.find('.textContentContainer');
-    $content.appendTo(this.getThreadHead().find('.textBubble'));
+    $(`#textMessageContent-${this.props.threadPreviousMessageId}`).after($content);
     $textRecord.find('.textBubble').hide();
   }
 }
