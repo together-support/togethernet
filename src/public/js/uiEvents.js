@@ -29,5 +29,5 @@ export const attachUIEvents = () => {
 
   new RoomForm().initialize();
 
-  $(document).on('mouseup', () => $('.makeFacilitator').hide());
+  $(document).on('mouseup', () => $('.longPressButton').hide());
 };
