@@ -57,6 +57,18 @@ export default class EphemeralMessageRecord {
     return $(`#${this.messageData.id}`);
   }
 
+  initiateConsentToArchiveProcess = () => {
+    console.log('init consent')
+  }
+
+  proposeToArchiveButton = (onInitiateConsentToArchive) => {
+    const $proposeToArchiveContainer = $('<div class="longPressButton askConsentToArchive" style="display:none"><div class="shortLine"/></div>');
+    const $button = $('<button>propose to archive</button>');
+    $button.on('mouseup', onInitiateConsentToArchive);
+    $button.appendTo($proposeToArchiveContainer);
+    return $proposeToArchiveContainer;
+  };
+
   renderVotingButtons = (template, votes) => {
     const $votingButtons = $(document.getElementById(`${template}Template`).content.cloneNode(true));
     $votingButtons.find('.votingButtons').children().each((_, el) => {
@@ -152,6 +164,11 @@ export default class EphemeralMessageRecord {
 
     if (room.mode === roomModes.directAction) {
       this.renderVotingButtons('consentfulGestures', votes).appendTo($textBubble);
+    }
+
+    if (!this.messageData.threadEntryMessageId) {
+      this.proposeToArchiveButton(this.initiateConsentToArchiveProcess).appendTo($textRecord);
+      $textRecord.on('mousedown', () => $textRecord.find('.askConsentToArchive').show());
     }
 
     return $textRecord;
