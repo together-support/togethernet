@@ -83,13 +83,18 @@
       <button type="button" class="roomLink" id="addRoom">
         <p>+</p>
       </button>
+      <button type="button" class="roomLink" id="archivalSpaceLink">
+        <p><i class="fas fa-history"></i></p>
+      </button>
     </div>
 
     <div class="row" id="rooms">
       <div class="chat squaresView" id="ephemeralSpace" tabindex="0">
       </div>
 
-      <div class="chat listView hidden" id="archivalSpace">
+      <div class="chat archivalView hidden" id="archivalSpace">
+        <div id="archivalMessagesContainer"></div>
+        <div id="archivalMessagesDetails" style="display: none;"></div>
       </div>
     </div>
 

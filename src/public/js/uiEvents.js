@@ -30,4 +30,9 @@ export const attachUIEvents = () => {
   new RoomForm().initialize();
 
   $(document).on('mouseup', () => $('.longPressButton').hide());
+
+  $('#archivalSpaceLink').on('click', () => {
+    $('.chat').hide();
+    $('#archivalSpace').show();
+  });
 };
