@@ -58,9 +58,19 @@ export default class EphemeralMessageRecord {
   }
 
   initiateConsentToArchiveProcess = () => {
-    store.getRoom(this.messageData.roomId).$room.find('.consentToArchiveOverlay').show();
+    const {id, roomId} = this.messageData;
+    this.inConsentToArchiveProcess = true;
+    store.inConsentToArchiveProcess = true;
+    store.getRoom(roomId).initiateConsentToArchiveProcess();
     this.$textRecord().css({zIndex: 50});
-    $('#user').css({zIndex: 60});
+
+    store.sendToPeers({
+      type: 'consentToArchiveProcess', 
+      data: {
+        roomId, 
+        messageId: id,
+      }
+    });
   }
 
   proposeToArchiveButton = (onInitiateConsentToArchive) => {

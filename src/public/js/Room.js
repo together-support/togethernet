@@ -61,6 +61,11 @@ export default class Room {
     this.$room.on('keydown', keyboardEvent);
   }
 
+  initiateConsentToArchiveProcess = () => {
+    this.$room.find('.consentToArchiveOverlay').show();
+    this.$room.find('#user').css({zIndex: 60});
+  }
+
   goToRoom = () => {
     $('#archivalSpace').hide();
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
