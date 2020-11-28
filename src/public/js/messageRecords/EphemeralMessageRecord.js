@@ -58,7 +58,9 @@ export default class EphemeralMessageRecord {
   }
 
   initiateConsentToArchiveProcess = () => {
-    console.log('init consent')
+    store.getRoom(this.messageData.roomId).$room.find('.consentToArchiveOverlay').show();
+    this.$textRecord().css({zIndex: 50});
+    $('#user').css({zIndex: 60});
   }
 
   proposeToArchiveButton = (onInitiateConsentToArchive) => {

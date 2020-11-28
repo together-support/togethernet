@@ -17,6 +17,8 @@ export default class Room {
     this.$roomLink = $(`#${this.roomId}Link`);
     this.members = {...options.members};
 
+    this.inConsentToArchiveProcess = false;
+
     this.ephemeralHistory = {...this.createMessageRecords(options.ephemeralHistory)};
   }
 
@@ -45,8 +47,7 @@ export default class Room {
   }
 
   renderSpace = () => {
-    const $room = $(`<div class="chat hidden" id="${this.roomId}" tabindex="0"></div>`);
-    this.ephemeral ? $room.addClass('squaresView') : $room.addClass('listView');
+    const $room = $(`<div class="chat hidden squaresView" id="${this.roomId}" tabindex="0"></div>`);
     $room.appendTo('#rooms');
     this.$room = $room;
   }
@@ -56,10 +57,8 @@ export default class Room {
     this.$room.on('showRoom', this.showRoom);
     this.$room.on('hideRoom', this.hideRoom);
 
-    if (this.ephemeral) {
-      this.setBoundary();
-      this.$room.on('keydown', keyboardEvent);
-    }
+    this.setBoundary();
+    this.$room.on('keydown', keyboardEvent);
   }
 
   goToRoom = () => {
