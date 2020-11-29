@@ -8,7 +8,7 @@ import path, {dirname} from 'path';
 import {fileURLToPath} from 'url';
 
 import SignalingServer from './server/SignalingServer.js'
-import pgClient from './server/PGWriter.js'
+import pgClient from './server/PGClient.js'
 
 dotenv.config();
 const app = express();
