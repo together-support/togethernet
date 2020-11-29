@@ -118,6 +118,11 @@ export default class EphemeralMessageRecord {
     $consentIndicator.css({backgroundColor: avatar});
     $consentIndicator.width(size);
     $consentIndicator.height(size);
+    
+    this.$textRecord().find('.consentIndicator').each((_, el) => {
+      $(el).width(size);
+      $(el).height(size);
+    })
     $consentIndicator.appendTo(this.$textRecord());
   }
 
