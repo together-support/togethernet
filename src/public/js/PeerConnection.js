@@ -14,7 +14,7 @@ export default class PeerConnection {
 
   connect = () => {
     this.socket.on('connect', () => {
-      new User(this.socket.id).initialize();
+      new User(this.socket).initialize();
       
       Object.values(store.get('rooms')).forEach(room => room.attachEvents());
       addSystemMessage('Searching for peers...');

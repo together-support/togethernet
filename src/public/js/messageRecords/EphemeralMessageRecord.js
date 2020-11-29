@@ -148,7 +148,7 @@ export default class EphemeralMessageRecord {
   }
 
   archiveSelf = () => {
-    console.log('archive');
+    store.getCurrentUser().sendToServer(this.messageData);
   }
 
   blockConsentToArchive = () => {

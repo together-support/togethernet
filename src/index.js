@@ -8,6 +8,7 @@ import path, {dirname} from 'path';
 import {fileURLToPath} from 'url';
 
 import SignalingServer from './server/SignalingServer.js'
+import pgClient from './server/PGWriter.js'
 
 dotenv.config();
 const app = express();
@@ -30,6 +31,14 @@ if (process.env.BASIC_AUTH_ENABLED) {
     res.status(401).send('Authentication required.')
   });
 }
+
+app.post('/archive', (req, res) => { 
+  const {name, message, roomId} = req.body;
+  pgClient.write({
+    text: "INSERT INTO archive(author, msg, roomId) VALUES($1,$2,$3)",
+    values: [name, message, roomId]
+  });
+});
 
 app.use(express.static(path.join(__dirname, '/public')));
 
