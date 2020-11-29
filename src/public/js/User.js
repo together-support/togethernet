@@ -5,9 +5,8 @@ import {makeDraggableUser} from './animatedAvatar.js';
 import compact from 'lodash/compact';
 
 export default class User {
-  constructor (socket) {
-    this.socket = socket
-    this.socketId = socket.id;
+  constructor (socketId) {
+    this.socketId = socketId;
 
     this.state = {
       currentRoomId: 'ephemeralSpace',
