@@ -16,7 +16,7 @@ export default class EphemeralMessageRecord {
       ...props,
       id: `${props.roomId}-${props.left}-${props.top}`,
       votingRecords: props.votingRecords || {},
-      consentToArchiveRecords: props.consentToArchiveRecords || {},
+      consentToArchiveRecords: props.consentToArchiveRecords || [],
     };
 
     const room = store.getRoom(props.roomId);
@@ -85,8 +85,9 @@ export default class EphemeralMessageRecord {
   consentToArchiveActions = (e) => {
     const {left, top} = $('#user').position();
     const alignedWithMessage = left === this.messageData.left && top === this.messageData.top;
+    const alreadyGaveConsent = this.messageData.consentToArchiveRecords.includes(store.getCurrentUser().socketId);
     
-    if (alignedWithMessage) {
+    if (alignedWithMessage && !alreadyGaveConsent) {
       if (e.key === 'Enter') {
         this.giveConsentToArchive();
       } else if (e.key === 'Escape') {
@@ -96,7 +97,28 @@ export default class EphemeralMessageRecord {
   }
 
   giveConsentToArchive = () => {
-    console.log('give consent');
+    this.consentToArchiveReceived(store.getCurrentUser());
+
+    const {id, roomId} = this.messageData;
+    store.sendToPeers({
+      type: 'giveConsentToArchive', 
+      data: {
+        roomId, 
+        messageId: id,
+      }
+    });
+  }
+
+  consentToArchiveReceived = (user) => {
+    const {socketId, avatar} = user.getProfile();
+    this.messageData.consentToArchiveRecords.push(socketId);
+
+    const size = Math.round(this.$textRecord().outerWidth() / (this.messageData.consentToArchiveRecords.length + 1));
+    const $consentIndicator = $('<div class="consentIndicator"></div>');
+    $consentIndicator.css({backgroundColor: avatar});
+    $consentIndicator.width(size);
+    $consentIndicator.height(size);
+    $consentIndicator.appendTo(this.$textRecord());
   }
 
   archiveSelf = () => {
@@ -234,7 +256,11 @@ export default class EphemeralMessageRecord {
 
     if (!this.messageData.threadEntryMessageId) {
       this.proposeToArchiveButton(this.initiateConsentToArchiveProcess).appendTo($textRecord);
-      $textRecord.on('mousedown', () => $textRecord.find('.askConsentToArchive').show());
+      $textRecord.on('mousedown', () => {
+        if (!this.inConsentToArchiveProcess) {
+          $textRecord.find('.askConsentToArchive').show();
+        }
+      });
     }
 
     return $textRecord;
