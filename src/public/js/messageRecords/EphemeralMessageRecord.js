@@ -142,6 +142,7 @@ export default class EphemeralMessageRecord {
 
   blockConsentToArchive = () => {
     this.consentToArchiveBlocked();
+    addSystemMessage('You have stopped the archive process.');
 
     const {id, roomId} = this.messageData;
     store.sendToPeers({
