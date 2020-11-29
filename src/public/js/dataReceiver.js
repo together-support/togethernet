@@ -59,10 +59,9 @@ export const handleData = ({event, peerId}) => {
     updateFacilitators(data.data);
   } else if (data.type === 'initConsentToArchiveProcess') {
     const {roomId, messageId, name} = data.data;
-    addSystemMessage(`${name} has just asked for your consent to archive this message. \n\n move your avatar so that it overalps with the message. \n\n enter (y) for YES and (s) for STOP`)
     const room = store.getRoom(roomId);
     const messageRecord = room.ephemeralHistory[messageId];
-    messageRecord.performConsentToArchive();
+    messageRecord.initConsentToArchiveReceived({consentToArchiveInitiator: name});
   } else if (data.type === 'blockConsentToArchive') {
     const {roomId, messageId, name} = data.data;
     addSystemMessage(`Process stopped. \n\n ${name} would not prefer not to archive this message at the moment.`)
