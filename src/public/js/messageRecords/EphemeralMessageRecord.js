@@ -1,6 +1,7 @@
 import store from '../../store/index.js';
 import {roomModes} from '../../constants/index.js';
 import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord, ThreadedTextRecord} from './ephemeralMessageRecords/index.js';
+import {addSystemMessage} from '../systemMessage.js';
 
 const messageTypeToComponent = {
   'question': PersistentTextRecord,
@@ -60,15 +61,16 @@ export default class EphemeralMessageRecord {
 
   initiateConsentToArchiveProcess = () => {
     const {roomId, id} = this.messageData;
+    addSystemMessage("you have just asked for everyone's consent to archive the message");
     store.sendToPeers({
-      type: 'consentToArchiveProcess', 
+      type: 'initConsentToArchiveProcess', 
       data: {
         roomId, 
         messageId: id,
       }
     });
 
-    this.performConsentToArchive();
+    // this.performConsentToArchive();
   }
 
   performConsentToArchive = () => {
@@ -88,11 +90,11 @@ export default class EphemeralMessageRecord {
     const alreadyGaveConsent = this.messageData.consentToArchiveRecords.includes(store.getCurrentUser().socketId);
     
     if (alignedWithMessage) {
-      if (e.key === 'Enter') {
+      if (e.key === 'y') {
         if (!alreadyGaveConsent) {
           this.giveConsentToArchive();
         }
-      } else if (e.key === 'Escape') {
+      } else if (e.key === 's') {
         this.blockConsentToArchive()
       }
     }

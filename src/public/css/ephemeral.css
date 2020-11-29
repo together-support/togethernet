@@ -49,6 +49,7 @@ button {
   color: #efefef;
   font-size: 24px;
   text-shadow: 1px 1px 1px black;
+  user-select: none;
 }
 
 .textBubble,
@@ -199,3 +200,4 @@ button {
   z-index: 9;
   position: absolute;
 }
+

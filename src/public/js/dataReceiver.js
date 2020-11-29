@@ -15,6 +15,8 @@ import {
   voteChanged,
 } from './voting.js';
 
+import {addSystemMessage} from './systemMessage.js';
+
 export const handleData = ({event, peerId}) => {
   let data;
   try {
@@ -55,6 +57,12 @@ export const handleData = ({event, peerId}) => {
     voteChanged(data.data);
   } else if (data.type === 'updateFacilitators') {
     updateFacilitators(data.data);
+  } else if (data.type === 'initConsentToArchiveProcess') {
+    const {roomId, messageId, name} = data.data;
+    addSystemMessage(`${name} has just asked for your consent to archive this message. \n\n move your avatar so that it overalps with the message. \n\n enter (y) for YES and (s) for STOP`)
+    const room = store.getRoom(roomId);
+    const messageRecord = room.ephemeralHistory[messageId];
+    messageRecord.performConsentToArchive();
   }
 };
 
