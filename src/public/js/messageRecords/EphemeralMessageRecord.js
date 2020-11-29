@@ -120,6 +120,7 @@ export default class EphemeralMessageRecord {
     const {roomId, id} = this.messageData;
     const room = store.getRoom(roomId);
     this.messageData.consentToArchiveRecords.push(socketId);
+
     if (this.messageData.consentToArchiveRecords.length === Object.values(room.members).length) {
       this.archiveSelf();
       this.finishConsentToArchiveProcess();
@@ -130,19 +131,20 @@ export default class EphemeralMessageRecord {
           messageId: id,
         }
       });
-    } else {
-      const size = Math.round(this.$textRecord().outerWidth() / (this.messageData.consentToArchiveRecords.length + 1));
-      const $consentIndicator = $('<div class="consentIndicator"></div>');
-      $consentIndicator.css({backgroundColor: avatar});
-      $consentIndicator.width(size);
-      $consentIndicator.height(size);
-      
-      this.$textRecord().find('.consentIndicator').each((_, el) => {
-        $(el).width(size);
-        $(el).height(size);
-      })
-      $consentIndicator.appendTo(this.$textRecord());
     }
+
+    const size = Math.round(this.$textRecord().outerWidth() / (Math.floor(Math.sqrt(this.messageData.consentToArchiveRecords.length)) + 1));
+    const $consentIndicator = $('<div class="consentIndicator"></div>');
+    $consentIndicator.css({backgroundColor: avatar});
+    $consentIndicator.width(size);
+    $consentIndicator.height(size);
+    
+    this.$textRecord().find('.consentIndicator').each((_, el) => {
+      $(el).width(size);
+      $(el).height(size);
+    });
+
+    $consentIndicator.appendTo(this.$textRecord());
   }
 
   archiveSelf = () => {
