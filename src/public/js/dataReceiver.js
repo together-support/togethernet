@@ -69,6 +69,16 @@ export const handleData = ({event, peerId}) => {
     const room = store.getRoom(roomId);
     const messageRecord = room.ephemeralHistory[messageId];
     messageRecord.consentToArchiveBlocked();
+  } else if (data.type === 'giveConsentToArchive') {
+    const {roomId, messageId, socketId} = data.data;
+    const room = store.getRoom(roomId);
+    const messageRecord = room.ephemeralHistory[messageId];
+    messageRecord.consentToArchiveReceived(store.getPeer(socketId));
+  } else if (data.type === 'messageArchived') {
+    const {roomId, messageId} = data.data;
+    const room = store.getRoom(roomId);
+    const messageRecord = room.ephemeralHistory[messageId];
+    messageRecord.finishConsentToArchiveProcess();
   }
 };
 
