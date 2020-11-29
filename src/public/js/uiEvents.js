@@ -34,5 +34,6 @@ export const attachUIEvents = () => {
   $('#archivalSpaceLink').on('click', () => {
     $('.chat').hide();
     $('#archivalSpace').show();
+    $('#_messageInput').attr('disabled', true)
   });
 };

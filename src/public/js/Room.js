@@ -67,6 +67,7 @@ export default class Room {
     this.updateMessageTypes();
     this.addMember(store.getCurrentUser());
     this.$room.trigger('showRoom');
+    $('#_messageInput').removeAttr('disabled');
 
     store.sendToPeers({
       type: 'joinedRoom',
