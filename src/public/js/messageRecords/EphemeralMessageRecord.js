@@ -59,7 +59,8 @@ export default class EphemeralMessageRecord {
     return $(`#${this.messageData.id}`);
   }
 
-  initiateConsentToArchiveProcess = () => {
+  initiateConsentToArchiveProcess = (e) => {
+    e.stopPropagation();
     const {roomId, id} = this.messageData;
     addSystemMessage("you have just asked for everyone's consent to archive the message");
     store.sendToPeers({
@@ -70,7 +71,7 @@ export default class EphemeralMessageRecord {
       }
     });
 
-    // this.performConsentToArchive();
+    this.performConsentToArchive();
   }
 
   performConsentToArchive = () => {
