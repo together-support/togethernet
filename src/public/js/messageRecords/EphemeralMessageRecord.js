@@ -18,6 +18,7 @@ export default class EphemeralMessageRecord {
       id: `${props.roomId}-${props.left}-${props.top}`,
       votingRecords: props.votingRecords || {},
       consentToArchiveRecords: props.consentToArchiveRecords || [],
+      consentToArchiveInitiator: '',
     };
 
     const room = store.getRoom(props.roomId);
@@ -37,6 +38,11 @@ export default class EphemeralMessageRecord {
       const threadTail = entryMessage.getThreadTail()
       threadTail.messageData.threadNextMessageId = messageData.id;
       messageData.threadPreviousMessageId = threadTail.messageData.id;
+    }
+
+    if (props.inConsentToArchiveProcess) {
+      const {consentToArchiveInitiator} = props;
+      this.initConsentToArchiveReceived({consentToArchiveInitiator});
     }
   }
 
@@ -74,9 +80,14 @@ export default class EphemeralMessageRecord {
     this.performConsentToArchive();
   }
 
-  performConsentToArchive = () => {
-    this.inConsentToArchiveProcess = true;
+  initConsentToArchiveReceived = ({consentToArchiveInitiator}) => {
+    addSystemMessage(`${consentToArchiveInitiator} has just asked for your consent to archive this message. \n\n move your avatar so that it overalps with the message. \n\n enter (y) for YES and (s) for STOP`)
+    this.messageData.consentToArchiveInitiator = consentToArchiveInitiator;
+    this.performConsentToArchive();
+  }
 
+  performConsentToArchive = () => {
+    this.messageData.inConsentToArchiveProcess = true;
     const {roomId} = this.messageData;
 
     this.$textRecord().addClass('inConsentProcess');
@@ -119,7 +130,9 @@ export default class EphemeralMessageRecord {
     const {socketId, avatar} = user.getProfile();
     const {roomId, id} = this.messageData;
     const room = store.getRoom(roomId);
-    this.messageData.consentToArchiveRecords.push(socketId);
+    if (!this.messageData.consentToArchiveRecords.includes(socketId)) {
+      this.messageData.consentToArchiveRecords.push(socketId);
+    }
 
     if (this.messageData.consentToArchiveRecords.length === Object.values(room.members).length) {
       this.archiveSelf();
@@ -172,7 +185,7 @@ export default class EphemeralMessageRecord {
   }
 
   finishConsentToArchiveProcess = () => {
-    this.inConsentToArchiveProcess = false;
+    this.messageData.inConsentToArchiveProcess = false;
 
     const {roomId} = this.messageData;
 
@@ -290,7 +303,7 @@ export default class EphemeralMessageRecord {
     if (!this.messageData.threadEntryMessageId) {
       this.proposeToArchiveButton(this.initiateConsentToArchiveProcess).appendTo($textRecord);
       $textRecord.on('mousedown', () => {
-        if (!this.inConsentToArchiveProcess) {
+        if (!this.messageData.inConsentToArchiveProcess) {
           $textRecord.find('.askConsentToArchive').show();
         }
       });
