@@ -29,5 +29,11 @@ export const attachUIEvents = () => {
 
   new RoomForm().initialize();
 
-  $(document).on('mouseup', () => $('.makeFacilitator').hide());
+  $(document).on('mouseup', () => $('.longPressButton').hide());
+
+  $('#archivalSpaceLink').on('click', () => {
+    $('.chat').hide();
+    $('#archivalSpace').show();
+    $('#_messageInput').attr('disabled', true)
+  });
 };

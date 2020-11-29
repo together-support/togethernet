@@ -289,10 +289,15 @@ button p {
   color: white;
 }
 
+#systemMessage {
+  z-index: 100;
+}
+
 #systemMessage > .modalContent {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 30px;
 }
 
 #systemMessage span {
@@ -300,6 +305,8 @@ button p {
   margin: auto;
   font-family: sans-serif;
   font-size: 24px;
+  white-space: pre;
+  text-align: center;
 }
 
 .modalContent p {

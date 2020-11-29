@@ -15,7 +15,7 @@ export default class DisappearingTextRecord {
       $textRecord
         .mouseenter(() => $textRecord.find('.textBubble').show())
         .mouseleave(() => $textRecord.find('.textBubble').hide())
-        .on('adjacent', () => $textRecord.find('.textBubble').show());
+        .on('adjacent', () => $textRecord.find('.textBubble').show())
     }
     
     $textRecord.appendTo(store.getRoom(this.props.roomId).$room);

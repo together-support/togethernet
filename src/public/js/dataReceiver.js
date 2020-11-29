@@ -15,6 +15,8 @@ import {
   voteChanged,
 } from './voting.js';
 
+import {addSystemMessage} from './systemMessage.js';
+
 export const handleData = ({event, peerId}) => {
   let data;
   try {
@@ -55,6 +57,28 @@ export const handleData = ({event, peerId}) => {
     voteChanged(data.data);
   } else if (data.type === 'updateFacilitators') {
     updateFacilitators(data.data);
+  } else if (data.type === 'initConsentToArchiveProcess') {
+    const {roomId, messageId, name} = data.data;
+    addSystemMessage(`${name} has just asked for your consent to archive this message. \n\n move your avatar so that it overalps with the message. \n\n enter (y) for YES and (s) for STOP`)
+    const room = store.getRoom(roomId);
+    const messageRecord = room.ephemeralHistory[messageId];
+    messageRecord.performConsentToArchive();
+  } else if (data.type === 'blockConsentToArchive') {
+    const {roomId, messageId, name} = data.data;
+    addSystemMessage(`Process stopped. \n\n ${name} would not prefer not to archive this message at the moment.`)
+    const room = store.getRoom(roomId);
+    const messageRecord = room.ephemeralHistory[messageId];
+    messageRecord.consentToArchiveBlocked();
+  } else if (data.type === 'giveConsentToArchive') {
+    const {roomId, messageId, socketId} = data.data;
+    const room = store.getRoom(roomId);
+    const messageRecord = room.ephemeralHistory[messageId];
+    messageRecord.consentToArchiveReceived(store.getPeer(socketId));
+  } else if (data.type === 'messageArchived') {
+    const {roomId, messageId} = data.data;
+    const room = store.getRoom(roomId);
+    const messageRecord = room.ephemeralHistory[messageId];
+    messageRecord.finishConsentToArchiveProcess();
   }
 };
 
