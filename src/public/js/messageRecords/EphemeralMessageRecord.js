@@ -16,6 +16,7 @@ export default class EphemeralMessageRecord {
       ...props,
       id: `${props.roomId}-${props.left}-${props.top}`,
       votingRecords: props.votingRecords || {},
+      consentToArchiveRecords: props.consentToArchiveRecords || {},
     };
 
     const room = store.getRoom(props.roomId);
@@ -58,12 +59,7 @@ export default class EphemeralMessageRecord {
   }
 
   initiateConsentToArchiveProcess = () => {
-    const {id, roomId} = this.messageData;
-    this.inConsentToArchiveProcess = true;
-    store.inConsentToArchiveProcess = true;
-    store.getRoom(roomId).initiateConsentToArchiveProcess();
-    this.$textRecord().css({zIndex: 50});
-
+    const {roomId, id} = this.messageData;
     store.sendToPeers({
       type: 'consentToArchiveProcess', 
       data: {
@@ -71,8 +67,66 @@ export default class EphemeralMessageRecord {
         messageId: id,
       }
     });
+
+    this.performConsentToArchive();
   }
 
+  performConsentToArchive = () => {
+    this.inConsentToArchiveProcess = true;
+
+    const {roomId} = this.messageData;
+
+    this.$textRecord().addClass('inConsentProcess');
+    $(`#${roomId}`).find('#user').addClass('inConsentProcess');
+    $(`#${roomId}`).find('.consentToArchiveOverlay').show();
+    $(`#${roomId}`).on('keyup', this.consentToArchiveActions);
+  }
+
+  consentToArchiveActions = (e) => {
+    const {left, top} = $('#user').position();
+    const alignedWithMessage = left === this.messageData.left && top === this.messageData.top;
+    
+    if (alignedWithMessage) {
+      if (e.key === 'Enter') {
+        this.giveConsentToArchive();
+      } else if (e.key === 'Escape') {
+        this.blockConsentToArchive()
+      }
+    }
+  }
+
+  giveConsentToArchive = () => {
+    console.log('give consent');
+  }
+
+  archiveSelf = () => {
+    console.log('archive');
+  }
+
+  blockConsentToArchive = () => {
+    this.consentToArchiveBlocked();
+    const {id, roomId} = this.messageData;
+
+    store.sendToPeers({
+      type: 'blockConsentToArchive', 
+      data: {
+        roomId, 
+        messageId: id,
+      }
+    });
+  }
+
+  consentToArchiveBlocked = () => {
+    this.inConsentToArchiveProcess = false;
+
+    const {roomId} = this.messageData;
+
+    this.$textRecord().removeClass('inConsentProcess');
+    $(`#${roomId}`).find('#user').removeClass('inConsentProcess');
+    $(`#${roomId}`).find('.consentToArchiveOverlay').hide();
+    $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
+  }
+ 
   proposeToArchiveButton = (onInitiateConsentToArchive) => {
     const $proposeToArchiveContainer = $('<div class="longPressButton askConsentToArchive" style="display:none"><div class="shortLine"/></div>');
     const $button = $('<button>propose to archive</button>');

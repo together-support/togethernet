@@ -6,7 +6,6 @@ class Store {
   constructor() {
     this.peers = {};
     this.needRoomsInfo = true;
-    this.inConsentToArchiveProcess = false;
 
     this.rooms = {
       ...defaultRooms
