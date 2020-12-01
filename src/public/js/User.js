@@ -11,17 +11,11 @@ export default class User {
     this.state = {
       currentRoomId: 'ephemeralSpace',
     };
-
-    this.$avatar = null;
   }
 
   initialize = async () => {
     store.set('currentUser', this);
-
     $('#userAvatar').val(this.getRandomColor());
-    $('#userName').text('Anonymous');
-
-    $('#userName').on('click', this.setMyUserName);
 
     $('#userAvatar').on('change', (e) => {
       const avatar = e.target.value;
@@ -30,13 +24,25 @@ export default class User {
       store.sendToPeers({type: 'profileUpdated'});
     });
 
+    $('#userName').text('Anonymous');
+    $('#userName').on('click', this.setMyUserName);
+    await this.render();
+    makeDraggableUser();
+  }
+
+  $avatar = () => {
+    if ($('#user').length === 1) {
+      return $('#user');
+    } else {
+      return this.initAvatar();
+    }
+  }
+
+  initAvatar = () => {
     const initials = $('#userName').text().slice(0, 2);
     const $avatar = $(`<div id="user" class="avatar draggabble ui-widget-content"><span>${initials}<span></div>`);
     $avatar.css('background-color', $('#userAvatar').val());
-    this.$avatar = $avatar;
-
-    await this.render();
-    makeDraggableUser();
+    return $avatar;
   }
 
   getProfile = () => {
@@ -93,10 +99,9 @@ export default class User {
 
   render = async () => {
     const room = store.getRoom(this.state.currentRoomId)
-    if (room.hasFacilitator(this.socketId)) {
-      this.$avatar.addClass('facilitator');
-    }
-    this.$avatar.appendTo(room.$room);
+    const $avatar = this.$avatar();
+    $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId))
+    $avatar.appendTo(room.$room);
   }
 
   sendToServer = async (messageData) => {

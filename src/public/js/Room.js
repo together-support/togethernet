@@ -1,6 +1,7 @@
 import store from '../store/index.js';
 import throttle from 'lodash/throttle';
 import pull from 'lodash/pull';
+import difference from 'lodash/difference';
 import {keyboardEvent} from './animatedAvatar.js';
 import { roomModes } from '../constants/index.js';
 import {addSystemMessage} from './systemMessage.js';
@@ -117,22 +118,37 @@ export default class Room {
   }
 
   onTransferFacilitator = (e) => {
+    const newFacilitators = [...this.facilitators]
+    pull(newFacilitators, store.getCurrentUser().socketId);
+
     const $peerAvatar = $(e.target).closest('.avatar');
-    $peerAvatar.empty();
     const peerId = $peerAvatar.attr('id').split('peer-')[1];
-    addSystemMessage(`${store.getPeer(peerId).state.name} stepped in as a new facilitator`);
-    pull(this.facilitators, store.getCurrentUser().socketId);
-    this.facilitators.push(peerId);
+    newFacilitators.push(peerId)
 
     store.sendToPeers({
       type: 'updateFacilitators',
       data: {
         roomId: this.roomId,
-        facilitators: this.facilitators,
+        facilitators: newFacilitators,
       }
     });
 
+    this.updateFacilitators(newFacilitators);
+  }
+
+  updateFacilitators = (currentFacilitators) => {
+    const currentUser = store.getCurrentUser();
+    const newFacilitators = difference(currentFacilitators, this.facilitators);
+
+    newFacilitators.forEach(facilitatorId => {
+      const facilitator = currentUser.isMe(facilitatorId) ? currentUser : store.getPeer(facilitatorId);
+      const name = facilitator.getProfile().name;
+      addSystemMessage(`${name} stepped in as the new facilitator`);
+    });
+
+    this.facilitators = currentFacilitators;
     this.updateMessageTypes();
+    this.renderAvatars();
   }
   
   renderHistory = () => {
@@ -185,23 +201,6 @@ export default class Room {
       ephemeralHistory[newMessageRecord.messageData.id] = newMessageRecord;
     });
     return ephemeralHistory;
-  }
-
-  updateFacilitators = (facilitators) => {
-    const me = store.getCurrentUser();
-    facilitators.forEach(facilitator => {
-      if (!this.hasFacilitator(facilitator)) {
-        const name = me.isMe(facilitator) ? me.getProfile().name : store.getPeer(facilitator).state.name;
-        addSystemMessage(`${name} stepped in as the new facilitator`);
-      }
-    });
-
-    this.facilitators = facilitators;
-    this.updateMessageTypes();
-
-    if (this.hasFacilitator(store.getCurrentUser().socketId)) {
-      this.renderAvatars();
-    }
   }
 
   updateMessageTypes = () => {
