@@ -114,7 +114,7 @@ export default class EphemeralMessageRecord {
 
   giveConsentToArchive = () => {
     this.consentToArchiveReceived(store.getCurrentUser());
-    addSystemMessage("You've given your consent to archive this message.")
+    addSystemMessage("You've given your consent to archive this message.\n\nwaiting for peers to give their consent...")
 
     const {id, roomId} = this.messageData;
     store.sendToPeers({
