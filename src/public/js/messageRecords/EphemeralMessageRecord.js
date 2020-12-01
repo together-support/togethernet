@@ -17,7 +17,7 @@ export default class EphemeralMessageRecord {
       ...props,
       id: `${props.roomId}-${props.left}-${props.top}`,
       votingRecords: props.votingRecords || {},
-      consentToArchiveRecords: props.consentToArchiveRecords || [],
+      consentToArchiveRecords: props.consentToArchiveRecords || {},
       consentToArchiveInitiator: '',
     };
 
@@ -93,13 +93,14 @@ export default class EphemeralMessageRecord {
     this.$textRecord().addClass('inConsentProcess');
     $(`#${roomId}`).find('#user').addClass('inConsentProcess');
     $(`#${roomId}`).find('.consentToArchiveOverlay').show();
+    $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
     $(`#${roomId}`).on('keyup', this.consentToArchiveActions);
   }
 
   consentToArchiveActions = (e) => {
     const {left, top} = $('#user').position();
     const alignedWithMessage = left === this.messageData.left && top === this.messageData.top;
-    const alreadyGaveConsent = this.messageData.consentToArchiveRecords.includes(store.getCurrentUser().socketId);
+    const alreadyGaveConsent = Boolean(this.messageData.consentToArchiveRecords[store.getCurrentUser().socketId]);
     
     if (alignedWithMessage) {
       if (e.key === 'y') {
@@ -114,9 +115,11 @@ export default class EphemeralMessageRecord {
 
   giveConsentToArchive = () => {
     this.consentToArchiveReceived(store.getCurrentUser());
-    addSystemMessage("You've given your consent to archive this message.")
+    addSystemMessage("You've given your consent to archive this message.\n\nwaiting for peers to give their consent...")
 
     const {id, roomId} = this.messageData;
+    const room = store.getRoom(roomId);
+
     store.sendToPeers({
       type: 'giveConsentToArchive', 
       data: {
@@ -124,17 +127,8 @@ export default class EphemeralMessageRecord {
         messageId: id,
       }
     });
-  }
 
-  consentToArchiveReceived = (user) => {
-    const {socketId, avatar} = user.getProfile();
-    const {roomId, id} = this.messageData;
-    const room = store.getRoom(roomId);
-    if (!this.messageData.consentToArchiveRecords.includes(socketId)) {
-      this.messageData.consentToArchiveRecords.push(socketId);
-    }
-
-    if (this.messageData.consentToArchiveRecords.length === Object.values(room.members).length) {
+    if (Object.keys(this.messageData.consentToArchiveRecords).length === Object.keys(room.members).length) {
       this.archiveSelf();
       this.finishConsentToArchiveProcess();
       store.sendToPeers({
@@ -145,8 +139,15 @@ export default class EphemeralMessageRecord {
         }
       });
     }
+  }
 
-    const size = Math.round(this.$textRecord().outerWidth() / (Math.floor(Math.sqrt(this.messageData.consentToArchiveRecords.length)) + 1));
+  consentToArchiveReceived = (user) => {
+    const {socketId, avatar} = user.getProfile();
+    if (!this.messageData.consentToArchiveRecords[socketId]) {
+      this.messageData.consentToArchiveRecords[socketId] = user.getProfile();
+    }
+
+    const size = Math.round(this.$textRecord().outerWidth() / (Math.floor(Math.sqrt(Object.keys(this.messageData.consentToArchiveRecords).length)) + 1));
     const $consentIndicator = $('<div class="consentIndicator"></div>');
     $consentIndicator.css({backgroundColor: avatar});
     $consentIndicator.width(size);
@@ -181,7 +182,7 @@ export default class EphemeralMessageRecord {
   consentToArchiveBlocked = () => {
     this.$textRecord().find('.consentIndicator').remove();
     this.finishConsentToArchiveProcess();
-    this.messageData.consentToArchiveRecords = [];
+    this.messageData.consentToArchiveRecords = {};
   }
 
   finishConsentToArchiveProcess = () => {
@@ -308,6 +309,15 @@ export default class EphemeralMessageRecord {
         }
       });
     }
+
+    const size = Math.round(50 / (Math.floor(Math.sqrt(Object.values(this.messageData.consentToArchiveRecords).length)) + 1));
+    Object.values(this.messageData.consentToArchiveRecords).forEach(profile => {
+      const $consentIndicator = $('<div class="consentIndicator"></div>');
+      $consentIndicator.css({backgroundColor: profile.avatar})
+      $consentIndicator.width(size);
+      $consentIndicator.height(size);
+      $consentIndicator.appendTo($textRecord);
+    });
 
     return $textRecord;
   }

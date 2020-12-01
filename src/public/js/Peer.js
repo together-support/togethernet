@@ -23,7 +23,7 @@ export default class Peer {
     }
   }
 
-  getAvatarEl = () => {
+  $avatar = () => {
     if ($(`#peer-${this.socketId}`).length === 1) {
       return $(`#peer-${this.socketId}`);
     } else {
@@ -72,7 +72,7 @@ export default class Peer {
       ...options,
     }
     const {name, avatar} = this.state;
-    this.getAvatarEl().finish().animate({backgroundColor: avatar}).find('span').text(String(name).slice(0, 2));
+    this.$avatar().finish().animate({backgroundColor: avatar}).find('span').text(String(name).slice(0, 2));
     this.getParticipantAvatarEl().finish().animate({backgroundColor: avatar});
   }
 
@@ -82,7 +82,7 @@ export default class Peer {
 
   updatePosition = ({left, top}) => {
     this.state = {...this.state, left, top}
-    this.getAvatarEl().finish().animate({left, top});
+    this.$avatar().finish().animate({left, top});
   }
 
   initParticipantAvatar = () => {
@@ -98,11 +98,13 @@ export default class Peer {
 
   render = () => {
     const room = store.getRoom(this.state.currentRoomId);
-    const $avatar = this.getAvatarEl();
+    const $avatar = this.$avatar();
 
     if (room.hasFeature('facilitators') && room.hasFacilitator(store.getCurrentUser().socketId) && !room.hasFacilitator(this.socketId)) {
       this.makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
     }
+
+    $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId))
 
     $avatar.appendTo(room.$room);
   }

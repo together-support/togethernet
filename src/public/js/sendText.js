@@ -11,7 +11,8 @@ export const sendMessage = () => {
     return;
   }
 
-  const {left, top} = $('#user').position();
+  const left = Math.round($('#user').position().left)
+  const top = Math.round($('#user').position().top)
   let messageType = $('#messageType option:selected').val();
   
   const threadEntryMessageId = $('#messageType').attr('data-thread-entry-message')
