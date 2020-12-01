@@ -92,8 +92,11 @@ export default class User {
   }
 
   render = async () => {
-    const $room = store.getRoom(this.state.currentRoomId).$room;
-    this.$avatar.appendTo($room);
+    const room = store.getRoom(this.state.currentRoomId)
+    if (room.hasFacilitator(this.socketId)) {
+      this.$avatar.addClass('facilitator');
+    }
+    this.$avatar.appendTo(room.$room);
   }
 
   sendToServer = async (messageData) => {

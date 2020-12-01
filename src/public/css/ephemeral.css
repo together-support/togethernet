@@ -18,6 +18,11 @@ button {
   padding: 10px;
 }
 
+.avatar.facilitator {
+  font-weight: 800;
+  text-decoration: underline;
+}
+
 .textRecord,
 .audioRecord {
   position: absolute;

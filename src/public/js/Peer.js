@@ -104,6 +104,10 @@ export default class Peer {
       this.makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
     }
 
+    if (room.hasFacilitator(this.socketId)) {
+      $avatar.addClass('facilitator')
+    }
+
     $avatar.appendTo(room.$room);
   }
 }
