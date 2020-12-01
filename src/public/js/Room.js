@@ -48,7 +48,7 @@ export default class Room {
   }
 
   renderSpace = () => {
-    const $room = $(`<div class="chat hidden squaresView" id="${this.roomId}" tabindex="0"></div>`);
+    const $room = $(`<div class="chat hidden squaresView" id="${this.roomId}" tabindex="0"><div class="consentToArchiveOverlay" style="display: none;"></div></div>`);
     $room.appendTo('#rooms');
     this.$room = $room;
   }
