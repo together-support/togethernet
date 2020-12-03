@@ -2,13 +2,14 @@ import dotenv from 'dotenv';
 import express from 'express';
 import bodyParser from 'body-parser';
 import browserify from '../browserify.js'
+import pick from 'lodash/pick.js';
 
 import http from 'http';
 import path, {dirname} from 'path';
 import {fileURLToPath} from 'url';
 
 import SignalingServer from './server/SignalingServer.js'
-import pgClient from './server/PGClient.js'
+import archiver from './server/Archiver.js'
 
 dotenv.config();
 const app = express();
@@ -33,11 +34,8 @@ if (process.env.BASIC_AUTH_ENABLED) {
 }
 
 app.post('/archive', (req, res) => { 
-  const {name, message, roomId} = req.body;
-  pgClient.write({
-    text: "INSERT INTO archive(author, msg, roomId) VALUES($1,$2,$3)",
-    values: [name, message, roomId]
-  });
+  const values = pick(req.body, ['name', 'message', 'roomId'])
+  archiver.write({resource: 'message', values});
 });
 
 app.use(express.static(path.join(__dirname, '/public')));

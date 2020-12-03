@@ -1,30 +1,43 @@
-// import { Pool } from 'pg';
+import pg from 'pg';
+import range from 'lodash/range.js';
+
+const {Client} = pg;
 
 class PGClient {
   constructor () {
-    // this.pool = new Pool({
-    //   user: process.env.PG_USER,
-    //   host: process.env.PG_HOST,
-    //   database: process.env.PG_DB,
-    //   password: process.env.PG_PASSWORD,
-    //   port: process.env.PG_PORT || 5432,
-    // });
+    this.client = new Client({
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false
+      }
+    });
+
+    this.client.connect();
   }
 
-  write ({text, values}) {
-    this.pool.query({text, values}, (err, res) => {
-      console.log(err, res);
-    });
+  write ({resource, values}) {
+    const keys = Object.keys(values);
+    const query = {
+      text: `INSERT INTO ${resource}(${keys.join(',')}) VALUES(${range(1, keys.length).map(i => `$${i}`)})`,
+      values: Object.values(values),
+    }
+    
+    console.log(query)
   }
 
-  read (text) {
-    this.pool.query({text}, (err, response) => {
-      console.log(err, response.rows);
-      res.json(response.rows);
-    });
+  read (resource, id) {
+    if (Boolean(id)) {
+
+    } else {
+      this.client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+        if (err) throw err;
+        for (let row of res.rows) {
+          console.log(JSON.stringify(row));
+        }
+        client.end();
+      });
+    }
   }
 }
 
-const pgClient = new PGClient();
-
-export default pgClient;
+export default PGClient;

@@ -105,17 +105,17 @@ export default class User {
   }
 
   sendToServer = async (messageData) => {
-    // const {message, name, roomId} = messageData
-    // await fetch(`${url}/archive`, {
-    //   method: "POST",
-    //   headers: {"Content-Type": "application/json"},
-    //   body: JSON.stringify({
-    //     name, 
-    //     message,
-    //     roomId,
-    //   })
-    // })
-    // .then(response => response.text())
-    // .then(data => console.log(data));
+    const {message, name, roomId} = messageData
+    await fetch('/archive', {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        name, 
+        message,
+        roomId,
+      })
+    })
+    .then(response => response.text())
+    .then(data => console.log(data));
   }
 }
