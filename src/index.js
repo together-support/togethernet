@@ -38,6 +38,15 @@ app.post('/archive', (req, res) => {
   archiver.write({resource: 'messages', values});
 });
 
+app.get('/archive', (_, response) => { 
+  archiver.readAll('messages', (messages, error) => {
+    if (error) {
+      console.log(error)
+    }
+    response.status(200).json(messages);
+  });
+});
+
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.get('/js/bundle.js',  browserify('src/public/js/index.js'))

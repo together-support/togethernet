@@ -6,11 +6,11 @@ class Archiver {
   }
 
   write ({resource, values}) {
-    this.archivalClient.write({resource, values});
+    return this.archivalClient.write({resource, values});
   }
 
-  read (resource, id) {
-    this.archivalClient.read({resource, id});
+  readAll (resource, callback) {
+    return this.archivalClient.readAll(resource, callback);
   }
 }
 

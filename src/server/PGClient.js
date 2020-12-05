@@ -29,22 +29,10 @@ class PGClient {
     });
   }
 
-  read (resource, id) {
-    if (Boolean(id)) {
-      this.pool.query(`SELECT * FROM ${resource} WHERE id = $1`, [id], (error, results) => {
-        if (error) {
-          throw error
-        }
-        console.log(results);
-      })    
-    } else {
-      this.pool.query(`SELECT * FROM ${resource} ORDER BY id ASC`, (err, results) => {
-        if (error) {
-          throw error;
-        }  
-        console.log(results)
-      })      
-    }
+  readAll (resource, callback) {
+    this.pool.query(`SELECT * FROM ${resource}`, (error, results) => {
+      callback(results.rows, error);
+    });
   }
 }
 
