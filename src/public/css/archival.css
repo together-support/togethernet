@@ -16,7 +16,11 @@
   margin-right: 5px;
 }
 
-#archivalMessagesDetails {
+.textRecord.archival > .consentIndicator {
+  z-index: 6;
+}
+
+#archivalMessagesDetailsContainer {
   width: 50%;
   display: flex;
   flex-direction: column;
