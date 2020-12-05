@@ -26,4 +26,23 @@
   flex-direction: column;
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+  padding: 25px;
+}
+
+#archivalMessagesDetailsContainer {
+  color: white;
+  font-family: sans-serif;
+  line-height: 1.5;
+}
+
+.archivalMessagesDetails {
+  margin-bottom: 25px;
+}
+
+.archivalMessagesDetails h3 {
+  font-size: 18px;
+}
+
+.archivalMessagesDetails h3.author {
+  margin-top: 15px;
 }
