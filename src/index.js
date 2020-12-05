@@ -9,12 +9,13 @@ import path, {dirname} from 'path';
 import {fileURLToPath} from 'url';
 
 import SignalingServer from './server/SignalingServer.js'
-import archiver from './server/Archiver.js'
+import Archiver from './server/Archiver.js'
 
 dotenv.config();
 const app = express();
 app.use(bodyParser.json());
 const server = http.Server(app);
+const archiver = new Archiver();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
