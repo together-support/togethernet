@@ -115,7 +115,7 @@ export default class User {
         room_id: roomId,
         color: avatar,
         participants: Object.values(consentToArchiveRecords).map(r => r.name),
-        secondary_color: Object.values(consentToArchiveRecords).map(r => r.avatar),
+        secondary_colors: Object.values(consentToArchiveRecords).map(r => r.avatar),
       })
     })
     .then(response => response.text())
