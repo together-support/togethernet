@@ -15,7 +15,7 @@ class ArchivalSpace {
     this.messageRecords = messageRecords;
   }
 
-  addArchivedMessage = (messageData) => {
+  addArchivedMessage = ({messageData}) => {
     const $messageRecordAvatar = archivalMessageAvatar(messageData);
     $messageRecordAvatar.appendTo($('#archivalMessagesContainer'));
 
