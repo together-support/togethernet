@@ -3,6 +3,7 @@ import store from '../store/index.js';
 import {getBrowserRTC} from './ensureWebRTC.js';
 import {handleData} from './dataReceiver.js';
 import {addSystemMessage} from './systemMessage.js';
+import archivalSpace from './archivalSpace.js'
 import User from './User.js';
 
 export default class PeerConnection {
@@ -26,6 +27,7 @@ export default class PeerConnection {
     this.socket.on('answer', this.handleReceivedAnswer);
     this.socket.on('candidate', this.addCandidate);
     this.socket.on('peerLeave', this.handlePeerLeaveSocket);
+    this.socket.on('archivedMessage', archivalSpace.addArchivedMessage);
     this.socket.on('error', this.handleError);
   }
 

@@ -34,8 +34,13 @@ if (process.env.BASIC_AUTH_ENABLED) {
 }
 
 app.post('/archive', (req, res) => { 
-  const values = pick(req.body, ['author', 'content', 'roomId', 'color', 'participants', 'secondaryColors']);
-  archiver.write({resource: 'messages', values});
+  const values = pick(req.body, ['author', 'content', 'room_id', 'color', 'participants', 'secondary_colors']);
+  archiver.write({resource: 'messages', values, callback: (error, _) => {
+    if (error) {
+      console.log(error);
+    }
+    signalingServer.alertArchivedMessage(values);
+  }});
 });
 
 app.get('/archive', (_, response) => { 
@@ -54,4 +59,5 @@ app.get('/js/bundle.js',  browserify('src/public/js/index.js'))
 const port = process.env.PORT || '3000';
 server.listen(port, () => console.log(`server listening on ${port}`));
 
-new SignalingServer(server).connect();
+const signalingServer = new SignalingServer(server)
+signalingServer.connect();

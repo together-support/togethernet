@@ -15,6 +15,14 @@ class ArchivalSpace {
     this.messageRecords = messageRecords;
   }
 
+  addArchivedMessage = (messageData) => {
+    const $messageRecordAvatar = archivalMessageAvatar(messageData);
+    $messageRecordAvatar.appendTo($('#archivalMessagesContainer'));
+
+    const $messageDetails = archivalMessageDetails(messageData)
+    $messageDetails.appendTo($('#archivalMessagesDetailsContainer'));
+  }
+
   render () {
     this.messageRecords.forEach((messageRecord) => {
       const $messageRecordAvatar = archivalMessageAvatar(messageRecord);
@@ -26,4 +34,6 @@ class ArchivalSpace {
   }
 }
 
-export default ArchivalSpace;
+const archivalSpace = new ArchivalSpace();
+
+export default archivalSpace;

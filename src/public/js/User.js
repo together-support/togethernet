@@ -112,10 +112,10 @@ export default class User {
       body: JSON.stringify({
         author: name, 
         content: message,
-        roomId,
+        room_id: roomId,
         color: avatar,
         participants: Object.values(consentToArchiveRecords).map(r => r.name),
-        secondaryColors: Object.values(consentToArchiveRecords).map(r => r.avatar),
+        secondary_color: Object.values(consentToArchiveRecords).map(r => r.avatar),
       })
     })
     .then(response => response.text())

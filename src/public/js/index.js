@@ -1,10 +1,9 @@
 import store from '../store/index.js';
 import PeerConnection from './PeerConnection.js';
 import {attachUIEvents} from './uiEvents.js';
-import ArchivalSpace from './ArchivalSpace.js';
+import archivalSpace from './archivalSpace.js';
 
 $(window).load(() => {
-  const archivalSpace = new ArchivalSpace();
   archivalSpace.fetchArchivedMessages().then(() => {
     archivalSpace.render();
   });

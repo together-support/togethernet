@@ -5,8 +5,8 @@ class Archiver {
     this.archivalClient = new PGClient();
   }
 
-  write ({resource, values}) {
-    return this.archivalClient.write({resource, values});
+  write ({resource, values, callback}) {
+    return this.archivalClient.write({resource, values, callback});
   }
 
   readAll (resource, callback) {

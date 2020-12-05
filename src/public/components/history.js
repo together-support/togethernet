@@ -1,13 +1,13 @@
 export const archivalMessageAvatar = (messageRecord) => {
-  const {color, secondarycolors} = messageRecord;
+  const {color, secondary_colors} = messageRecord;
   
   const $messageRecordAvatar = $(`<div class="archival textRecord"></div>`);
   $messageRecordAvatar.css({backgroundColor: color});
 
-  const participantIndicatorSize = Math.round(50 / (Math.floor(Math.sqrt(secondarycolors.length)) + 1));
-  secondarycolors.forEach(secondarycolor => {
+  const participantIndicatorSize = Math.round(50 / (Math.floor(Math.sqrt(secondary_colors.length)) + 1));
+  secondary_colors.forEach(secondary_color => {
     const $consentIndicator = $('<div class="consentIndicator" style="display:none"></div>');
-    $consentIndicator.css({backgroundColor: secondarycolor})
+    $consentIndicator.css({backgroundColor: secondary_color})
     $consentIndicator.width(participantIndicatorSize);
     $consentIndicator.height(participantIndicatorSize);
     $consentIndicator.appendTo($messageRecordAvatar);

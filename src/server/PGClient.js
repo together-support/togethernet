@@ -14,7 +14,7 @@ class PGClient {
     });
   }
 
-  write ({resource, values}) {
+  write ({resource, values, callback}) {
     const keys = Object.keys(values);
     const query = {
       text: `INSERT INTO ${resource}(${keys.join(',')}) VALUES(${range(1, keys.length + 1).map(i => `$${i}`)})`,
@@ -22,10 +22,7 @@ class PGClient {
     }
 
     this.pool.query(query, (error, _) => {
-      if (error) {
-        throw error;
-      }
-      console.log('message archived!');
+      callback(error);
     });
   }
 
