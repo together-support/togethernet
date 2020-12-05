@@ -9,7 +9,11 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-between;
+  padding: 25px;
+}
+
+.textRecord.archival {
+  margin-right: 5px;
 }
 
 #archivalMessagesDetails {

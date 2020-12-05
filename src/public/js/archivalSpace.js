@@ -9,13 +9,16 @@ class ArchivalSpace {
       headers: {"Content-Type": "application/json"},
     });
 
-    // const messages = await response.json(); 
-    console.log(response);
+    const messageRecords = await response.json(); 
+    this.messageRecords = messageRecords;
   }
 
   render () {
     this.messageRecords.forEach((messageRecord) => {
-
+      const {color} = messageRecord;
+      const $messageRecordAvatar = $(`<div class="archival textRecord"></div>`);
+      $messageRecordAvatar.css({backgroundColor: color})
+      $messageRecordAvatar.appendTo($('#archivalMessagesContainer'));
     });
   }
 }

@@ -5,7 +5,9 @@ import ArchivalSpace from './ArchivalSpace.js';
 
 $(window).load(() => {
   const archivalSpace = new ArchivalSpace();
-  archivalSpace.fetchArchivedMessages();
+  archivalSpace.fetchArchivedMessages().then(() => {
+    archivalSpace.render();
+  });
   attachUIEvents();
   new PeerConnection().connect();
   window.debugStore = store;
