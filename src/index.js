@@ -36,11 +36,11 @@ if (process.env.BASIC_AUTH_ENABLED) {
 
 app.post('/archive', (req, res) => { 
   const values = pick(req.body, ['author', 'content', 'room_id', 'color', 'participants', 'secondary_colors']);
-  archiver.write({resource: 'messages', values, callback: (error, _) => {
+  archiver.write({resource: 'messages', values, callback: (error, result) => {
     if (error) {
       console.log(error);
     }
-    signalingServer.alertArchivedMessage(values);
+    signalingServer.alertArchivedMessage(result.rows[0]);
   }});
 });
 
