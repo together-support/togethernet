@@ -1,20 +1,36 @@
-/* eslint-disable no-eval */
+export const archivalMessageAvatar = (messageRecord) => {
+  const {color, secondarycolors} = messageRecord;
+  
+  const $messageRecordAvatar = $(`<div class="archival textRecord"></div>`);
+  $messageRecordAvatar.css({backgroundColor: color});
 
-export const historyMessage = ({author, time, msg}, idx) => {
-  // const entry = document.createElement("div");
-  // entry.setAttribute(`id`, `entry${idx}`);
-  // entry.classList.add('entry');
-  // // entry.style.backgroundColor = peerColor;
+  const participantIndicatorSize = Math.round(50 / (Math.floor(Math.sqrt(secondarycolors.length)) + 1));
+  secondarycolors.forEach(secondarycolor => {
+    const $consentIndicator = $('<div class="consentIndicator" style="display:none"></div>');
+    $consentIndicator.css({backgroundColor: secondarycolor})
+    $consentIndicator.width(participantIndicatorSize);
+    $consentIndicator.height(participantIndicatorSize);
+    $consentIndicator.appendTo($messageRecordAvatar);
+  });
 
-  // publicMsg.insertAdjacentHTML("beforeend", (
-  //   `<div class="row">
-  //     <div id="_privateName"><p>${author}</p></div>
-  //     <div id="_privateStamp"><p>${time}</p></div>
-  //   </div>
-  //   <div class="message" id="message${idx}">
-  //     <p>${msg}</p>
-  //   </div>`
-  // ));
+  $messageRecordAvatar.mouseenter((e) => {
+    $(e.target).find('.consentIndicator').show();
+  }).mouseleave(e => {
+    $(e.target).find('.consentIndicator').hide();
+  });
 
-  // return entry;
+  return $messageRecordAvatar;
+};
+
+export const archivalMessageDetails = (messageRecord) => {
+  const {author, content, participants, created_at} = messageRecord;
+
+  const $messageDetailsTemplate = $(document.getElementById('archivalMessagesDetailsTemplate').content.cloneNode(true));
+  const $messageDetails = $messageDetailsTemplate.find('.archivalMessagesDetails');
+  $messageDetails.find('.archivedTimestamp').text(new Date(created_at).toDateString());
+  $messageDetails.find('.participantNames').text(`Participants: ${participants.join(', ')}`);
+  $messageDetails.find('.author').text(author);
+  $messageDetails.find('.content').text(content);
+
+  return $messageDetails;
 };
