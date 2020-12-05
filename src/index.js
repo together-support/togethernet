@@ -2,13 +2,14 @@ import dotenv from 'dotenv';
 import express from 'express';
 import bodyParser from 'body-parser';
 import browserify from '../browserify.js'
+import pick from 'lodash/pick.js';
 
 import http from 'http';
 import path, {dirname} from 'path';
 import {fileURLToPath} from 'url';
 
 import SignalingServer from './server/SignalingServer.js'
-import pgClient from './server/PGClient.js'
+import archiver from './server/Archiver.js'
 
 dotenv.config();
 const app = express();
@@ -33,10 +34,21 @@ if (process.env.BASIC_AUTH_ENABLED) {
 }
 
 app.post('/archive', (req, res) => { 
-  const {name, message, roomId} = req.body;
-  pgClient.write({
-    text: "INSERT INTO archive(author, msg, roomId) VALUES($1,$2,$3)",
-    values: [name, message, roomId]
+  const values = pick(req.body, ['author', 'content', 'room_id', 'color', 'participants', 'secondary_colors']);
+  archiver.write({resource: 'messages', values, callback: (error, _) => {
+    if (error) {
+      console.log(error);
+    }
+    signalingServer.alertArchivedMessage(values);
+  }});
+});
+
+app.get('/archive', (_, response) => { 
+  archiver.readAll('messages', (messages, error) => {
+    if (error) {
+      console.log(error)
+    }
+    response.status(200).json(messages);
   });
 });
 
@@ -47,4 +59,5 @@ app.get('/js/bundle.js',  browserify('src/public/js/index.js'))
 const port = process.env.PORT || '3000';
 server.listen(port, () => console.log(`server listening on ${port}`));
 
-new SignalingServer(server).connect();
+const signalingServer = new SignalingServer(server)
+signalingServer.connect();

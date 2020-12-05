@@ -95,7 +95,7 @@
 
       <div class="chat archivalView" id="archivalSpace" style="display:none;">
         <div id="archivalMessagesContainer"></div>
-        <div id="archivalMessagesDetails" style="display: none;"></div>
+        <div id="archivalMessagesDetailsContainer"></div>
       </div>
     </div>
 
@@ -141,6 +141,15 @@
     </template>
     <template id="systemBubbleTemplate">
       <div class="systemBubble"><p></p></div>
+    </template>
+
+    <template id="archivalMessagesDetailsTemplate">
+      <div class="archivalMessagesDetails">
+        <h3 class="archivedTimestamp"></h3>
+        <h3 class="participantNames"></h3>
+        <h3 class="author"></h3>
+        <p class="content"></p>
+      </div>
     </template>
   </body>
 </html>
