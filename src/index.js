@@ -35,7 +35,7 @@ if (process.env.BASIC_AUTH_ENABLED) {
 
 app.post('/archive', (req, res) => { 
   const values = pick(req.body, ['name', 'message', 'roomId'])
-  archiver.write({resource: 'message', values});
+  archiver.write({resource: 'messages', values});
 });
 
 app.use(express.static(path.join(__dirname, '/public')));

@@ -1,41 +1,49 @@
 import pg from 'pg';
 import range from 'lodash/range.js';
 
-const {Client} = pg;
+const {Pool} = pg;
 
 class PGClient {
   constructor () {
-    this.client = new Client({
-      connectionString: process.env.DATABASE_URL,
-      ssl: {
-        rejectUnauthorized: false
-      }
+    this.pool = new Pool({
+      user: 'yaqing',
+      host: 'localhost',
+      database: 'togethernet',
+      password: 'password',
+      port: 5432,    
     });
-
-    this.client.connect();
   }
 
   write ({resource, values}) {
     const keys = Object.keys(values);
     const query = {
-      text: `INSERT INTO ${resource}(${keys.join(',')}) VALUES(${range(1, keys.length).map(i => `$${i}`)})`,
+      text: `INSERT INTO ${resource}(${keys.join(',')}) VALUES(${range(1, keys.length + 1).map(i => `$${i}`)})`,
       values: Object.values(values),
     }
-    
-    console.log(query)
+
+    this.pool.query(query, (error, _) => {
+      if (error) {
+        throw error;
+      }
+      console.log('message archived!');
+    });
   }
 
   read (resource, id) {
     if (Boolean(id)) {
-
-    } else {
-      this.client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-        if (err) throw err;
-        for (let row of res.rows) {
-          console.log(JSON.stringify(row));
+      this.pool.query(`SELECT * FROM ${resource} WHERE id = $1`, [id], (error, results) => {
+        if (error) {
+          throw error
         }
-        client.end();
-      });
+        console.log(results);
+      })    
+    } else {
+      this.pool.query(`SELECT * FROM ${resource} ORDER BY id ASC`, (err, results) => {
+        if (error) {
+          throw error;
+        }  
+        console.log(results)
+      })      
     }
   }
 }
