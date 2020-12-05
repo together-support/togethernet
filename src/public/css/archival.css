@@ -10,10 +10,11 @@
   flex-direction: row;
   flex-wrap: wrap;
   padding: 25px;
+  align-content: start;
 }
 
 .textRecord.archival {
-  margin-right: 5px;
+  margin: 5px 5px 0 0;
 }
 
 .textRecord.archival > .consentIndicator {
