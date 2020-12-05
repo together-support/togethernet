@@ -14,6 +14,4 @@ class Archiver {
   }
 }
 
-const archiver = new Archiver();
-
-export default archiver;
+export default Archiver;
