@@ -41,17 +41,7 @@ export default class Room {
     $roomTitle.appendTo($roomLink);
 
     if (this.facilitators.includes(store.getCurrentUser().socketId)) {
-      const $removeRoomButton = $('<button class="removeRoom">x</button>');
-      $removeRoomButton.on('click', () => {
-        if (this.facilitators.includes(store.getCurrentUser().socketId)) {
-          this.purgeSelf();
-          store.sendToPeers({
-            type: 'deleteRoom', 
-            data: {removedRoom: this.roomId},
-          })
-        }
-      });
-      $removeRoomButton.appendTo($roomTitle);
+      this.renderRemoveRoomButton().appendTo($roomTitle);
     }
 
     const $participantsContainer = $('<div class="participantsContainer"></div>');
@@ -59,6 +49,21 @@ export default class Room {
 
     $roomLink.insertBefore($('#addRoom'));
     this.$roomLink = $roomLink;
+  }
+
+  renderRemoveRoomButton = () => {
+    const $removeRoomButton = $('<button class="removeRoom">x</button>');
+    $removeRoomButton.on('click', () => {
+      if (this.facilitators.includes(store.getCurrentUser().socketId)) {
+        this.purgeSelf();
+        store.sendToPeers({
+          type: 'deleteRoom', 
+          data: {removedRoom: this.roomId},
+        })
+      }
+    });
+
+    return $removeRoomButton;
   }
 
   purgeSelf = () => {
@@ -168,6 +173,7 @@ export default class Room {
     });
 
     this.facilitators = currentFacilitators;
+    this.updateCloseButtons();
     this.updateMessageTypes();
     this.renderAvatars();
   }
@@ -222,6 +228,14 @@ export default class Room {
       ephemeralHistory[newMessageRecord.messageData.id] = newMessageRecord;
     });
     return ephemeralHistory;
+  }
+
+  updateCloseButtons = () => {
+    if (this.facilitators.includes(store.getCurrentUser().socketId)) {
+      this.renderRemoveRoomButton().appendTo(this.$roomLink.find('p'));
+    } else {
+      this.$roomLink.find('.removeRoom').remove();
+    }
   }
 
   updateMessageTypes = () => {
