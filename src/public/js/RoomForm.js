@@ -2,7 +2,6 @@ import {roomModes} from '../constants/index.js';
 import store from '../store/index.js';
 import Room from './Room.js';
 import publicConfig from '../config/index.js';
-import {renderFacilitator, facilitatorOption} from '../components/room.js';
 import pull from 'lodash/pull';
 
 const defaultOptions = {
@@ -52,25 +51,39 @@ export default class RoomForm {
     $('#configureRoom-2').find('.facilitatorOption').remove();
     const profiles = [store.getCurrentUser().getProfile(), ...Object.values(store.get('peers')).map(peer => peer.getProfile())];
     profiles.forEach((profile) => {
-      facilitatorOption({
+      this.renderFacilitatorOption({
         profile, 
-        onClick: () => this.toggleFacilitator(profile),
+        onClick: (e) => this.toggleFacilitator(e, profile),
         selected: this.options.facilitators.includes(profile.socketId)
       }).insertBefore($('#configureRoom-2 .modalButtons'));
     });
   };
 
-  toggleFacilitator = (profile) => {
+  renderFacilitatorOption = ({profile, onClick, selected}) => {
+    const {avatar, name} = profile;
+    const option = $(`<button class="facilitatorOption"><div style="background-color:${avatar}"></div><span>${name}</span></button>`);
+    if (selected) { option.addClass('selected'); }
+    option.on('click', onClick);
+    return option;
+  };
+
+  toggleFacilitator = (e, profile) => {
     const {socketId} = profile;
     if (this.options.facilitators.includes(socketId)) {
+      $(e.target).closest('.facilitatorOption').toggleClass('selected');
       pull(this.options.facilitators, socketId);
       $('#currentFacilitators').find(`div[data-socketId="${socketId}"]`).remove();
     } else if (this.options.facilitators.length < 3) {
-      renderFacilitator(profile).appendTo($('#currentFacilitators'));
-      this.options.facilitators.push(socketId);
-    }
+      $(e.target).closest('.facilitatorOption').toggleClass('selected');
+      this.renderFacilitator(profile).appendTo($('#currentFacilitators'));
+      this.options.facilitators.push(socketId);        
+    } 
   }
 
+  renderFacilitator = ({avatar, name, socketId}) => {
+    return $(`<div class="facilitatorOption" data-socketId="${socketId}"><div style="background-color:${avatar}"></div><span>${name}</span></div>`);
+  };
+  
   changeMeetingMode = (e) => {
     this.options.mode = e.target.value;
     if (this.options.mode === roomModes.egalitarian) {
@@ -80,7 +93,7 @@ export default class RoomForm {
       $('#consentfulGestureInfo').hide();
     } else if (this.options.mode === roomModes.facilitated) {
       $('#currentFacilitators').html('');
-      renderFacilitator(store.getCurrentUser().getProfile()).appendTo($('#currentFacilitators'));
+      this.renderFacilitator(store.getCurrentUser().getProfile()).appendTo($('#currentFacilitators'));
       this.options.facilitators = [store.getCurrentUser().socketId];
       $('#configureFacilitatorsDA').hide();
       $('#configureFacilitatorsFac').show();
