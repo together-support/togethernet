@@ -67,10 +67,13 @@ export default class Room {
   }
 
   purgeSelf = () => {
+    Object.values(this.members).forEach(member => {
+      member.joinedRoom('ephemeralSpace')
+    });
+
     this.$roomLink.remove();
     this.$room.remove();
     delete store.rooms[this.roomId];
-    Object.values(store.rooms)[0].goToRoom();
   }
 
   renderSpace = () => {

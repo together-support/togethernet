@@ -72,6 +72,10 @@ export default class User {
       return $(`#${this.state.currentRoomId}-${position}`)[0];
     }));
   }
+
+  joinedRoom = (joinedRoomId) => {
+    store.getRoom(joinedRoomId).goToRoom();
+  }
   
   setMyUserName = () => {
     const name = DOMPurify.sanitize(prompt('Please enter your name:'));
