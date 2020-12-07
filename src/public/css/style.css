@@ -416,3 +416,9 @@ button p {
   display: flex;
   flex-wrap: wrap;
 }
+
+.removeRoom {
+  margin-left: 10px;
+  border-radius: 50%;
+  border: 1px solid darkgray;
+}

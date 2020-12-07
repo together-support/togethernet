@@ -78,6 +78,10 @@ export const handleData = ({event, peerId}) => {
     const room = store.getRoom(roomId);
     const messageRecord = room.ephemeralHistory[messageId];
     messageRecord.finishConsentToArchiveProcess();
+  } else if (data.type === 'deleteRoom') {
+    const {removedRoom} = data.data;
+    const room = store.rooms[removedRoom];
+    room.purgeSelf();
   }
 };
 

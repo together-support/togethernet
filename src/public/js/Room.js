@@ -40,11 +40,32 @@ export default class Room {
     $roomTitle.text(this.name);
     $roomTitle.appendTo($roomLink);
 
+    if (this.facilitators.includes(store.getCurrentUser().socketId)) {
+      const $removeRoomButton = $('<button class="removeRoom">x</button>');
+      $removeRoomButton.on('click', () => {
+        if (this.facilitators.includes(store.getCurrentUser().socketId)) {
+          this.purgeSelf();
+          store.sendToPeers({
+            type: 'deleteRoom', 
+            data: {removedRoom: this.roomId},
+          })
+        }
+      });
+      $removeRoomButton.appendTo($roomTitle);
+    }
+
     const $participantsContainer = $('<div class="participantsContainer"></div>');
     $participantsContainer.appendTo($roomLink);
 
     $roomLink.insertBefore($('#addRoom'));
     this.$roomLink = $roomLink;
+  }
+
+  purgeSelf = () => {
+    this.$roomLink.remove();
+    this.$room.remove();
+    delete store.rooms[this.roomId];
+    Object.values(store.rooms)[0].goToRoom();
   }
 
   renderSpace = () => {
