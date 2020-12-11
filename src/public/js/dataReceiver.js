@@ -78,7 +78,7 @@ export const handleData = ({event, peerId}) => {
     const {roomId, messageId} = data.data;
     const room = store.getRoom(roomId);
     const messageRecord = room.ephemeralHistory[messageId];
-    messageRecord.finishConsentToArchiveProcess();
+    messageRecord.messageArchived();
   } else if (data.type === 'deleteRoom') {
     const {removedRoom} = data.data;
     const room = store.rooms[removedRoom];

@@ -35,7 +35,7 @@ if (process.env.BASIC_AUTH_ENABLED) {
 }
 
 app.post('/archive', (req, res) => { 
-  const values = pick(req.body, ['author', 'content', 'room_id', 'color', 'participants', 'secondary_colors']);
+  const values = pick(req.body, ['author', 'content', 'room_id', 'base_color', 'participant_names', 'secondary_colors']);
   archiver.write({resource: 'messages', values, callback: (error, result) => {
     if (error) {
       console.log(error);
