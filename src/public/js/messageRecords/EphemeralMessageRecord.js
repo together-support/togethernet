@@ -2,6 +2,7 @@ import store from '../../store/index.js';
 import {roomModes} from '../../constants/index.js';
 import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord, ThreadedTextRecord} from './ephemeralMessageRecords/index.js';
 import {addSystemMessage} from '../systemMessage.js';
+import sample from 'lodash/sample';
 
 const messageTypeToComponent = {
   'question': PersistentTextRecord,
@@ -129,8 +130,8 @@ export default class EphemeralMessageRecord {
     });
 
     if (Object.keys(this.messageData.consentToArchiveRecords).length === Object.keys(room.members).length) {
-      this.archiveSelf();
-      this.finishConsentToArchiveProcess();
+      store.getCurrentUser().sendToServer(this.messageData);
+      this.messageArchived();
       store.sendToPeers({
         type: 'messageArchived', 
         data: {
@@ -139,6 +140,19 @@ export default class EphemeralMessageRecord {
         }
       });
     }
+  }
+
+  messageArchived = () => {
+    const consentColors = Object.values(this.messageData.consentToArchiveRecords).map(profile => profile.avatar);
+    this.$textRecord().find('.consentIndicator').remove();
+    Array.from({length: 25}).forEach(_ => {
+      const color = sample(consentColors);    
+      const $consentIndicator = $('<div class="consentIndicator given"></div>');
+      $consentIndicator.css({backgroundColor: color})
+      $consentIndicator.appendTo(this.$textRecord());  
+    });
+
+    this.finishConsentToArchiveProcess()
   }
 
   consentToArchiveReceived = (user) => {
@@ -159,10 +173,6 @@ export default class EphemeralMessageRecord {
     });
 
     $consentIndicator.appendTo(this.$textRecord());
-  }
-
-  archiveSelf = () => {
-    store.getCurrentUser().sendToServer(this.messageData);
   }
 
   blockConsentToArchive = () => {

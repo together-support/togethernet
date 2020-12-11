@@ -203,3 +203,7 @@ button {
   position: absolute;
 }
 
+.consentIndicator.given {
+  width: 10px;
+  height: 10px;
+}
