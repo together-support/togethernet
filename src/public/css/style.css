@@ -1,11 +1,29 @@
-body {
-  font: 12px "Courier New", Courier, "Lucida Sans Typewriter",
-    "Lucida Typewriter", monospace;
+@font-face {
+  font-family: nunito;
+  src: url(../font/nunito/Nunito-Regular.ttf);
 }
 
-p {
-  font: 14px "Courier New", Courier, "Lucida Sans Typewriter",
-    "Lucida Typewriter", monospace;
+@font-face {
+  font-family: nunito-bold;
+  src: url(../font/nunito/Nunito-Bold.ttf);
+  font-weight: bold;
+}
+
+body,
+p,
+button p,
+.btn,
+.roomLink,
+.configureRoomView,
+.modalContent p,
+#userName,
+#_messageInput,
+#_privateSendBtn,
+#messageType,
+#systemMessage span,
+.systemBubble p,
+.textBubble p {
+  font: 16px nunito, monospace;
 }
 
 #messages {
@@ -83,20 +101,19 @@ p {
 #userName {
   border: 1px solid gray;
   border-right: 0px solid transparent;
-  padding: 5px;
-  width: 100px;
+  border-top: 0px solid transparent;
+  padding: 0 10px;
+  width: auto;
   height: 50px;
-  font: 14px "Courier New", Courier, "Lucida Sans Typewriter",
-    "Lucida Typewriter", monospace;
   background-color: #ffffff;
 }
 
 #_messageInput {
   border: 1px solid gray;
+  border-right: 0px solid transparent;
+  border-top: 0px solid transparent;
   display: flex;
   flex-grow: 5;
-  font: 14px "Courier New", Courier, "Lucida Sans Typewriter",
-    "Lucida Typewriter", monospace;
   padding-left: 10px;
 }
 
@@ -110,9 +127,9 @@ p {
   padding: 10px;
   margin: 0;
   height: 50px;
-  font: 12px "Courier New", Courier, "Lucida Sans Typewriter",
-    "Lucida Typewriter", monospace;
   border: 0.5px solid gray;
+  border-left: 0px solid transparent;
+  border-top: 0px solid transparent;
   background-color: #efefef;
 }
 
@@ -121,12 +138,10 @@ p {
 }
 
 .roomLink {
-  padding: 20px;
+  padding: 10px 20px 10px 20px;
   margin: 0 2px 0 0;
   width: auto;
   height: 50px;
-  font: 12px "Courier New", Courier, "Lucida Sans Typewriter",
-    "Lucida Typewriter", monospace;
   border-radius: 20px 20px 0px 0px;
   border-top: 0.5px solid gray;
   border-left: 0.5px solid gray;
@@ -163,10 +178,6 @@ p {
   cursor: pointer;
 }
 
-#_privateSendBtn {
-  font-size: 14px;
-}
-
 #_privateName {
   display: flex;
   padding-bottom: 4pt;
@@ -198,6 +209,7 @@ p {
   position: relative;
   width: 10px;
   height: 50px;
+  padding: 0;
 }
 
 .audioRecord {
@@ -239,10 +251,6 @@ input[type="color"] {
   border: none;
 }
 
-button p {
-  font-size: 12px;
-}
-
 .hidden {
   display: none;
 }
@@ -256,12 +264,12 @@ button p {
   width: 100vw;
   height: 100vh;
   overflow: auto;
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
 .modalContent {
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0, 0, 0, 0.8);
   border: 1px solid #888;
   width: 900px;
   margin: 100px auto 50px auto;
@@ -277,8 +285,7 @@ button p {
 
 .configureRoomView {
   padding: 25px;
-  background-color: rgba(0,0,0,0.8);
-  font-family: sans-serif;
+  background-color: rgba(0, 0, 0, 0.8);
   line-height: 2;
   color: white;
 }
@@ -297,14 +304,8 @@ button p {
 #systemMessage span {
   color: white;
   margin: auto;
-  font-family: sans-serif;
-  font-size: 24px;
   white-space: pre;
   text-align: center;
-}
-
-.modalContent p {
-  font-family: sans-serif;
 }
 
 .modalContent .modalButtons {
@@ -316,7 +317,7 @@ button p {
   padding: 5px 10px;
   margin-left: 20px;
   background-color: #919191;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .modalContent .section {
@@ -405,7 +406,8 @@ button p {
 
 #messageType {
   background-color: #efefef;
-  padding: 0 15px;
+  padding: 0 10px;
+  border-top: 0px solid transparent;
 }
 
 .textRecord,
