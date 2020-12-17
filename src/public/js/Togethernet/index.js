@@ -1,8 +1,7 @@
 import archivalSpace from '@js/ArchivalSpace';
 import PeerConnection from '@js/PeerConnection';
-import {startRecordingAudio, sendAudio} from '@js/MessageRecords/audio';
 import RoomForm from '@js/RoomForm';
-import {sendMessage} from '@js/MessageRecords/sendText';
+import {sendMessage} from '@js/EphemeralMessageRecord/sendText';
 
 class Togethernet {
   initialize = async () => {
@@ -20,7 +19,6 @@ class Togethernet {
   attachUIEvents = () => {
     this.preventPageScroll();
     this.handleMessageSendingEvents();
-    // this.handleAudioEvents();
     this.detectThreadStart();
     this.hideInteractionButtonsOnMouseLeave();
     this.navigateToArchivalSpaceEvent();
@@ -41,11 +39,6 @@ class Togethernet {
         sendMessage();
       }
     });
-  }
-
-  handleAudioEvents = () => {
-    $('#_recordBtn').on('mousedown', startRecordingAudio);
-    $('#_recordBtn').on('mouseup', sendAudio);
   }
 
   detectThreadStart = () => {

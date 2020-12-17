@@ -7,7 +7,7 @@ import { roomModes } from '@js/constants';
 
 import {keyboardEvent} from './animation';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
-import EphemeralMessageRecord from '@js/MessageRecords/EphemeralMessageRecord';
+import EphemeralMessageRecord from '@js/EphemeralMessageRecord';
 
 export default class Room {
   constructor(options) {

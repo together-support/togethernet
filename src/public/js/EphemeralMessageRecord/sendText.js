@@ -1,6 +1,6 @@
 import { roomModes } from '@js/constants';
 import store from '@js/store';
-import EphemeralMessageRecord from './EphemeralMessageRecord';
+import EphemeralMessageRecord from './index';
 import {clearSystemMessage} from '@js/Togethernet/systemMessage';
 
 export const sendMessage = () => {

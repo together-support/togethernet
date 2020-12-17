@@ -1,6 +1,9 @@
 import store from '@js/store';
 import {roomModes} from '@js/constants';
-import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord, ThreadedTextRecord} from './ephemeralMessageRecords/index.js';
+import AgendaTextRecord from './AgendaTextRecord';
+import DisappearingTextRecord from './DisappearingTextRecord';
+import PersistentTextRecord from './PersistentTextRecord';
+import ThreadedTextRecord from './ThreadedTextRecord';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import sample from 'lodash/sample';
 
