@@ -1,1 +1,1 @@
-DROP TYPE 'message_type';
+DROP TYPE "message_type";

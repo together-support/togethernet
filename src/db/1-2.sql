@@ -1,1 +1,1 @@
-CREATE TYPE 'message_type' AS ENUM ('thread', 'comment', 'text_message', 'audio_message');
+CREATE TYPE "message_type" AS ENUM ('thread', 'comment', 'text_message', 'audio_message');
