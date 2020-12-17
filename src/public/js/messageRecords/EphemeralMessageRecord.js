@@ -1,7 +1,7 @@
-import store from '../store/index.js';
-import {roomModes} from '../constants.js';
+import store from '@js/store/index.js';
+import {roomModes} from '@js/constants.js';
 import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord, ThreadedTextRecord} from './ephemeralMessageRecords/index.js';
-import {addSystemMessage} from '../Togethernet/systemMessage.js';
+import {addSystemMessage} from '@js/Togethernet/systemMessage.js';
 import sample from 'lodash/sample';
 
 const messageTypeToComponent = {
@@ -145,7 +145,7 @@ export default class EphemeralMessageRecord {
   messageArchived = () => {
     const consentColors = Object.values(this.messageData.consentToArchiveRecords).map(profile => profile.avatar);
     this.$textRecord().find('.consentIndicator').remove();
-    Array.from({length: 25}).forEach(_ => {
+    Array.from({length: 25}).forEach(() => {
       const color = sample(consentColors);    
       const $consentIndicator = $('<div class="consentIndicator given"></div>');
       $consentIndicator.css({backgroundColor: color});

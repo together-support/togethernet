@@ -1,5 +1,5 @@
-import store from '../../store/index.js';
-import {roomModes} from '../../constants.js';
+import store from '@js/store/index.js';
+import {roomModes} from '@js/constants.js';
 
 export default class PersistentTextRecord {
   constructor(props) {

@@ -12,7 +12,13 @@ browserify.settings({
       ],
       plugins: [
         "@babel/plugin-proposal-class-properties",
-        "@babel/plugin-transform-runtime"
+        "@babel/plugin-transform-runtime",
+        ["module-resolver", {
+          "alias": {
+            "@js": "./src/public/js",
+            "@public": "./src/public",
+          }
+        }]
       ]
     }),
     ['envify', publicConfig]

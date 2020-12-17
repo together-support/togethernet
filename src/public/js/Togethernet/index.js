@@ -1,8 +1,8 @@
-import archivalSpace from '../ArchivalSpace/index.js';
-import PeerConnection from '../PeerConnection/index.js';
-// import {startRecordingAudio, sendAudio} from '../MessageRecords/audio.js';
-import RoomForm from '../RoomForm/index.js';
-import {sendMessage} from '../MessageRecords/sendText.js';
+import archivalSpace from '@js/ArchivalSpace/index.js';
+import PeerConnection from '@js/PeerConnection/index.js';
+import {startRecordingAudio, sendAudio} from '@js/MessageRecords/audio.js';
+import RoomForm from '@js/RoomForm/index.js';
+import {sendMessage} from '@js/MessageRecords/sendText.js';
 
 class Togethernet {
   initialize = async () => {
@@ -44,8 +44,8 @@ class Togethernet {
   }
 
   handleAudioEvents = () => {
-    // $('#_recordBtn').on('mousedown', startRecordingAudio);
-    // $('#_recordBtn').on('mouseup', sendAudio);
+    $('#_recordBtn').on('mousedown', startRecordingAudio);
+    $('#_recordBtn').on('mouseup', sendAudio);
   }
 
   detectThreadStart = () => {

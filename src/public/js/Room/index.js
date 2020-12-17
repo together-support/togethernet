@@ -2,12 +2,12 @@ import throttle from 'lodash/throttle';
 import pull from 'lodash/pull';
 import difference from 'lodash/difference';
 
-import store from '../store/index.js';
-import { roomModes } from '../constants.js';
+import store from '@js/store/index.js';
+import { roomModes } from '@js/constants.js';
 
 import {keyboardEvent} from './animation.js';
-import {addSystemMessage} from '../Togethernet/systemMessage.js';
-import EphemeralMessageRecord from '../MessageRecords/EphemeralMessageRecord.js';
+import {addSystemMessage} from '@js/Togethernet/systemMessage.js';
+import EphemeralMessageRecord from '@js/MessageRecords/EphemeralMessageRecord.js';
 
 export default class Room {
   constructor(options) {

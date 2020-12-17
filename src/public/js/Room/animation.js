@@ -1,4 +1,4 @@
-import store from '../store/index.js';
+import store from '@js/store/index.js';
 
 export const keyboardEvent = (event) => {
   event.preventDefault();

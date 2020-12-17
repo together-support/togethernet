@@ -1,5 +1,5 @@
-import store from './store/index.js';
-import Togethernet from './Togethernet/index.js';
+import store from '@js/store/index.js';
+import Togethernet from '@js/Togethernet/index.js';
 
 $(window).load(() => {
   new Togethernet().initialize();
