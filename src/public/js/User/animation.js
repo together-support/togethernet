@@ -1,4 +1,4 @@
-import {onAnimationComplete, hideEphemeralMessageText} from '@js/Room/animation.js';
+import {onAnimationComplete, hideEphemeralMessageText} from '@js/Room/animation';
 
 export const makeDraggableUser = () => {
   $('#user').draggable({

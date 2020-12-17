@@ -1,6 +1,6 @@
-import store from '@js/store/index.js';
-import {addSystemMessage} from '@js/Togethernet/systemMessage.js';
-import EphemeralMessageRecord from '@js/MessageRecords/EphemeralMessageRecord.js';
+import store from '@js/store';
+import {addSystemMessage} from '@js/Togethernet/systemMessage';
+import EphemeralMessageRecord from '@js/MessageRecords/EphemeralMessageRecord';
 
 export const handleData = ({event, peerId}) => {
   let data;

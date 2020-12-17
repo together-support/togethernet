@@ -1,8 +1,8 @@
-import archivalSpace from '@js/ArchivalSpace/index.js';
-import PeerConnection from '@js/PeerConnection/index.js';
-import {startRecordingAudio, sendAudio} from '@js/MessageRecords/audio.js';
-import RoomForm from '@js/RoomForm/index.js';
-import {sendMessage} from '@js/MessageRecords/sendText.js';
+import archivalSpace from '@js/ArchivalSpace';
+import PeerConnection from '@js/PeerConnection';
+import {startRecordingAudio, sendAudio} from '@js/MessageRecords/audio';
+import RoomForm from '@js/RoomForm';
+import {sendMessage} from '@js/MessageRecords/sendText';
 
 class Togethernet {
   initialize = async () => {
