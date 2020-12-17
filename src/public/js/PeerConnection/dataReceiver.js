@@ -1,5 +1,5 @@
-import store from './store/index.js';
-import {addSystemMessage} from './systemMessage.js';
+import store from '../store/index.js';
+import {addSystemMessage} from '../Togethernet/systemMessage.js';
 
 export const handleData = ({event, peerId}) => {
   let data;
