@@ -1,6 +1,6 @@
 import archivalSpace from '../ArchivalSpace/index.js';
 import PeerConnection from '../PeerConnection/index.js';
-import {startRecordingAudio, sendAudio} from '../MessageRecords/sendAudio.js';
+import {startRecordingAudio, sendAudio} from '../MessageRecords/audio.js';
 import RoomForm from '../RoomForm/index.js';
 import {sendMessage} from '../MessageRecords/sendText.js'
 
