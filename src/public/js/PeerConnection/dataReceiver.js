@@ -1,21 +1,5 @@
 import store from '../store/index.js';
-import {
-  removeEphemeralPeerMessage, 
-  removeEphemeralPeerMessageInThread,
-  renderIncomingEphemeralMessage, 
-  updateFacilitators,
-  setAgendaHidden,
-  updatePeerRoom,
-} from './ephemeralView.js';
-
-import {
-  pollCreated, 
-  voteReceived,
-  voteRetracted,
-  voteChanged,
-} from './voting.js';
-
-import {addSystemMessage} from './systemMessage.js';
+import {addSystemMessage} from '../Togethernet/systemMessage.js';
 
 export const handleData = ({event, peerId}) => {
   let data;
@@ -26,7 +10,9 @@ export const handleData = ({event, peerId}) => {
   }
 
   if (data.type === 'text') {
-    renderIncomingEphemeralMessage(data.data);
+    const textRecord = new EphemeralTextRecord(data.data);
+    store.getRoom(data.roomId).addEphemeralHistory(textRecord);
+    textRecord.render();
   } else if (data.type === 'initPeer') {
     initPeer({...data.data});
   } else if (data.type === 'position') {
@@ -41,7 +27,8 @@ export const handleData = ({event, peerId}) => {
   } else if (data.type === 'removeEphemeralMessage') {
     removeEphemeralPeerMessage(data.data);
   } else if (data.type === 'removeMessageInThread') {
-    removeEphemeralPeerMessageInThread(data.data);
+    const {messageId} = data.data;
+    $(`#textMessageContent-${messageId}`).text('[removed]')
   } else if (data.type === 'requestRooms') {
     sendRooms(peerId);
   } else if (data.type === 'shareRooms') {
@@ -49,15 +36,24 @@ export const handleData = ({event, peerId}) => {
   } else if (data.type === 'setAgendaHidden') {
     setAgendaHidden(data.data);
   } else if (data.type === 'pollCreated') {
-    pollCreated(data.data);
+    const {roomId, textRecordId} = data.data;
+    const pollRecord = store.getRoom(roomId).ephemeralHistory[textRecordId];
+    pollRecord.pollCreated();
   } else if (data.type === 'voteCasted') {
-    voteReceived(data.data);
+    const {roomId, textRecordId, option, socketId} = data.data;
+    const pollRecord = store.getRoom(roomId).ephemeralHistory[textRecordId];
+    pollRecord.voteReceived({option, socketId});  
   } else if (data.type === 'voteRetracted') {
-    voteRetracted(data.data);
+    const {roomId, textRecordId, option, socketId} = data.data;
+    const pollRecord = store.getRoom(roomId).ephemeralHistory[textRecordId];
+    pollRecord.voteRetracted({option, socketId});
   } else if (data.type === 'voteChanged') {
-    voteChanged(data.data);
+    const {roomId, textRecordId, option, socketId} = data.data;
+    const pollRecord = store.getRoom(roomId).ephemeralHistory[textRecordId];
+    pollRecord.voteChanged({option, socketId});
   } else if (data.type === 'updateFacilitators') {
-    updateFacilitators(data.data);
+    const {roomId, facilitators} = data.data;
+    store.getRoom(roomId).updateFacilitators(facilitators);
   } else if (data.type === 'initConsentToArchiveProcess') {
     const {roomId, messageId, name} = data.data;
     const room = store.getRoom(roomId);
@@ -116,4 +112,21 @@ const initPeer = (data) => {
   const peer = store.getPeer(socketId);
   peer.updateState({avatar, name, currentRoomId: roomId, left, top});
   store.updateOrInitializeRoom(roomId, room).addMember(peer);
+};
+
+const removeEphemeralPeerMessage = ({roomId, messageId}) => {
+  $(`.textRecord#${messageId}`).finish().animate({opacity: 0}, {
+    complete: () => {
+      $(`textRecord#${messageId}`).remove();
+      store.getRoom(roomId).removeEphemeralHistory(messageId);
+    }
+  });
+};
+
+const setAgendaHidden = ({agendaId, shouldHide}) => {
+  if (shouldHide) {
+    $(`#${agendaId}`).find('.textBubble').hide();
+  } else {
+    $(`#${agendaId}`).find('.textBubble').show();
+  }
 };

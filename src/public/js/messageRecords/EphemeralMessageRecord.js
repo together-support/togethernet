@@ -1,7 +1,7 @@
-import store from '../../store/index.js';
-import {roomModes} from '../../constants/index.js';
+import store from '../store/index.js';
+import {roomModes} from '../constants.js';
 import {AgendaTextRecord, DisappearingTextRecord, PersistentTextRecord, ThreadedTextRecord} from './ephemeralMessageRecords/index.js';
-import {addSystemMessage} from '../systemMessage.js';
+import {addSystemMessage} from '../Togethernet/systemMessage.js';
 import sample from 'lodash/sample';
 
 const messageTypeToComponent = {

@@ -2,9 +2,9 @@ import io from 'socket.io-client';
 import store from '../store/index.js';
 import {getBrowserRTC} from './ensureWebRTC.js';
 import {handleData} from './dataReceiver.js';
-import {addSystemMessage} from './systemMessage.js';
-import archivalSpace from './archivalSpace.js'
-import User from './User.js';
+import {addSystemMessage} from '../Togethernet/systemMessage.js';
+import archivalSpace from '../ArchivalSpace/index.js'
+import User from '../User/index.js';
 
 export default class PeerConnection {
   constructor () {

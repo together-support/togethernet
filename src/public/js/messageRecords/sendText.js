@@ -1,7 +1,7 @@
-import { roomModes } from '../constants/index.js';
+import { roomModes } from '../constants.js';
 import store from '../store/index.js';
-import EphemeralMessageRecord from './messageRecords/EphemeralMessageRecord.js';
-import {clearSystemMessage} from './systemMessage.js';
+import EphemeralMessageRecord from './EphemeralMessageRecord.js';
+import {clearSystemMessage} from '../Togethernet/systemMessage.js';
 
 export const sendMessage = () => {
   const $messageInput = $('#_messageInput');

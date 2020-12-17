@@ -44,18 +44,6 @@ const animationEvents = {
   'ArrowDown': moveDown
 };
 
-export const makeDraggableUser = () => {
-  $('#user').draggable({
-    grid: [$('#user').outerWidth(), $('#user').outerWidth()],
-    stop: onAnimationComplete,
-    containment: $('.chat'),
-  });
-
-  $('#user').on('dragstart', () => {
-    hideEphemeralMessageText();
-  });
-};
-
 const hideEphemeralMessageText = () => {
   store.getCurrentRoom().$room.find('.textBubble.message').each((_, el) => {
     $(el).hide();

@@ -1,7 +1,7 @@
 import DOMPurify from 'dompurify';
 
 import store from '../store/index.js';
-import {makeDraggableUser} from './animatedAvatar.js';
+import {makeDraggableUser} from './animation.js';
 import compact from 'lodash/compact';
 
 export default class User {

@@ -1,7 +1,7 @@
-import {roomModes} from '../constants/index.js';
+import {roomModes} from '../constants.js';
 import store from '../store/index.js';
-import Room from './Room.js';
-import publicConfig from '../config/index.js';
+import Room from '../Room/index.js';
+import publicConfig from '../../config/index.js';
 import pull from 'lodash/pull';
 
 const defaultOptions = {
