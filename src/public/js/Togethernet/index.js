@@ -1,6 +1,6 @@
 import archivalSpace from '../ArchivalSpace/index.js';
 import PeerConnection from '../PeerConnection/index.js';
-import {startRecordingAudio, sendAudio} from '../MessageRecords/audio.js';
+// import {startRecordingAudio, sendAudio} from '../MessageRecords/audio.js';
 import RoomForm from '../RoomForm/index.js';
 import {sendMessage} from '../MessageRecords/sendText.js'
 
@@ -20,7 +20,7 @@ class Togethernet {
   attachUIEvents = () => {
     this.preventPageScroll();
     this.handleMessageSendingEvents();
-    this.handleAudioEvents();
+    // this.handleAudioEvents();
     this.detectThreadStart();
     this.hideInteractionButtonsOnMouseLeave();
     this.navigateToArchivalSpaceEvent();
