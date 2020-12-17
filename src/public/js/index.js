@@ -1,13 +1,7 @@
-import store from '../store/index.js';
-import PeerConnection from './PeerConnection.js';
-import {attachUIEvents} from './uiEvents.js';
-import archivalSpace from './archivalSpace.js';
+import store from './store/index.js';
+import Togethernet from './Togethernet/index.js'
 
 $(window).load(() => {
-  archivalSpace.fetchArchivedMessages().then(() => {
-    archivalSpace.render();
-  });
-  attachUIEvents();
-  new PeerConnection().connect();
+  new Togethernet().initialize();
   window.debugStore = store;
 });

@@ -3,9 +3,9 @@ import throttle from 'lodash/throttle';
 import pull from 'lodash/pull';
 import difference from 'lodash/difference';
 import {keyboardEvent} from './animatedAvatar.js';
-import { roomModes } from '../constants/index.js';
-import {addSystemMessage} from './systemMessage.js';
-import EphemeralMessageRecord from './messageRecords/EphemeralMessageRecord.js';
+import { roomModes } from '../../constants/index.js';
+import {addSystemMessage} from '../systemMessage.js';
+import EphemeralMessageRecord from '../messageRecords/EphemeralMessageRecord.js';
 
 export default class Room {
   constructor(options) {

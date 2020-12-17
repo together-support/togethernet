@@ -1,5 +1,5 @@
 import publicConfig from '../config/index.js';
-import Room from '../js/Room.js';
+import Room from '../js/Room/index.js';
 
 export const EGALITARIAN_MODE = 'egalitarian';
 export const DIRECT_ACTION_MODE = 'direct-action';

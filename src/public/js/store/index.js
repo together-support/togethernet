@@ -1,6 +1,6 @@
 import {defaultRooms} from '../constants/index.js';
 import Room from '../js/Room.js';
-import Peer from '../js/Peer.js'
+import Peer from '../js/Peer/index.js'
 
 class Store {
   constructor() {
