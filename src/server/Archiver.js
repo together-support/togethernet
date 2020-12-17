@@ -1,4 +1,4 @@
-import PGClient from './PGClient.js'
+import PGClient from './PGClient.js';
 
 class Archiver {
   constructor () {

@@ -2,7 +2,7 @@ import archivalSpace from '../ArchivalSpace/index.js';
 import PeerConnection from '../PeerConnection/index.js';
 // import {startRecordingAudio, sendAudio} from '../MessageRecords/audio.js';
 import RoomForm from '../RoomForm/index.js';
-import {sendMessage} from '../MessageRecords/sendText.js'
+import {sendMessage} from '../MessageRecords/sendText.js';
 
 class Togethernet {
   initialize = async () => {
@@ -44,13 +44,13 @@ class Togethernet {
   }
 
   handleAudioEvents = () => {
-    $('#_recordBtn').on('mousedown', startRecordingAudio);
-    $('#_recordBtn').on('mouseup', sendAudio);
+    // $('#_recordBtn').on('mousedown', startRecordingAudio);
+    // $('#_recordBtn').on('mouseup', sendAudio);
   }
 
   detectThreadStart = () => {
     $('#messageType').on('messageThread', (e) => {
-      if (Boolean(e.threadPreviousMessage)) {
+      if (e.threadPreviousMessage) {
         $(e.target).attr('data-thread-entry-message', e.threadPreviousMessage.id);
       } else {
         $(e.target).removeAttr('data-thread-entry-message');
@@ -66,7 +66,7 @@ class Togethernet {
     $('#archivalSpaceLink').on('click', () => {
       $('.chat').hide();
       $('#archivalSpace').show();
-      $('#_messageInput').attr('disabled', true)
+      $('#_messageInput').attr('disabled', true);
     });
   }
 }

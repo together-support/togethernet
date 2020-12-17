@@ -33,7 +33,7 @@ export default class RoomForm {
     $('#backToCustomize').on('click', () => this.goToPage(1));
     $('#addFacilitator').on('click', () => {
       this.listFacilitatorOptions();
-      this.goToPage(2)
+      this.goToPage(2);
     });
     
     $('.modalOverlay').on('click', () => {

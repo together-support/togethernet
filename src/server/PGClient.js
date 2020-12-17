@@ -19,7 +19,7 @@ class PGClient {
     const query = {
       text: `INSERT INTO ${resource}(${keys.join(',')}) VALUES(${range(1, keys.length + 1).map(i => `$${i}`)}) RETURNING *`,
       values: Object.values(values),
-    }
+    };
 
     this.pool.query(query, (error, result) => {
       callback(error, result);

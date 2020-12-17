@@ -3,7 +3,7 @@ import store from '../store/index.js';
 import {getBrowserRTC} from './ensureWebRTC.js';
 import {handleData} from './dataReceiver.js';
 import {addSystemMessage} from '../Togethernet/systemMessage.js';
-import archivalSpace from '../ArchivalSpace/index.js'
+import archivalSpace from '../ArchivalSpace/index.js';
 import User from '../User/index.js';
 
 export default class PeerConnection {

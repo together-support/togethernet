@@ -16,55 +16,55 @@ export default class SignalingServer {
 
       socket.on('sendOffers', this.handleSendOffers);
       socket.on('sendAnswer', (message) => {
-        this.handleSendAnswer(socket, message)
+        this.handleSendAnswer(socket, message);
       });
       socket.on('trickleCandidate', this.handleTrickleCandidate);
       socket.on('disconnect', () => this.handleDisconnect(socket));
-    })
+    });
   }
 
   initConnections = (initiator) => {
     const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== initiator.id);
     peerIds.forEach((peerId) => {
-      this.sendConnection(initiator, {type: "initConnections", initiator: initiator.id, peerId});    
-    })
+      this.sendConnection(initiator, {type: 'initConnections', initiator: initiator.id, peerId});    
+    });
   }
 
   alertArchivedMessage = (messageData) => {
     Object.keys(this.io.sockets.connected).forEach((socketId) => {
       const connection = this.io.sockets.connected[socketId];
-      this.sendConnection(connection, {type: "archivedMessage", messageData});    
-    })
+      this.sendConnection(connection, {type: 'archivedMessage', messageData});    
+    });
   }
 
   handleSendOffers = ({offer, peerId, fromSocket}) => {
     const connection = this.io.sockets.connected[peerId];
-    this.sendConnection(connection, {type: "offer", offer, offerInitiator: fromSocket});    
+    this.sendConnection(connection, {type: 'offer', offer, offerInitiator: fromSocket});    
   }
 
   handleSendAnswer = (socket, {offerInitiator, answer}) => {
     const connection = this.io.sockets.connected[offerInitiator];   
-    if(Boolean(connection)){ 
-      this.sendConnection(connection, {type: "answer", answer, fromSocket: socket.id}); 
+    if(connection){ 
+      this.sendConnection(connection, {type: 'answer', answer, fromSocket: socket.id}); 
     }
   }
 
   handleTrickleCandidate = ({fromSocket, candidate}) => {
-    const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== fromSocket)
+    const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== fromSocket);
 
     peerIds.forEach((peerId) => {
       const connection = this.io.sockets.connected[peerId];
-      this.sendConnection(connection, {type: "candidate", candidate, fromSocket}); 
-    })
+      this.sendConnection(connection, {type: 'candidate', candidate, fromSocket}); 
+    });
   }
 
   handleDisconnect = ({id: leavingUser}) => {
-    const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== leavingUser)
+    const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== leavingUser);
 
     peerIds.forEach((peerId) => {
       const connection = this.io.sockets.connected[peerId];
-      this.sendConnection(connection, {type: "peerLeave", leavingUser}); 
-    })
+      this.sendConnection(connection, {type: 'peerLeave', leavingUser}); 
+    });
   }
 
   sendConnection = (socket, message) => {

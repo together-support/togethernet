@@ -1,5 +1,6 @@
 import store from '../store/index.js';
 import {addSystemMessage} from '../Togethernet/systemMessage.js';
+import EphemeralMessageRecord from '../MessageRecords/EphemeralMessageRecord.js';
 
 export const handleData = ({event, peerId}) => {
   let data;
@@ -10,13 +11,13 @@ export const handleData = ({event, peerId}) => {
   }
 
   if (data.type === 'text') {
-    const textRecord = new EphemeralTextRecord(data.data);
+    const textRecord = new EphemeralMessageRecord(data.data);
     store.getRoom(data.roomId).addEphemeralHistory(textRecord);
     textRecord.render();
   } else if (data.type === 'initPeer') {
     initPeer({...data.data});
   } else if (data.type === 'position') {
-    store.getPeer(data.data.socketId).updatePosition(data.data)
+    store.getPeer(data.data.socketId).updatePosition(data.data);
   } else if (data.type === 'newRoom') {
     addNewRoom(data.data);
   } else if (data.type === 'joinedRoom') {
@@ -28,7 +29,7 @@ export const handleData = ({event, peerId}) => {
     removeEphemeralPeerMessage(data.data);
   } else if (data.type === 'removeMessageInThread') {
     const {messageId} = data.data;
-    $(`#textMessageContent-${messageId}`).text('[removed]')
+    $(`#textMessageContent-${messageId}`).text('[removed]');
   } else if (data.type === 'requestRooms') {
     sendRooms(peerId);
   } else if (data.type === 'shareRooms') {
@@ -61,7 +62,7 @@ export const handleData = ({event, peerId}) => {
     messageRecord.initConsentToArchiveReceived({consentToArchiveInitiator: name});
   } else if (data.type === 'blockConsentToArchive') {
     const {roomId, messageId, name} = data.data;
-    addSystemMessage(`Process stopped. \n\n ${name} would not prefer not to archive this message at the moment.`)
+    addSystemMessage(`Process stopped. \n\n ${name} would not prefer not to archive this message at the moment.`);
     const room = store.getRoom(roomId);
     const messageRecord = room.ephemeralHistory[messageId];
     messageRecord.consentToArchiveBlocked();

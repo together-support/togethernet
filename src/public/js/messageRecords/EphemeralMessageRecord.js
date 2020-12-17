@@ -36,7 +36,7 @@ export default class EphemeralMessageRecord {
 
     if (props.messageType === 'threadedMessage' && (!props.threadPreviousMessageId) && (!props.threadNextMessageId)) {
       const entryMessage = room.ephemeralHistory[props.threadEntryMessageId];
-      const threadTail = entryMessage.getThreadTail()
+      const threadTail = entryMessage.getThreadTail();
       threadTail.messageData.threadNextMessageId = messageData.id;
       messageData.threadPreviousMessageId = threadTail.messageData.id;
     }
@@ -51,11 +51,11 @@ export default class EphemeralMessageRecord {
     const {roomId, threadNextMessageId} = this.messageData;
     if (!threadNextMessageId) {
       return this;
-    };
+    }
 
     const ephemeralHistory = store.getRoom(roomId).ephemeralHistory;
     let threadNextMessage = ephemeralHistory[threadNextMessageId];
-    while (Boolean(threadNextMessage.messageData.threadNextMessageId)) {
+    while (threadNextMessage.messageData.threadNextMessageId) {
       threadNextMessage = ephemeralHistory[threadNextMessage.messageData.threadNextMessageId];
     }
 
@@ -69,7 +69,7 @@ export default class EphemeralMessageRecord {
   initiateConsentToArchiveProcess = (e) => {
     e.stopPropagation();
     const {roomId, id} = this.messageData;
-    addSystemMessage("you have just asked for everyone's consent to archive the message");
+    addSystemMessage('you have just asked for everyone\'s consent to archive the message');
     store.sendToPeers({
       type: 'initConsentToArchiveProcess', 
       data: {
@@ -82,7 +82,7 @@ export default class EphemeralMessageRecord {
   }
 
   initConsentToArchiveReceived = ({consentToArchiveInitiator}) => {
-    addSystemMessage(`${consentToArchiveInitiator} has just asked for your consent to archive this message. \n\n move your avatar so that it overalps with the message. \n\n enter (y) for YES and (s) for STOP`)
+    addSystemMessage(`${consentToArchiveInitiator} has just asked for your consent to archive this message. \n\n move your avatar so that it overalps with the message. \n\n enter (y) for YES and (s) for STOP`);
     this.messageData.consentToArchiveInitiator = consentToArchiveInitiator;
     this.performConsentToArchive();
   }
@@ -109,14 +109,14 @@ export default class EphemeralMessageRecord {
           this.giveConsentToArchive();
         }
       } else if (e.key === 's') {
-        this.blockConsentToArchive()
+        this.blockConsentToArchive();
       }
     }
   }
 
   giveConsentToArchive = () => {
     this.consentToArchiveReceived(store.getCurrentUser());
-    addSystemMessage("You've given your consent to archive this message.\n\nwaiting for peers to give their consent...")
+    addSystemMessage('You\'ve given your consent to archive this message.\n\nwaiting for peers to give their consent...');
 
     const {id, roomId} = this.messageData;
     const room = store.getRoom(roomId);
@@ -148,11 +148,11 @@ export default class EphemeralMessageRecord {
     Array.from({length: 25}).forEach(_ => {
       const color = sample(consentColors);    
       const $consentIndicator = $('<div class="consentIndicator given"></div>');
-      $consentIndicator.css({backgroundColor: color})
+      $consentIndicator.css({backgroundColor: color});
       $consentIndicator.appendTo(this.$textRecord());  
     });
 
-    this.finishConsentToArchiveProcess()
+    this.finishConsentToArchiveProcess();
   }
 
   consentToArchiveReceived = (user) => {
@@ -323,7 +323,7 @@ export default class EphemeralMessageRecord {
     const size = Math.round(50 / (Math.floor(Math.sqrt(Object.values(this.messageData.consentToArchiveRecords).length)) + 1));
     Object.values(this.messageData.consentToArchiveRecords).forEach(profile => {
       const $consentIndicator = $('<div class="consentIndicator"></div>');
-      $consentIndicator.css({backgroundColor: profile.avatar})
+      $consentIndicator.css({backgroundColor: profile.avatar});
       $consentIndicator.width(size);
       $consentIndicator.height(size);
       $consentIndicator.appendTo($textRecord);
@@ -360,7 +360,7 @@ export default class EphemeralMessageRecord {
   }
 
   handleRemoveMessageInThread = () => {
-    $(`#textMessageContent-${this.messageData.id}`).text('[removed]')
+    $(`#textMessageContent-${this.messageData.id}`).text('[removed]');
   
     store.sendToPeers({
       type: 'removeMessageInThread',

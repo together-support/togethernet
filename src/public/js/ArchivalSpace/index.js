@@ -7,8 +7,8 @@ class ArchivalSpace {
 
   fetchArchivedMessages = async () => {
     const response = await fetch('/archive', {
-      method: "GET",
-      headers: {"Content-Type": "application/json"},
+      method: 'GET',
+      headers: {'Content-Type': 'application/json'},
     });
 
     const messageRecords = await response.json(); 
@@ -19,20 +19,20 @@ class ArchivalSpace {
     const $messageRecordAvatar = this.renderArchivalMessageAvatar(messageData);
     $messageRecordAvatar.appendTo($('#archivalMessagesContainer'));
 
-    const $messageDetails = this.renderArchivalMessageDetails(messageData)
+    const $messageDetails = this.renderArchivalMessageDetails(messageData);
     $messageDetails.appendTo($('#archivalMessagesDetailsContainer'));
   }
 
   renderArchivalMessageAvatar = (messageRecord) => {
     const {base_color, secondary_colors} = messageRecord;
     
-    const $messageRecordAvatar = $(`<div class="archival textRecord"></div>`);
+    const $messageRecordAvatar = $('<div class="archival textRecord"></div>');
     $messageRecordAvatar.css({backgroundColor: base_color});
     
-    Array.from({length: 25}).forEach(_ => {
+    Array.from({length: 25}).forEach(() => {
       const color = sample(secondary_colors);
       const $consentIndicator = $('<div class="consentIndicator" style="display:none"></div>');
-      $consentIndicator.css({backgroundColor: color})
+      $consentIndicator.css({backgroundColor: color});
       $consentIndicator.appendTo($messageRecordAvatar);
     });
   
@@ -63,7 +63,7 @@ class ArchivalSpace {
       const $messageRecordAvatar = this.renderArchivalMessageAvatar(messageRecord);
       $messageRecordAvatar.appendTo($('#archivalMessagesContainer'));
 
-      const $messageDetails = this.renderArchivalMessageDetails(messageRecord)
+      const $messageDetails = this.renderArchivalMessageDetails(messageRecord);
       $messageDetails.appendTo($('#archivalMessagesDetailsContainer'));
     });
   }

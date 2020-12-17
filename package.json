@@ -6,7 +6,8 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "lint": "eslint src"
   },
   "dependencies": {
     "@babel/core": "^7.12.3",

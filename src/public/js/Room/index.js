@@ -61,7 +61,7 @@ export default class Room {
         store.sendToPeers({
           type: 'deleteRoom', 
           data: {removedRoom: this.roomId},
-        })
+        });
       }
     });
 
@@ -70,7 +70,7 @@ export default class Room {
 
   purgeSelf = () => {
     Object.values(this.members).forEach(member => {
-      member.joinedRoom('ephemeralSpace')
+      member.joinedRoom('ephemeralSpace');
     });
 
     this.$roomLink.remove();
@@ -113,7 +113,7 @@ export default class Room {
     const {socketId} = member;
     Object.values(store.get('rooms')).forEach(room => delete room.members[socketId]);
     member.state.currentRoomId = this.roomId;
-    this.members[socketId] = member
+    this.members[socketId] = member;
     member.render();
     member.renderParticipantAvatar();
   }
@@ -134,7 +134,7 @@ export default class Room {
   renderAvatars = () => {
     Object.values(this.members).forEach(member => {
       member.currentRoomId = this.roomId;
-      member.render()
+      member.render();
     });
   }
 
@@ -149,12 +149,12 @@ export default class Room {
   }
 
   onTransferFacilitator = (e) => {
-    const newFacilitators = [...this.facilitators]
+    const newFacilitators = [...this.facilitators];
     pull(newFacilitators, store.getCurrentUser().socketId);
 
     const $peerAvatar = $(e.target).closest('.avatar');
     const peerId = $peerAvatar.attr('id').split('peer-')[1];
-    newFacilitators.push(peerId)
+    newFacilitators.push(peerId);
 
     store.sendToPeers({
       type: 'updateFacilitators',

@@ -102,17 +102,17 @@ export default class User {
   }
 
   render = async () => {
-    const room = store.getRoom(this.state.currentRoomId)
+    const room = store.getRoom(this.state.currentRoomId);
     const $avatar = this.$avatar();
-    $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId))
+    $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
     $avatar.appendTo(room.$room);
   }
 
   sendToServer = async (messageData) => {
-    const {message, name, roomId, avatar, consentToArchiveRecords} = messageData
+    const {message, name, roomId, avatar, consentToArchiveRecords} = messageData;
     await fetch('/archive', {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         author: name, 
         content: message,
@@ -123,7 +123,7 @@ export default class User {
         message_type: 'text_message'
       })
     })
-    .then(response => response.text())
-    .then(data => console.log(data));
+      .then(response => response.text())
+      .then(data => console.log(data));
   }
 }

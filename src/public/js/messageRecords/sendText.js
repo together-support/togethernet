@@ -11,11 +11,11 @@ export const sendMessage = () => {
     return;
   }
 
-  const left = Math.round($('#user').position().left)
-  const top = Math.round($('#user').position().top)
+  const left = Math.round($('#user').position().left);
+  const top = Math.round($('#user').position().top);
   let messageType = $('#messageType option:selected').val();
   
-  const threadEntryMessageId = $('#messageType').attr('data-thread-entry-message')
+  const threadEntryMessageId = $('#messageType').attr('data-thread-entry-message');
   if (messageType === 'message' && Boolean(threadEntryMessageId) && store.getCurrentRoom().mode === roomModes.egalitarian) {
     messageType = 'threadedMessage';
   }

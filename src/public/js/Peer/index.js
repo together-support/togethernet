@@ -11,7 +11,7 @@ export default class Peer {
       currentRoomId: '',
       left: 0,
       top: 0,
-    }
+    };
 
     this.dataChannel = {};
   }
@@ -20,7 +20,7 @@ export default class Peer {
     return {
       ...this.state,
       socketId: this.socketId,
-    }
+    };
   }
 
   $avatar = () => {
@@ -70,7 +70,7 @@ export default class Peer {
     this.state = {
       ...this.state,
       ...options,
-    }
+    };
     const {name, avatar} = this.state;
     this.$avatar().finish().animate({backgroundColor: avatar}).find('span').text(String(name).slice(0, 2));
     this.getParticipantAvatarEl().finish().animate({backgroundColor: avatar});
@@ -81,7 +81,7 @@ export default class Peer {
   }
 
   updatePosition = ({left, top}) => {
-    this.state = {...this.state, left, top}
+    this.state = {...this.state, left, top};
     this.$avatar().finish().animate({left, top});
   }
 
@@ -117,7 +117,7 @@ export default class Peer {
       this.makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
     }
 
-    $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId))
+    $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
 
     $avatar.appendTo(room.$room);
   }
