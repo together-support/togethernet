@@ -17,8 +17,9 @@
   <body>
 
 <div class="grid-container"> 
-
-  <div class = "avatar" style= "background-color:FireBrick;"></div>
+      
+<div class = "avatar" style= "background-color:FireBrick;"></div>
+<div class = "ghost"></div>
   
 </div>
 
@@ -47,6 +48,8 @@ let userX = parseInt(getComputedStyle(document.documentElement)
 let userY = parseInt(getComputedStyle(document.documentElement)
     .getPropertyValue('--user-y'));
 
+const ghost = document.querySelector('.ghost');
+
 // zooming feature
 function zoomIn(){
         if (zoomStage > 0){
@@ -57,10 +60,10 @@ function zoomIn(){
         document.documentElement.style.setProperty('--cell-horizontal-num', cellNum);
         document.documentElement.style.setProperty('--cell-vertical-num', cellNum/2);
         document.documentElement.style.setProperty('--cell-size', newCellSize+'vh');
-        
+        animateAvatar();
         console.log(`cell size: ${newCellSize} horizotal cell num: ${cellNum} vertical cell num: ${cellNum/2}`);
     } else {
-        console.log('reached minimum zoom');
+        alert('reached minimum zoom');
     }
 }
 
@@ -73,11 +76,11 @@ if (zoomStage < 2){
         document.documentElement.style.setProperty('--cell-horizontal-num', cellNum);
         document.documentElement.style.setProperty('--cell-vertical-num', cellNum/2);
         document.documentElement.style.setProperty('--cell-size', newCellSize+'vh');
-
+        animateAvatar();
         console.log(`cell size: ${newCellSize} horizotal cell num: ${cellNum} vertical cell num: ${cellNum/2}`);
 
     } else {
-        console.log('reached maximum zoom');
+        alert('reached maximum zoom');
     }
 }
 
@@ -85,8 +88,8 @@ if (zoomStage < 2){
 
 $(document).keydown(function(e){
  
- //e.which is set by jQuery for those browsers that do not normally support e.keyCode.
- var keyCode = e.keyCode || e.which;
+    //e.which is set by jQuery for those browsers that do not normally support e.keyCode.
+    var keyCode = e.keyCode || e.which;
  
     if (keyCode == 38) 
  { 
@@ -94,9 +97,10 @@ $(document).keydown(function(e){
 
         if (userY < 1){
             userY = cellNum/2;    
+             moveAvatar();
+        }else {
+             animateAvatar();
         }
-
-        $('.avatar').css('grid-row-start', userY);
     }
  
     if (keyCode == 40) 
@@ -105,9 +109,11 @@ $(document).keydown(function(e){
 
         if (userY > cellNum/2){
             userY = 1;    
+            moveAvatar();
+        }else {
+             animateAvatar();
         }
 
-        $('.avatar').css('grid-row-start', userY);
     }
  
     if (keyCode == 37) 
@@ -115,10 +121,11 @@ $(document).keydown(function(e){
         userX--;
 
         if (userX < 1){
-            userX = cellNum;    
+            userX = cellNum;   
+              moveAvatar();
+        } else {
+             animateAvatar();
         }
-
-        $('.avatar').css('grid-column-start', userX);
     }
  
     if (keyCode == 39) 
@@ -127,15 +134,34 @@ $(document).keydown(function(e){
         userX++;
 
         if (userX > cellNum){
-            userX = 1;    
+            userX = 1;   
+             moveAvatar();
+        } else {
+               animateAvatar();
         }
-
-        $('.avatar').css('grid-column-start', userX);
     }
 
-        console.log(`x:${userX}, y:${userY}`);
+    console.log(`x:${userX}, y:${userY}`);
  
 });
+
+function animateAvatar(){
+    $('.ghost').css('grid-column-start', userX);
+    $('.ghost').css('grid-row-start', userY);
+    $('.avatar').animate({    
+        'left': ghost.offsetLeft,
+        'top': ghost.offsetTop
+    });
+}
+
+function moveAvatar(){
+    $('.ghost').css('grid-column-start', userX);
+    $('.ghost').css('grid-row-start', userY);
+    $('.avatar').css({    
+        'left': ghost.offsetLeft,
+        'top': ghost.offsetTop
+    });
+}
  
 </script> 
   </body>
