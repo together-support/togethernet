@@ -21,7 +21,6 @@ button p,
 #_privateSendBtn,
 #messageType,
 #systemMessage span,
-.systemBubble p,
 .textBubble p {
   font: 16px nunito, monospace;
 }

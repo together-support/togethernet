@@ -54,8 +54,7 @@ button {
   user-select: none;
 }
 
-.textBubble,
-.systemBubble {
+.textBubble {
   position: absolute;
   top: -10px;
   left: 52px;
@@ -74,8 +73,7 @@ button {
   min-width: 200px;
 }
 
-.textBubble:after,
-.systemBubble:after {
+.textBubble:after {
   content: "";
   position: absolute;
   left: 0;
@@ -91,7 +89,6 @@ button {
   border-right-color: #f8f8f8;
 }
 
-.systemBubble p,
 .textBubble p {
   font: 16px nunito, monospace;
   text-align: left;
