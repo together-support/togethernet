@@ -100,7 +100,7 @@
       </div>
     </div>
 
-    <div class="sendMessageDiv row">
+    <div class="messageActions row" id="ephemeralSpaceActions">
       <input type="color" id="userAvatar" class="slit" title="change avatar color" name="userAvatar">
       <button id="userName" title="change name"></button>
       <input type="text" id="_messageInput" name="text" placeholder=" Type your message here" />
@@ -113,6 +113,23 @@
         <i class="fas fa-microphone-alt"></i>
       </button>
     </div>
+
+    <div class="messageActions row" id="archivalSpaceActions" style="display: none;">
+      <button type="button" class="btn icon" title="move messages" class="moveArchivedMessage" name="commentArchivedMessage">
+        <i class="fa fa-arrows-alt" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="btn icon" title="delete message" class="deleteArchivedMessage" name="commentArchivedMessage">
+        <i class="fa fa-trash"></i>
+      </button>
+      <button type="button" class="btn icon" title="comment on archived message" class="commentArchivedMessage" name="commentArchivedMessage">
+        <i class="fa fa-comment"></i>
+      </button>
+      <input type="text" id="archivalCommentInput" name="text" placeholder=" Type your message here" />
+      <button type="button" class="btn icon" title="download archives" class="downloadArchives" name="downloadArchives">
+        <i class="fa fa-download"></i>
+      </button>
+    </div>
+
     <script src="/js/bundle.js"></script>
     <template id="consentfulGesturesTemplate">
       <div class="votingButtons">

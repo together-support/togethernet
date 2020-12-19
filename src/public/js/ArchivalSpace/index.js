@@ -28,7 +28,7 @@ class ArchivalSpace {
 
   goToRoom = () => {
     $('.chat').hide();
-    $('#archivalSpace').show();
+    $('#ephemeralSpaceActions').hide();
     if (this.memberships.isEmpty()) {
       this.editor = store.getCurrentUser().socketId;
       addSystemMessage("You have landed in the archival channel and you are currently editing");
@@ -37,6 +37,8 @@ class ArchivalSpace {
       addSystemMessage(`You have landed in the archival channel and ${editor.state.name} is currently editing`);
     }
     this.memberships.addMember(store.getCurrentUser());
+    $('#archivalSpaceActions').show();
+    $('#archivalSpace').show();
   }
 
   fetchArchivedMessages = async () => {

@@ -85,10 +85,15 @@ button p,
   height: 100%;
 }
 
-.sendMessageDiv {
+.messageActions {
   padding: 0px;
   background-color: #ffffff;
   z-index: 1;
+  display: flex;
+}
+
+#archivalCommentInput {
+  flex-grow: 1;
 }
 
 .message {

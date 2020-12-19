@@ -89,7 +89,6 @@ export default class Room {
 
   attachEvents = () => {
     this.$roomLink.on('click', this.goToRoom);
-    this.$room.on('showRoom', this.showRoom);
     this.$room.on('hideRoom', this.hideRoom);
 
     this.setBoundary();
@@ -98,10 +97,11 @@ export default class Room {
 
   goToRoom = () => {
     $('#archivalSpace').hide();
+    $('#archivalSpaceActions').hide();
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
     this.memberships.addMember(store.getCurrentUser());
-    this.$room.trigger('showRoom');
+    this.showRoom();
     $('#_messageInput').removeAttr('disabled');
 
     store.sendToPeers({
@@ -115,6 +115,7 @@ export default class Room {
   showRoom = () => {
     store.getCurrentUser().updateState({currentRoomId: this.roomId});
     this.$room.show();
+    $('#ephemeralSpaceActions').show();
     $(window).on('resize', this.onResize);
     
     this.memberships.renderAvatars();

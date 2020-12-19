@@ -7,5 +7,6 @@ export const addSystemMessage = (systemMsg) => {
 
 export const clearSystemMessage = () => {
   $('#systemMessage').hide();
-  $('.chat:visible').get(0).focus();
+  const $visibleEphmeralRoom = $('.chat:visible').get(0)
+  $visibleEphmeralRoom && $visibleEphmeralRoom.focus();
 };
