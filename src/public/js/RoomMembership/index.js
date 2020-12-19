@@ -29,6 +29,14 @@ class RoomMembership {
   isEmpty = () => {
     return !Object.keys(this.members).length;
   }
+
+  updateSelf = (membershipData) => {
+    const {members} = membershipData;
+    Object.keys(members).forEach(memberId => {
+      const member = store.getPeer(memberId);
+      this.addMember(member);
+    })
+  }
 }
 
 export default RoomMembership;

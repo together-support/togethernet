@@ -35,7 +35,7 @@ class Store {
   }
 
   removePeer = (id) => {
-    Object.values(this.rooms).forEach(room => delete room.members[id]);
+    Object.values(this.rooms).forEach(room => room.memberships.removeMember(id));
     delete this.peers[id];
   }
 

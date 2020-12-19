@@ -113,12 +113,13 @@ export default class Peer {
     const room = store.getRoom(this.state.currentRoomId);
     const $avatar = this.$avatar();
 
-    if (room.hasFeature('facilitators') && room.hasFacilitator(store.getCurrentUser().socketId) && !room.hasFacilitator(this.socketId)) {
-      this.makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
+    if (room.constructor.isEphemeral) {
+      if (room.hasFacilitator(store.getCurrentUser().socketId) && !room.hasFacilitator(this.socketId)) {
+        this.makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
+      }
+      $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
     }
-
-    $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
-
+    
     $avatar.appendTo(room.$room);
   }
 }

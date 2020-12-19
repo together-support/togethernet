@@ -39,6 +39,13 @@ class ArchivalSpace {
     this.memberships.addMember(store.getCurrentUser());
     $('#archivalSpaceActions').show();
     $('#archivalSpace').show();
+
+    store.sendToPeers({
+      type: 'joinedRoom',
+      data: {
+        joinedRoomId: 'archivalSpace',
+      }
+    });
   }
 
   fetchArchivedMessages = async () => {
@@ -55,6 +62,12 @@ class ArchivalSpace {
     const message = new ArchivedMessage(messageData)
     message.renderMessageRecord().appendTo($('#archivalMessagesContainer'));
     message.renderMessageDetails().appendTo($('#archivalMessagesDetailsContainer'));
+  }
+
+  updateSelf = (data) => {
+    const {editor, memberships} = data
+    this.editor = editor;
+    this.memberships.updateSelf(memberships)
   }
 
   render = () => {
