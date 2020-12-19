@@ -1,9 +1,21 @@
 import sample from 'lodash/sample';
+import RoomMembership from '@js/RoomMembership';
 
 class ArchivalSpace {
   constructor () {
     this.messageRecords = [];
+    this.members = new RoomMembership();
   }
+
+  initialize = () => {
+    this.fetchArchivedMessages().then(() => {
+      this.render();
+    });
+  };
+
+  attachEvents = () => {
+
+  };
 
   fetchArchivedMessages = async () => {
     const response = await fetch('/archive', {
@@ -15,7 +27,7 @@ class ArchivalSpace {
     this.messageRecords = messageRecords;
   }
 
-  addArchivedMessage = ({messageData}) => {
+  appendArchivedMessage = ({messageData}) => {
     const $messageRecordAvatar = this.renderArchivalMessageAvatar(messageData);
     $messageRecordAvatar.appendTo($('#archivalMessagesContainer'));
 
@@ -69,6 +81,4 @@ class ArchivalSpace {
   }
 }
 
-const archivalSpace = new ArchivalSpace();
-
-export default archivalSpace;
+export default ArchivalSpace;

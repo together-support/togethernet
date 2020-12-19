@@ -1,4 +1,3 @@
-import {defaultRooms} from '@js/constants';
 import Room from '@js/Room';
 import Peer from '@js/Peer';
 
@@ -7,9 +6,7 @@ class Store {
     this.peers = {};
     this.needRoomsInfo = true;
 
-    this.rooms = {
-      ...defaultRooms
-    };
+    this.rooms = {};
 
     this.topBoundary = 0;
     this.leftBoundary = 0;
@@ -89,6 +86,10 @@ class Store {
 
   isMe = (id) => {
     return id === this.socketId;
+  }
+
+  appendArchivedMessage = (e) => {
+    this.getRoom('archivalSpace').appendArchivedMessage(e);
   }
 }
 

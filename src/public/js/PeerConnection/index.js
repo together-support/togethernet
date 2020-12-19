@@ -3,7 +3,6 @@ import store from '@js/store';
 import {getBrowserRTC} from './ensureWebRTC';
 import {handleData} from './dataReceiver';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
-import archivalSpace from '@js/ArchivalSpace';
 import User from '@js/User';
 
 export default class PeerConnection {
@@ -16,8 +15,6 @@ export default class PeerConnection {
   connect = () => {
     this.socket.on('connect', () => {
       new User(this.socket.id).initialize();
-      
-      Object.values(store.get('rooms')).forEach(room => room.attachEvents());
       addSystemMessage('Searching for peers...');
       store.getCurrentRoom().goToRoom();
     });
@@ -27,7 +24,7 @@ export default class PeerConnection {
     this.socket.on('answer', this.handleReceivedAnswer);
     this.socket.on('candidate', this.addCandidate);
     this.socket.on('peerLeave', this.handlePeerLeaveSocket);
-    this.socket.on('archivedMessage', archivalSpace.addArchivedMessage);
+    this.socket.on('archivedMessage', store.appendArchivedMessage);
     this.socket.on('error', this.handleError);
   }
 
