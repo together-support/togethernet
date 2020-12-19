@@ -44,7 +44,7 @@ const animationEvents = {
   'ArrowDown': moveDown
 };
 
-const hideEphemeralMessageText = () => {
+export const hideEphemeralMessageText = () => {
   store.getCurrentRoom().$room.find('.textBubble.message').each((_, el) => {
     $(el).hide();
   });

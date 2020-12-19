@@ -27,7 +27,6 @@ export default class User {
     $('#userName').text('Anonymous');
     $('#userName').on('click', this.setMyUserName);
     await this.render();
-    makeDraggableUser();
   }
 
   $avatar = () => {
@@ -108,6 +107,8 @@ export default class User {
     if (room.constructor.isEphemeral) {
       $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
     }
+
+    makeDraggableUser();
     $avatar.appendTo(room.$room);
   }
 
