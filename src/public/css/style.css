@@ -17,6 +17,7 @@ button p,
 .configureRoomView,
 .modalContent p,
 #userName,
+#editorOptions,
 #_messageInput,
 #_privateSendBtn,
 #messageType,
@@ -102,7 +103,8 @@ button p,
   padding-right: 10pt;
 }
 
-#userName {
+#userName,
+#editorOptions {
   border: 1px solid gray;
   border-right: 0px solid transparent;
   border-top: 0px solid transparent;

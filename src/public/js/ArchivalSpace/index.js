@@ -31,13 +31,7 @@ class ArchivalSpace {
   goToRoom = () => {
     $('.chat').hide();
     $('#ephemeralSpaceActions').hide();
-    if (this.memberships.isEmpty()) {
-      this.editor = store.getCurrentUser().socketId;
-      addSystemMessage("You have landed in the archival channel and you are currently editing");
-    } else {
-      const editor = store.getPeer(this.editor);
-      addSystemMessage(`You have landed in the archival channel and ${editor.state.name} is currently editing`);
-    }
+    this.setEditor();
     this.memberships.addMember(store.getCurrentUser());
     $('#archivalSpaceActions').show();
     $('#archivalSpace').show();
@@ -48,6 +42,21 @@ class ArchivalSpace {
         joinedRoomId: 'archivalSpace',
       }
     });
+  }
+
+  setEditor = () => {
+    let editorProfile;
+    if (this.memberships.isEmpty()) {
+      editorProfile = store.getCurrentUser().getProfile();
+      this.editor = editorProfile.socketId;
+      addSystemMessage("You have landed in the archival channel and you are currently editing");
+    } else {
+      editorProfile = store.getPeer(this.editor).getProfile();
+      addSystemMessage(`You have landed in the archival channel and ${editorName} is currently editing`);
+    }
+    
+    $('#editorOptions').find('.editorName').text(editorProfile.name);
+    $('#editorOptions').find('.editorAvatar').css({backgroundColor: editorProfile.avatar});
   }
 
   fetchArchivedMessages = async () => {
