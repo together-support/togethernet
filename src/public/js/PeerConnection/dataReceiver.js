@@ -1,6 +1,6 @@
 import store from '@js/store';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
-import EphemeralMessageRecord from '@js/EphemeralMessageRecord';
+import EphemeralMessage from '@js/EphemeralMessage';
 
 export const handleData = ({event, peerId}) => {
   let data;
@@ -11,7 +11,7 @@ export const handleData = ({event, peerId}) => {
   }
 
   if (data.type === 'text') {
-    const textRecord = new EphemeralMessageRecord(data.data);
+    const textRecord = new EphemeralMessage(data.data);
     store.getRoom(data.roomId).addEphemeralHistory(textRecord);
     textRecord.render();
   } else if (data.type === 'initPeer') {

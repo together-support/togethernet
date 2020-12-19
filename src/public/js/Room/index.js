@@ -7,7 +7,7 @@ import { roomModes } from '@js/constants';
 
 import {keyboardEvent} from './animation';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
-import EphemeralMessageRecord from '@js/EphemeralMessageRecord';
+import EphemeralMessage from '@js/EphemeralMessage';
 
 export default class Room {
   constructor(options) {
@@ -229,7 +229,7 @@ export default class Room {
   createMessageRecords = (ephemeralHistoryData = {}) => {
     let ephemeralHistory = {};
     Object.values(ephemeralHistoryData).forEach(({messageData}) => {
-      const newMessageRecord = new EphemeralMessageRecord(messageData);
+      const newMessageRecord = new EphemeralMessage(messageData);
       ephemeralHistory[newMessageRecord.messageData.id] = newMessageRecord;
     });
     return ephemeralHistory;

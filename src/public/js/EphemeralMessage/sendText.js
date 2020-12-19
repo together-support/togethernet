@@ -1,6 +1,6 @@
 import { roomModes } from '@js/constants';
 import store from '@js/store';
-import EphemeralMessageRecord from './index';
+import EphemeralMessage from './index';
 import {clearSystemMessage} from '@js/Togethernet/systemMessage';
 
 export const sendMessage = () => {
@@ -23,11 +23,11 @@ export const sendMessage = () => {
   if ($(`#${store.getCurrentUser().currentRoomId}-${left}-${top}`).length) {
     alert('move to an empty spot to write the msg');
   } else {
-    const ephemeralMessageRecord = new EphemeralMessageRecord({message, messageType, left, top, threadEntryMessageId, ...store.getCurrentUser().getProfile()});
-    store.getCurrentRoom().addEphemeralHistory(ephemeralMessageRecord);
-    store.sendToPeers({type: 'text', data: ephemeralMessageRecord.messageData});
+    const ephemeralMessage = new EphemeralMessage({message, messageType, left, top, threadEntryMessageId, ...store.getCurrentUser().getProfile()});
+    store.getCurrentRoom().addEphemeralHistory(ephemeralMessage);
+    store.sendToPeers({type: 'text', data: ephemeralMessage.messageData});
     clearSystemMessage();
-    ephemeralMessageRecord.render();
+    ephemeralMessage.render();
   }
 
   $messageInput.val('');

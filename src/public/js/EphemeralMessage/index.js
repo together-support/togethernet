@@ -15,7 +15,7 @@ const messageTypeToComponent = {
   'threadedMessage': ThreadedTextRecord,
 };
 
-export default class EphemeralMessageRecord {
+export default class EphemeralMessage {
   constructor (props) {
     const messageData = {
       ...props,

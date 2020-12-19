@@ -2,7 +2,7 @@ import PeerConnection from '@js/PeerConnection';
 import Room from '@js/Room';
 import ArchivalSpace from '@js/ArchivalSpace';
 import RoomForm from '@js/RoomForm';
-import {sendMessage} from '@js/EphemeralMessageRecord/sendText';
+import {sendMessage} from '@js/EphemeralMessage/sendText';
 import store from '@js/store';
 import publicConfig from '@public/config';
 import {EGALITARIAN_MODE} from '@js/constants';
@@ -46,7 +46,6 @@ class Togethernet {
     this.handleMessageSendingEvents();
     this.detectThreadStart();
     this.hideInteractionButtonsOnMouseLeave();
-    this.navigateToArchivalSpaceEvent();
   }
 
   handleMessageSendingEvents = () => {
@@ -70,14 +69,6 @@ class Togethernet {
 
   hideInteractionButtonsOnMouseLeave = () => {
     $(document).on('mouseup', () => $('.longPressButton').hide());
-  }
-
-  navigateToArchivalSpaceEvent = () => {
-    $('#archivalSpaceLink').on('click', () => {
-      $('.chat').hide();
-      $('#archivalSpace').show();
-      $('#_messageInput').attr('disabled', true);
-    });
   }
 }
 
