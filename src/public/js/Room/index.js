@@ -19,7 +19,7 @@ export default class Room {
     this.facilitators = options.facilitators || [];
     this.$room = $(`#${this.roomId}`);
     this.$roomLink = $(`#${this.roomId}Link`);
-    this.memberships = new RoomMembership();
+    this.memberships = new RoomMembership(this.roomId);
 
     this.inConsentToArchiveProcess = false;
 

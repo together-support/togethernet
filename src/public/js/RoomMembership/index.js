@@ -1,11 +1,14 @@
+import store from '@js/store';
+
 class RoomMembership {
-  constructor () {
+  constructor (roomId) {
+    this.roomId = roomId;
     this.members = {};
   }
 
   addMember = (member) => {
     const {socketId} = member;
-    Object.values(store.get('rooms')).forEach(room => delete room.members[socketId]);
+    Object.values(store.get('rooms')).forEach(room => room.memberships.removeMember(socketId));
     member.state.currentRoomId = this.roomId;
     this.members[socketId] = member;
     member.render();
@@ -17,6 +20,10 @@ class RoomMembership {
       member.currentRoomId = this.roomId;
       member.render();
     });
+  }
+
+  removeMember = (socketId) => {
+    delete this.members[socketId]
   }
 }
 
