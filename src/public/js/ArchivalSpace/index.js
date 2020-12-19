@@ -1,10 +1,15 @@
 import RoomMembership from '@js/RoomMembership';
 import ArchivedMessage from '@js/ArchivedMessage';
+import store from '@js/store';
 
 class ArchivalSpace {
+  static isEphemeral = false;
+
   constructor () {
     this.messageRecords = [];
-    this.memberships = new RoomMembership();
+    this.memberships = new RoomMembership('archivalSpace');
+
+    this.$roomLink = $('#archivalSpaceLink');
   }
 
   initialize = () => {
@@ -15,12 +20,13 @@ class ArchivalSpace {
   };
 
   attachEvents = () => {
-    $('#archivalSpaceLink').on('click', this.goToRoom)
+    this.$roomLink.on('click', this.goToRoom)
   };
 
   goToRoom = () => {
     $('.chat').hide();
     $('#archivalSpace').show();
+    this.memberships.addMember(store.getCurrentUser());
   }
 
   fetchArchivedMessages = async () => {

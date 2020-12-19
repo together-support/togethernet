@@ -104,7 +104,10 @@ export default class User {
   render = async () => {
     const room = store.getRoom(this.state.currentRoomId);
     const $avatar = this.$avatar();
-    $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
+
+    if (room.constructor.isEphemeral) {
+      $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
+    }
     $avatar.appendTo(room.$room);
   }
 

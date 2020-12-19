@@ -11,6 +11,8 @@ import EphemeralMessage from '@js/EphemeralMessage';
 import RoomMembership from '@js/RoomMembership';
 
 export default class Room {
+  static isEphemeral = true;
+
   constructor(options) {
     this.mode = options.mode;
     this.name = options.name;
