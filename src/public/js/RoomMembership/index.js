@@ -25,6 +25,10 @@ class RoomMembership {
   removeMember = (socketId) => {
     delete this.members[socketId]
   }
+
+  isEmpty = () => {
+    return !Object.keys(this.members).length;
+  }
 }
 
 export default RoomMembership;

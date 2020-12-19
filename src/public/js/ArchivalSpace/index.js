@@ -1,6 +1,7 @@
 import RoomMembership from '@js/RoomMembership';
 import ArchivedMessage from '@js/ArchivedMessage';
 import store from '@js/store';
+import {addSystemMessage} from '@js/Togethernet/systemMessage';
 
 class ArchivalSpace {
   static isEphemeral = false;
@@ -8,6 +9,8 @@ class ArchivalSpace {
   constructor () {
     this.messageRecords = [];
     this.memberships = new RoomMembership('archivalSpace');
+
+    this.editor = null;
 
     this.$roomLink = $('#archivalSpaceLink');
   }
@@ -26,6 +29,13 @@ class ArchivalSpace {
   goToRoom = () => {
     $('.chat').hide();
     $('#archivalSpace').show();
+    if (this.memberships.isEmpty()) {
+      this.editor = store.getCurrentUser().socketId;
+      addSystemMessage("You have landed in the archival channel and you are currently editing");
+    } else {
+      const editor = store.getPeer(this.editor);
+      addSystemMessage(`You have landed in the archival channel and ${editor.state.name} is currently editing`);
+    }
     this.memberships.addMember(store.getCurrentUser());
   }
 
