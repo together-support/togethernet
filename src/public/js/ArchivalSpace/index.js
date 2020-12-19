@@ -2,6 +2,8 @@ import RoomMembership from '@js/RoomMembership';
 import ArchivedMessage from '@js/ArchivedMessage';
 import store from '@js/store';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
+import groupBy from 'lodash/groupBy';
+import sortBy from 'lodash/sortBy';
 
 class ArchivalSpace {
   static isEphemeral = false;
@@ -58,10 +60,22 @@ class ArchivalSpace {
     this.messageRecords = messageRecords;
   }
 
-  appendArchivedMessage = ({messageData}) => {
-    const message = new ArchivedMessage(messageData)
+  appendArchivedMessage = ({messageData, index}) => {
+    const message = new ArchivedMessage(messageData, index + 1);
     message.renderMessageRecord().appendTo($('#archivalMessagesContainer'));
     message.renderMessageDetails().appendTo($('#archivalMessagesDetailsContainer'));
+  }
+
+  appendDateHeading = (date) => {
+    const $dateHeading = $('<h3></h3>');
+    $dateHeading.text(date);
+    $dateHeading.appendTo($('#archivalMessagesDetailsContainer'));
+  }
+
+  appendRoomHeading = (room) => {
+    const $roomHeading = $('<h3></h3>');
+    $roomHeading.text(room);
+    $roomHeading.appendTo($('#archivalMessagesDetailsContainer'));
   }
 
   updateSelf = (data) => {
@@ -70,8 +84,31 @@ class ArchivalSpace {
     this.memberships.updateSelf(memberships)
   }
 
+  groupedMessages = () => {
+    const groupedMessages = {};
+    const dateGroupedMessages = groupBy(this.messageRecords, (messageRecord) => {
+      return new Date(messageRecord.created_at).toDateString();
+    });
+
+    sortBy(Object.keys(dateGroupedMessages), (date) => Date.parse(date)).forEach(date => {
+      groupedMessages[date] = groupBy(dateGroupedMessages[date], 'room_id');
+    })
+
+    return groupedMessages;
+  }
+
   render = () => {
-    this.messageRecords.forEach((messageData) => this.appendArchivedMessage({messageData}));
+    const groupedMessages = this.groupedMessages();
+    Object.keys(groupedMessages).forEach(date => {
+      this.appendDateHeading(date);
+      const messagesByDate = groupedMessages[date];
+      Object.keys(messagesByDate).forEach(roomId => {
+        this.appendRoomHeading(roomId);
+        messagesByDate[roomId].forEach((messageData, index) => {
+          this.appendArchivedMessage({messageData, index});
+        });
+      });
+    });
   }
 }
 

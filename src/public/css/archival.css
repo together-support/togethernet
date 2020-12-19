@@ -47,6 +47,7 @@
   font-size: 18px;
 }
 
-.archivalMessagesDetails h3.author {
-  margin-top: 15px;
+.archivalMessagesDetails .mainContent {
+  display: flex;
+  flex-direction: row;
 }

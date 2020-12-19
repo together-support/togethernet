@@ -1,8 +1,9 @@
 import sample from 'lodash/sample';
 
 class ArchivedMessage {
-  constructor (messageData) {
+  constructor (messageData, index) {
     this.messageData = messageData
+    this.index = index;
   }
 
   renderMessageRecord = () => {
@@ -34,6 +35,7 @@ class ArchivedMessage {
     const $messageDetails = $messageDetailsTemplate.find('.archivalMessagesDetails');
     $messageDetails.find('.archivedTimestamp').text(new Date(created_at).toDateString());
     $messageDetails.find('.participantNames').text(`Participants: ${participant_names.join(', ')}`);
+    $messageDetails.find('.index').text(this.index);
     $messageDetails.find('.author').text(author);
     $messageDetails.find('.content').text(content);
   
