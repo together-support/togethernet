@@ -4,7 +4,7 @@ import ArchivedMessage from '@js/ArchivedMessage';
 class ArchivalSpace {
   constructor () {
     this.messageRecords = [];
-    this.members = new RoomMembership();
+    this.memberships = new RoomMembership();
   }
 
   initialize = () => {

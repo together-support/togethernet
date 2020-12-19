@@ -8,6 +8,7 @@ import { roomModes } from '@js/constants';
 import {keyboardEvent} from './animation';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import EphemeralMessage from '@js/EphemeralMessage';
+import RoomMembership from '@js/RoomMembership';
 
 export default class Room {
   constructor(options) {
@@ -18,7 +19,7 @@ export default class Room {
     this.facilitators = options.facilitators || [];
     this.$room = $(`#${this.roomId}`);
     this.$roomLink = $(`#${this.roomId}Link`);
-    this.members = {...options.members};
+    this.memberships = new RoomMembership();
 
     this.inConsentToArchiveProcess = false;
 
@@ -97,7 +98,7 @@ export default class Room {
     $('#archivalSpace').hide();
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
-    this.addMember(store.getCurrentUser());
+    this.memberships.addMember(store.getCurrentUser());
     this.$room.trigger('showRoom');
     $('#_messageInput').removeAttr('disabled');
 
@@ -109,33 +110,15 @@ export default class Room {
     });
   }
 
-  addMember = (member) => {
-    const {socketId} = member;
-    Object.values(store.get('rooms')).forEach(room => delete room.members[socketId]);
-    member.state.currentRoomId = this.roomId;
-    this.members[socketId] = member;
-    member.render();
-    member.renderParticipantAvatar();
-  }
-
   showRoom = () => {
     store.getCurrentUser().updateState({currentRoomId: this.roomId});
     this.$room.show();
     $(window).on('resize', this.onResize);
     
-    if (this.ephemeral) {
-      this.renderAvatars();
-      this.setBoundary();
-    }
-    
-    this.renderHistory();
-  }
+    this.memberships.renderAvatars();
+    this.setBoundary();
 
-  renderAvatars = () => {
-    Object.values(this.members).forEach(member => {
-      member.currentRoomId = this.roomId;
-      member.render();
-    });
+    this.renderHistory();
   }
 
   hasFeature = (feature) => {
@@ -180,7 +163,7 @@ export default class Room {
     this.facilitators = currentFacilitators;
     this.updateCloseButtons();
     this.updateMessageTypes();
-    this.renderAvatars();
+    this.memberships.renderAvatars();
   }
   
   renderHistory = () => {
