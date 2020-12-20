@@ -99,7 +99,7 @@ export default class Peer {
   joinedRoom = (joinedRoomId) => {
     $(`#peer-${this.socketId}`).finish().animate({opacity: 0}, {
       complete: () => {
-        store.getRoom(joinedRoomId).memberships.addMember(this);
+        store.getRoom(joinedRoomId).addMember(this);
         $(`#peer-${this.socketId}`).css({
           left: 0,
           top: 0,

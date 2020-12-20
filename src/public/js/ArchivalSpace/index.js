@@ -34,6 +34,13 @@ class ArchivalSpace {
   goToRoom = () => {
     $('.chat').hide();
     $('#ephemeralSpaceActions').hide();
+    if (this.memberships.isEmpty()) {
+      addSystemMessage("You have landed in the archival channel and you are currently editing");
+    } else {
+      const editorProfile = store.getPeer(this.editor).getProfile();
+      addSystemMessage(`You have landed in the archival channel and ${editorProfile.name} is currently editing`);
+
+    }
     this.addMember(store.getCurrentUser());
     $('#archivalSpaceActions').show();
     $('#archivalSpace').show();
@@ -52,16 +59,12 @@ class ArchivalSpace {
   }
 
   setEditor = (user) => {
-    let editorProfile = user.getProfile();
     if (this.memberships.isEmpty()) {
+      const editorProfile = user.getProfile();
       this.editor = editorProfile.socketId;
-      addSystemMessage("You have landed in the archival channel and you are currently editing");
-    } else {
-      addSystemMessage(`You have landed in the archival channel and ${editorProfile.editorName} is currently editing`);
+      $('#editorOptions').find('.editorName').text(editorProfile.name);
+      $('#editorOptions').find('.editorAvatar').css({backgroundColor: editorProfile.avatar});
     }
-    
-    $('#editorOptions').find('.editorName').text(editorProfile.name);
-    $('#editorOptions').find('.editorAvatar').css({backgroundColor: editorProfile.avatar});
   }
 
   fetchArchivedMessages = async () => {
@@ -104,7 +107,9 @@ class ArchivalSpace {
   updateSelf = (data) => {
     const {editor, memberships} = data
     this.editor = editor;
-    this.memberships.updateSelf(memberships)
+    Object.keys(memberships.members).forEach(memberId => {
+      this.addMember(store.getPeer(memberId));
+    });
   }
 
   groupedMessages = () => {
