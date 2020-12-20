@@ -8,10 +8,11 @@ class ArchivedMessage {
   }
 
   renderMessageRecord = () => {
-    const {base_color, secondary_colors} = this.messageData;
+    const {id, base_color, secondary_colors} = this.messageData;
     
     const $messageRecordAvatar = $('<div class="archival textRecord"></div>');
     $messageRecordAvatar.css({backgroundColor: base_color});
+    $messageRecordAvatar.attr('id', `archivedMessageRecord-${id}`);
     
     Array.from({length: 25}).forEach(() => {
       const color = sample(secondary_colors);
@@ -31,13 +32,20 @@ class ArchivedMessage {
     return $messageRecordAvatar;
   }
 
+  $messageRecord = () => {
+    const {id} = this.messageData;
+    return $(`#archivedMessageRecord-${id}`);
+  }
+
   toggleIsEditing = () => {
     const archivalSpace = store.getRoom('archivalSpace');
     if (archivalSpace.isEditingMessageId === this.messageData.id) {
       archivalSpace.isEditingMessageId = null;
     } else {
+      $(`#archivedMessageRecord-${archivalSpace.isEditingMessageId}`).removeClass('isEditing');
       archivalSpace.isEditingMessageId = this.messageData.id;
     }
+    this.$messageRecord().toggleClass('isEditing');
   }
 
   renderMessageDetails = () => {

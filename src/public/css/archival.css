@@ -18,6 +18,10 @@
   cursor: pointer;
 }
 
+.textRecord.archival.isEditing {
+  outline: 2px solid blue;
+}
+
 .textRecord.archival > .consentIndicator {
   z-index: 6;
   width: 10px;

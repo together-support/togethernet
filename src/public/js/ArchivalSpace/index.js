@@ -75,8 +75,12 @@ class ArchivalSpace {
   }
 
   archivedMessageUpdated = ({messageData}) => {
-    console.log(messageData)
-    $(`#archivedMessageDetails-${messageData.id}`).find('.content').text(messageData.content);
+    const {id, content} = messageData;
+    $(`#archivedMessageDetails-${id}`).find('.content').text(content);
+    if (this.isEditingMessageId === id) {
+      $(`#archivedMessageRecord-${id}`).removeClass('isEditing');
+      this.isEditingMessageId = null;
+    }
   }
 
   appendArchivedMessage = ({messageData, index}) => {
