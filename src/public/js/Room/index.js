@@ -72,7 +72,7 @@ export default class Room {
   }
 
   purgeSelf = () => {
-    Object.values(this.members).forEach(member => {
+    Object.values(this.memberships.members).forEach(member => {
       member.joinedRoom('ephemeralSpace');
     });
 
@@ -100,7 +100,7 @@ export default class Room {
     $('#archivalSpaceActions').hide();
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
-    this.memberships.addMember(store.getCurrentUser());
+    this.addMember(store.getCurrentUser());
     this.showRoom();
     $('#_messageInput').removeAttr('disabled');
 
@@ -110,6 +110,10 @@ export default class Room {
         joinedRoomId: this.roomId
       }
     });
+  }
+
+  addMember = (user) => {
+    this.memberships.addMember(user);
   }
 
   showRoom = () => {

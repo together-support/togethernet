@@ -4,6 +4,7 @@ import store from '@js/store';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import groupBy from 'lodash/groupBy';
 import sortBy from 'lodash/sortBy';
+import {updateMessage} from '@js/api';
 
 class ArchivalSpace {
   static isEphemeral = false;
@@ -13,6 +14,7 @@ class ArchivalSpace {
     this.memberships = new RoomMembership('archivalSpace');
 
     this.editor = null;
+    this.isEditingMessageId = null;
 
     this.$roomLink = $('#archivalSpaceLink');
   }
@@ -26,13 +28,13 @@ class ArchivalSpace {
 
   attachEvents = () => {
     this.$roomLink.on('click', this.goToRoom)
+    $('#deleteArchivedMessage').on('click', this.markMessageDeleted)
   };
 
   goToRoom = () => {
     $('.chat').hide();
     $('#ephemeralSpaceActions').hide();
-    this.setEditor();
-    this.memberships.addMember(store.getCurrentUser());
+    this.addMember(store.getCurrentUser());
     $('#archivalSpaceActions').show();
     $('#archivalSpace').show();
 
@@ -44,15 +46,18 @@ class ArchivalSpace {
     });
   }
 
-  setEditor = () => {
-    let editorProfile;
+  addMember = (user) => {
+    this.setEditor(user);
+    this.memberships.addMember(user);
+  }
+
+  setEditor = (user) => {
+    let editorProfile = user.getProfile();
     if (this.memberships.isEmpty()) {
-      editorProfile = store.getCurrentUser().getProfile();
       this.editor = editorProfile.socketId;
       addSystemMessage("You have landed in the archival channel and you are currently editing");
     } else {
-      editorProfile = store.getPeer(this.editor).getProfile();
-      addSystemMessage(`You have landed in the archival channel and ${editorName} is currently editing`);
+      addSystemMessage(`You have landed in the archival channel and ${editorProfile.editorName} is currently editing`);
     }
     
     $('#editorOptions').find('.editorName').text(editorProfile.name);
@@ -67,6 +72,11 @@ class ArchivalSpace {
 
     const messageRecords = await response.json(); 
     this.messageRecords = messageRecords;
+  }
+
+  archivedMessageUpdated = ({messageData}) => {
+    console.log(messageData)
+    $(`#archivedMessageDetails-${messageData.id}`).find('.content').text(messageData.content);
   }
 
   appendArchivedMessage = ({messageData, index}) => {
@@ -104,6 +114,16 @@ class ArchivalSpace {
     })
 
     return groupedMessages;
+  }
+
+  markMessageDeleted = () => {
+    if (this.isEditingMessageId && store.getCurrentUser().socketId === this.editor) {
+      const content = `message deleted by ${store.getCurrentUser().getProfile().name}. ${new Date().toString()}`
+      updateMessage({
+        messageId: this.isEditingMessageId,
+        content
+      })
+    }
   }
 
   render = () => {

@@ -6,6 +6,7 @@ import PersistentTextRecord from './PersistentTextRecord';
 import ThreadedTextRecord from './ThreadedTextRecord';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import sample from 'lodash/sample';
+import {createMessage} from '@js/api'
 
 const messageTypeToComponent = {
   'question': PersistentTextRecord,
@@ -132,9 +133,8 @@ export default class EphemeralMessage {
       }
     });
 
-    if (Object.keys(this.messageData.consentToArchiveRecords).length === Object.keys(room.members).length) {
-      store.getCurrentUser().sendToServer(this.messageData);
-      this.messageArchived();
+    if (Object.keys(this.messageData.consentToArchiveRecords).length === Object.keys(room.memberships.members).length) {
+      createMessage(this.messageData).then(this.messageArchived());
       store.sendToPeers({
         type: 'messageArchived', 
         data: {

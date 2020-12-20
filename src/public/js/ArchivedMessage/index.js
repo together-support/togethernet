@@ -1,4 +1,5 @@
 import sample from 'lodash/sample';
+import store from '@js/store';
 
 class ArchivedMessage {
   constructor (messageData, index) {
@@ -24,15 +25,27 @@ class ArchivedMessage {
     }).mouseleave(e => {
       $(e.target).closest('.textRecord').find('.consentIndicator').hide();
     });
+
+    $messageRecordAvatar.on('click', this.toggleIsEditing);
   
     return $messageRecordAvatar;
   }
 
+  toggleIsEditing = () => {
+    const archivalSpace = store.getRoom('archivalSpace');
+    if (archivalSpace.isEditingMessageId === this.messageData.id) {
+      archivalSpace.isEditingMessageId = null;
+    } else {
+      archivalSpace.isEditingMessageId = this.messageData.id;
+    }
+  }
+
   renderMessageDetails = () => {
-    const {author, content, participant_names, created_at} = this.messageData;
+    const {id, author, content, participant_names, created_at} = this.messageData;
   
     const $messageDetailsTemplate = $(document.getElementById('archivalMessagesDetailsTemplate').content.cloneNode(true));
     const $messageDetails = $messageDetailsTemplate.find('.archivalMessagesDetails');
+    $messageDetails.attr('id', `archivedMessageDetails-${id}`);
     $messageDetails.find('.archivedTimestamp').text(new Date(created_at).toDateString());
     $messageDetails.find('.participantNames').text(`Participants: ${participant_names.join(', ')}`);
     $messageDetails.find('.index').text(this.index);

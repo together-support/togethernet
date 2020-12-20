@@ -24,7 +24,8 @@ export default class PeerConnection {
     this.socket.on('answer', this.handleReceivedAnswer);
     this.socket.on('candidate', this.addCandidate);
     this.socket.on('peerLeave', this.handlePeerLeaveSocket);
-    this.socket.on('archivedMessage', store.appendArchivedMessage);
+    this.socket.on('archivedMessage', store.getRoom('archivalSpace').appendArchivedMessage);
+    this.socket.on('archivedMessageUpdated', store.getRoom('archivalSpace').archivedMessageUpdated);
     this.socket.on('error', this.handleError);
   }
 

@@ -111,23 +111,4 @@ export default class User {
     makeDraggableUser();
     $avatar.appendTo(room.$room);
   }
-
-  sendToServer = async (messageData) => {
-    const {message, name, roomId, avatar, consentToArchiveRecords} = messageData;
-    await fetch('/archive', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        author: name, 
-        content: message,
-        room_id: roomId,
-        base_color: avatar,
-        participant_names: Object.values(consentToArchiveRecords).map(r => r.name),
-        secondary_colors: Object.values(consentToArchiveRecords).map(r => r.avatar),
-        message_type: 'text_message'
-      })
-    })
-      .then(response => response.text())
-      .then(data => console.log(data));
-  }
 }

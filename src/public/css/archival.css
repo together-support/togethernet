@@ -15,6 +15,7 @@
 
 .textRecord.archival {
   margin: 5px 5px 0 0;
+  cursor: pointer;
 }
 
 .textRecord.archival > .consentIndicator {
@@ -50,6 +51,7 @@
 .archivalMessagesDetails .mainContent {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 #editorOptions {

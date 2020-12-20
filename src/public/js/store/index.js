@@ -87,10 +87,6 @@ class Store {
   isMe = (id) => {
     return id === this.socketId;
   }
-
-  appendArchivedMessage = (e) => {
-    this.getRoom('archivalSpace').appendArchivedMessage(e);
-  }
 }
 
 const store = new Store();

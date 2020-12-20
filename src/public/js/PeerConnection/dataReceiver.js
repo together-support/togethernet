@@ -112,7 +112,7 @@ const initPeer = (data) => {
   const {socketId, avatar, name, roomId, room, left, top} = data;
   const peer = store.getPeer(socketId);
   peer.updateState({avatar, name, currentRoomId: roomId, left, top});
-  store.updateOrInitializeRoom(roomId, room).memberships.addMember(peer);
+  store.updateOrInitializeRoom(roomId, room).addMember(peer);
 };
 
 const removeEphemeralPeerMessage = ({roomId, messageId}) => {

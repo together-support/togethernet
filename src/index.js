@@ -53,6 +53,16 @@ app.get('/archive', (_, response) => {
   });
 });
 
+app.post('/archive/:id', (req, _) => { 
+  const values = pick(req.body, ['content', 'order']);
+  archiver.update({resource: 'messages', id: req.params.id, values, callback: (error, result) => {
+    if (error) {
+      console.log(error);
+    }
+    signalingServer.alertArchivedMessageUpdated(result.rows[0]);
+  }});
+});
+
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.get('/js/bundle.js',  browserify('src/public/js/index.js'));
