@@ -5,6 +5,7 @@ import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import groupBy from 'lodash/groupBy';
 import sortBy from 'lodash/sortBy';
 import {updateMessage} from '@js/api';
+import moment from 'moment';
 
 class ArchivalSpace {
   static isEphemeral = false;
@@ -28,6 +29,7 @@ class ArchivalSpace {
 
   attachEvents = () => {
     this.$roomLink.on('click', this.goToRoom)
+    $('#deleteArchivedMessage').on('click', this.markMessageDeleted)
     $('#deleteArchivedMessage').on('click', this.markMessageDeleted)
   };
 
@@ -86,22 +88,28 @@ class ArchivalSpace {
     }
   }
 
-  appendArchivedMessage = ({messageData, index}) => {
+  appendArchivedMessage = ({messageData, date, index}) => {
     const message = new ArchivedMessage(messageData, index + 1);
-    message.renderMessageRecord().appendTo($('#archivalMessagesContainer'));
+    message.renderMessageRecord().appendTo($(`#dateGroup-${date.replaceAll(' ', '-')}`).find(`.roomGroup-${messageData.room_id}`));
     message.renderMessageDetails().appendTo($('#archivalMessagesDetailsContainer'));
   }
 
-  appendDateHeading = (date) => {
+  appendDateGroup = (date) => {
     const $dateHeading = $('<h3></h3>');
     $dateHeading.text(date);
     $dateHeading.appendTo($('#archivalMessagesDetailsContainer'));
+
+    const $dateGroupForMessageRecords = $(`<div class="archiveGroup dateGroup" id="dateGroup-${date.replaceAll(' ', '-')}"></div>`);
+    $dateGroupForMessageRecords.appendTo($('#archivalMessagesContainer'));
   }
 
-  appendRoomHeading = (room) => {
+  appendRoomGroup = (room, date) => {
     const $roomHeading = $('<h3></h3>');
     $roomHeading.text(room);
     $roomHeading.appendTo($('#archivalMessagesDetailsContainer'));
+
+    const $roomGroup = $(`<div class="archiveGroup roomGroup roomGroup-${room}"></div>`);
+    $roomGroup.appendTo($(`#dateGroup-${date.replaceAll(' ', '-')}`));
   }
 
   updateSelf = (data) => {
@@ -115,7 +123,7 @@ class ArchivalSpace {
   groupedMessages = () => {
     const groupedMessages = {};
     const dateGroupedMessages = groupBy(this.messageRecords, (messageRecord) => {
-      return new Date(messageRecord.created_at).toDateString();
+      return moment(messageRecord.created_at).format('MMMM D YYYY');
     });
 
     sortBy(Object.keys(dateGroupedMessages), (date) => Date.parse(date)).forEach(date => {
@@ -127,7 +135,7 @@ class ArchivalSpace {
 
   markMessageDeleted = () => {
     if (this.isEditingMessageId && store.getCurrentUser().socketId === this.editor) {
-      const content = `message deleted by ${store.getCurrentUser().getProfile().name}. ${new Date().toString()}`
+      const content = `message deleted by ${store.getCurrentUser().getProfile().name}. ${moment().format('MMMM D h:mm')}`
       updateMessage({
         messageId: this.isEditingMessageId,
         content
@@ -138,12 +146,12 @@ class ArchivalSpace {
   render = () => {
     const groupedMessages = this.groupedMessages();
     Object.keys(groupedMessages).forEach(date => {
-      this.appendDateHeading(date);
+      this.appendDateGroup(date);
       const messagesByDate = groupedMessages[date];
       Object.keys(messagesByDate).forEach(roomId => {
-        this.appendRoomHeading(roomId);
+        this.appendRoomGroup(roomId, date);
         messagesByDate[roomId].forEach((messageData, index) => {
-          this.appendArchivedMessage({messageData, index});
+          this.appendArchivedMessage({messageData, date, index});
         });
       });
     });

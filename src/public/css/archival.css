@@ -7,10 +7,23 @@
 #archivalMessagesContainer {
   width: 50%;
   display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.dateGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.roomGroup {
+  width: 100%;
+  display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  padding: 25px;
   align-content: start;
+  padding: 5px;
 }
 
 .textRecord.archival {
