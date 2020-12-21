@@ -33,6 +33,7 @@ class ArchivalSpace {
     this.$roomLink.on('click', this.goToRoom)
     $('#deleteArchivedMessage').on('click', this.markMessageDeleted)
     $('#archivalCommentInput').on('keyup', this.addComment);
+    $('#downloadArchives').on('click', this.downloadArchives);
   };
 
   goToRoom = () => {
@@ -54,6 +55,14 @@ class ArchivalSpace {
       data: {
         joinedRoomId: 'archivalSpace',
       }
+    });
+  }
+
+  downloadArchives = () => {
+    const archiveContent = $('#archivalMessagesDetailsContainer').html();
+    $('#downloadArchives').attr({
+      'download': `togethernetArchives-${moment().format('MM dd YY')}.html`,
+      'href': 'data:text/plain;charset=utf-8,' + encodeURIComponent(archiveContent),
     });
   }
 
