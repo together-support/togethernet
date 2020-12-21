@@ -9,6 +9,6 @@ CREATE TABLE "messages"
   participant_names VARCHAR(30)[],
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   message_type message_type,
-  position serial,
+  position int,
   commentable_id int
 );
