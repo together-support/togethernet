@@ -27,7 +27,7 @@
 }
 
 .textRecord.archival {
-  margin: 5px 5px 0 0;
+  margin: 5px 0 0 5px;
   cursor: pointer;
 }
 
@@ -39,6 +39,12 @@
   z-index: 6;
   width: 10px;
   height: 10px;
+}
+
+.textRecord.archival.comment {
+  align-items: center;
+  justify-content: center;
+  margin-left: 0;
 }
 
 #archivalMessagesDetailsContainer {

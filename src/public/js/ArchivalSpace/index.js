@@ -4,7 +4,8 @@ import store from '@js/store';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import groupBy from 'lodash/groupBy';
 import sortBy from 'lodash/sortBy';
-import {updateMessage} from '@js/api';
+import filter from 'lodash/filter';
+import {updateMessage, addComment} from '@js/api';
 import moment from 'moment';
 import {formatDateString, formatDateLabel} from '@js/utils';
 
@@ -56,8 +57,19 @@ class ArchivalSpace {
     });
   }
 
-  addComment = () => {
+  addComment = (e) => {
+    if (e.key !== 'Enter') {
+      return;
+    }
+    const messageContent = $('#archivalCommentInput').val();
 
+    if (this.isEditingMessageId && Boolean(messageContent) && store.getCurrentUser().socketId === this.editor) {
+      addComment({
+        ...store.getCurrentUser().getProfile(),
+        message: messageContent,
+        commentableId: this.isEditingMessageId,
+      })
+    }
   }
 
   addMember = (user) => {
@@ -95,10 +107,22 @@ class ArchivalSpace {
   }
 
   appendArchivedMessage = ({messageData}) => {
+    const {room_id, created_at, message_type, commentable_id} = messageData;
+    const message = new ArchivedMessage(messageData, this.getIndex(messageData));
+    const $record = message.renderMessageRecord();
+    const $details = message.renderMessageDetails();
+    if (message_type === 'text_message') {
+      $record.appendTo($(`#dateGroup-${formatDateLabel(created_at)}`).find(`.roomGroup-${room_id}`));
+      $details.appendTo($('#archivalMessagesDetailsContainer'));
+    } else if (message_type === 'comment') {
+      $record.insertAfter($(`#archivedMessageRecord-${commentable_id}`));
+      $details.insertAfter($(`#archivedMessageDetails-${commentable_id}`));
+    }
+  }
+
+  getIndex = (messageData) => {
     const {room_id, created_at} = messageData;
-    const message = new ArchivedMessage(messageData, 0);
-    message.renderMessageRecord().appendTo($(`#dateGroup-${formatDateLabel(created_at)}`).find(`.roomGroup-${room_id}`));
-    message.renderMessageDetails().appendTo($('#archivalMessagesDetailsContainer'));
+    return 0
   }
 
   appendDateGroup = (date) => {
@@ -127,9 +151,10 @@ class ArchivalSpace {
     });
   }
 
-  groupedMessages = () => {
+  groupedTextMessages = () => {
     const groupedMessages = {};
-    const dateGroupedMessages = groupBy(this.messageRecords, (messageRecord) => {
+    const textMessages = filter(this.messageRecords, (record) => record.message_type === 'text_message')
+    const dateGroupedMessages = groupBy(textMessages, (messageRecord) => {
       return formatDateString(messageRecord.created_at);
     });
 
@@ -151,7 +176,7 @@ class ArchivalSpace {
   }
 
   renderMessageRecords = () => {
-    const groupedMessages = this.groupedMessages();
+    const groupedMessages = this.groupedTextMessages();
     Object.keys(groupedMessages).forEach(date => {
       this.appendDateGroup(date);
       const messagesByDate = groupedMessages[date];
@@ -165,7 +190,8 @@ class ArchivalSpace {
   }
 
   renderComments = () => {
-
+    const comments = filter(this.messageRecords, (record) => record.message_type === 'comment');
+    comments.forEach(messageData => this.appendArchivedMessage({messageData}));
   }
 
   render = () => {
