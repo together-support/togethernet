@@ -6,6 +6,7 @@ import groupBy from 'lodash/groupBy';
 import sortBy from 'lodash/sortBy';
 import {updateMessage} from '@js/api';
 import moment from 'moment';
+import {formatDateString, formatDateLabel} from '@js/utils';
 
 class ArchivalSpace {
   static isEphemeral = false;
@@ -30,7 +31,7 @@ class ArchivalSpace {
   attachEvents = () => {
     this.$roomLink.on('click', this.goToRoom)
     $('#deleteArchivedMessage').on('click', this.markMessageDeleted)
-    $('#deleteArchivedMessage').on('click', this.markMessageDeleted)
+    $('#archivalCommentInput').on('keyup', this.addComment);
   };
 
   goToRoom = () => {
@@ -55,6 +56,10 @@ class ArchivalSpace {
     });
   }
 
+  addComment = () => {
+
+  }
+
   addMember = (user) => {
     this.setEditor(user);
     this.memberships.addMember(user);
@@ -64,6 +69,7 @@ class ArchivalSpace {
     if (this.memberships.isEmpty()) {
       const editorProfile = user.getProfile();
       this.editor = editorProfile.socketId;
+      $('#archivalCommentInput').removeAttr('disabled');
       $('#editorOptions').find('.editorName').text(editorProfile.name);
       $('#editorOptions').find('.editorAvatar').css({backgroundColor: editorProfile.avatar});
     }
@@ -88,9 +94,10 @@ class ArchivalSpace {
     }
   }
 
-  appendArchivedMessage = ({messageData, date, index}) => {
-    const message = new ArchivedMessage(messageData, index + 1);
-    message.renderMessageRecord().appendTo($(`#dateGroup-${date.replaceAll(' ', '-')}`).find(`.roomGroup-${messageData.room_id}`));
+  appendArchivedMessage = ({messageData}) => {
+    const {room_id, created_at} = messageData;
+    const message = new ArchivedMessage(messageData, 0);
+    message.renderMessageRecord().appendTo($(`#dateGroup-${formatDateLabel(created_at)}`).find(`.roomGroup-${room_id}`));
     message.renderMessageDetails().appendTo($('#archivalMessagesDetailsContainer'));
   }
 
@@ -123,10 +130,10 @@ class ArchivalSpace {
   groupedMessages = () => {
     const groupedMessages = {};
     const dateGroupedMessages = groupBy(this.messageRecords, (messageRecord) => {
-      return moment(messageRecord.created_at).format('MMMM D YYYY');
+      return formatDateString(messageRecord.created_at);
     });
 
-    sortBy(Object.keys(dateGroupedMessages), (date) => Date.parse(date)).forEach(date => {
+    sortBy(Object.keys(dateGroupedMessages), (date) => moment(date)).forEach(date => {
       groupedMessages[date] = groupBy(dateGroupedMessages[date], 'room_id');
     })
 
@@ -143,18 +150,27 @@ class ArchivalSpace {
     }
   }
 
-  render = () => {
+  renderMessageRecords = () => {
     const groupedMessages = this.groupedMessages();
     Object.keys(groupedMessages).forEach(date => {
       this.appendDateGroup(date);
       const messagesByDate = groupedMessages[date];
       Object.keys(messagesByDate).forEach(roomId => {
         this.appendRoomGroup(roomId, date);
-        messagesByDate[roomId].forEach((messageData, index) => {
-          this.appendArchivedMessage({messageData, date, index});
+        messagesByDate[roomId].forEach((messageData) => {
+          this.appendArchivedMessage({messageData});
         });
       });
     });
+  }
+
+  renderComments = () => {
+
+  }
+
+  render = () => {
+    this.renderMessageRecords();
+    this.renderComments();
   }
 }
 

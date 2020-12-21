@@ -3,7 +3,7 @@ import store from '@js/store';
 
 class ArchivedMessage {
   constructor (messageData, index) {
-    this.messageData = messageData
+    this.messageData = messageData;
     this.index = index;
   }
 
