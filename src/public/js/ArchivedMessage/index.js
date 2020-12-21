@@ -23,6 +23,7 @@ class ArchivedMessage {
   
     $messageRecordAvatar.mouseenter((e) => {
       $(e.target).closest('.textRecord').find('.consentIndicator').show();
+      document.getElementById(`archivedMessageDetails-${id}`).scrollIntoView({behavior: 'smooth'});
     }).mouseleave(e => {
       $(e.target).closest('.textRecord').find('.consentIndicator').hide();
     });
@@ -56,9 +57,7 @@ class ArchivedMessage {
     $messageDetails.attr('id', `archivedMessageDetails-${id}`);
     $messageDetails.find('.archivedTimestamp').text(new Date(created_at).toDateString());
     $messageDetails.find('.participantNames').text(`Participants: ${participant_names.join(', ')}`);
-    $messageDetails.find('.index').text(this.index);
-    $messageDetails.find('.author').text(author);
-    $messageDetails.find('.content').text(content);
+    $messageDetails.find('.content').text(`${this.index}.${content}.${author}`);
   
     return $messageDetails;
   }
