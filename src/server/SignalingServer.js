@@ -8,6 +8,7 @@ export default class SignalingServer {
 
   connect = () => {
     this.io.on('connection', (socket) => {
+      // console.log('server connection initiated', new Date().toLocaleTimeString())
       if (Object.keys(this.io.sockets.connected).length > (process.env.CONNECTION_LIMIT || 10)) {
         socket.disconnect();
       }
@@ -66,6 +67,7 @@ export default class SignalingServer {
   }
 
   handleDisconnect = ({id: leavingUser}) => {
+    // console.log('server disconnected', new Date().toLocaleTimeString())
     const peerIds = Object.keys(this.io.sockets.connected).filter(socketId => socketId !== leavingUser);
 
     peerIds.forEach((peerId) => {

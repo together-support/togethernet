@@ -14,6 +14,7 @@ export default class PeerConnection {
 
   connect = () => {
     this.socket.on('connect', () => {
+      // console.log('socket connected', new Date().toLocaleTimeString());
       new User(this.socket.id).initialize();
       addSystemMessage('Searching for peers...');
       store.getCurrentRoom().goToRoom();
@@ -31,6 +32,7 @@ export default class PeerConnection {
   }
 
   initConnections = async ({peerId}) => {
+    // console.log('initing connections', new Date().toLocaleTimeString())
     const peerConnection = this.initPeerConnection(peerId, {initiator: true});
     try {
       const offer = await peerConnection.createOffer({
@@ -56,6 +58,7 @@ export default class PeerConnection {
   }
 
   initPeerConnection = (peerId, {initiator}) => {
+    // console.log('create peer connection', new Date().toLocaleTimeString())
     const peerConnection = new this._wrtc.RTCPeerConnection({ 
       'iceServers': [{
         urls: [
@@ -84,13 +87,15 @@ export default class PeerConnection {
     }
 
     peerConnection.addEventListener('iceconnectionstatechange', event => {
-      if (peerConnection.iceConnectionState === 'failed') {
+      if (peerConnection.iceConnectionState === 'failed' || peerConnection.iceConnectionState === 'disconnected') {
+        // console.log('restart ice', new Date().toLocaleTimeString())
         peerConnection.restartIce();
       }
     });    
 
     peerConnection.addEventListener('connectionstatechange', event => {
       if (peerConnection.connectionState === 'failed') {
+        // console.log('restart ice from connection state change', new Date().toLocaleTimeString())
         peerConnection.restartIce();
       }
     });
@@ -100,6 +105,7 @@ export default class PeerConnection {
 
   setUpDataChannel = ({dataChannel, peerId, initiator}) => {
     dataChannel.onclose = () => {
+      // console.log('data channel closed', new Date().toLocaleTimeString())
       this.handlePeerLeaveSocket({leavingUser: peerId});
     };
 
@@ -108,6 +114,7 @@ export default class PeerConnection {
     };
 
     dataChannel.onopen = () => {
+      // console.log('datachannel open', new Date().toLocaleTimeString())
       addSystemMessage('Peer connection established. You\'re now ready to chat in the p2p mode');
       store.sendToPeer(dataChannel, {
         type: 'initPeer', 
@@ -142,13 +149,13 @@ export default class PeerConnection {
   }
 
   handleSocketError = (e) => {
-    console.log('socket error')
+    // console.log('Error connecting to server')
     addSystemMessage('Error connecting to server');
   }
 
   handleSocketDisconnect = (e) => {
-    addSystemMessage('Connection to server dropped');
-    console.log('socket close')
+    addSystemMessage('Connection to server dropped', new Date().toLocaleTimeString());
+    // console.log('Connection to server dropped', new Date().toLocaleTimeString())
     $('.participant').remove();
   }
 
