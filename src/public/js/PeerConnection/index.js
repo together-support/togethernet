@@ -143,10 +143,12 @@ export default class PeerConnection {
 
   handleSocketError = (e) => {
     console.log('socket error')
+    addSystemMessage('Error connecting to server');
   }
 
   handleSocketDisconnect = (e) => {
-    console.log('socket disconnected')
+    addSystemMessage('Connection to server dropped');
+    console.log('socket close')
     $('.participant').remove();
   }
 
