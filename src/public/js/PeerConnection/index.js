@@ -26,7 +26,8 @@ export default class PeerConnection {
     this.socket.on('peerLeave', this.handlePeerLeaveSocket);
     this.socket.on('archivedMessage', store.getRoom('archivalSpace').appendArchivedMessage);
     this.socket.on('archivedMessageUpdated', store.getRoom('archivalSpace').archivedMessageUpdated);
-    this.socket.on('error', this.handleError);
+    this.socket.on('error', this.handleSocketError);
+    this.socket.on('disconnect', this.handleSocketDisconnect);
   }
 
   initConnections = async ({peerId}) => {
@@ -99,7 +100,7 @@ export default class PeerConnection {
 
   setUpDataChannel = ({dataChannel, peerId, initiator}) => {
     dataChannel.onclose = () => {
-      console.log('channel close'); 
+      this.handlePeerLeaveSocket({leavingUser: peerId});
     };
 
     dataChannel.onmessage = (event) => {
@@ -122,7 +123,6 @@ export default class PeerConnection {
     };
 
     dataChannel.onerror = (event) => {
-      dataChannel.close();
       addSystemMessage(event.error.message);
     };
     
@@ -141,8 +141,13 @@ export default class PeerConnection {
     }
   }
 
-  handleError = () => {
-    this.socket.disconnect();
+  handleSocketError = (e) => {
+    console.log('socket error')
+  }
+
+  handleSocketDisconnect = (e) => {
+    console.log('socket disconnected')
+    $('.participant').remove();
   }
 
   handlePeerLeaveSocket = ({leavingUser}) => {
