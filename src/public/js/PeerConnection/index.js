@@ -82,6 +82,18 @@ export default class PeerConnection {
       };
     }
 
+    peerConnection.addEventListener('iceconnectionstatechange', event => {
+      if (peerConnection.iceConnectionState === 'failed') {
+        peerConnection.restartIce();
+      }
+    });    
+
+    peerConnection.addEventListener('connectionstatechange', event => {
+      if (peerConnection.connectionState === 'failed') {
+        peerConnection.restartIce();
+      }
+    });
+    
     return peerConnection;
   }
 
