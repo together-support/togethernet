@@ -11,8 +11,9 @@ export const handleData = ({event, peerId}) => {
   }
 
   if (data.type === 'text') {
+    const {roomId} = data.data;
     const textRecord = new EphemeralMessage(data.data);
-    store.getRoom(data.roomId).addEphemeralHistory(textRecord);
+    store.getRoom(roomId).addEphemeralHistory(textRecord);
     textRecord.render();
   } else if (data.type === 'initPeer') {
     initPeer({...data.data});
