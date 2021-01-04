@@ -27,7 +27,6 @@ export default class User {
     $('#userName').text('Anonymous');
     $('#userName').on('click', this.setMyUserName);
     await this.render();
-    makeDraggableUser();
   }
 
   $avatar = () => {
@@ -104,26 +103,12 @@ export default class User {
   render = async () => {
     const room = store.getRoom(this.state.currentRoomId);
     const $avatar = this.$avatar();
-    $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
-    $avatar.appendTo(room.$room);
-  }
 
-  sendToServer = async (messageData) => {
-    const {message, name, roomId, avatar, consentToArchiveRecords} = messageData;
-    await fetch('/archive', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        author: name, 
-        content: message,
-        room_id: roomId,
-        base_color: avatar,
-        participant_names: Object.values(consentToArchiveRecords).map(r => r.name),
-        secondary_colors: Object.values(consentToArchiveRecords).map(r => r.avatar),
-        message_type: 'text_message'
-      })
-    })
-      .then(response => response.text())
-      .then(data => console.log(data));
+    if (room.constructor.isEphemeral) {
+      $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
+    }
+
+    makeDraggableUser();
+    $avatar.appendTo(room.$room);
   }
 }

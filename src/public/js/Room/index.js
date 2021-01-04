@@ -7,9 +7,12 @@ import { roomModes } from '@js/constants';
 
 import {keyboardEvent} from './animation';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
-import EphemeralMessageRecord from '@js/EphemeralMessageRecord';
+import EphemeralMessage from '@js/EphemeralMessage';
+import RoomMembership from '@js/RoomMembership';
 
 export default class Room {
+  static isEphemeral = true;
+
   constructor(options) {
     this.mode = options.mode;
     this.name = options.name;
@@ -18,7 +21,7 @@ export default class Room {
     this.facilitators = options.facilitators || [];
     this.$room = $(`#${this.roomId}`);
     this.$roomLink = $(`#${this.roomId}Link`);
-    this.members = {...options.members};
+    this.memberships = new RoomMembership(this.roomId);
 
     this.inConsentToArchiveProcess = false;
 
@@ -69,7 +72,7 @@ export default class Room {
   }
 
   purgeSelf = () => {
-    Object.values(this.members).forEach(member => {
+    Object.values(this.memberships.members).forEach(member => {
       member.joinedRoom('ephemeralSpace');
     });
 
@@ -86,7 +89,6 @@ export default class Room {
 
   attachEvents = () => {
     this.$roomLink.on('click', this.goToRoom);
-    this.$room.on('showRoom', this.showRoom);
     this.$room.on('hideRoom', this.hideRoom);
 
     this.setBoundary();
@@ -95,10 +97,11 @@ export default class Room {
 
   goToRoom = () => {
     $('#archivalSpace').hide();
+    $('#archivalSpaceActions').hide();
     $('.chat').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
     this.addMember(store.getCurrentUser());
-    this.$room.trigger('showRoom');
+    this.showRoom();
     $('#_messageInput').removeAttr('disabled');
 
     store.sendToPeers({
@@ -109,33 +112,20 @@ export default class Room {
     });
   }
 
-  addMember = (member) => {
-    const {socketId} = member;
-    Object.values(store.get('rooms')).forEach(room => delete room.members[socketId]);
-    member.state.currentRoomId = this.roomId;
-    this.members[socketId] = member;
-    member.render();
-    member.renderParticipantAvatar();
+  addMember = (user) => {
+    this.memberships.addMember(user);
   }
 
   showRoom = () => {
     store.getCurrentUser().updateState({currentRoomId: this.roomId});
     this.$room.show();
+    $('#ephemeralSpaceActions').show();
     $(window).on('resize', this.onResize);
     
-    if (this.ephemeral) {
-      this.renderAvatars();
-      this.setBoundary();
-    }
-    
-    this.renderHistory();
-  }
+    this.memberships.renderAvatars();
+    this.setBoundary();
 
-  renderAvatars = () => {
-    Object.values(this.members).forEach(member => {
-      member.currentRoomId = this.roomId;
-      member.render();
-    });
+    this.renderHistory();
   }
 
   hasFeature = (feature) => {
@@ -180,7 +170,7 @@ export default class Room {
     this.facilitators = currentFacilitators;
     this.updateCloseButtons();
     this.updateMessageTypes();
-    this.renderAvatars();
+    this.memberships.renderAvatars();
   }
   
   renderHistory = () => {
@@ -229,7 +219,7 @@ export default class Room {
   createMessageRecords = (ephemeralHistoryData = {}) => {
     let ephemeralHistory = {};
     Object.values(ephemeralHistoryData).forEach(({messageData}) => {
-      const newMessageRecord = new EphemeralMessageRecord(messageData);
+      const newMessageRecord = new EphemeralMessage(messageData);
       ephemeralHistory[newMessageRecord.messageData.id] = newMessageRecord;
     });
     return ephemeralHistory;

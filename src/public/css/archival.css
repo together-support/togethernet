@@ -7,20 +7,44 @@
 #archivalMessagesContainer {
   width: 50%;
   display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.dateGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.roomGroup {
+  width: 100%;
+  display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  padding: 25px;
   align-content: start;
+  padding: 5px;
 }
 
 .textRecord.archival {
-  margin: 5px 5px 0 0;
+  margin: 5px 0 0 5px;
+  cursor: pointer;
+}
+
+.textRecord.archival.isEditing {
+  outline: 2px solid blue;
 }
 
 .textRecord.archival > .consentIndicator {
   z-index: 6;
   width: 10px;
   height: 10px;
+}
+
+.textRecord.archival.comment {
+  align-items: center;
+  justify-content: center;
+  margin-left: 0;
 }
 
 #archivalMessagesDetailsContainer {
@@ -47,6 +71,19 @@
   font-size: 18px;
 }
 
-.archivalMessagesDetails h3.author {
-  margin-top: 15px;
+.archivalMessagesDetails .mainContent {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+#editorOptions {
+  display: flex;
+  align-items: center;
+}
+
+.editorAvatar {
+  width: 10px;
+  height: 10px;
+  margin-left: 10px;
 }

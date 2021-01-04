@@ -1,4 +1,3 @@
-import {defaultRooms} from '@js/constants';
 import Room from '@js/Room';
 import Peer from '@js/Peer';
 
@@ -7,9 +6,7 @@ class Store {
     this.peers = {};
     this.needRoomsInfo = true;
 
-    this.rooms = {
-      ...defaultRooms
-    };
+    this.rooms = {};
 
     this.topBoundary = 0;
     this.leftBoundary = 0;
@@ -38,7 +35,7 @@ class Store {
   }
 
   removePeer = (id) => {
-    Object.values(this.rooms).forEach(room => delete room.members[id]);
+    Object.values(this.rooms).forEach(room => room.memberships.removeMember(id));
     delete this.peers[id];
   }
 

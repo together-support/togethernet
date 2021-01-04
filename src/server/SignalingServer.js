@@ -37,6 +37,13 @@ export default class SignalingServer {
     });
   }
 
+  alertArchivedMessageUpdated = (messageData) => {
+    Object.keys(this.io.sockets.connected).forEach((socketId) => {
+      const connection = this.io.sockets.connected[socketId];
+      this.sendConnection(connection, {type: 'archivedMessageUpdated', messageData});    
+    });
+  }
+  
   handleSendOffers = ({offer, peerId, fromSocket}) => {
     const connection = this.io.sockets.connected[peerId];
     this.sendConnection(connection, {type: 'offer', offer, offerInitiator: fromSocket});    

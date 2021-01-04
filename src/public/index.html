@@ -19,7 +19,7 @@
   <link rel="stylesheet" type="text/css" href="/css/archival.css" />
 </head>
 
-<body>
+<body scroll="no">
   <div class="container">
     <div id="systemMessage" class="modalOverlay">
       <div class="modalContent long"><span></span></div>
@@ -85,6 +85,7 @@
       </button>
       <button type="button" class="roomLink" id="archivalSpaceLink">
         <p><i class="fas fa-history"></i></p>
+        <div class="participantsContainer"></div>
       </button>
     </div>
 
@@ -99,7 +100,7 @@
       </div>
     </div>
 
-    <div class="sendMessageDiv row">
+    <div class="messageActions row" id="ephemeralSpaceActions">
       <input type="color" id="userAvatar" class="slit" title="change avatar color" name="userAvatar">
       <button id="userName" title="change name"></button>
       <input type="text" id="_messageInput" name="text" placeholder=" Type your message here" />
@@ -112,6 +113,27 @@
         <i class="fas fa-microphone-alt"></i>
       </button>
     </div>
+
+    <div class="messageActions row" id="archivalSpaceActions" style="display: none;">
+      <button type="button" class="btn icon" title="move messages" id="moveArchivedMessage" name="commentArchivedMessage">
+        <i class="fa fa-arrows-alt" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="btn icon" title="delete message" id="deleteArchivedMessage" name="commentArchivedMessage">
+        <i class="fa fa-trash"></i>
+      </button>
+      <button type="button" class="btn icon" title="comment on archived message" class="commentArchivedMessage" name="commentArchivedMessage">
+        <i class="fa fa-comment"></i>
+      </button>
+      <button id="editorOptions">
+        <p class="editorName"><p>
+        <div class="editorAvatar"></div>
+      </button>
+      <input type="text" id="archivalCommentInput" name="text" disabled="disabled" placeholder=" Type your message here" />
+      <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives">
+        <i class="fa fa-download"></i>
+      </a>
+    </div>
+
     <script src="/js/bundle.js"></script>
     <template id="consentfulGesturesTemplate">
       <div class="votingButtons">
@@ -139,15 +161,10 @@
         </div>
       </div>
     </template>
-    <template id="systemBubbleTemplate">
-      <div class="systemBubble"><p></p></div>
-    </template>
 
     <template id="archivalMessagesDetailsTemplate">
       <div class="archivalMessagesDetails">
-        <h3 class="archivedTimestamp"></h3>
-        <h3 class="participantNames"></h3>
-        <h3 class="author"></h3>
+        <p class="participantNames"></p>
         <p class="content"></p>
       </div>
     </template>

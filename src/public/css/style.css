@@ -17,11 +17,11 @@ button p,
 .configureRoomView,
 .modalContent p,
 #userName,
+#editorOptions,
 #_messageInput,
 #_privateSendBtn,
 #messageType,
 #systemMessage span,
-.systemBubble p,
 .textBubble p {
   font: 16px nunito, monospace;
 }
@@ -85,10 +85,15 @@ button p,
   height: 100%;
 }
 
-.sendMessageDiv {
+.messageActions {
   padding: 0px;
   background-color: #ffffff;
   z-index: 1;
+  display: flex;
+}
+
+#archivalCommentInput {
+  flex-grow: 1;
 }
 
 .message {
@@ -98,7 +103,8 @@ button p,
   padding-right: 10pt;
 }
 
-#userName {
+#userName,
+#editorOptions {
   border: 1px solid gray;
   border-right: 0px solid transparent;
   border-top: 0px solid transparent;
