@@ -50,7 +50,7 @@ export const hideEphemeralMessageText = () => {
   });
 };
 
-const onAnimationComplete = () => {
+export const onAnimationComplete = () => {
   showAdjacentMessages();
   sendPositionToPeers();
 };

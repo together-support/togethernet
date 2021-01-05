@@ -30,8 +30,8 @@ class ArchivalSpace {
   };
 
   attachEvents = () => {
-    this.$roomLink.on('click', this.goToRoom)
-    $('#deleteArchivedMessage').on('click', this.markMessageDeleted)
+    this.$roomLink.on('click', this.goToRoom);
+    $('#deleteArchivedMessage').on('click', this.markMessageDeleted);
     $('#archivalCommentInput').on('keyup', this.addComment);
     $('#downloadArchives').on('click', this.downloadArchives);
   };
@@ -40,7 +40,7 @@ class ArchivalSpace {
     $('.chat').hide();
     $('#ephemeralSpaceActions').hide();
     if (this.memberships.isEmpty()) {
-      addSystemMessage("You have landed in the archival channel and you are currently editing");
+      addSystemMessage('You have landed in the archival channel and you are currently editing');
     } else {
       const editorProfile = store.getPeer(this.editor).getProfile();
       addSystemMessage(`You have landed in the archival channel and ${editorProfile.name} is currently editing`);
@@ -77,7 +77,7 @@ class ArchivalSpace {
         ...store.getCurrentUser().getProfile(),
         message: messageContent,
         commentableId: this.isEditingMessageId,
-      })
+      });
     }
   }
 
@@ -131,7 +131,7 @@ class ArchivalSpace {
 
   getIndex = (messageData) => {
     const {room_id, created_at} = messageData;
-    return 0
+    return 0;
   }
 
   appendDateGroup = (date) => {
@@ -153,7 +153,7 @@ class ArchivalSpace {
   }
 
   updateSelf = (data) => {
-    const {editor, memberships} = data
+    const {editor, memberships} = data;
     this.editor = editor;
     Object.keys(memberships.members).forEach(memberId => {
       this.addMember(store.getPeer(memberId));
@@ -162,25 +162,25 @@ class ArchivalSpace {
 
   groupedTextMessages = () => {
     const groupedMessages = {};
-    const textMessages = filter(this.messageRecords, (record) => record.message_type === 'text_message')
+    const textMessages = filter(this.messageRecords, (record) => record.message_type === 'text_message');
     const dateGroupedMessages = groupBy(textMessages, (messageRecord) => {
       return formatDateString(messageRecord.created_at);
     });
 
     sortBy(Object.keys(dateGroupedMessages), (date) => moment(date)).forEach(date => {
       groupedMessages[date] = groupBy(dateGroupedMessages[date], 'room_id');
-    })
+    });
 
     return groupedMessages;
   }
 
   markMessageDeleted = () => {
     if (this.isEditingMessageId && store.getCurrentUser().socketId === this.editor) {
-      const content = `message deleted by ${store.getCurrentUser().getProfile().name}. ${moment().format('MMMM D h:mm')}`
+      const content = `message deleted by ${store.getCurrentUser().getProfile().name}. ${moment().format('MMMM D h:mm')}`;
       updateMessage({
         messageId: this.isEditingMessageId,
         content
-      })
+      });
     }
   }
 

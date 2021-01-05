@@ -23,7 +23,7 @@ class RoomMembership {
   }
 
   removeMember = (socketId) => {
-    delete this.members[socketId]
+    delete this.members[socketId];
   }
 
   isEmpty = () => {
@@ -35,7 +35,7 @@ class RoomMembership {
     Object.keys(members).forEach(memberId => {
       const member = store.getPeer(memberId);
       this.addMember(member);
-    })
+    });
   }
 }
 

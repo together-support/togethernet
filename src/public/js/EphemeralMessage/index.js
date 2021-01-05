@@ -6,7 +6,7 @@ import PersistentTextRecord from './PersistentTextRecord';
 import ThreadedTextRecord from './ThreadedTextRecord';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import sample from 'lodash/sample';
-import {createMessage} from '@js/api'
+import {createMessage} from '@js/api';
 
 const messageTypeToComponent = {
   'question': PersistentTextRecord,

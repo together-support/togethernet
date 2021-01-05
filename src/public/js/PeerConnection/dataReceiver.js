@@ -11,10 +11,12 @@ export const handleData = ({event, peerId}) => {
   }
 
   if (data.type === 'text') {
+    const {roomId} = data.data;
     const textRecord = new EphemeralMessage(data.data);
-    store.getRoom(data.roomId).addEphemeralHistory(textRecord);
+    store.getRoom(roomId).addEphemeralHistory(textRecord);
     textRecord.render();
   } else if (data.type === 'initPeer') {
+    // console.log('init peer', new Date().toLocaleTimeString());
     initPeer({...data.data});
   } else if (data.type === 'position') {
     store.getPeer(data.data.socketId).updatePosition(data.data);

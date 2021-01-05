@@ -15,7 +15,7 @@ export const createMessage = async (messageData) => {
   })
     .then(response => response.text())
     .then(data => console.log(data));
-}
+};
 
 export const addComment = async (commentData) => {
   const {message, name, avatar, commentableId} = commentData;
@@ -33,10 +33,10 @@ export const addComment = async (commentData) => {
   })
     .then(response => response.text())
     .then(data => console.log(data));
-}
+};
 
 export const addThread = async (threadData) => {
-}
+};
 
 export const updateMessage = async ({messageId, content, order}) => {
   await fetch(`/archive/${messageId}`, {
@@ -49,4 +49,4 @@ export const updateMessage = async ({messageId, content, order}) => {
   })
     .then(response => response.text())
     .then(data => console.log(data));
-}
+};

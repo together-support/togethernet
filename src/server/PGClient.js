@@ -28,7 +28,7 @@ class PGClient {
 
   update ({resource, id, values, callback}) {
     const keys = Object.keys(values);
-    const query = `UPDATE ${resource} SET ${keys.map(key => `${key} = '${values[key]}'`).join(', ')} WHERE id = ${id} RETURNING *`
+    const query = `UPDATE ${resource} SET ${keys.map(key => `${key} = '${values[key]}'`).join(', ')} WHERE id = ${id} RETURNING *`;
     
     this.pool.query(query, (error, result) => {
       callback(error, result);
