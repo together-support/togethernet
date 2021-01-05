@@ -26,11 +26,11 @@ class PGClient {
     });
   }
 
-  readAll (resource, callback) {
-    this.pool.query(`SELECT * FROM ${resource}`, (error, results) => {
-      callback(results.rows, error);
-    });
-  }
+  // readAll (resource, callback) {
+  //   this.pool.query(`SELECT * FROM ${resource}`, (error, results) => {
+  //     callback(results.rows, error);
+  //   });
+  // }
 }
 
 export default PGClient;
