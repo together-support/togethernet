@@ -149,13 +149,13 @@ export default class PeerConnection {
   }
 
   handleSocketError = (e) => {
-    // console.log('Error connecting to server')
     addSystemMessage('Error connecting to server');
+    console.log('Socket connection error', e, new Date().toLocaleTimeString());
   }
 
   handleSocketDisconnect = (e) => {
-    addSystemMessage('Connection to server dropped', new Date().toLocaleTimeString());
-    // console.log('Connection to server dropped', new Date().toLocaleTimeString())
+    addSystemMessage('Disconnected from server', new Date().toLocaleTimeString());
+    console.log('Disconnected from server', e, new Date().toLocaleTimeString());
     $('.participant').remove();
   }
 
