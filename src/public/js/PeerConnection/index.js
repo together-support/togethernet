@@ -86,19 +86,19 @@ export default class PeerConnection {
       };
     }
 
-    peerConnection.addEventListener('iceconnectionstatechange', event => {
+    peerConnection.oniceconnectionstatechange = () => {
       if (peerConnection.iceConnectionState === 'failed' || peerConnection.iceConnectionState === 'disconnected') {
         // console.log('restart ice', new Date().toLocaleTimeString())
         peerConnection.restartIce();
       }
-    });    
+    };    
 
-    peerConnection.addEventListener('connectionstatechange', event => {
+    peerConnection.onconnectionstatechange = () => {
       if (peerConnection.connectionState === 'failed') {
         // console.log('restart ice from connection state change', new Date().toLocaleTimeString())
         peerConnection.restartIce();
       }
-    });
+    };
     
     return peerConnection;
   }
