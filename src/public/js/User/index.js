@@ -38,10 +38,17 @@ export default class User {
   }
 
   initAvatar = () => {
+    const $user = $('<div id="user"></div>');
+    const $shadow = $('<div class="shadow"></div>');
+
     const initials = $('#userName').text().slice(0, 2);
-    const $avatar = $(`<div id="user" class="avatar draggabble ui-widget-content"><span>${initials}<span></div>`);
+    const $avatar = $(`<div class="avatar draggabble ui-widget-content"><span>${initials}<span></div>`);
     $avatar.css('background-color', $('#userAvatar').val());
-    return $avatar;
+
+    $avatar.appendTo($user);
+    $shadow.appendTo($user);
+
+    return $user;
   }
 
   getProfile = () => {
