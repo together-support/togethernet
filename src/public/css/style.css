@@ -75,6 +75,11 @@ button p,
   z-index: 1;
 }
 
+#rooms {
+  height: calc(var(--cell-size) * var(--cell-vertical-num));
+  outline: 1px solid gray;
+}
+
 .col {
   display: flex;
   flex-direction: column;
@@ -113,7 +118,7 @@ button p,
   border-right: 0px solid transparent;
   border-top: 0px solid transparent;
   padding: 0 10px;
-  width: auto;
+  width: 27ch;
   height: 50px;
   background-color: #ffffff;
 }
@@ -308,7 +313,6 @@ input[type="color"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 30px;
 }
 
 #systemMessage span {

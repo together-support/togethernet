@@ -37,7 +37,7 @@ class ArchivalSpace {
   };
 
   goToRoom = () => {
-    $('.chat').hide();
+    $('.ephemeralView').hide();
     $('#ephemeralSpaceActions').hide();
     if (this.memberships.isEmpty()) {
       addSystemMessage('You have landed in the archival channel and you are currently editing');
