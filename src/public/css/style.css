@@ -428,8 +428,8 @@ input[type="color"] {
 
 .textRecord,
 .audioRecord {
-  width: 50px;
-  height: 50px;
+  width: var(--cell-size);
+  height: var(--cell-size);
   z-index: 5;
   display: flex;
   flex-wrap: wrap;
