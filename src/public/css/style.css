@@ -57,6 +57,7 @@ button p,
 
 .menu {
   border: none;
+  height: 50px;
 }
 
 .container {
@@ -286,20 +287,21 @@ input[type="color"] {
 .modalContent {
   background-color: rgba(0, 0, 0, 0.8);
   border: 1px solid #888;
-  width: 900px;
-  margin: 100px auto 50px auto;
+  margin: 50px auto;
+  width: calc(var(--cell-size) * var(--cell-horizontal-num));
+  outline: 1px solid black;
 }
 
 .modalContent.long {
-  height: 550px;
+  height: calc(var(--cell-size) * var(--cell-vertical-num) + 50px);
 }
 
 .modalContent.short {
-  height: 500px;
+  height: calc(var(--cell-size) * var(--cell-vertical-num));
 }
 
 .configureRoomView {
-  padding: 25px;
+  padding: 55px;
   background-color: rgba(0, 0, 0, 0.8);
   line-height: 2;
   color: white;
