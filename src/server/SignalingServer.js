@@ -7,7 +7,7 @@ export default class SignalingServer {
   }
 
   connect = () => {
-    this.io.on('connection', (socket) => {
+    this.io.on('connection', (socket) => {      
       // console.log('server connection initiated', new Date().toLocaleTimeString())
       if (Object.keys(this.io.sockets.connected).length > (process.env.CONNECTION_LIMIT || 10)) {
         socket.disconnect();

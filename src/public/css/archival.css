@@ -2,6 +2,14 @@
   background-color: #FFF5D3;
   display: flex;
   flex-direction: row;
+
+  display: block;
+  width: 100%;
+  border: 0.5px solid gray;
+  height: 500px;
+  margin: 0;
+  padding: 0;
+  z-index: 1;  
 }
 
 #archivalMessagesContainer {

@@ -1,13 +1,13 @@
+
 button {
   cursor: pointer;
 }
 
-.squaresView {
-  float: left;
-  background-color: Cornsilk;
-  color: #eee;
-  z-index: 1;
-  position: relative;
+.ephemeralView {
+  display: grid;
+  grid-template-rows: repeat(var(--cell-vertical-num), var(--cell-size));
+  grid-template-columns: repeat(var(--cell-horizontal-num), var(--cell-size));
+  background: var(--bg-color);
 }
 
 .avatar {

@@ -9,6 +9,21 @@
   font-weight: bold;
 }
 
+:root {
+  --default-font-size: 16px;
+  --bg-color: burlywood;
+  --interface-gray: Grey;
+  --avatar-outline-color: whitesmoke;
+  --overlay-color: black;
+  --overlay-opacity: 0.5;
+  --min-navbar-width: 17vw;
+  --cell-horizontal-num: 40;
+  --cell-vertical-num: 16;
+  --cell-size: 5vh;
+  --avatar-x: 1;
+  --avatar-y: 1;
+}
+
 body,
 p,
 button p,
@@ -46,13 +61,11 @@ button p,
 
 .container {
   display: block;
-  width: 900px;
   padding: 0px;
-  margin: auto;
-  margin-top: 50px;
-  margin-bottom: 50px;
+  margin: 0 auto;
   border: none;
   z-index: -5;
+  width: calc(var(--cell-size) * var(--cell-horizontal-num));
 }
 
 .row {
@@ -68,16 +81,6 @@ button p,
   z-index: 1;
 }
 
-.chat {
-  display: block;
-  width: 100%;
-  border: 0.5px solid gray;
-  height: 500px;
-  margin: 0;
-  padding: 0;
-  z-index: 1;
-}
-
 .messageDiv {
   display: flex;
   flex-direction: column;
@@ -90,6 +93,7 @@ button p,
   background-color: #ffffff;
   z-index: 1;
   display: flex;
+  width: 100%;
 }
 
 #archivalCommentInput {
