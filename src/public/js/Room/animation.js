@@ -5,36 +5,46 @@ export const keyboardEvent = (event) => {
 
   if(['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(event.key)) {
     hideEphemeralMessageText();
-    animationEvents[event.key]();
+    animateUser(event.key);
   }
 };
 
-const moveUp = () => {
-  const newY = $('#user').position().top - $('#user').outerWidth();
-  if (newY >= store.get('topBoundary')) {
-    $('#user').finish().animate({top: `-=${$('#user').outerWidth()}`}, {complete: onAnimationComplete});
-  }
+const animateUser = (eventKey) => {
+  const currentColumnStart = parseInt($('#user .shadow').css('grid-column-start')  );
+  const currentRowStart = parseInt($('#user .shadow').css('grid-row-start'));
+  let {newColumnStart, newRowStart} = animationEvents[eventKey]({currentColumnStart, currentRowStart});
+
+  const $shadow = $('#user .shadow');
+  $shadow[0].style.gridColumnStart = newColumnStart;
+  $shadow[0].style.gridRowStart = newRowStart;
+
+  $('#user .avatar').animate({    
+      'left': $shadow.position().left,
+      'top': $shadow.position().top,
+  }, 200);
+
+  $('#user .shadow')[0].scrollIntoView();
+}
+
+const totalX = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cell-horizontal-num'));
+const totalY = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cell-vertical-num'));
+
+const moveUp = ({currentColumnStart: newColumnStart, currentRowStart}) => {
+  const newRowStart = currentRowStart - 1 < 1 ? totalY : currentRowStart - 1;
+  return {newColumnStart, newRowStart};
 };
 
-const moveDown = () => {
-  const newY = $('#user').position().top + $('#user').outerWidth();
-  if (newY + $('#user').outerWidth() <= store.get('bottomBoundary')) {
-    $('#user').finish().animate({top: `+=${$('#user').outerWidth()}`}, {complete: onAnimationComplete});
-  }
+const moveDown = ({currentColumnStart: newColumnStart, currentRowStart}) => {
+  const newRowStart = currentRowStart + 1 > totalY ? 1 : currentRowStart + 1;
+  return {newColumnStart, newRowStart};
 };
-
-const moveLeft = () => {
-  const newX = $('#user').position().left - $('#user').outerWidth();
-  if (newX >= store.get('leftBoundary')) {
-    $('#user').finish().animate({left: `-=${$('#user').outerWidth()}`}, {complete: onAnimationComplete});
-  }
+const moveLeft = ({currentColumnStart, currentRowStart: newRowStart}) => {
+  const newColumnStart = currentColumnStart - 1 < 1 ? totalX : currentColumnStart - 1;
+  return {newColumnStart, newRowStart};
 };
-
-const moveRight = () => {
-  const newX = $('#user').position().left + $('#user').outerWidth();
-  if (newX + $('#user').outerWidth() <= store.get('rightBoundary')) {
-    $('#user').finish().animate({left: `+=${$('#user').outerWidth()}`}, {complete: onAnimationComplete});
-  }
+const moveRight = ({currentColumnStart, currentRowStart: newRowStart}) => {
+  const newColumnStart = currentColumnStart + 1 > totalX ? 1 : currentColumnStart + 1;
+  return {newColumnStart, newRowStart};
 };
 
 const animationEvents = {

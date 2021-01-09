@@ -2,25 +2,11 @@ button {
   cursor: pointer;
 }
 
-.squaresView {
-  float: left;
-  background-color: Cornsilk;
-  color: #eee;
-  z-index: 1;
-  position: relative;
-}
-
-.avatar {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
-  padding: 10px;
-}
-
-.avatar.facilitator {
-  font-weight: 800;
-  text-decoration: underline;
+.ephemeralView {
+  display: grid;
+  grid-template-rows: repeat(var(--cell-vertical-num), var(--cell-size));
+  grid-template-columns: repeat(var(--cell-horizontal-num), var(--cell-size));
+  background: var(--bg-color);
 }
 
 .textRecord.ephemeral,
@@ -36,22 +22,48 @@ button {
   z-index: 25;
 }
 
+.avatar {
+  position: absolute;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
+  padding: 10px;
+}
+
+.avatar.facilitator {
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+.avatar, .shadow {
+  width: var(--cell-size);
+  height: var(--cell-size);
+}
+
+.avatar > span {
+  color: #efefef;
+  font-size: 1em;
+  text-shadow: 1px 1px 1px black;
+  user-select: none;
+}
+
 #user {
+  display: contents;
   z-index: 10;
-  margin: 0;
-  font-size: 0.9em;
 }
 
 #user.inConsentProcess {
   z-index: 20;
 }
 
-.avatar > span,
-#user > span {
-  color: #efefef;
-  font-size: 24px;
-  text-shadow: 1px 1px 1px black;
-  user-select: none;
+#user .avatar,
+#user .shadow {
+  grid-column-start: var(--avatar-x);
+  grid-row-start: var(--avatar-y);
+  margin: 0;
+}
+
+#user .shadow {
+  z-index: 0;
+  outline: 1px solid var(--avatar-outline-color);
 }
 
 .textBubble {

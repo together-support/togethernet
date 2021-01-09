@@ -16,7 +16,6 @@ export default class PeerConnection {
     this.socket.on('connect', () => {
       // console.log('socket connected', new Date().toLocaleTimeString());
       new User(this.socket.id).initialize();
-      addSystemMessage('Searching for peers...');
       store.getCurrentRoom().goToRoom();
     });
 
@@ -34,6 +33,7 @@ export default class PeerConnection {
   initConnections = async ({peerId}) => {
     // console.log('initing connections', new Date().toLocaleTimeString())
     const peerConnection = this.initPeerConnection(peerId, {initiator: true});
+    addSystemMessage('Searching for peers...');
     try {
       const offer = await peerConnection.createOffer({
         offerToReceiveAudio: true
@@ -115,7 +115,6 @@ export default class PeerConnection {
 
     dataChannel.onopen = () => {
       // console.log('datachannel open', new Date().toLocaleTimeString())
-      addSystemMessage('Peer connection established. You\'re now ready to chat in the p2p mode');
       store.sendToPeer(dataChannel, {
         type: 'initPeer', 
         data: {
@@ -130,7 +129,6 @@ export default class PeerConnection {
     };
 
     dataChannel.onerror = (event) => {
-      addSystemMessage(event.error.message);
     };
     
     return dataChannel;

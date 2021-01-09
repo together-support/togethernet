@@ -9,6 +9,21 @@
   font-weight: bold;
 }
 
+:root {
+  --default-font-size: 16px;
+  --bg-color: burlywood;
+  --interface-gray: Grey;
+  --avatar-outline-color: whitesmoke;
+  --overlay-color: black;
+  --overlay-opacity: 0.5;
+  --min-navbar-width: 17vw;
+  --cell-horizontal-num: 40;
+  --cell-vertical-num: 16;
+  --cell-size: 5vh;
+  --avatar-x: 1;
+  --avatar-y: 1;
+}
+
 body,
 p,
 button p,
@@ -42,17 +57,16 @@ button p,
 
 .menu {
   border: none;
+  height: 50px;
 }
 
 .container {
   display: block;
-  width: 900px;
   padding: 0px;
-  margin: auto;
-  margin-top: 50px;
-  margin-bottom: 50px;
+  margin: 0 auto;
   border: none;
   z-index: -5;
+  width: calc(var(--cell-size) * var(--cell-horizontal-num));
 }
 
 .row {
@@ -62,19 +76,14 @@ button p,
   z-index: 1;
 }
 
+#rooms {
+  height: calc(var(--cell-size) * var(--cell-vertical-num));
+  outline: 1px solid gray;
+}
+
 .col {
   display: flex;
   flex-direction: column;
-  z-index: 1;
-}
-
-.chat {
-  display: block;
-  width: 100%;
-  border: 0.5px solid gray;
-  height: 500px;
-  margin: 0;
-  padding: 0;
   z-index: 1;
 }
 
@@ -90,6 +99,7 @@ button p,
   background-color: #ffffff;
   z-index: 1;
   display: flex;
+  width: 100%;
 }
 
 #archivalCommentInput {
@@ -109,7 +119,7 @@ button p,
   border-right: 0px solid transparent;
   border-top: 0px solid transparent;
   padding: 0 10px;
-  width: auto;
+  width: 27ch;
   height: 50px;
   background-color: #ffffff;
 }
@@ -277,20 +287,21 @@ input[type="color"] {
 .modalContent {
   background-color: rgba(0, 0, 0, 0.8);
   border: 1px solid #888;
-  width: 900px;
-  margin: 100px auto 50px auto;
+  margin: 50px auto;
+  width: calc(var(--cell-size) * var(--cell-horizontal-num));
+  outline: 1px solid black;
 }
 
 .modalContent.long {
-  height: 550px;
+  height: calc(var(--cell-size) * var(--cell-vertical-num) + 50px);
 }
 
 .modalContent.short {
-  height: 500px;
+  height: calc(var(--cell-size) * var(--cell-vertical-num));
 }
 
 .configureRoomView {
-  padding: 25px;
+  padding: 55px;
   background-color: rgba(0, 0, 0, 0.8);
   line-height: 2;
   color: white;
@@ -304,7 +315,6 @@ input[type="color"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 30px;
 }
 
 #systemMessage span {
@@ -418,8 +428,8 @@ input[type="color"] {
 
 .textRecord,
 .audioRecord {
-  width: 50px;
-  height: 50px;
+  width: var(--cell-size);
+  height: var(--cell-size);
   z-index: 5;
   display: flex;
   flex-wrap: wrap;
