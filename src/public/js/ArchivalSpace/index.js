@@ -38,7 +38,7 @@ class ArchivalSpace {
 
   goToRoom = () => {
     $('.ephemeralView').hide();
-    $('#ephemeralSpaceActions').hide();
+    $('#pinMessage').hide();
     if (this.memberships.isEmpty()) {
       addSystemMessage('You have landed in the archival channel and you are currently editing');
     } else {
@@ -47,7 +47,7 @@ class ArchivalSpace {
 
     }
     this.addMember(store.getCurrentUser());
-    $('#archivalSpaceActions').show();
+    $('#downloadArchives').show();
     $('#archivalSpace').show();
 
     store.sendToPeers({
@@ -116,15 +116,12 @@ class ArchivalSpace {
   }
 
   appendArchivedMessage = ({messageData}) => {
-    const {room_id, created_at, message_type, commentable_id} = messageData;
+    const {message_type, commentable_id} = messageData;
     const message = new ArchivedMessage(messageData, this.getIndex(messageData));
-    const $record = message.renderMessageRecord();
     const $details = message.renderMessageDetails();
     if (message_type === 'text_message') {
-      $record.appendTo($(`#dateGroup-${formatDateLabel(created_at)}`).find(`.roomGroup-${room_id}`));
       $details.appendTo($('#archivalMessagesDetailsContainer'));
     } else if (message_type === 'comment') {
-      $record.insertAfter($(`#archivedMessageRecord-${commentable_id}`));
       $details.insertAfter($(`#archivedMessageDetails-${commentable_id}`));
     }
   }

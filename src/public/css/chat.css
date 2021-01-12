@@ -6,6 +6,10 @@
   flex-direction: column;
 }
 
+.room {
+  height: calc(var(--cell-vertical-num) * var(--cell-size));
+}
+
 .room:focus {
   outline: 2px solid blue;
 }

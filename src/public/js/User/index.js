@@ -56,7 +56,7 @@ export default class User {
       socketId: this.socketId,
       roomId: this.state.currentRoomId,
       name: $('#displayUserName').text(),
-      avatar: $('#userAvatar').val(),
+      avatar: $('#changeUserAvatar').val(),
     };
   }
 
@@ -103,7 +103,7 @@ export default class User {
   renderParticipantAvatar = () => {
     const $roomLink = store.getRoom(this.state.currentRoomId).$roomLink;
     const $avatar = $(`#participant-${this.socketId}`).length ? $(`#participant-${this.socketId}`) : $(`<div class="participant" id="participant-${this.socketId}"></div>`);
-    $avatar.css('background-color', $('#userAvatar').val());
+    $avatar.css('background-color', $('#changeUserAvatar').val());
     $avatar.appendTo($roomLink.find('.participantsContainer'));
   }
 
