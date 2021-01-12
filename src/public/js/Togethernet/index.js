@@ -46,6 +46,7 @@ class Togethernet {
     this.handleMessageSendingEvents();
     this.detectThreadStart();
     this.hideInteractionButtonsOnMouseLeave();
+    $('#pinMessage').on('click', () => $('#pinMessage').toggleClass('clicked'));
   }
 
   handleMessageSendingEvents = () => {
@@ -58,7 +59,7 @@ class Togethernet {
   }
 
   detectThreadStart = () => {
-    $('#messageType').on('messageThread', (e) => {
+    $('#sendMessage').on('messageThread', (e) => {
       if (e.threadPreviousMessage) {
         $(e.target).attr('data-thread-entry-message', e.threadPreviousMessage.id);
       } else {
