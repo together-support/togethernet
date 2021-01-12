@@ -21,7 +21,10 @@ const animateUser = (eventKey) => {
   $('#user .avatar').animate({    
       'left': $shadow.position().left,
       'top': $shadow.position().top,
-  }, 200);
+  }, {
+    duration: 180,
+    complete: onAnimationComplete
+  });
 
   $('#user .shadow')[0].scrollIntoView();
 }
@@ -78,6 +81,9 @@ const showAdjacentMessages = () => {
 const sendPositionToPeers = () => {
   store.sendToPeers({
     type: 'position', 
-    data: $('#user').position(),
+    data: {
+      columnStart: $('#user .shadow').css('grid-column-start'),
+      rowStart: $('#user .shadow').css('grid-row-start'),
+    },
   });
 };

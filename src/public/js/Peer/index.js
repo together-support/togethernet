@@ -9,8 +9,8 @@ export default class Peer {
       name: '',
       avatar: '',
       currentRoomId: '',
-      left: 0,
-      top: 0,
+      rowStart: '1',
+      columnStart: '1',
     };
 
     this.dataChannel = {};
@@ -32,14 +32,13 @@ export default class Peer {
   }
 
   initAvatar = () => {
-    const {name, left, top, avatar} = this.state;
+    const {name, rowStart, columnStart, avatar} = this.state;
+    console.log(rowStart, columnStart)
     const displayName = name.slice(0, 2);
     const $avatar = $(`<div class="avatar" id="peer-${this.socketId}"><span>${displayName}<span></div>`);
-    $avatar.css({
-      left,
-      top,
-      backgroundColor: avatar,
-    });
+    $avatar.css({backgroundColor: avatar});
+    $avatar[0].style.gridColumnStart = columnStart;
+    $avatar[0].style.gridRowStart = rowStart;
 
     $avatar.on('mousedown', () => $avatar.find('.makeFacilitator').show());
   
@@ -71,6 +70,7 @@ export default class Peer {
       ...this.state,
       ...options,
     };
+
     const {name, avatar} = this.state;
     this.$avatar().finish().animate({backgroundColor: avatar}).find('span').text(String(name).slice(0, 2));
     this.getParticipantAvatarEl().finish().animate({backgroundColor: avatar});
@@ -80,9 +80,10 @@ export default class Peer {
     this.dataChannel = dataChannel;
   }
 
-  updatePosition = ({left, top}) => {
-    this.state = {...this.state, left, top};
-    this.$avatar().finish().animate({left, top});
+  updatePosition = ({rowStart, columnStart}) => {
+    this.state = {...this.state, rowStart, columnStart};
+    this.$avatar()[0].style.gridColumnStart = columnStart;
+    this.$avatar()[0].style.gridRowStart = rowStart;
   }
 
   initParticipantAvatar = () => {
@@ -100,11 +101,9 @@ export default class Peer {
     $(`#peer-${this.socketId}`).finish().animate({opacity: 0}, {
       complete: () => {
         store.getRoom(joinedRoomId).addMember(this);
-        $(`#peer-${this.socketId}`).css({
-          left: 0,
-          top: 0,
-          opacity: 1
-        });
+        $(`#peer-${this.socketId}`).css({opacity: 1});
+        $(`#peer-${this.socketId}`)[0].style.gridColumnStart = 1;
+        $(`#peer-${this.socketId}`)[0].style.gridRowStart = 1;
       }
     });
   }

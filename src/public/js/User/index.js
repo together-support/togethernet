@@ -114,8 +114,6 @@ export default class User {
     if (room.constructor.isEphemeral) {
       $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
     }
-
-    makeDraggableUser();
     $avatar.appendTo(room.$room);
   }
 }

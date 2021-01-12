@@ -16,9 +16,9 @@ export const handleData = ({event, peerId}) => {
     store.getRoom(roomId).addEphemeralHistory(textRecord);
     textRecord.render();
   } else if (data.type === 'initPeer') {
-    // console.log('init peer', new Date().toLocaleTimeString());
     initPeer({...data.data});
   } else if (data.type === 'position') {
+    console.log(data.data)
     store.getPeer(data.data.socketId).updatePosition(data.data);
   } else if (data.type === 'newRoom') {
     addNewRoom(data.data);
@@ -111,9 +111,9 @@ const addNewRoom = ({options}) => {
 };
 
 const initPeer = (data) => {
-  const {socketId, avatar, name, roomId, room, left, top} = data;
+  const {socketId, avatar, name, roomId, room, columnStart, rowStart} = data;
   const peer = store.getPeer(socketId);
-  peer.updateState({avatar, name, currentRoomId: roomId, left, top});
+  peer.updateState({avatar, name, currentRoomId: roomId, columnStart, rowStart});
   store.updateOrInitializeRoom(roomId, room).addMember(peer);
 };
 
