@@ -6,11 +6,6 @@
   flex-direction: column;
 }
 
-.room {
-  outline: 1px solid gray;
-  background-color: midnightblue;
-}
-
 .room:focus {
   outline: 2px solid blue;
 }
@@ -29,7 +24,7 @@
   border-radius: 50%;
   width: 35px;
   height: 35px;
-  background-color: var(--primary-background-color);
+  background-color: var(--primary-bg-color);
   color: var(--primary-font-color);
   margin-right: 10px;
 }
@@ -40,5 +35,6 @@
   flex-grow: 1;
   padding-left: 10px;
   height: 35px;
-  background-color: var(--primary-background-color);
+  background-color: var(--primary-bg-color);
+  color: var(--primary-font-color);
 }

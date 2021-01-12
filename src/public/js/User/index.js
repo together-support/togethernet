@@ -41,7 +41,7 @@ export default class User {
     const $user = $('<div id="user"></div>');
     const $shadow = $('<div class="shadow"></div>');
 
-    const initials = $('#displayUsername').text().slice(0, 2);
+    const initials = $('#displayUserName').text().slice(0, 2);
     const $avatar = $(`<div class="avatar draggabble ui-widget-content"><span>${initials}<span></div>`);
     $avatar.css('background-color', $('#changeUserAvatar').val());
 

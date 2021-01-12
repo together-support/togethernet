@@ -11,7 +11,8 @@
 
 :root {
   --default-font-size: 16px;
-  --bg-color: black;
+  --primary-bg-color: black;
+  --ephemeral-bg-color: midnightblue;
   --primary-font-color: whitesmoke;
   --secondary-font-color: gray;
   --interface-gray: Grey;
@@ -44,7 +45,7 @@ button p,
 }
 
 body {
-  background-color: var(--bg-color);
+  background-color: var(--primary-bg-color);
   padding: 2.5vh;
 }
 

@@ -40,7 +40,7 @@
 }
 
 .roomLink {
-  background-color: var(--primary-background-color);
+  background-color: var(--primary-bg-color);
   color: var(--primary-font-color);
   margin: 0 2px 0 0;
   width: 100%;

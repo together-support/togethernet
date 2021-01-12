@@ -131,7 +131,7 @@ button {
   text-decoration: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-color: var(--primary-background-color);
+  background-color: var(--primary-bg-color);
   color: var(--primary-font-color);
 }
 

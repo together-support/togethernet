@@ -6,7 +6,7 @@ button {
   display: grid;
   grid-template-rows: repeat(var(--cell-vertical-num), var(--cell-size));
   grid-template-columns: repeat(var(--cell-horizontal-num), var(--cell-size));
-  background: var(--bg-color);
+  background-color: var(--ephemeral-bg-color);  
 }
 
 .textRecord.ephemeral,
