@@ -102,7 +102,7 @@ export default class Room {
     this.updateMessageTypes();
     this.addMember(store.getCurrentUser());
     this.showRoom();
-    $('#_messageInput').removeAttr('disabled');
+    $('#writeMessage').removeAttr('disabled');
 
     store.sendToPeers({
       type: 'joinedRoom',

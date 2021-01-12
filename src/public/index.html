@@ -113,11 +113,9 @@
         <div id="archivalMessagesDetailsContainer"></div>
       </div>
       <div class="messageActions row" id="ephemeralSpaceActions">
-        <input type="text" id="_messageInput" name="text" placeholder=" Type your message here" />
-      </div>
-      <div class="messageActions row" id="archivalSpaceActions" style="display: none;">
-        <input type="text" id="archivalCommentInput" name="text" disabled="disabled" placeholder=" Type your message here" />
-        <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives">
+        <button class="btn icon" title="pin message" id="pinMessage" name="pinMessage">⚐</button>
+        <input type="text" id="writeMessage" name="text" placeholder=" Type your message here" />
+        <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives" style="display: none;">
           <i class="fa fa-download"></i>
         </a>
       </div>
@@ -151,7 +149,7 @@
     <div class="messageActions row" id="ephemeralSpaceActions">
       <input type="color" id="userAvatar" class="slit" title="change avatar color" name="userAvatar">
       <button id="userName" title="change name"></button>
-      <input type="text" id="_messageInput" name="text" placeholder=" Type your message here" />
+      <input type="text" id="writeMessage" name="text" placeholder=" Type your message here" />
       <select id="messageType">
         <option value="message">send message</option>
         <option value="question">ask a question</option>

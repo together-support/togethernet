@@ -19,8 +19,8 @@
   --overlay-color: black;
   --overlay-opacity: 0.5;
   --min-navbar-width: 17vw;
-  --cell-horizontal-num: 33;
-  --cell-vertical-num: 18;
+  --cell-horizontal-num: 31;
+  --cell-vertical-num: 17;
   --cell-size: 5vh;
   --avatar-x: 1;
   --avatar-y: 1;
@@ -35,7 +35,7 @@ button p,
 .modalContent p,
 #displayUserName,
 #editorOptions,
-#_messageInput,
+#writeMessage,
 #_privateSendBtn,
 #messageType,
 #systemMessage span,
@@ -108,15 +108,6 @@ body {
   padding-right: 10pt;
 }
 
-#_messageInput {
-  border: 1px solid gray;
-  border-right: 0px solid transparent;
-  border-top: 0px solid transparent;
-  display: flex;
-  flex-grow: 5;
-  padding-left: 10px;
-}
-
 .listView {
   float: left;
   background-color: white;
@@ -124,17 +115,10 @@ body {
 }
 
 .btn {
-  padding: 10px;
   margin: 0;
   height: 50px;
   border: 0.5px solid gray;
-  border-left: 0px solid transparent;
-  border-top: 0px solid transparent;
   background-color: #efefef;
-}
-
-.btn.icon {
-  width: 50px;
 }
 
 .participantsContainer {

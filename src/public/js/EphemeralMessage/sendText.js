@@ -4,7 +4,7 @@ import EphemeralMessage from './index';
 import {clearSystemMessage} from '@js/Togethernet/systemMessage';
 
 export const sendMessage = () => {
-  const $messageInput = $('#_messageInput');
+  const $messageInput = $('#writeMessage');
   const message = $messageInput.val();
 
   if (!message) {

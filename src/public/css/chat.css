@@ -8,9 +8,37 @@
 
 .room {
   outline: 1px solid gray;
+  background-color: midnightblue;
+}
+
+.room:focus {
+  outline: 2px solid blue;
 }
 
 .messageActions {
   min-height: 50px;
   width: 100%;
+  padding: 5px;
+  background-color: black;
+  justify-content: space-between;
+  border-top: 1px solid gray;
+  align-items: center;
+}
+
+.messageActions button {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  background-color: var(--primary-background-color);
+  color: var(--primary-font-color);
+  margin-right: 10px;
+}
+
+#writeMessage {
+  border-radius: 25px;
+  border: 1px solid gray;
+  flex-grow: 1;
+  padding-left: 10px;
+  height: 35px;
+  background-color: var(--primary-background-color);
 }

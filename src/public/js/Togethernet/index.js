@@ -49,7 +49,7 @@ class Togethernet {
   }
 
   handleMessageSendingEvents = () => {
-    $('#_messageInput').on('keyup', (e) => {
+    $('#writeMessage').on('keyup', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
         sendMessage();
