@@ -39,6 +39,8 @@ class ArchivalSpace {
   goToRoom = () => {
     $('.ephemeralView').hide();
     $('#pinMessage').hide();
+    $('.roomLink').removeClass('currentRoom');
+    this.$roomLink.addClass('currentRoom');
     if (this.memberships.isEmpty()) {
       addSystemMessage('You have landed in the archival channel and you are currently editing');
     } else {

@@ -95,6 +95,8 @@ export default class Room {
   goToRoom = () => {
     $('#archivalSpace').hide();
     $('#downloadArchives').hide();
+    $('.roomLink').removeClass('currentRoom');
+    this.$roomLink.addClass('currentRoom');
     $('.room').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
     this.addMember(store.getCurrentUser());

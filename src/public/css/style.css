@@ -12,6 +12,7 @@
 :root {
   --default-font-size: 16px;
   --primary-bg-color: black;
+  --secondary-bg-color: #282828;
   --ephemeral-bg-color: midnightblue;
   --primary-font-color: whitesmoke;
   --secondary-font-color: gray;
@@ -34,7 +35,7 @@ button p,
 .roomLink,
 .configureRoomView,
 .modalContent p,
-#displayUserName,
+#changeUserName,
 #editorOptions,
 #writeMessage,
 #_privateSendBtn,

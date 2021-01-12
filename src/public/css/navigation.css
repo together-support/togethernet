@@ -52,6 +52,10 @@
   flex-direction: column;
 }
 
+.roomLink.currentRoom {
+  background-color: var(--secondary-bg-color);
+}
+
 .userInfo {
   height: 50px;
   display: flex;
@@ -66,9 +70,18 @@
 #changeUserAvatar {
   width: 16px;
   height: 16px;
+  margin-right: 16px;
 }
 
-#displayUserName {
+#changeUserName {
   font-size: 16px;
   color: var(--primary-font-color);
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  justify-content: space-evenly;
+}
+
+#changeUserName span {
+  margin-right: 16px;
 }

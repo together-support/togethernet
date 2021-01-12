@@ -24,7 +24,7 @@ export default class User {
       store.sendToPeers({type: 'profileUpdated'});
     });
 
-    $('#displayUserName').text('Anonymous');
+    $('#changeUserName span').text('Anonymous');
     $('#changeUserName').on('click', this.setMyUserName);
     await this.render();
   }
@@ -41,7 +41,7 @@ export default class User {
     const $user = $('<div id="user"></div>');
     const $shadow = $('<div class="shadow"></div>');
 
-    const initials = $('#displayUserName').text().slice(0, 2);
+    const initials = $('#changeUserName span').text().slice(0, 2);
     const $avatar = $(`<div class="avatar draggabble ui-widget-content"><span>${initials}<span></div>`);
     $avatar.css('background-color', $('#changeUserAvatar').val());
 
@@ -55,7 +55,7 @@ export default class User {
     return {
       socketId: this.socketId,
       roomId: this.state.currentRoomId,
-      name: $('#displayUserName').text(),
+      name: $('#changeUserName').text(),
       avatar: $('#changeUserAvatar').val(),
     };
   }
@@ -86,7 +86,7 @@ export default class User {
   setMyUserName = () => {
     const name = DOMPurify.sanitize(prompt('Please enter your name:'));
     if (name) {
-      $('#displayUserName').text(name);
+      $('#changeUserName span').text(name);
       $('#user').find('span').text(name.slice(0,2));
     }
     store.sendToPeers({type: 'profileUpdated'});
