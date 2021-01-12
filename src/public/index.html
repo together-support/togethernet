@@ -23,60 +23,6 @@
 
 <body scroll="no">
   <div class="container">
-    <div id="systemMessage" class="modalOverlay">
-      <div class="modalContent long"><span></span></div>
-    </div>
-
-    <div id="configureRoom" class="modalOverlay">
-      <!-- Modal content -->
-      <div class="modalContent long configureRoomView" id="configureRoom-1">
-        <div class="section">
-          <h2>Create a room</h2>
-        </div>
-
-        <div class="section">
-          <h3>Room Title</h3>
-          <p>Customize the name of your room around a topic.</p>
-          <input id="newRoomName"type="text" placeholder="convening-on-the-beach"/>
-        </div>
-
-        <div class="section" id="configureMeetingMode">
-          <h3>Select a mode of Communication</h3>
-          <div name="meetingMode" id="meetingMode"></div>
-        </div>
-
-        <p>Learn more about the modes of communication&nbsp;<a href="#">here</a>.</p>
-
-        <div class="section" id="configureFacilitators" style="display:none;">
-          <h3>Facilitator Module</h3>
-          <p id="configureFacilitatorsDA">You have the option to add 0-3 facilitattors for your room. You may hand the facilitator role to someone else at a later point.</p>
-          <p id="configureFacilitatorsFac">You have the option to add 1-3 facilitattors for your room. You may hand the facilitator role to someone else at a later point.</p>
-          <div class="facilitatorsContainer">
-            <button id="addFacilitator">Set facilitators</button>
-            <div id="currentFacilitators"></div>
-          </div>
-        </div>
-
-        <div class="section" id="votingModuleInfo" style="display:none;">
-          <h3>Voting Module</h3>
-          <p>A voting module will be added to your room, favoring decisions made by more than half of the team members.</p>
-        </div>
-        <div class="section" id="consentfulGestureInfo" style="display:none;">
-          <h3>Consentful Gesture Module</h3>
-          <p>The consentful gesture module includes "Agree", "Disagree", "Oppose", "Block", making it possible to express feedback and needs through non-verbal means.</p>
-        </div>
-        <div class="section modalButtons">
-          <button id="createNewRoom">Create</button>
-        </div>
-      </div>
-
-      <div class="modalContent configureRoomView long" id="configureRoom-2" style="display:none;">
-        <div class="section modalButtons">
-          <button id="backToCustomize">Back</button>
-        </div>
-      </div>
-    </div>
-
     <div class="navigation">
       <h1 class="title">Togethernet</h1>
       <div class="roomsList">
@@ -119,6 +65,59 @@
           <i class="fa fa-download"></i>
         </a>
       </div>
+      <div id="systemMessage" class="modalOverlay">
+        <div class="modalContent long"><span></span></div>
+      </div>
+  
+      <div id="configureRoom" class="modalOverlay">
+        <!-- Modal content -->
+        <div class="modalContent long configureRoomView" id="configureRoom-1">
+          <div class="section">
+            <h2>Create a room</h2>
+          </div>
+  
+          <div class="section">
+            <h3>Room Title</h3>
+            <p>Customize the name of your room around a topic.</p>
+            <input id="newRoomName"type="text" placeholder="convening-on-the-beach"/>
+          </div>
+  
+          <div class="section" id="configureMeetingMode">
+            <h3>Select a mode of Communication</h3>
+            <div name="meetingMode" id="meetingMode"></div>
+          </div>
+  
+          <p>Learn more about the modes of communication&nbsp;<a href="#">here</a>.</p>
+  
+          <div class="section" id="configureFacilitators" style="display:none;">
+            <h3>Facilitator Module</h3>
+            <p id="configureFacilitatorsDA">You have the option to add 0-3 facilitattors for your room. You may hand the facilitator role to someone else at a later point.</p>
+            <p id="configureFacilitatorsFac">You have the option to add 1-3 facilitattors for your room. You may hand the facilitator role to someone else at a later point.</p>
+            <div class="facilitatorsContainer">
+              <button id="addFacilitator">Set facilitators</button>
+              <div id="currentFacilitators"></div>
+            </div>
+          </div>
+  
+          <div class="section" id="votingModuleInfo" style="display:none;">
+            <h3>Voting Module</h3>
+            <p>A voting module will be added to your room, favoring decisions made by more than half of the team members.</p>
+          </div>
+          <div class="section" id="consentfulGestureInfo" style="display:none;">
+            <h3>Consentful Gesture Module</h3>
+            <p>The consentful gesture module includes "Agree", "Disagree", "Oppose", "Block", making it possible to express feedback and needs through non-verbal means.</p>
+          </div>
+          <div class="section modalButtons">
+            <button id="createNewRoom">Create</button>
+          </div>
+        </div>
+  
+        <div class="modalContent configureRoomView long" id="configureRoom-2" style="display:none;">
+          <div class="section modalButtons">
+            <button id="backToCustomize">Back</button>
+          </div>
+        </div>
+      </div>  
     </div>
 
     <!-- <div class="menu row">
