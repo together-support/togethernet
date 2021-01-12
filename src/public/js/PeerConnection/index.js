@@ -14,6 +14,7 @@ export default class PeerConnection {
 
   connect = () => {
     this.socket.on('connect', () => {
+      clearSystemMessage();
       new User(this.socket.id).initialize();
       store.getCurrentRoom().goToRoom();
     });
@@ -112,6 +113,7 @@ export default class PeerConnection {
     };
 
     dataChannel.onopen = () => {
+      clearSystemMessage();
       store.sendToPeer(dataChannel, {
         type: 'initPeer', 
         data: {
