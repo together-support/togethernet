@@ -131,7 +131,8 @@ button {
   text-decoration: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-color: white;
+  background-color: var(--primary-background-color);
+  color: var(--primary-font-color);
 }
 
 select::-ms-expand {

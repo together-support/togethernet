@@ -98,7 +98,7 @@ export default class Room {
   goToRoom = () => {
     $('#archivalSpace').hide();
     $('#archivalSpaceActions').hide();
-    $('.chat').each((_, el) => $(el).trigger('hideRoom'));
+    $('.room').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
     this.addMember(store.getCurrentUser());
     this.showRoom();

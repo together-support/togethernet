@@ -15,6 +15,8 @@
   <!-- import the webpage's stylesheet -->
   <link rel="stylesheet" type="text/css" href="/css/reset.css" />
   <link rel="stylesheet" type="text/css" href="/css/style.css" />
+  <link rel="stylesheet" type="text/css" href="/css/navigation.css" />
+  <link rel="stylesheet" type="text/css" href="/css/chat.css" />
   <link rel="stylesheet" type="text/css" href="/css/ephemeral.css" />
   <link rel="stylesheet" type="text/css" href="/css/archival.css" />
 </head>
@@ -75,7 +77,53 @@
       </div>
     </div>
 
-    <div class="menu row">
+    <div class="navigation">
+      <h1 class="title">Togethernet</h1>
+      <div class="roomsList">
+        <h2>Rooms<button type="button" id="addRoom"><p>+</p></button></h2>
+        <button type="button" class="roomLink" id="ephemeralSpaceLink">
+          <p>sitting-at-the-park</p>
+          <div class="participantsContainer"></div>
+        </button>
+        <h2>Archive</h2>
+        <button type="button" class="roomLink" id="ephemeralSpaceLink">
+          <p>speaking-on-the-stage</p>
+          <div class="participantsContainer"></div>
+        </button>
+      </div>
+      <div class="userInfo">
+        <input type="color" id="changeUserAvatar" title="change avatar color" name="userAvatar">
+        <span id="displayUserName"></span>
+        <button id="changeUserName" title="change name"><i class="fas fa-pencil-alt"></i></button>
+      </div>
+      <div class="userInfo" style="display:none">
+        <button id="editorOptions">
+          <p class="editorName"><p>
+          <div class="editorAvatar"></div>
+        </button>
+      </div>
+    </div>
+
+    <div class="chat" id="rooms">
+      <div class="ephemeralView room" id="ephemeralSpace" tabindex="0">
+        <div class="consentToArchiveOverlay" style="display: none;"></div>
+      </div>
+      <div class="archivalView room" id="archivalSpace" style="display:none;">
+        <div id="archivalMessagesContainer"></div>
+        <div id="archivalMessagesDetailsContainer"></div>
+      </div>
+      <div class="messageActions row" id="ephemeralSpaceActions">
+        <input type="text" id="_messageInput" name="text" placeholder=" Type your message here" />
+      </div>
+      <div class="messageActions row" id="archivalSpaceActions" style="display: none;">
+        <input type="text" id="archivalCommentInput" name="text" disabled="disabled" placeholder=" Type your message here" />
+        <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives">
+          <i class="fa fa-download"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- <div class="menu row">
       <button type="button" class="roomLink" id="ephemeralSpaceLink">
         <p>sitting-at-the-park</p>
         <div class="participantsContainer"></div>
@@ -132,7 +180,7 @@
       <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives">
         <i class="fa fa-download"></i>
       </a>
-    </div>
+    </div> -->
 
     <script src="/js/bundle.js"></script>
     <template id="consentfulGesturesTemplate">

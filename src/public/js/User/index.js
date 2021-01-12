@@ -15,17 +15,17 @@ export default class User {
 
   initialize = async () => {
     store.set('currentUser', this);
-    $('#userAvatar').val(this.getRandomColor());
+    $('#changeUserAvatar').val(this.getRandomColor());
 
-    $('#userAvatar').on('change', (e) => {
+    $('#changeUserAvatar').on('change', (e) => {
       const avatar = e.target.value;
-      $('#user').css('background-color', avatar);
+      $('#user .avatar').css('background-color', avatar);
       $(`#participant-${store.getCurrentUser().socketId}`).css('background-color', avatar);
       store.sendToPeers({type: 'profileUpdated'});
     });
 
-    $('#userName').text('Anonymous');
-    $('#userName').on('click', this.setMyUserName);
+    $('#displayUserName').text('Anonymous');
+    $('#changeUserName').on('click', this.setMyUserName);
     await this.render();
   }
 
@@ -41,7 +41,7 @@ export default class User {
     const $user = $('<div id="user"></div>');
     const $shadow = $('<div class="shadow"></div>');
 
-    const initials = $('#userName').text().slice(0, 2);
+    const initials = $('#displayUsername').text().slice(0, 2);
     const $avatar = $(`<div class="avatar draggabble ui-widget-content"><span>${initials}<span></div>`);
     $avatar.css('background-color', $('#userAvatar').val());
 
@@ -55,7 +55,7 @@ export default class User {
     return {
       socketId: this.socketId,
       roomId: this.state.currentRoomId,
-      name: $('#userName').text(),
+      name: $('#displayUserName').text(),
       avatar: $('#userAvatar').val(),
     };
   }
@@ -86,7 +86,7 @@ export default class User {
   setMyUserName = () => {
     const name = DOMPurify.sanitize(prompt('Please enter your name:'));
     if (name) {
-      $('#userName').text(name);
+      $('#displayUserName').text(name);
       $('#user').find('span').text(name.slice(0,2));
     }
     store.sendToPeers({type: 'profileUpdated'});

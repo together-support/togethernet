@@ -11,14 +11,16 @@
 
 :root {
   --default-font-size: 16px;
-  --bg-color: burlywood;
+  --bg-color: black;
+  --primary-font-color: whitesmoke;
+  --secondary-font-color: gray;
   --interface-gray: Grey;
   --avatar-outline-color: whitesmoke;
   --overlay-color: black;
   --overlay-opacity: 0.5;
   --min-navbar-width: 17vw;
-  --cell-horizontal-num: 40;
-  --cell-vertical-num: 16;
+  --cell-horizontal-num: 33;
+  --cell-vertical-num: 18;
   --cell-size: 5vh;
   --avatar-x: 1;
   --avatar-y: 1;
@@ -31,7 +33,7 @@ button p,
 .roomLink,
 .configureRoomView,
 .modalContent p,
-#userName,
+#displayUserName,
 #editorOptions,
 #_messageInput,
 #_privateSendBtn,
@@ -39,6 +41,20 @@ button p,
 #systemMessage span,
 .textBubble p {
   font: 16px nunito, monospace;
+}
+
+body {
+  background-color: var(--bg-color);
+  padding: 2.5vh;
+}
+
+.container {
+  margin: auto;
+  outline: 1px solid gray;
+  display: flex;
+  flex-direction: row;
+  height: calc(var(--cell-size) * var(--cell-vertical-num) + 50px);
+  width: calc(250px + var(--cell-size) * var(--cell-horizontal-num));
 }
 
 #messages {
@@ -58,27 +74,6 @@ button p,
 .menu {
   border: none;
   height: 50px;
-}
-
-.container {
-  display: block;
-  padding: 0px;
-  margin: 0 auto;
-  border: none;
-  z-index: -5;
-  width: calc(var(--cell-size) * var(--cell-horizontal-num));
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  z-index: 1;
-}
-
-#rooms {
-  height: calc(var(--cell-size) * var(--cell-vertical-num));
-  outline: 1px solid gray;
 }
 
 .col {
@@ -113,17 +108,6 @@ button p,
   padding-right: 10pt;
 }
 
-#userName,
-#editorOptions {
-  border: 1px solid gray;
-  border-right: 0px solid transparent;
-  border-top: 0px solid transparent;
-  padding: 0 10px;
-  width: 27ch;
-  height: 50px;
-  background-color: #ffffff;
-}
-
 #_messageInput {
   border: 1px solid gray;
   border-right: 0px solid transparent;
@@ -151,21 +135,6 @@ button p,
 
 .btn.icon {
   width: 50px;
-}
-
-.roomLink {
-  padding: 10px 20px 10px 20px;
-  margin: 0 2px 0 0;
-  width: auto;
-  height: 50px;
-  border-radius: 20px 20px 0px 0px;
-  border-top: 0.5px solid gray;
-  border-left: 0.5px solid gray;
-  border-right: 0.5px solid gray;
-  border-bottom: 0px transparent;
-  background-color: #efefef;
-  display: flex;
-  flex-direction: column;
 }
 
 .participantsContainer {
@@ -219,13 +188,6 @@ button p,
 .ui-widget-header p,
 .ui-widget-content p {
   margin: 0;
-}
-
-.slit {
-  position: relative;
-  width: 10px;
-  height: 50px;
-  padding: 0;
 }
 
 .audioRecord {

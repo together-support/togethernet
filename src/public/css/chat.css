@@ -1,0 +1,16 @@
+.chat {
+  outline: 1px solid gray;
+  width: calc(var(--cell-size) * var(--cell-horizontal-num));
+  height: calc(var(--cell-size) * var(--cell-vertical-num) + 50px);
+  display: flex;
+  flex-direction: column;
+}
+
+.room {
+  outline: 1px solid gray;
+}
+
+.messageActions {
+  min-height: 50px;
+  width: 100%;
+}
