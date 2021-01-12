@@ -5,14 +5,7 @@ class Store {
   constructor() {
     this.peers = {};
     this.needRoomsInfo = true;
-
     this.rooms = {};
-
-    this.topBoundary = 0;
-    this.leftBoundary = 0;
-    this.rightBoundary = 0;
-    this.bottomBoundary = 0;
-
     this.currentUser = null;
   }
 

@@ -28,6 +28,9 @@
 .roomsList {
   flex-direction: column;
   overflow-y: scroll;
+}
+
+.roomsList.ephemeral {
   flex-grow: 1;
 }
 

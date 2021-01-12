@@ -26,14 +26,16 @@
     <div class="navigation">
       <h1 class="title">Togethernet</h1>
       <div class="roomsList">
-        <h2>Rooms<button type="button" id="addRoom"><p>+</p></button></h2>
-        <button type="button" class="roomLink" id="ephemeralSpaceLink">
-          <p>sitting-at-the-park</p>
-          <div class="participantsContainer"></div>
-        </button>
         <h2>Archive</h2>
         <button type="button" class="roomLink" id="archivalSpaceLink">
           <p>speaking-on-the-stage</p>
+          <div class="participantsContainer"></div>
+        </button>
+      </div>
+      <div class="roomsList ephemeral">
+        <h2>Rooms<button type="button" id="addRoom"><p>+</p></button></h2>
+        <button type="button" class="roomLink" id="ephemeralSpaceLink">
+          <p>sitting-at-the-park</p>
           <div class="participantsContainer"></div>
         </button>
       </div>
@@ -57,7 +59,7 @@
       <div class="archivalView room" id="archivalSpace" style="display:none;">
         <div id="archivalMessagesDetailsContainer"></div>
       </div>
-      <div class="messageActions row" id="ephemeralSpaceActions">
+      <div class="messageActions">
         <button class="btn icon" title="pin message" id="pinMessage" name="pinMessage">⚐</button>
         <input type="text" id="writeMessage" name="text" placeholder=" Type your message here" />
         <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives" style="display: none;">
@@ -118,65 +120,6 @@
         </div>
       </div>  
     </div>
-
-    <!-- <div class="menu row">
-      <button type="button" class="roomLink" id="ephemeralSpaceLink">
-        <p>sitting-at-the-park</p>
-        <div class="participantsContainer"></div>
-      </button>
-      <button type="button" class="roomLink" id="addRoom">
-        <p>+</p>
-      </button>
-      <button type="button" class="roomLink" id="archivalSpaceLink">
-        <p><i class="fas fa-history"></i></p>
-        <div class="participantsContainer"></div>
-      </button>
-    </div>
-
-    <div class="row" id="rooms">
-      <div class="chat ephemeralView" id="ephemeralSpace" tabindex="0">
-        <div class="consentToArchiveOverlay" style="display: none;"></div>
-      </div>
-
-      <div class="archivalView" id="archivalSpace" style="display:none;">
-        <div id="archivalMessagesContainer"></div>
-        <div id="archivalMessagesDetailsContainer"></div>
-      </div>
-    </div>
-
-    <div class="messageActions row" id="ephemeralSpaceActions">
-      <input type="color" id="userAvatar" class="slit" title="change avatar color" name="userAvatar">
-      <button id="userName" title="change name"></button>
-      <input type="text" id="writeMessage" name="text" placeholder=" Type your message here" />
-      <select id="messageType">
-        <option value="message">send message</option>
-        <option value="question">ask a question</option>
-        <option value="idea">propose an idea</option>
-      </select>
-      <button type="button" class="btn icon" title="hold down to record audio" id="_recordBtn" name="">
-        <i class="fas fa-microphone-alt"></i>
-      </button>
-    </div>
-
-    <div class="messageActions row" id="archivalSpaceActions" style="display: none;">
-      <button type="button" class="btn icon" title="move messages" id="moveArchivedMessage" name="commentArchivedMessage">
-        <i class="fa fa-arrows-alt" aria-hidden="true"></i>
-      </button>
-      <button type="button" class="btn icon" title="delete message" id="deleteArchivedMessage" name="commentArchivedMessage">
-        <i class="fa fa-trash"></i>
-      </button>
-      <button type="button" class="btn icon" title="comment on archived message" class="commentArchivedMessage" name="commentArchivedMessage">
-        <i class="fa fa-comment"></i>
-      </button>
-      <button id="editorOptions">
-        <p class="editorName"><p>
-        <div class="editorAvatar"></div>
-      </button>
-      <input type="text" id="archivalCommentInput" name="text" disabled="disabled" placeholder=" Type your message here" />
-      <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives">
-        <i class="fa fa-download"></i>
-      </a>
-    </div> -->
 
     <script src="/js/bundle.js"></script>
     <template id="consentfulGesturesTemplate">

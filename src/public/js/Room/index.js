@@ -39,8 +39,7 @@ export default class Room {
   }
 
   renderMenuButton = () => {
-    const $roomLink = $('<button type="button" class="roomLink icon"></button>');
-
+    const $roomLink = $('<button type="button" class="roomLink"></button>');
     const $roomTitle = $('<p></p>');
     $roomTitle.text(this.name);
     $roomTitle.appendTo($roomLink);
@@ -52,7 +51,7 @@ export default class Room {
     const $participantsContainer = $('<div class="participantsContainer"></div>');
     $participantsContainer.appendTo($roomLink);
 
-    $roomLink.insertBefore($('#addRoom'));
+    $roomLink.appendTo($('.roomsList.ephemeral'));
     this.$roomLink = $roomLink;
   }
 
@@ -82,22 +81,20 @@ export default class Room {
   }
 
   renderSpace = () => {
-    const $room = $(`<div class="chat hidden ephemeralView" id="${this.roomId}" tabindex="0"><div class="consentToArchiveOverlay" style="display: none;"></div></div>`);
-    $room.appendTo('#rooms');
+    const $room = $(`<div class="room hidden ephemeralView" id="${this.roomId}"><div class="consentToArchiveOverlay" style="display: none;"></div></div>`);
+    $room.insertBefore('.messageActions');
     this.$room = $room;
   }
 
   attachEvents = () => {
     this.$roomLink.on('click', this.goToRoom);
     this.$room.on('hideRoom', this.hideRoom);
-
-    this.setBoundary();
     this.$room.on('keydown', keyboardEvent);
   }
 
   goToRoom = () => {
     $('#archivalSpace').hide();
-    $('#archivalSpaceActions').hide();
+    $('#downloadArchives').hide();
     $('.room').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
     this.addMember(store.getCurrentUser());
@@ -119,11 +116,9 @@ export default class Room {
   showRoom = () => {
     store.getCurrentUser().updateState({currentRoomId: this.roomId});
     this.$room.show();
-    $('#ephemeralSpaceActions').show();
-    $(window).on('resize', this.onResize);
+    $('#pinMessage').show();
     
     this.memberships.renderAvatars();
-    this.setBoundary();
 
     this.renderHistory();
   }
@@ -190,18 +185,8 @@ export default class Room {
   }
 
   hideRoom = () => {
-    $(window).off('resize', this.onResize);
     this.$room.hide();
     $('#user').remove();
-  }
-
-  onResize = throttle(() => { 
-    this.setBoundary();
-  }, 500);
-
-  setBoundary = () => {   
-    store.set('rightBoundary', store.get('leftBoundary') + this.$room.width());
-    store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
   }
 
   updateSelf = ({mode, ephemeral, name, ephemeralHistory}) => {
