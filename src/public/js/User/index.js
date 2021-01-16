@@ -84,10 +84,11 @@ export default class User {
   }
   
   setMyUserName = () => {
-    const name = DOMPurify.sanitize(prompt('Please enter your name:'));
+    const name = DOMPurify.sanitize(prompt('Please enter your name (max 25 characters):'));
     if (name) {
-      $('#changeUserName span').text(name);
-      $('#user').find('span').text(name.slice(0,2));
+      $('#changeUserName span').text(name.substr(0, 25));
+      $("#changeUserName").fitText((name.length > 19 ? 2 : 1), {minFontSize: '12px', maxFontSize: '16px'});
+      $('#user').find('span').text(name.substr(0,2));
     }
     store.sendToPeers({type: 'profileUpdated'});
   };

@@ -133,6 +133,7 @@ button {
   -moz-appearance: none;
   background-color: var(--primary-bg-color);
   color: var(--primary-font-color);
+  padding: 0;
 }
 
 select::-ms-expand {
