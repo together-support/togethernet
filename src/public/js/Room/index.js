@@ -15,8 +15,7 @@ export default class Room {
 
   constructor(options) {
     this.mode = options.mode;
-    this.name = options.name;
-    this.roomId = options.roomId;
+    this.roomId = options.roomId.toLowerCase().replaceAll(' ', '-');
     this.ephemeral = options.ephemeral;
     this.facilitators = options.facilitators || [];
     this.$room = $(`#${this.roomId}`);
@@ -41,7 +40,7 @@ export default class Room {
   renderMenuButton = () => {
     const $roomLink = $('<button type="button" class="roomLink"></button>');
     const $roomTitle = $('<p></p>');
-    $roomTitle.text(this.name);
+    $roomTitle.text(this.roomId);
     $roomTitle.appendTo($roomLink);
 
     if (this.facilitators.includes(store.getCurrentUser().socketId)) {
@@ -72,7 +71,7 @@ export default class Room {
 
   purgeSelf = () => {
     Object.values(this.memberships.members).forEach(member => {
-      member.joinedRoom('ephemeralSpace');
+      member.joinedRoom('sitting-at-the-park');
     });
 
     this.$roomLink.remove();
@@ -191,10 +190,10 @@ export default class Room {
     $('#user').remove();
   }
 
-  updateSelf = ({mode, ephemeral, name, ephemeralHistory}) => {
+  updateSelf = ({mode, ephemeral, roomId, ephemeralHistory}) => {
     this.mode = mode;
     this.ephemeral = ephemeral;
-    this.name = name;
+    this.roomId = roomId;
     this.updateEphemeralHistory(ephemeralHistory);
   }
 

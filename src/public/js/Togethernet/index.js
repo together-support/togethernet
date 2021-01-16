@@ -20,7 +20,7 @@ class Togethernet {
     const defaultEphemeralRoom = await this.initDefaultEphemeralRoom();
 
     store.rooms = {
-      ephemeralSpace: defaultEphemeralRoom,
+      'sitting-at-the-park': defaultEphemeralRoom,
       archivalSpace: archivalSpace,
     };
   }
@@ -35,8 +35,7 @@ class Togethernet {
     const defaultEphemeralRoom = new Room({
       mode: publicConfig.defaultMode || EGALITARIAN_MODE,
       ephemeral: true,
-      name: 'sitting-in-the-park',
-      roomId: 'ephemeralSpace',
+      roomId: 'sitting-at-the-park',
     });
     defaultEphemeralRoom.attachEvents();
     return defaultEphemeralRoom;

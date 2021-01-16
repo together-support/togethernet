@@ -9,7 +9,7 @@ export default class User {
     this.socketId = socketId;
 
     this.state = {
-      currentRoomId: 'ephemeralSpace',
+      currentRoomId: 'sitting-at-the-park',
     };
   }
 

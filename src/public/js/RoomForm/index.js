@@ -6,7 +6,6 @@ import pull from 'lodash/pull';
 
 const defaultOptions = {
   mode: publicConfig.defaultMode,
-  name: '',
   roomId: '',
   ephemeral: true,
   facilitators: [],
@@ -27,7 +26,7 @@ export default class RoomForm {
   }
 
   initialize = () => {
-    $('#newRoomName').on('change', this.updateRoomName);
+    $('#newRoomId').on('change', this.updateRoomId);
     $('input[type=radio][name=roomMode]').on('change', this.changeMeetingMode);
     $('#createNewRoom').on('click', this.createNewRoom);
     $('#backToCustomize').on('click', () => this.goToPage(1));
@@ -110,10 +109,11 @@ export default class RoomForm {
     }
   }
 
-  updateRoomName = (e) => {
+  updateRoomId = (e) => {
     e.preventDefault();
-    this.options.name = e.target.value;
-    this.options.roomId = e.target.value;
+    if (e.target.value.length < 26) {
+      this.options.roomId = e.target.value;
+    }
   };
 
   goToPage = (pageNumber) => {
@@ -146,12 +146,12 @@ export default class RoomForm {
 
   validateOptions = () => {
     let isValid = true;
-    if (!this.options.name) {
+    if (!this.options.roomId) {
       alert('please enter a room name');
       isValid = false;
     }
 
-    if (store.getRoom(this.options.name)) {
+    if (store.getRoom(this.options.roomId.toLowerCase().replaceAll(' ', '-'))) {
       alert('room names must be unique');
       isValid = false;
     }
@@ -164,7 +164,7 @@ export default class RoomForm {
     $(`#roomMode-${defaultOptions.mode}`).prop('checked', true).trigger('click');
 
     $('#configureFacilitators').hide();
-    $('#newRoomName').val(defaultOptions.name);
+    $('#newRoomId').val(defaultOptions.roomId);
     $('#configureRoom-2').find('.facilitatorOption').remove();
     this.clearFacilitators();
 
