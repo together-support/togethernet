@@ -112,8 +112,12 @@ export default class RoomForm {
   updateRoomId = (e) => {
     e.preventDefault();
     if (e.target.value.length < 26) {
-      this.options.roomId = e.target.value;
+      $(e.target).removeClass('hasError')
+    } else {
+      $(e.target).addClass('hasError')
     }
+
+    this.options.roomId = e.target.value;
   };
 
   goToPage = (pageNumber) => {
@@ -149,9 +153,10 @@ export default class RoomForm {
     if (!this.options.roomId) {
       alert('please enter a room name');
       isValid = false;
-    }
-
-    if (store.getRoom(this.options.roomId.toLowerCase().replaceAll(' ', '-'))) {
+    } else if (this.options.roomId.length > 25) {
+      alert('room names must be max 25 characters');
+      isValid = false;
+    } else if (store.getRoom(this.options.roomId.toLowerCase().replaceAll(' ', '-'))) {
       alert('room names must be unique');
       isValid = false;
     }
