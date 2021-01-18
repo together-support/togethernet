@@ -43,6 +43,7 @@ class Togethernet {
  
   attachUIEvents = () => {
     this.handleMessageSendingEvents();
+    this.addKeyboardCues();
     this.detectThreadStart();
     this.hideInteractionButtonsOnMouseLeave();
     $('#pinMessage').on('click', () => $('#pinMessage').toggleClass('clicked'));
@@ -55,6 +56,26 @@ class Togethernet {
         sendMessage();
       }
     });
+  }
+
+  addKeyboardCues = () => {
+    document.addEventListener('keyup', e => {
+      if (e.shiftKey && e.key === 'Tab') {
+        e.preventDefault();
+        const $visibleEphmeralRoom = $('.room:visible').get(0);
+        if (document.activeElement.id === 'writeMessage') {
+          $visibleEphmeralRoom && $visibleEphmeralRoom.focus();
+        } else if ($(document.activeElement).hasClass('room')) {
+          $('#writeMessage').focus();
+        } else {
+          $visibleEphmeralRoom && $visibleEphmeralRoom.focus();
+        }
+      }
+
+      if (e.key.length === 1 && document.activeElement.id !== 'writeMessage') {
+        $('#writeMessage').delay(100).fadeOut(150).fadeIn(100);
+      }
+    })
   }
 
   detectThreadStart = () => {
