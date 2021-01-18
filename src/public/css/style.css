@@ -56,7 +56,7 @@ body {
   display: flex;
   flex-direction: row;
   height: calc(var(--cell-size) * var(--cell-vertical-num) + 50px);
-  width: calc(250px + var(--cell-size) * var(--cell-horizontal-num));
+  width: calc(280px + var(--cell-size) * var(--cell-horizontal-num));
 }
 
 #messages {

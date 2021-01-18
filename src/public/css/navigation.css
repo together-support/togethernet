@@ -1,5 +1,5 @@
 .navigation {
-  min-width: 280px;
+  width: 280px;
   height: 100%;
   display: flex;
   flex-direction: column;
