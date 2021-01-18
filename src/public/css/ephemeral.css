@@ -32,6 +32,12 @@ button {
   text-decoration: underline;
 }
 
+.avatar.newlyJoined {
+  outline-color: var(--newly-joined-avatar-outline-color);
+  outline-width: 2px;
+  outline-style: solid;
+}
+
 .avatar, .shadow {
   width: var(--cell-size);
   height: var(--cell-size);
@@ -66,7 +72,9 @@ button {
 
 #user .shadow {
   z-index: 0;
-  outline: 1px solid var(--avatar-outline-color);
+  outline-color: var(--avatar-outline-color);
+  outline-width: 1px;
+  outline-style: solid;
 }
 
 .textBubble {

@@ -31,17 +31,21 @@ export default class Peer {
     }
   }
 
-  initAvatar = () => {
+  initAvatar = () => {    
     const {name, rowStart, columnStart, avatar} = this.state;
-    console.log(rowStart, columnStart)
     const displayName = name.slice(0, 2);
-    const $avatar = $(`<div class="avatar" id="peer-${this.socketId}"><span>${displayName}<span></div>`);
+    const $avatar = $(`<div class="avatar newlyJoined" id="peer-${this.socketId}"><span>${displayName}<span></div>`);
     $avatar.css({backgroundColor: avatar});
     $avatar[0].style.gridColumnStart = columnStart;
     $avatar[0].style.gridRowStart = rowStart;
 
     $avatar.on('mousedown', () => $avatar.find('.makeFacilitator').show());
-  
+
+    $avatar.delay(1000).animate({outlineColor: 'transparent'}, {
+      duration: 2000,
+      complete: () => $avatar.removeClass('newlyJoined'),
+    });
+
     return $avatar;
   }
 

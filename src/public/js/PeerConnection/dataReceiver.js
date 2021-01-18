@@ -115,6 +115,10 @@ const initPeer = (data) => {
   const peer = store.getPeer(socketId);
   peer.updateState({avatar, name, currentRoomId: roomId, columnStart, rowStart});
   store.updateOrInitializeRoom(roomId, room).addMember(peer);
+
+  const newlyJoinedOutlineColor = getComputedStyle(document.documentElement).getPropertyValue('--newly-joined-avatar-outline-color');
+  const defaultOutlineColor = getComputedStyle(document.documentElement).getPropertyValue('--avatar-outline-color');
+  $('#user .shadow').css({outlineColor: newlyJoinedOutlineColor}).delay(2000).animate({outlineColor: defaultOutlineColor}, {duration: 2000})
 };
 
 const removeEphemeralPeerMessage = ({roomId, messageId}) => {
