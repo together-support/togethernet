@@ -52,6 +52,7 @@ body {
 }
 
 .container {
+  position: relative;
   margin: auto;
   outline: 1px solid gray;
   display: flex;
@@ -74,22 +75,10 @@ body {
   background: #eee;
 }
 
-.menu {
-  border: none;
-  height: 50px;
-}
-
 .col {
   display: flex;
   flex-direction: column;
   z-index: 1;
-}
-
-.messageDiv {
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
-  height: 100%;
 }
 
 .messageActions {
@@ -138,69 +127,8 @@ body {
   font-size: 20px;
 }
 
-#_privacyToggle {
-  border: 1px solid black;
-}
-
-#_privacyToggle.private {
-  border: 1px solid red;
-}
-
 .btn:hover {
   cursor: pointer;
-}
-
-#_privateName {
-  display: flex;
-  padding-bottom: 4pt;
-  padding-left: 10pt;
-  order: 1;
-}
-
-#_privateName p {
-  font-weight: bold;
-}
-
-#_privateStamp {
-  display: flex;
-  padding-bottom: 4pt;
-  padding-left: 10pt;
-  order: 2;
-}
-
-#_privateStamp p {
-  color: grey;
-}
-
-.ui-widget-header p,
-.ui-widget-content p {
-  margin: 0;
-}
-
-.audioRecord {
-  border: none;
-  padding-left: 20px;
-}
-
-.audioPlay {
-  margin: auto;
-  border-top: 13px solid transparent;
-  border-bottom: 13px solid transparent;
-  border-left: 18px solid rgba(0, 0, 0, 0.3);
-}
-
-.audioPause {
-  margin: auto;
-  border-left: 18px solid blue;
-  border-right: 18px solid blue;
-}
-
-.pink {
-  background-color: pink;
-}
-
-.yellow {
-  background-color: yellow;
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {
@@ -373,15 +301,6 @@ input[type="color"] {
   background-color: #efefef;
   padding: 0 10px;
   border-top: 0px solid transparent;
-}
-
-.textRecord,
-.audioRecord {
-  width: var(--cell-size);
-  height: var(--cell-size);
-  z-index: 5;
-  display: flex;
-  flex-wrap: wrap;
 }
 
 .removeRoom {

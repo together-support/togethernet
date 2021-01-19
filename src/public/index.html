@@ -20,6 +20,7 @@
   <link rel="stylesheet" type="text/css" href="/css/chat.css" />
   <link rel="stylesheet" type="text/css" href="/css/ephemeral.css" />
   <link rel="stylesheet" type="text/css" href="/css/archival.css" />
+  <link rel="stylesheet" type="text/css" href="/css/users.css" />
 </head>
 
 <body scroll="no">
@@ -53,6 +54,21 @@
     </div>
 
     <div class="chat" id="rooms">
+      <div class="ephemeralMessageContainer right" style="display: none;">
+        <div class="pinnedMessageContainer" style="display: none;">
+          <p class="pinnedMessagesSummary"><i class="fas fa-thumbtack"></i><span id="pinnedMessageCount">5</span></p>
+          <div class="pinnedMessages" style="display: none;">
+            <p>test</p>
+            <p>test</p>
+          </div>
+        </div>
+
+        <div class="nonPinnedMessageContainer">
+          <div class="nonPinnedMessages">
+            <p>test</p>
+          </div>
+        </div>
+      </div>
       <div class="ephemeralView room" id="sitting-at-the-park" tabindex="0">
         <div class="consentToArchiveOverlay" style="display: none;"></div>
       </div>
