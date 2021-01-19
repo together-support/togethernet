@@ -79,7 +79,7 @@ class Togethernet {
   }
 
   detectThreadStart = () => {
-    $('#sendMessage').on('messageThread', (e) => {
+    $('#writeMessage').on('messageThread', (e) => {
       if (e.threadPreviousMessage) {
         $(e.target).attr('data-thread-entry-message', e.threadPreviousMessage.id);
       } else {

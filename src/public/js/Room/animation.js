@@ -72,7 +72,7 @@ const showAdjacentMessages = () => {
   const adjacentMessages = store.getCurrentUser().getAdjacentMessages();
   adjacentMessages.forEach(messageRecord => $(messageRecord).trigger('adjacent'));
 
-  $('#sendMessage').trigger({
+  $('#writeMessage').trigger({
     type: 'messageThread', 
     threadPreviousMessage: adjacentMessages.length === 1 && adjacentMessages[0],
   });
