@@ -10,19 +10,14 @@ import {createMessage} from '@js/api';
 
 export default class EphemeralMessage {
   constructor (props) {
-    const room = store.getRoom(props.roomId);
-
-    this.id = `${props.roomId}-${props.gridColumnStart}-${props.gridRowStart}`;
-    this.avatar = props.avatar;
-    this.roomId = props.roomId;
-    this.gridColumnStart = props.gridColumnStart;
-    this.gridRowStart = props.gridRowStart;
-    
-    this.messageData = props || {};
+    this.messageData = {
+      ...props, 
+      id: `${props.roomId}-${props.gridColumnStart}-${props.gridRowStart}`,
+    };
   }
    
   $textRecord = () => {
-    return $(`#${this.id}`);
+    return $(`#${this.messageData.id}`);
   }
 
   renderEphemeralMessageDetails = () => {
@@ -33,8 +28,8 @@ export default class EphemeralMessage {
     const $ephemeralRecord = $(
       `<div \
         class="ephemeralRecord" \ 
-        id=${this.id} \
-        style="grid-column-start:${this.gridColumnStart};grid-row-start:${this.gridRowStart};" \
+        id=${this.messageData.id} \
+        style="grid-column-start:${this.messageData.gridColumnStart};grid-row-start:${this.messageData.gridRowStart};" \
       />`
     );
 
@@ -43,7 +38,7 @@ export default class EphemeralMessage {
       .on('mouseleave', () => $('.ephemeralMessageContainer').finish().fadeOut(500));
     $ephemeralRecord.on('adjacent', this.renderEphemeralMessageDetails);
 
-    $ephemeralRecord.css({backgroundColor: this.avatar});
-    $ephemeralRecord.appendTo($(`#${this.roomId}`));
+    $ephemeralRecord.css({backgroundColor: this.messageData.avatar});
+    $ephemeralRecord.appendTo($(`#${this.messageData.roomId}`));
   }
 }
