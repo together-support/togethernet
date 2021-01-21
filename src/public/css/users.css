@@ -24,6 +24,7 @@
   font-size: 1em;
   text-shadow: 1px 1px 1px black;
   user-select: none;
+  z-index: 5;
 }
 
 #user {

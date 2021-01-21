@@ -60,7 +60,7 @@ class Togethernet {
 
   addKeyboardCues = () => {
     document.addEventListener('keyup', e => {
-      if (e.shiftKey && e.key === 'Tab') {
+      if (e.shiftKey && e.key === ' ') {
         e.preventDefault();
         const $visibleEphmeralRoom = $('.room:visible').get(0);
         if (document.activeElement.id === 'writeMessage') {
@@ -72,7 +72,7 @@ class Togethernet {
         }
       }
 
-      if (e.key.length === 1 && document.activeElement.id !== 'writeMessage') {
+      if (e.key.length === 1 && document.activeElement.id !== 'writeMessage' && !e.shiftKey) {
         $('#writeMessage').delay(100).fadeOut(150).fadeIn(100);
       }
     })

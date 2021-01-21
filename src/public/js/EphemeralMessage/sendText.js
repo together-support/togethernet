@@ -3,16 +3,16 @@ import EphemeralMessage from './index';
 
 export const sendMessage = () => {
   const $messageInput = $('#writeMessage');
-  const message = $messageInput.val();
+  const content = $messageInput.val();
 
-  if (!message) {
+  if (!content) {
     return;
   }
 
-  const columnStart = $('#user .shadow').css('grid-column-start');
-  const rowStart = $('#user .shadow').css('grid-row-start');
+  const gridColumnStart = $('#user .shadow').css('grid-column-start');
+  const gridRowStart = $('#user .shadow').css('grid-row-start');
 
-  if ($(`#${store.getCurrentUser().currentRoomId}-${columnStart}-${rowStart}`).length) {
+  if ($(`#${store.getCurrentUser().currentRoomId}-${gridColumnStart}-${gridRowStart}`).length) {
     alert('move to an empty spot to write the msg');
   }
 
@@ -20,10 +20,10 @@ export const sendMessage = () => {
   const isPinned = $('#pinMessage').hasClass('clicked');
   
   const ephemeralMessage = new EphemeralMessage({
-    message, 
+    content, 
     isPinned, 
-    columnStart, 
-    rowStart, 
+    gridColumnStart, 
+    gridRowStart, 
     threadEntryMessageId, 
     ...store.getCurrentUser().getProfile()
   });
