@@ -25,6 +25,10 @@ export default class EphemeralMessage {
     return $(`#${this.id}`);
   }
 
+  renderEphemeralMessageDetails = () => {
+    console.log('render');
+  }
+
   render = () => {
     const $ephemeralRecord = $(
       `<div \
@@ -33,6 +37,10 @@ export default class EphemeralMessage {
         style="grid-column-start:${this.gridColumnStart};grid-row-start:${this.gridRowStart};" \
       />`
     );
+
+    $ephemeralRecord.on('hover', this.renderEphemeralMessageDetails);
+    $ephemeralRecord.on('adjacent', this.renderEphemeralMessageDetails);
+
     $ephemeralRecord.css({backgroundColor: this.avatar});
     $ephemeralRecord.appendTo($(`#${this.roomId}`));
   }

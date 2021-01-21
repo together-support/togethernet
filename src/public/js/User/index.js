@@ -66,14 +66,14 @@ export default class User {
   }
 
   getAdjacentMessages = () => {
-    const {left, top} = $('#user').position();
-    const avatarSize = $('#user').outerWidth();
+    const gridColumnStart = parseInt($('#user .shadow').css('grid-column-start'));
+    const gridRowStart = parseInt($('#user .shadow').css('grid-row-start'));
 
     return compact([
-      `${left}-${top + avatarSize}`,
-      `${left}-${top - avatarSize}`,
-      `${left - avatarSize}-${top}`,
-      `${left + avatarSize}-${top}`,
+      `${gridColumnStart}-${gridRowStart + 1}`,
+      `${gridColumnStart}-${gridRowStart - 1}`,
+      `${gridColumnStart - 1}-${gridRowStart}`,
+      `${gridColumnStart + 1}-${gridRowStart}`,
     ].map((position) => {
       return $(`#${this.state.currentRoomId}-${position}`)[0];
     }));
