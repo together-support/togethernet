@@ -58,9 +58,7 @@ const animationEvents = {
 };
 
 export const hideEphemeralMessageText = () => {
-  store.getCurrentRoom().$room.find('.textBubble.message').each((_, el) => {
-    $(el).hide();
-  });
+  $('.ephemeralMessageContainer').finish().fadeOut(500);
 };
 
 export const onAnimationComplete = () => {

@@ -26,7 +26,7 @@ export default class EphemeralMessage {
   }
 
   renderEphemeralMessageDetails = () => {
-    console.log('render');
+    $('.ephemeralMessageContainer').finish().show();
   }
 
   render = () => {
@@ -38,7 +38,9 @@ export default class EphemeralMessage {
       />`
     );
 
-    $ephemeralRecord.on('hover', this.renderEphemeralMessageDetails);
+    $ephemeralRecord
+      .on('mouseenter', this.renderEphemeralMessageDetails)
+      .on('mouseleave', () => $('.ephemeralMessageContainer').finish().fadeOut(500));
     $ephemeralRecord.on('adjacent', this.renderEphemeralMessageDetails);
 
     $ephemeralRecord.css({backgroundColor: this.avatar});
