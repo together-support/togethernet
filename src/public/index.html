@@ -65,7 +65,6 @@
 
         <div class="nonPinnedMessageContainer">
           <div class="nonPinnedMessages">
-            <p>test</p>
           </div>
         </div>
       </div>
@@ -75,7 +74,7 @@
       <div class="archivalView room" id="archivalSpace" style="display:none;">
         <div id="archivalMessagesDetailsContainer"></div>
       </div>
-      <div class="messageActions">
+      <div class="sendMessageActions">
         <button class="btn icon" title="pin message" id="pinMessage" name="pinMessage">⚐</button>
         <input type="text" id="writeMessage" name="text" placeholder=" Type your message here" />
         <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives" style="display: none;">
@@ -155,7 +154,10 @@
     </template>
     <template id="ephemeralRecordDetailsTemplate">
       <div class="ephemeralRecordDetails">
-        <b class="name"></b>
+        <div class="heading">
+          <b class="author"></b>
+          <div class="messageActions"></div>
+        </div>
         <p class="content"></p>
       </div>
     </template>

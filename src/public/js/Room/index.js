@@ -81,7 +81,7 @@ export default class Room {
 
   renderSpace = () => {
     const $room = $(`<div class="room hidden ephemeralView" id="${this.roomId}"><div class="consentToArchiveOverlay" style="display: none;"></div></div>`);
-    $room.insertBefore('.messageActions');
+    $room.insertBefore('.sendMessageActions');
     this.$room = $room;
   }
 

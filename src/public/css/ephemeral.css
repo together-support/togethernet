@@ -37,11 +37,6 @@ button {
   right: 35px;
 }
 
-.ephemeralMessageContainer p {
-  padding: 16px;
-  width: 100%;
-}
-
 .pinnedMessageContainer,
 .pinnedMessagesSummary {
   border-bottom: 1px solid whitesmoke;
@@ -49,4 +44,27 @@ button {
 
 #pinnedMessageCount {
   margin-left: 16px;
+}
+
+.ephemeralRecordDetails {
+  width: 100%;
+  padding: 16px;
+}
+
+.ephemeralRecordDetails .heading {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.ephemeralRecordDetails .heading .messageActions button {
+  width: 24px;
+  height: 24px;
+  border: 1px solid whitesmoke;
+  border-radius: 5px;
+}
+
+.ephemeralRecordDetails .content {
+  width: 100%;
 }

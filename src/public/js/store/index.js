@@ -78,7 +78,7 @@ class Store {
   }
 
   isMe = (id) => {
-    return id === this.socketId;
+    return id === this.currentUser.socketId;
   }
 }
 

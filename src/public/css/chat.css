@@ -14,7 +14,7 @@
   outline: 2px solid blue;
 }
 
-.messageActions {
+.sendMessageActions {
   min-height: 50px;
   width: 100%;
   padding: 5px;
@@ -24,7 +24,7 @@
   align-items: center;
 }
 
-.messageActions button {
+.sendMessageActions button {
   border-radius: 50%;
   width: 35px;
   height: 35px;

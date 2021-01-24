@@ -121,9 +121,10 @@ const initPeer = (data) => {
 };
 
 const removeEphemeralPeerMessage = ({roomId, messageId}) => {
-  $(`.textRecord#${messageId}`).finish().animate({opacity: 0}, {
+  $(`.ephemeralRecord#${messageId}`).finish().animate({opacity: 0}, {
     complete: () => {
-      $(`textRecord#${messageId}`).remove();
+      $(`.ephemeralRecord#${messageId}`).remove();
+      $(`#ephemeralDetails-${messageId}`).text('[message removed]');
       store.getRoom(roomId).removeEphemeralHistory(messageId);
     }
   });

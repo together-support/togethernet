@@ -1,12 +1,5 @@
 import store from '@js/store';
-import {roomModes} from '@js/constants';
-import AgendaTextRecord from './AgendaTextRecord';
-import DisappearingTextRecord from './DisappearingTextRecord';
-import PersistentTextRecord from './PersistentTextRecord';
-import ThreadedTextRecord from './ThreadedTextRecord';
-import {addSystemMessage} from '@js/Togethernet/systemMessage';
-import sample from 'lodash/sample';
-import {createMessage} from '@js/api';
+import renderEphemeralDetails from './renderEphemeralDetails'
 
 export default class EphemeralMessage {
   constructor (props) {
@@ -21,7 +14,43 @@ export default class EphemeralMessage {
   }
 
   renderEphemeralMessageDetails = () => {
+    $('.nonPinnedMessages').empty();
+
+    if (!this.messageData.isPinned) {
+      const $messageContent = renderEphemeralDetails(this.messageData);
+      $messageContent.appendTo($('.nonPinnedMessages'));
+    }
+
     $('.ephemeralMessageContainer').finish().show();
+  }
+
+  purgeSelf = () => {
+    if (this.messageData.threadNextMessageId || this.messageData.threadPreviousMessageId) {
+      this.handleRemoveMessageInThread();
+    } else {
+      this.handleRemoveSingleMessage();
+    }
+  }
+
+  handleRemoveSingleMessage = () => {
+    const room = store.getRoom(this.messageData.roomId);
+    const $textRecord = this.$textRecord();
+
+    $('.nonPinnedMessages').empty();
+    $('.ephemeralMessageContainer').hide();
+    $textRecord.finish().animate({opacity: 0}, {
+      complete: () => {
+        $textRecord.remove();
+        store.sendToPeers({
+          type: 'removeEphemeralMessage',
+          data: {
+            messageId: this.messageData.id,
+            roomId: this.messageData.roomId,
+          }
+        });
+        room.removeEphemeralHistory(this.messageData.id);
+      }
+    }); 
   }
 
   render = () => {
