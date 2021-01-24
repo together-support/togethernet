@@ -80,7 +80,17 @@ export default class Room {
   }
 
   renderSpace = () => {
-    const $room = $(`<div class="room hidden ephemeralView" id="${this.roomId}"><div class="consentToArchiveOverlay" style="display: none;"></div></div>`);
+    const $room = $(`
+      <div \
+        class="room hidden ephemeralView" \
+        id="${this.roomId}" \
+        tabindex="0"
+      > \
+        <div 
+          class="consentToArchiveOverlay" \
+          style="display: none;"\
+        ></div>\
+      </div>`);
     $room.insertBefore('.sendMessageActions');
     this.$room = $room;
   }
@@ -94,6 +104,7 @@ export default class Room {
   goToRoom = () => {
     $('#archivalSpace').hide();
     $('#downloadArchives').hide();
+    $('.ephemeralMessageContainer').finish().hide();
     $('.roomLink').removeClass('currentRoom');
     this.$roomLink.addClass('currentRoom');
     $('.room').each((_, el) => $(el).trigger('hideRoom'));
@@ -117,6 +128,7 @@ export default class Room {
   showRoom = () => {
     store.getCurrentUser().updateState({currentRoomId: this.roomId});
     this.$room.show();
+    this.$room.focus();
     $('#pinMessage').show();
     
     this.memberships.renderAvatars();

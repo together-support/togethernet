@@ -65,6 +65,7 @@ export default class EphemeralMessage {
     $ephemeralRecord
       .on('mouseenter', this.renderEphemeralMessageDetails)
       .on('mouseleave', () => $('.ephemeralMessageContainer').finish().fadeOut(500));
+
     $ephemeralRecord.on('adjacent', this.renderEphemeralMessageDetails);
 
     $ephemeralRecord.css({backgroundColor: this.messageData.avatar});
