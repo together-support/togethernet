@@ -111,6 +111,24 @@ export default class EphemeralMessage {
     this.voteReceived({option, socketId});
   }
 
+  createPoll = () => {
+    const {roomId, id} = this.messageData;
+    this.pollCreated();
+    store.sendToPeers({
+      type: 'pollCreated',
+      data: {roomId, textRecordId: id},
+    });
+  }
+
+  pollCreated = () => {
+    this.messageData.canVote = true;
+    this.votes = {
+      'yes': 0,
+      'no': 0, 
+      'neutral': 0
+    }
+  }
+
   render = () => {
     const $ephemeralRecord = $(
       `<div \

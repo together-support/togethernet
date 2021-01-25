@@ -1,4 +1,3 @@
-import throttle from 'lodash/throttle';
 import pull from 'lodash/pull';
 import difference from 'lodash/difference';
 

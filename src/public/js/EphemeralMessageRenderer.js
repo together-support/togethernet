@@ -16,7 +16,9 @@ class EphemeralMessageRenderer {
       this.message = message;
     };
 
-    const {id, name, content, socketId} = this.message.messageData;
+    const myId = store.getCurrentUser().socketId;
+
+    const {id, name, content, socketId, canVote} = this.message.messageData;
     const $ephemeralRecordDetails = $(document.getElementById('ephemeralRecordDetailsTemplate').content.cloneNode(true));
     const $messageDetails = $ephemeralRecordDetails.find('.ephemeralRecordDetails');
     $messageDetails.attr('id', `ephemeralDetails-${id}`);
@@ -34,17 +36,27 @@ class EphemeralMessageRenderer {
       $consentfulGestures.appendTo($messageDetails.find('.votingButtonsContainer'));
     }
 
+    if (room.mode === roomModes.facilitated && room.facilitators.includes(myId) && !canVote) {
+      const $makeVoteButton = this.renderCreatePollButton();
+      $makeVoteButton.appendTo($messageDetails.find('.messageActions'));
+    }
+
+    if (room.mode === roomModes.facilitated && canVote) {
+      const $majorityRulesButtons = this.renderMajorityRulesButtons();
+      $majorityRulesButtons.appendTo($messageDetails.find('.votingButtonsContainer'));
+    }
+
     return $ephemeralRecordDetails;
   }
 
   renderCloseButton = () => {
-    const $removeMessageButton = $('<button id="removeMessage">x</button>');
+    const $removeMessageButton = $('<button>x</button>');
     $removeMessageButton.on('click', () => this.message.purgeSelf());
     return $removeMessageButton
   }
 
   renderConsentfulGestures = () => {
-    const {id, votes, votingRecords} = this.message.messageData;
+    const {votes} = this.message.messageData;
     
     const $consentfulGesturesTemplate = $(document.getElementById('consentfulGesturesTemplate').content.cloneNode(true));
     if (isPlainObject(votes)) {
@@ -62,6 +74,40 @@ class EphemeralMessageRenderer {
     })
    
     return $consentfulGesturesTemplate;
+  }
+
+  renderCreatePollButton = () => {
+    const {id} = this.message.messageData;
+    const $makeVoteButton = $('<button class="makeVote"><i class="fas fa-check"></i></button>');
+
+    $makeVoteButton.on('click', (e) => {
+      this.message.createPoll();
+      (e.target).closest('.makeVote').remove();
+      this.renderMajorityRulesButtons().appendTo($(`#ephemeralDetails-${id}`).find('.votingButtonsContainer'));
+    });
+
+    return $makeVoteButton;
+  }
+
+  renderMajorityRulesButtons = () => {
+    const {votes} = this.message.messageData;
+    
+    const $majorityRulesTemplate = $(document.getElementById('majorityRulesTemplate').content.cloneNode(true));
+    if (isPlainObject(votes)) {
+      Object.keys(votes).forEach(option => {
+        $majorityRulesTemplate.find(`.voteOption.${option} .voteCount`).text(votes[option]);
+      });
+    };
+
+    $majorityRulesTemplate.find('.voteOption').each((_, option) => {
+      $(option).on('click', (e) => {
+        $(option).toggleClass('myVote');
+        $('.voteOption').not(`.${$(option).data('value')}`).removeClass('myVote');
+        // this.message.castVote($(option).data('value'));
+      });
+    })
+   
+    return $majorityRulesTemplate;
   }
 }
 

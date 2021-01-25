@@ -63,6 +63,7 @@ button {
   height: 24px;
   border: 1px solid whitesmoke;
   border-radius: 5px;
+  margin-left: 8px;
 }
 
 .ephemeralRecordDetails .content {
