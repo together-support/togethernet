@@ -104,7 +104,7 @@ export default class EphemeralMessage {
 
   consentToArchiveActions = (e) => {
     const {left, top} = $('#user').position();
-    const alignedWithMessage = left === this.messageData.left && top === this.messageData.top;
+    const alignedWithMessage = left === this.messageData.gridColumnStart && top === this.messageData.gridRowStart;
     const alreadyGaveConsent = Boolean(this.messageData.consentToArchiveRecords[store.getCurrentUser().socketId]);
     
     if (alignedWithMessage) {

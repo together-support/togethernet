@@ -105,3 +105,11 @@ button {
   width: 16px;
   height: 16px;
 }
+
+.consentToArchiveOverlay {
+  width: calc(var(--cell-size) * var(--cell-horizontal-num));
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 9;
+  position: absolute;
+}

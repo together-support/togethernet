@@ -1,6 +1,7 @@
 import store from '@js/store';
 import ephemeralMessageRenderer from '@js/ephemeralMessageRenderer';
 import isPlainObject from 'lodash/isPlainObject';
+import {addSystemMessage} from '@js/Togethernet/systemMessage';
 
 export default class EphemeralMessage {
   constructor (props) {
@@ -129,6 +130,49 @@ export default class EphemeralMessage {
     }
     if ($(`#ephemeralDetails-${this.messageData.id}`).is(":visible")) {
       this.renderEphemeralMessageDetails();
+    }
+  }
+
+  initiateConsentToArchiveProcess = () => {
+    const {roomId, id} = this.messageData;
+    addSystemMessage('you have just asked for everyone\'s consent to archive the message');
+    store.sendToPeers({
+      type: 'initConsentToArchiveProcess', 
+      data: {
+        roomId, 
+        messageId: id,
+      }
+    });
+
+    this.performConsentToArchive();
+  }
+
+  performConsentToArchive = () => {
+    this.messageData.inConsentToArchiveProcess = true;
+    const {roomId} = this.messageData;
+
+    this.$textRecord().addClass('inConsentProcess');
+    $(`#${roomId}`).find('#user .avatar').addClass('inConsentProcess');
+    $(`#${roomId}`).find('.consentToArchiveOverlay').show();
+    $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
+    $(`#${roomId}`).on('keyup', this.consentToArchiveActions);
+  }
+
+  consentToArchiveActions = (e) => {
+    const {gridColumnStart, gridRowStart, consentToArchiveRecords} = this.messageData;
+    const userGridColumnStart = parseInt($('#user .avatar').css('grid-column-start'));
+    const userGridRowStart = parseInt($('#user .avatar').css('grid-row-start'));
+    const alignedWithMessage = gridColumnStart === userGridColumnStart && gridRowStart === userGridRowStart;
+    const alreadyGaveConsent = isPlainObject(consentToArchiveRecords) && consentToArchiveRecords[store.getCurrentUser().socketId];
+    
+    if (alignedWithMessage) {
+      if (e.key === 'y') {
+        if (!alreadyGaveConsent) {
+          this.giveConsentToArchive();
+        }
+      } else if (e.key === 's') {
+        this.blockConsentToArchive();
+      }
     }
   }
 

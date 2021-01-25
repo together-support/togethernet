@@ -30,11 +30,6 @@
 
 #user {
   display: contents;
-  z-index: 10;
-}
-
-#user.inConsentProcess {
-  z-index: 20;
 }
 
 #user .avatar,
@@ -46,6 +41,11 @@
 
 #user .avatar {
   position: absolute;
+  z-index: 10;
+}
+
+#user .avatar.inConsentProcess {
+  z-index: 20;
 }
 
 #user .shadow {

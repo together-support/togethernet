@@ -118,11 +118,12 @@ class EphemeralMessageRenderer {
     if (archivalMessageId) {
       $consentToArchiveButton.addClass('checked');
       $consentToArchiveButton.on('click', (e) => {
-  
+        // revoke consent
       });
     } else {
       $consentToArchiveButton.on('click', (e) => {
-  
+        e.stopPropagation();
+        this.message.initiateConsentToArchiveProcess();
       });
     }
 
