@@ -67,4 +67,31 @@ button {
 
 .ephemeralRecordDetails .content {
   width: 100%;
+  padding-bottom: 16px;
+}
+
+.votingButtonsContainer {
+  width: 100%;
+}
+
+.votingButtons {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.voteOption {
+  background-color: whitesmoke;
+  border-radius: 5px;
+  display: flex;
+  flex-wrap: nowrap;
+  color: black;
+  width: 22%;
+  padding: 2px 5px;
+  justify-content: space-between;
+}
+
+.voteOption img {
+  width: 16px;
+  height: 16px;
 }

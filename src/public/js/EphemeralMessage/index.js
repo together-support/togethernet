@@ -1,5 +1,5 @@
 import store from '@js/store';
-import renderEphemeralDetails from './renderEphemeralDetails'
+import ephemeralMessageRenderer from '@js/ephemeralMessageRenderer';
 
 export default class EphemeralMessage {
   constructor (props) {
@@ -15,9 +15,10 @@ export default class EphemeralMessage {
 
   renderEphemeralMessageDetails = () => {
     $('.nonPinnedMessages').empty();
+    const {isPinned, id, roomId} = this.messageData;
 
-    if (!this.messageData.isPinned) {
-      const $messageContent = renderEphemeralDetails(this.messageData);
+    if (!isPinned) {
+      const $messageContent = ephemeralMessageRenderer.renderMessageDetails(roomId, id);
       $messageContent.appendTo($('.nonPinnedMessages'));
     }
 
