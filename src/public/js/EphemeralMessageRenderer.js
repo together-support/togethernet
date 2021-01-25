@@ -18,7 +18,7 @@ class EphemeralMessageRenderer {
 
     const myId = store.getCurrentUser().socketId;
 
-    const {id, name, content, socketId, canVote, archivalMessageId} = this.message.messageData;
+    const {id, name, content, socketId, canVote} = this.message.messageData;
     const $ephemeralRecordDetails = $(document.getElementById('ephemeralRecordDetailsTemplate').content.cloneNode(true));
     const $messageDetails = $ephemeralRecordDetails.find('.ephemeralRecordDetails');
     $messageDetails.attr('id', `ephemeralDetails-${id}`);
@@ -86,7 +86,6 @@ class EphemeralMessageRenderer {
     $makeVoteButton.on('click', (e) => {
       this.message.createPoll();
       (e.target).closest('.makeVote').remove();
-      this.renderMajorityRulesButtons().appendTo($(`#ephemeralDetails-${id}`).find('.votingButtonsContainer'));
     });
 
     return $makeVoteButton;

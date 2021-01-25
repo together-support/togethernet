@@ -127,6 +127,9 @@ export default class EphemeralMessage {
       'no': 0, 
       'neutral': 0
     }
+    if ($(`#ephemeralDetails-${this.messageData.id}`).is(":visible")) {
+      this.renderEphemeralMessageDetails();
+    }
   }
 
   render = () => {
