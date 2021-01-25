@@ -91,6 +91,10 @@ button {
   justify-content: space-between;
 }
 
+.voteOption.myVote {
+  background-color: darkgray;
+}
+
 .voteOption img {
   width: 16px;
   height: 16px;

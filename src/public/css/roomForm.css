@@ -1,0 +1,47 @@
+#meetingMode {
+  display: flex;
+  flex-direction: column;
+}
+
+#meetingMode input {
+  margin-right: 10px;
+}
+
+.facilitatorsContainer > children {
+  margin-right: 5px;
+}
+
+.facilitatorsContainer {
+  display: flex;
+  padding: 15px 0;
+  display: flex;
+}
+
+#addFacilitator {
+  padding: 10px 5px;
+  border: 1px solid whitesmoke;
+}
+
+#currentFacilitators {
+  display: flex;
+  flex-grow: 2;
+}
+
+.facilitatorOption {
+  display: flex;
+  padding: 10px;
+}
+
+.facilitatorOption div {
+  height: 25px;
+  width: 25px;
+  margin-right: 5px;
+}
+
+.facilitatorOption span {
+  align-self: center;
+}
+
+.facilitatorOption.selected {
+  background-color: #ead1dcff;
+}

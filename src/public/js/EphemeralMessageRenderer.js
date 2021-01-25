@@ -44,16 +44,21 @@ class EphemeralMessageRenderer {
   }
 
   renderConsentfulGestures = () => {
-    const {votes} = this.message.messageData;
+    const {id, votes, votingRecords} = this.message.messageData;
+    
     const $consentfulGesturesTemplate = $(document.getElementById('consentfulGesturesTemplate').content.cloneNode(true));
-    if (votes && isPlainObject(votes)) {
+    if (isPlainObject(votes)) {
       Object.keys(votes).forEach(option => {
         $consentfulGesturesTemplate.find(`.voteOption.${option} .voteCount`).text(votes[option]);
       });
     };
-  
+
     $consentfulGesturesTemplate.find('.voteOption').each((_, option) => {
-      $(option).on('click', () => {})
+      $(option).on('click', (e) => {
+        $(option).toggleClass('myVote');
+        $('.voteOption').not(`.${$(option).data('value')}`).removeClass('myVote');
+        this.message.castVote($(option).data('value'));
+      });
     })
    
     return $consentfulGesturesTemplate;

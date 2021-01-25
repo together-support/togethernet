@@ -1,5 +1,6 @@
 import store from '@js/store';
 import ephemeralMessageRenderer from '@js/ephemeralMessageRenderer';
+import isPlainObject from 'lodash/isPlainObject';
 
 export default class EphemeralMessage {
   constructor (props) {
@@ -52,6 +53,62 @@ export default class EphemeralMessage {
         room.removeEphemeralHistory(this.messageData.id);
       }
     }); 
+  }
+
+  castVote = (option) => {
+    const {votingRecords, id} = this.messageData;
+    const myId = store.getCurrentUser().socketId;
+    const myCurrentVote = isPlainObject(votingRecords) && votingRecords[myId];
+    const data = {textRecordId: id, option, ...store.getCurrentUser().getProfile()};
+
+    if (myCurrentVote) {
+      if (myCurrentVote === option) {
+        store.sendToPeers({type: 'voteRetracted', data});
+        this.voteRetracted(data);
+      } else {
+        store.sendToPeers({type: 'voteChanged', data});
+        this.voteChanged(data);
+      }
+    } else {
+      store.sendToPeers({type: 'voteCasted', data});
+      this.voteReceived(data);
+    }
+  }
+
+  voteReceived = ({option, socketId}) => {
+    const {votes = {}, votingRecords, id} = this.messageData;
+    this.messageData.votes = {
+      ...votes, 
+      [option]: (isNaN(votes[option]) ? 1 : votes[option] + 1),
+    };
+    this.messageData.votingRecords = {
+      ...votingRecords,
+      [socketId]: option,
+    };
+
+    $(`#ephemeralDetails-${id} .voteOption.${option} .voteCount`)
+      .text(this.messageData.votes[option]);
+  }
+  
+  voteRetracted = ({option, socketId}) => {
+    const {votes = {}, id} = this.messageData;
+    this.messageData.votes = {
+      ...votes, 
+      [option]: (isNaN(votes[option]) ? 1 : votes[option] - 1),
+    };
+
+    if (isPlainObject(delete this.messageData.votingRecords)) {
+      delete this.messageData.votingRecords[socketId];
+    }
+
+    $(`#ephemeralDetails-${id} .voteOption.${option} .voteCount`)
+      .text(this.messageData.votes[option]);
+  }
+  
+  voteChanged = ({option, socketId}) => {
+    const currentVote = this.messageData.votingRecords[socketId];
+    this.voteRetracted({option: currentVote, socketId});
+    this.voteReceived({option, socketId});
   }
 
   render = () => {
