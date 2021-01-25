@@ -18,7 +18,7 @@ class EphemeralMessageRenderer {
 
     const myId = store.getCurrentUser().socketId;
 
-    const {id, name, content, socketId, canVote} = this.message.messageData;
+    const {id, name, content, socketId, canVote, archivalMessageId} = this.message.messageData;
     const $ephemeralRecordDetails = $(document.getElementById('ephemeralRecordDetailsTemplate').content.cloneNode(true));
     const $messageDetails = $ephemeralRecordDetails.find('.ephemeralRecordDetails');
     $messageDetails.attr('id', `ephemeralDetails-${id}`);
@@ -45,6 +45,9 @@ class EphemeralMessageRenderer {
       const $majorityRulesButtons = this.renderMajorityRulesButtons();
       $majorityRulesButtons.appendTo($messageDetails.find('.votingButtonsContainer'));
     }
+
+    const $consentToArchiveButton = this.renderConsentToArchiveButton();
+    $consentToArchiveButton.appendTo($messageDetails.find('.messageActions'));
 
     return $ephemeralRecordDetails;
   }
@@ -103,11 +106,28 @@ class EphemeralMessageRenderer {
       $(option).on('click', (e) => {
         $(option).toggleClass('myVote');
         $('.voteOption').not(`.${$(option).data('value')}`).removeClass('myVote');
-        // this.message.castVote($(option).data('value'));
+        this.message.castVote($(option).data('value'));
       });
     })
    
     return $majorityRulesTemplate;
+  }
+
+  renderConsentToArchiveButton = () => {
+    const {id, archivalMessageId} = this.message.messageData;
+    const $consentToArchiveButton = $('<button class="initConsentToArchiveProcess"><i class="fas fa-align-justify"></i></button>');
+    if (archivalMessageId) {
+      $consentToArchiveButton.addClass('checked');
+      $consentToArchiveButton.on('click', (e) => {
+  
+      });
+    } else {
+      $consentToArchiveButton.on('click', (e) => {
+  
+      });
+    }
+
+    return $consentToArchiveButton;
   }
 }
 
