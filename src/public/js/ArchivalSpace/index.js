@@ -146,7 +146,7 @@ class ArchivalSpace {
   appendDateGroup = (date) => {
     const $dateGroupForMessageRecords = $(`<div class="archiveGroup dateGroup" id="dateGroup-${formatDateLabel(date)}"></div>`);
     const $dateHeading = $('<h3></h3>');
-    $dateHeading.text(date);
+    $dateHeading.text(formatDateString(date));
     $dateHeading.appendTo($dateGroupForMessageRecords);
     $dateGroupForMessageRecords.appendTo($('#archivalMessagesDetailsContainer'));
   }
