@@ -14,7 +14,7 @@ export default class Room {
 
   constructor(options) {
     this.mode = options.mode;
-    this.roomId = options.roomId.toLowerCase().replaceAll(' ', '-');
+    this.roomId = options.roomId.replaceAll(' ', '-');
     this.ephemeral = options.ephemeral;
     this.facilitators = options.facilitators || [];
     this.$room = $(`#${this.roomId}`);

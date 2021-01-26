@@ -121,6 +121,14 @@ class ArchivalSpace {
     const {message_type, commentable_id, room_id, created_at} = messageData;
     const message = new ArchivedMessage({messageData, index: this.getIndex(messageData)});
     const $details = message.renderArchivedMessage();
+    if (!$(`#dateGroup-${formatDateLabel(created_at)}`).length) {
+      this.appendDateGroup(created_at);
+    };
+
+    if (!$(`#dateGroup-${formatDateLabel(created_at)} .roomGroup-${room_id}`).length) {
+      this.appendRoomGroup(room_id, created_at);
+    };
+
     if (message_type === 'text_message') {
       $details.appendTo($(`#dateGroup-${formatDateLabel(created_at)} .roomGroup-${room_id}`));
     } else if (message_type === 'comment') {
