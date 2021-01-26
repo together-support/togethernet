@@ -11,17 +11,24 @@
 
 :root {
   --default-font-size: 16px;
-  --bg-color: burlywood;
+  --primary-bg-color: black;
+  --secondary-bg-color: #282828;
+  --ephemeral-bg-color: midnightblue;
+  --primary-font-color: whitesmoke;
+  --secondary-font-color: gray;
   --interface-gray: Grey;
   --avatar-outline-color: whitesmoke;
+  --newly-joined-avatar-outline-color: #0eb7da;
   --overlay-color: black;
   --overlay-opacity: 0.5;
   --min-navbar-width: 17vw;
-  --cell-horizontal-num: 40;
-  --cell-vertical-num: 16;
+  --cell-horizontal-num: 31;
+  --cell-vertical-num: 17;
   --cell-size: 5vh;
   --avatar-x: 1;
   --avatar-y: 1;
+  --interface-default-margin: 1vw;
+  --interface-highlight: #282828;
 }
 
 body,
@@ -31,14 +38,29 @@ button p,
 .roomLink,
 .configureRoomView,
 .modalContent p,
-#userName,
+#changeUserName,
 #editorOptions,
-#_messageInput,
+#writeMessage,
 #_privateSendBtn,
 #messageType,
 #systemMessage span,
 .textBubble p {
   font: 16px nunito, monospace;
+}
+
+body {
+  background-color: var(--primary-bg-color);
+  padding: 2.5vh;
+}
+
+.container {
+  position: relative;
+  margin: auto;
+  outline: 1px solid gray;
+  display: flex;
+  flex-direction: row;
+  height: calc(var(--cell-size) * var(--cell-vertical-num) + 50px);
+  width: calc(280px + var(--cell-size) * var(--cell-horizontal-num));
 }
 
 #messages {
@@ -55,46 +77,13 @@ button p,
   background: #eee;
 }
 
-.menu {
-  border: none;
-  height: 50px;
-}
-
-.container {
-  display: block;
-  padding: 0px;
-  margin: 0 auto;
-  border: none;
-  z-index: -5;
-  width: calc(var(--cell-size) * var(--cell-horizontal-num));
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  z-index: 1;
-}
-
-#rooms {
-  height: calc(var(--cell-size) * var(--cell-vertical-num));
-  outline: 1px solid gray;
-}
-
 .col {
   display: flex;
   flex-direction: column;
   z-index: 1;
 }
 
-.messageDiv {
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
-  height: 100%;
-}
-
-.messageActions {
+.sendMessageActions {
   padding: 0px;
   background-color: #ffffff;
   z-index: 1;
@@ -102,70 +91,11 @@ button p,
   width: 100%;
 }
 
-#archivalCommentInput {
-  flex-grow: 1;
-}
-
-.message {
-  display: flex;
-  padding-bottom: 8pt;
-  padding-left: 10pt;
-  padding-right: 10pt;
-}
-
-#userName,
-#editorOptions {
-  border: 1px solid gray;
-  border-right: 0px solid transparent;
-  border-top: 0px solid transparent;
-  padding: 0 10px;
-  width: 27ch;
-  height: 50px;
-  background-color: #ffffff;
-}
-
-#_messageInput {
-  border: 1px solid gray;
-  border-right: 0px solid transparent;
-  border-top: 0px solid transparent;
-  display: flex;
-  flex-grow: 5;
-  padding-left: 10px;
-}
-
-.listView {
-  float: left;
-  background-color: white;
-  z-index: 1;
-}
-
 .btn {
-  padding: 10px;
   margin: 0;
   height: 50px;
   border: 0.5px solid gray;
-  border-left: 0px solid transparent;
-  border-top: 0px solid transparent;
   background-color: #efefef;
-}
-
-.btn.icon {
-  width: 50px;
-}
-
-.roomLink {
-  padding: 10px 20px 10px 20px;
-  margin: 0 2px 0 0;
-  width: auto;
-  height: 50px;
-  border-radius: 20px 20px 0px 0px;
-  border-top: 0.5px solid gray;
-  border-left: 0.5px solid gray;
-  border-right: 0.5px solid gray;
-  border-bottom: 0px transparent;
-  background-color: #efefef;
-  display: flex;
-  flex-direction: column;
 }
 
 .participantsContainer {
@@ -182,76 +112,8 @@ button p,
   font-size: 20px;
 }
 
-#_privacyToggle {
-  border: 1px solid black;
-}
-
-#_privacyToggle.private {
-  border: 1px solid red;
-}
-
 .btn:hover {
   cursor: pointer;
-}
-
-#_privateName {
-  display: flex;
-  padding-bottom: 4pt;
-  padding-left: 10pt;
-  order: 1;
-}
-
-#_privateName p {
-  font-weight: bold;
-}
-
-#_privateStamp {
-  display: flex;
-  padding-bottom: 4pt;
-  padding-left: 10pt;
-  order: 2;
-}
-
-#_privateStamp p {
-  color: grey;
-}
-
-.ui-widget-header p,
-.ui-widget-content p {
-  margin: 0;
-}
-
-.slit {
-  position: relative;
-  width: 10px;
-  height: 50px;
-  padding: 0;
-}
-
-.audioRecord {
-  border: none;
-  padding-left: 20px;
-}
-
-.audioPlay {
-  margin: auto;
-  border-top: 13px solid transparent;
-  border-bottom: 13px solid transparent;
-  border-left: 18px solid rgba(0, 0, 0, 0.3);
-}
-
-.audioPause {
-  margin: auto;
-  border-left: 18px solid blue;
-  border-right: 18px solid blue;
-}
-
-.pink {
-  background-color: pink;
-}
-
-.yellow {
-  background-color: yellow;
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {
@@ -281,13 +143,13 @@ input[type="color"] {
   height: 100vh;
   overflow: auto;
   background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  background-color: rgba(0, 0, 0, 0.8); /* Black w/ opacity */
 }
 
 .modalContent {
   background-color: rgba(0, 0, 0, 0.8);
   border: 1px solid #888;
-  margin: 50px auto;
+  margin: 2.5vh auto;
   width: calc(var(--cell-size) * var(--cell-horizontal-num));
   outline: 1px solid black;
 }
@@ -340,103 +202,30 @@ input[type="color"] {
   padding: 0 0 10px 0;
 }
 
-#meetingMode {
-  display: flex;
-  flex-direction: column;
-}
-
-#meetingMode input {
-  margin-right: 10px;
-}
-
-.facilitatorsContainer > children {
-  margin-right: 5px;
-}
-
-.toggleOption {
-  display: flex;
-  justify-content: start;
-  padding: 10px 0;
-}
-
-.toggleOption > * {
-  margin-right: 20px;
-}
-
-.toggleContainer {
-  width: 80px;
-  height: 34px;
-  background-color: white;
-  border: 2px solid darkgray;
-  border-radius: 30px;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-}
-
-.toggleButton {
-  width: 50px;
-  height: 30px;
-  border-radius: 30px;
-  background-color: darkgray;
-}
-
-.toggleContainer.right {
-  justify-content: flex-end;
-}
-
-.facilitatorsContainer {
-  display: flex;
-  padding: 15px 0;
-  display: flex;
-}
-
-#addFacilitator {
-  padding: 10px 5px;
-  background-color: white;
-}
-
-#currentFacilitators {
-  display: flex;
-  flex-grow: 2;
-}
-
-.facilitatorOption {
-  display: flex;
-  padding: 10px;
-}
-
-.facilitatorOption div {
-  height: 25px;
-  width: 25px;
-  margin-right: 5px;
-}
-
-.facilitatorOption span {
-  align-self: center;
-}
-
-.facilitatorOption.selected {
-  background-color: #ead1dcff;
-}
-
 #messageType {
   background-color: #efefef;
   padding: 0 10px;
   border-top: 0px solid transparent;
 }
 
-.textRecord,
-.audioRecord {
-  width: var(--cell-size);
-  height: var(--cell-size);
-  z-index: 5;
-  display: flex;
-  flex-wrap: wrap;
-}
-
 .removeRoom {
   margin-left: 10px;
   border-radius: 50%;
   border: 1px solid darkgray;
+}
+
+#newRoomId {
+  font-size: 16px;
+  width: 300px;
+  padding: 5px 8px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.hasError {
+  border: 2px solid red;
+}
+
+.hasError:focus {
+  outline: 2 px solid red;
 }

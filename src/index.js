@@ -34,13 +34,15 @@ if (process.env.BASIC_AUTH_ENABLED) {
   });
 }
 
-app.post('/archive', (req, _) => { 
-  const values = pick(req.body, ['author', 'content', 'room_id', 'base_color', 'participant_names', 'secondary_colors', 'message_type', 'commentable_id']);
+app.post('/archive', (req, response) => { 
+  const values = pick(req.body, ['author', 'content', 'room_id', 'participant_ids', 'participant_names', 'message_type', 'commentable_id']);
   archiver.write({resource: 'messages', values, callback: (error, result) => {
     if (error) {
       console.log(error);
     }
-    signalingServer.alertArchivedMessage(result.rows[0]);
+    const message = result.rows[0];
+    response.status(200).json(message);
+    signalingServer.alertArchivedMessage(message);
   }});
 });
 

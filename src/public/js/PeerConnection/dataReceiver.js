@@ -16,7 +16,6 @@ export const handleData = ({event, peerId}) => {
     store.getRoom(roomId).addEphemeralHistory(textRecord);
     textRecord.render();
   } else if (data.type === 'initPeer') {
-    // console.log('init peer', new Date().toLocaleTimeString());
     initPeer({...data.data});
   } else if (data.type === 'position') {
     store.getPeer(data.data.socketId).updatePosition(data.data);
@@ -74,10 +73,10 @@ export const handleData = ({event, peerId}) => {
     const messageRecord = room.ephemeralHistory[messageId];
     messageRecord.consentToArchiveReceived(store.getPeer(socketId));
   } else if (data.type === 'messageArchived') {
-    const {roomId, messageId} = data.data;
+    const {roomId, messageId, archivedMessageId} = data.data;
     const room = store.getRoom(roomId);
     const messageRecord = room.ephemeralHistory[messageId];
-    messageRecord.messageArchived();
+    messageRecord.messageArchived({archivedMessageId});
   } else if (data.type === 'deleteRoom') {
     const {removedRoom} = data.data;
     const room = store.rooms[removedRoom];
@@ -111,16 +110,21 @@ const addNewRoom = ({options}) => {
 };
 
 const initPeer = (data) => {
-  const {socketId, avatar, name, roomId, room, left, top} = data;
+  const {socketId, avatar, name, roomId, room, columnStart, rowStart} = data;
   const peer = store.getPeer(socketId);
-  peer.updateState({avatar, name, currentRoomId: roomId, left, top});
+  peer.updateState({avatar, name, currentRoomId: roomId, columnStart, rowStart});
   store.updateOrInitializeRoom(roomId, room).addMember(peer);
+
+  const newlyJoinedOutlineColor = getComputedStyle(document.documentElement).getPropertyValue('--newly-joined-avatar-outline-color');
+  const defaultOutlineColor = getComputedStyle(document.documentElement).getPropertyValue('--avatar-outline-color');
+  $('#user .shadow').css({outlineColor: newlyJoinedOutlineColor}).delay(2000).animate({outlineColor: defaultOutlineColor}, {duration: 2000})
 };
 
 const removeEphemeralPeerMessage = ({roomId, messageId}) => {
-  $(`.textRecord#${messageId}`).finish().animate({opacity: 0}, {
+  $(`.ephemeralRecord#${messageId}`).finish().animate({opacity: 0}, {
     complete: () => {
-      $(`textRecord#${messageId}`).remove();
+      $(`.ephemeralRecord#${messageId}`).remove();
+      $(`#ephemeralDetails-${messageId}`).text('[message removed]');
       store.getRoom(roomId).removeEphemeralHistory(messageId);
     }
   });

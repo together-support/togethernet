@@ -1,0 +1,56 @@
+.avatar {
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
+  padding: 10px;
+}
+
+.avatar.facilitator {
+  font-weight: 800;
+  text-decoration: underline;
+  color: white;
+}
+
+.avatar.newlyJoined {
+  outline-color: var(--newly-joined-avatar-outline-color);
+  outline-width: 2px;
+  outline-style: solid;
+}
+
+.avatar, .shadow {
+  width: var(--cell-size);
+  height: var(--cell-size);
+}
+
+.avatar > span {
+  color: #efefef;
+  font-size: 1em;
+  text-shadow: 1px 1px 1px black;
+  user-select: none;
+  z-index: 5;
+}
+
+#user {
+  display: contents;
+}
+
+#user .avatar,
+#user .shadow {
+  grid-column-start: var(--avatar-x);
+  grid-row-start: var(--avatar-y);
+  margin: 0;
+}
+
+#user .avatar {
+  position: absolute;
+  z-index: 10;
+}
+
+#user .avatar.inConsentProcess {
+  z-index: 20;
+}
+
+#user .shadow {
+  z-index: 0;
+  outline-color: var(--avatar-outline-color);
+  outline-width: 1px;
+  outline-style: solid;
+}

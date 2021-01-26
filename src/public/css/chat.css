@@ -1,0 +1,49 @@
+.chat {
+  outline: 1px solid gray;
+  width: calc(var(--cell-size) * var(--cell-horizontal-num));
+  height: calc(var(--cell-size) * var(--cell-vertical-num) + 50px);
+  display: flex;
+  flex-direction: column;
+}
+
+.room {
+  height: calc(var(--cell-vertical-num) * var(--cell-size));
+}
+
+.room:focus {
+  outline: 2px solid blue;
+}
+
+.sendMessageActions {
+  min-height: 50px;
+  width: 100%;
+  padding: 5px;
+  background-color: black;
+  justify-content: space-between;
+  border-top: 1px solid gray;
+  align-items: center;
+}
+
+.sendMessageActions button {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  background-color: var(--primary-bg-color);
+  color: var(--primary-font-color);
+  margin-right: 10px;
+}
+
+#writeMessage {
+  border-radius: 25px;
+  border: 1px solid gray;
+  flex-grow: 1;
+  padding-left: 10px;
+  height: 35px;
+  background-color: var(--primary-bg-color);
+  color: var(--primary-font-color);
+}
+
+#pinMessage.clicked {
+  color: var(--primary-bg-color);
+  background-color: var(--primary-font-color);
+}

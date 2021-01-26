@@ -1,0 +1,88 @@
+.navigation {
+  width: 280px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.navigation h1 {
+  width: 100%;
+  color: var(--primary-font-color);
+  padding: 10px 20px;
+  font-size: 16px;
+  border-bottom: 1px solid gray;
+}
+
+.navigation h2 {
+  width: 100%;
+  color: var(--secondary-font-color);
+  justify-content: space-between;
+  font-size: 16px;
+  display: flex;
+}
+
+.navigation h2 button {
+  color: var(--secondary-font-color);
+}
+
+.roomsList {
+  flex-direction: column;
+  overflow-y: scroll;
+}
+
+.roomsList.ephemeral {
+  flex-grow: 1;
+}
+
+.roomsList > * {
+  padding: 10px 20px;
+}
+
+.roomsList h2 {
+  font-size: 16px;
+}
+
+.roomLink {
+  background-color: var(--primary-bg-color);
+  color: var(--primary-font-color);
+  margin: 0 2px 0 0;
+  width: 100%;
+  min-height: 55px;
+  display: flex;
+  flex-direction: column;
+}
+
+.roomLink.currentRoom {
+  background-color: var(--secondary-bg-color);
+}
+
+.userInfo {
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 10px 16px;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid gray;
+}
+
+#changeUserAvatar {
+  width: 16px;
+  height: 16px;
+  margin-right: 16px;
+}
+
+#changeUserName {
+  font-size: 16px;
+  color: var(--primary-font-color);
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+#changeUserName span {
+  margin-right: 16px;
+}

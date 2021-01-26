@@ -1,34 +1,36 @@
-import { roomModes } from '@js/constants';
 import store from '@js/store';
 import EphemeralMessage from './index';
-import {clearSystemMessage} from '@js/Togethernet/systemMessage';
 
 export const sendMessage = () => {
-  const $messageInput = $('#_messageInput');
-  const message = $messageInput.val();
+  const $messageInput = $('#writeMessage');
+  const content = $messageInput.val();
 
-  if (!message) {
+  if (!content) {
     return;
   }
 
-  const left = Math.round($('#user').position().left);
-  const top = Math.round($('#user').position().top);
-  let messageType = $('#messageType option:selected').val();
-  
-  const threadEntryMessageId = $('#messageType').attr('data-thread-entry-message');
-  if (messageType === 'message' && Boolean(threadEntryMessageId) && store.getCurrentRoom().mode === roomModes.egalitarian) {
-    messageType = 'threadedMessage';
-  }
-  
-  if ($(`#${store.getCurrentUser().currentRoomId}-${left}-${top}`).length) {
+  const gridColumnStart = $('#user .shadow').css('grid-column-start');
+  const gridRowStart = $('#user .shadow').css('grid-row-start');
+
+  if ($(`#${store.getCurrentUser().currentRoomId}-${gridColumnStart}-${gridRowStart}`).length) {
     alert('move to an empty spot to write the msg');
-  } else {
-    const ephemeralMessage = new EphemeralMessage({message, messageType, left, top, threadEntryMessageId, ...store.getCurrentUser().getProfile()});
-    store.getCurrentRoom().addEphemeralHistory(ephemeralMessage);
-    store.sendToPeers({type: 'text', data: ephemeralMessage.messageData});
-    clearSystemMessage();
-    ephemeralMessage.render();
   }
+
+  const threadEntryMessageId = $('#writeMessage').attr('data-thread-entry-message');
+  const isPinned = $('#pinMessage').hasClass('clicked');
+  
+  const ephemeralMessage = new EphemeralMessage({
+    content, 
+    isPinned, 
+    gridColumnStart, 
+    gridRowStart, 
+    threadEntryMessageId, 
+    ...store.getCurrentUser().getProfile()
+  });
+
+  store.getCurrentRoom().addEphemeralHistory(ephemeralMessage);
+  store.sendToPeers({type: 'text', data: ephemeralMessage.messageData});
+  ephemeralMessage.render();
 
   $messageInput.val('');
 };

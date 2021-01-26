@@ -1,9 +1,11 @@
-import sample from 'lodash/sample';
 import store from '@js/store';
 import {formatDateTimeString} from '@js/utils';
+import {updateMessage, addComment} from '@js/api';
+import moment from 'moment';
 
 class ArchivedMessage {
-  constructor (messageData, index) {
+  constructor (props) {
+    const {messageData, index} = props
     this.messageData = messageData;
     this.index = index;
   }
@@ -24,55 +26,7 @@ class ArchivedMessage {
     this.$messageRecord().toggleClass('isEditing');
   }
 
-  renderMessageRecord = () => {
-    if (this.messageData.message_type === 'text_message') {
-      return this.renderMessageRecordForTextMessage();
-    } else if (this.messageData.message_type === 'comment') {
-      return this.renderMessageRecordForComment();
-    }
-  }
-
-  renderBaseRecord = () => {
-    const {id, base_color} = this.messageData;
-    
-    const $messageRecordAvatar = $('<div class="archival textRecord"></div>');
-    $messageRecordAvatar.css({backgroundColor: base_color});
-    $messageRecordAvatar.attr('id', `archivedMessageRecord-${id}`);
-    
-    $messageRecordAvatar.mouseenter((e) => {
-      $(e.target).closest('.textRecord').find('.consentIndicator').show();
-      document.getElementById(`archivedMessageDetails-${id}`).scrollIntoView({behavior: 'smooth'});
-    }).mouseleave(e => {
-      $(e.target).closest('.textRecord').find('.consentIndicator').hide();
-    });
-
-    $messageRecordAvatar.on('click', this.toggleIsEditing);
-  
-    return $messageRecordAvatar;
-  }
-
-  renderMessageRecordForTextMessage = () => {
-    const {secondary_colors} = this.messageData;
-
-    const $messageRecord = this.renderBaseRecord();
-    Array.from({length: 25}).forEach(() => {
-      const color = sample(secondary_colors);
-      const $consentIndicator = $('<div class="consentIndicator" style="display:none"></div>');
-      $consentIndicator.css({backgroundColor: color});
-      $consentIndicator.appendTo($messageRecord);
-    });
-
-    return $messageRecord;
-  }
-
-  renderMessageRecordForComment = () => {
-    const $messageRecord = this.renderBaseRecord();
-    $messageRecord.addClass('comment');
-    $messageRecord.html('<i class="fas fa-comment"></i>');
-    return $messageRecord;
-  }
-
-  renderMessageDetails = () => {
+  renderArchivedMessage = () => {
     if (this.messageData.message_type === 'text_message') {
       return this.renderMessageDetailsForTextRecord();
     } else if (this.messageData.message_type === 'comment') {
@@ -86,8 +40,20 @@ class ArchivedMessage {
     const $messageDetailsTemplate = $(document.getElementById('archivalMessagesDetailsTemplate').content.cloneNode(true));
     const $messageDetails = $messageDetailsTemplate.find('.archivalMessagesDetails');
     $messageDetails.attr('id', `archivedMessageDetails-${id}`);
+
+    $messageDetails.find('.deleteArchivedMessage').on('click', this.markMessageDeleted);
   
     return $messageDetails;
+  }
+
+  markMessageDeleted = () => {
+    if (store.getCurrentUser().socketId === store.getRoom('archivalSpace').editor) {
+      const content = `message deleted by ${store.getCurrentUser().getProfile().name}. ${moment().format('MMMM D h:mm')}`;
+      updateMessage({
+        messageId: this.messageData.id,
+        content
+      });
+    }
   }
 
   renderMessageDetailsForTextRecord = () => {
@@ -95,7 +61,8 @@ class ArchivedMessage {
 
     const $messageDetails = this.renderBaseDetails();
     $messageDetails.find('.participantNames').text(`Participants: ${participant_names.join(', ')}`);
-    $messageDetails.find('.content').text(`${this.index}.${content}.${author}`);
+    $messageDetails.find('.message').text(`${this.index}. ${content}`);
+    $messageDetails.find('.author').text(author);
     return $messageDetails;
   }
 

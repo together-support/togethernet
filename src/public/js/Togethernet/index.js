@@ -20,7 +20,7 @@ class Togethernet {
     const defaultEphemeralRoom = await this.initDefaultEphemeralRoom();
 
     store.rooms = {
-      ephemeralSpace: defaultEphemeralRoom,
+      'sitting-at-the-park': defaultEphemeralRoom,
       archivalSpace: archivalSpace,
     };
   }
@@ -35,8 +35,7 @@ class Togethernet {
     const defaultEphemeralRoom = new Room({
       mode: publicConfig.defaultMode || EGALITARIAN_MODE,
       ephemeral: true,
-      name: 'sitting-in-the-park',
-      roomId: 'ephemeralSpace',
+      roomId: 'sitting-at-the-park',
     });
     defaultEphemeralRoom.attachEvents();
     return defaultEphemeralRoom;
@@ -44,12 +43,14 @@ class Togethernet {
  
   attachUIEvents = () => {
     this.handleMessageSendingEvents();
+    this.addKeyboardCues();
     this.detectThreadStart();
     this.hideInteractionButtonsOnMouseLeave();
+    $('#pinMessage').on('click', () => $('#pinMessage').toggleClass('clicked'));
   }
 
   handleMessageSendingEvents = () => {
-    $('#_messageInput').on('keyup', (e) => {
+    $('#writeMessage').on('keyup', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
         sendMessage();
@@ -57,8 +58,28 @@ class Togethernet {
     });
   }
 
+  addKeyboardCues = () => {
+    document.addEventListener('keyup', e => {
+      if (e.shiftKey && e.key === ' ') {
+        e.preventDefault();
+        const $visibleEphmeralRoom = $('.room:visible').get(0);
+        if (document.activeElement.id === 'writeMessage') {
+          $visibleEphmeralRoom && $visibleEphmeralRoom.focus();
+        } else if ($(document.activeElement).hasClass('room')) {
+          $('#writeMessage').focus();
+        } else {
+          $visibleEphmeralRoom && $visibleEphmeralRoom.focus();
+        }
+      }
+
+      if (e.key.length === 1 && document.activeElement.id !== 'writeMessage' && !e.shiftKey) {
+        $('#writeMessage').delay(100).fadeOut(150).fadeIn(100);
+      }
+    })
+  }
+
   detectThreadStart = () => {
-    $('#messageType').on('messageThread', (e) => {
+    $('#writeMessage').on('messageThread', (e) => {
       if (e.threadPreviousMessage) {
         $(e.target).attr('data-thread-entry-message', e.threadPreviousMessage.id);
       } else {

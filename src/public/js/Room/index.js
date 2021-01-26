@@ -1,4 +1,3 @@
-import throttle from 'lodash/throttle';
 import pull from 'lodash/pull';
 import difference from 'lodash/difference';
 
@@ -15,8 +14,7 @@ export default class Room {
 
   constructor(options) {
     this.mode = options.mode;
-    this.name = options.name;
-    this.roomId = options.roomId;
+    this.roomId = options.roomId.replaceAll(' ', '-');
     this.ephemeral = options.ephemeral;
     this.facilitators = options.facilitators || [];
     this.$room = $(`#${this.roomId}`);
@@ -39,10 +37,9 @@ export default class Room {
   }
 
   renderMenuButton = () => {
-    const $roomLink = $('<button type="button" class="roomLink icon"></button>');
-
+    const $roomLink = $('<button type="button" class="roomLink"></button>');
     const $roomTitle = $('<p></p>');
-    $roomTitle.text(this.name);
+    $roomTitle.text(this.roomId);
     $roomTitle.appendTo($roomLink);
 
     if (this.facilitators.includes(store.getCurrentUser().socketId)) {
@@ -52,7 +49,7 @@ export default class Room {
     const $participantsContainer = $('<div class="participantsContainer"></div>');
     $participantsContainer.appendTo($roomLink);
 
-    $roomLink.insertBefore($('#addRoom'));
+    $roomLink.appendTo($('.roomsList.ephemeral'));
     this.$roomLink = $roomLink;
   }
 
@@ -73,7 +70,7 @@ export default class Room {
 
   purgeSelf = () => {
     Object.values(this.memberships.members).forEach(member => {
-      member.joinedRoom('ephemeralSpace');
+      member.joinedRoom('sitting-at-the-park');
     });
 
     this.$roomLink.remove();
@@ -82,27 +79,39 @@ export default class Room {
   }
 
   renderSpace = () => {
-    const $room = $(`<div class="chat hidden ephemeralView" id="${this.roomId}" tabindex="0"><div class="consentToArchiveOverlay" style="display: none;"></div></div>`);
-    $room.appendTo('#rooms');
+    const $room = $(`
+      <div \
+        class="room ephemeralView" \
+        id="${this.roomId}" \
+        tabindex="0" \
+        style="display:none" \
+      > \
+        <div 
+          class="consentToArchiveOverlay" \
+          style="display: none;"\
+        ></div>\
+      </div>`);
+    $room.insertBefore('.sendMessageActions');
     this.$room = $room;
   }
 
   attachEvents = () => {
     this.$roomLink.on('click', this.goToRoom);
     this.$room.on('hideRoom', this.hideRoom);
-
-    this.setBoundary();
     this.$room.on('keydown', keyboardEvent);
   }
 
   goToRoom = () => {
     $('#archivalSpace').hide();
-    $('#archivalSpaceActions').hide();
-    $('.chat').each((_, el) => $(el).trigger('hideRoom'));
+    $('#downloadArchives').hide();
+    $('.ephemeralMessageContainer').finish().hide();
+    $('.roomLink').removeClass('currentRoom');
+    this.$roomLink.addClass('currentRoom');
+    $('.room').each((_, el) => $(el).trigger('hideRoom'));
     this.updateMessageTypes();
     this.addMember(store.getCurrentUser());
     this.showRoom();
-    $('#_messageInput').removeAttr('disabled');
+    $('#writeMessage').removeAttr('disabled');
 
     store.sendToPeers({
       type: 'joinedRoom',
@@ -119,11 +128,10 @@ export default class Room {
   showRoom = () => {
     store.getCurrentUser().updateState({currentRoomId: this.roomId});
     this.$room.show();
-    $('#ephemeralSpaceActions').show();
-    $(window).on('resize', this.onResize);
+    this.$room.focus();
+    $('#pinMessage').show();
     
     this.memberships.renderAvatars();
-    this.setBoundary();
 
     this.renderHistory();
   }
@@ -190,24 +198,14 @@ export default class Room {
   }
 
   hideRoom = () => {
-    $(window).off('resize', this.onResize);
     this.$room.hide();
     $('#user').remove();
   }
 
-  onResize = throttle(() => { 
-    this.setBoundary();
-  }, 500);
-
-  setBoundary = () => {   
-    store.set('rightBoundary', store.get('leftBoundary') + this.$room.width());
-    store.set('bottomBoundary', store.get('topBoundary') + this.$room.height());
-  }
-
-  updateSelf = ({mode, ephemeral, name, ephemeralHistory}) => {
+  updateSelf = ({mode, ephemeral, roomId, ephemeralHistory}) => {
     this.mode = mode;
     this.ephemeral = ephemeral;
-    this.name = name;
+    this.roomId = roomId;
     this.updateEphemeralHistory(ephemeralHistory);
   }
 

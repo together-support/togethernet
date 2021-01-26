@@ -1,77 +1,145 @@
 import store from '@js/store';
-import {roomModes} from '@js/constants';
-import AgendaTextRecord from './AgendaTextRecord';
-import DisappearingTextRecord from './DisappearingTextRecord';
-import PersistentTextRecord from './PersistentTextRecord';
-import ThreadedTextRecord from './ThreadedTextRecord';
+import ephemeralMessageRenderer from '@js/ephemeralMessageRenderer';
+import isPlainObject from 'lodash/isPlainObject';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import sample from 'lodash/sample';
-import {createMessage} from '@js/api';
-
-const messageTypeToComponent = {
-  'question': PersistentTextRecord,
-  'idea': PersistentTextRecord,
-  'message': DisappearingTextRecord,
-  'agenda': AgendaTextRecord,
-  'threadedMessage': ThreadedTextRecord,
-};
 
 export default class EphemeralMessage {
   constructor (props) {
-    const messageData = {
-      ...props,
-      id: `${props.roomId}-${props.left}-${props.top}`,
-      votingRecords: props.votingRecords || {},
-      consentToArchiveRecords: props.consentToArchiveRecords || {},
-      consentToArchiveInitiator: '',
+    this.messageData = {
+      ...props, 
+      id: `${props.roomId}-${props.gridColumnStart}-${props.gridRowStart}`,
     };
-
-    const room = store.getRoom(props.roomId);
-    if (room.ephemeral && room.mode === roomModes.directAction) {
-      messageData.votes = props.votes || {
-        agree: 0,
-        disagree: 0,
-        stand: 0,
-        block: 0,
-      };
-    }
-
-    this.messageData = messageData;
-
-    if (props.messageType === 'threadedMessage' && (!props.threadPreviousMessageId) && (!props.threadNextMessageId)) {
-      const entryMessage = room.ephemeralHistory[props.threadEntryMessageId];
-      const threadTail = entryMessage.getThreadTail();
-      threadTail.messageData.threadNextMessageId = messageData.id;
-      messageData.threadPreviousMessageId = threadTail.messageData.id;
-    }
 
     if (props.inConsentToArchiveProcess) {
       const {consentToArchiveInitiator} = props;
       this.initConsentToArchiveReceived({consentToArchiveInitiator});
     }
   }
-
-  getThreadTail = () => {
-    const {roomId, threadNextMessageId} = this.messageData;
-    if (!threadNextMessageId) {
-      return this;
-    }
-
-    const ephemeralHistory = store.getRoom(roomId).ephemeralHistory;
-    let threadNextMessage = ephemeralHistory[threadNextMessageId];
-    while (threadNextMessage.messageData.threadNextMessageId) {
-      threadNextMessage = ephemeralHistory[threadNextMessage.messageData.threadNextMessageId];
-    }
-
-    return threadNextMessage;
-  }
    
   $textRecord = () => {
     return $(`#${this.messageData.id}`);
   }
 
-  initiateConsentToArchiveProcess = (e) => {
-    e.stopPropagation();
+  renderEphemeralMessageDetails = () => {
+    $('.nonPinnedMessages').empty();
+    const {isPinned, id, roomId} = this.messageData;
+
+    if (!isPinned) {
+      const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
+      $messageContent.appendTo($('.nonPinnedMessages'));
+    }
+
+    $('.ephemeralMessageContainer').finish().show();
+  }
+
+  purgeSelf = () => {
+    if (this.messageData.threadNextMessageId || this.messageData.threadPreviousMessageId) {
+      this.handleRemoveMessageInThread();
+    } else {
+      this.handleRemoveSingleMessage();
+    }
+  }
+
+  handleRemoveSingleMessage = () => {
+    const room = store.getRoom(this.messageData.roomId);
+    const $textRecord = this.$textRecord();
+
+    $('.nonPinnedMessages').empty();
+    $('.ephemeralMessageContainer').hide();
+    $textRecord.finish().animate({opacity: 0}, {
+      complete: () => {
+        $textRecord.remove();
+        store.sendToPeers({
+          type: 'removeEphemeralMessage',
+          data: {
+            messageId: this.messageData.id,
+            roomId: this.messageData.roomId,
+          }
+        });
+        room.removeEphemeralHistory(this.messageData.id);
+      }
+    }); 
+  }
+
+  castVote = (option) => {
+    const {votingRecords, id} = this.messageData;
+    const myId = store.getCurrentUser().socketId;
+    const myCurrentVote = isPlainObject(votingRecords) && votingRecords[myId];
+    const data = {textRecordId: id, option, ...store.getCurrentUser().getProfile()};
+
+    if (myCurrentVote) {
+      if (myCurrentVote === option) {
+        store.sendToPeers({type: 'voteRetracted', data});
+        this.voteRetracted(data);
+      } else {
+        store.sendToPeers({type: 'voteChanged', data});
+        this.voteChanged(data);
+      }
+    } else {
+      store.sendToPeers({type: 'voteCasted', data});
+      this.voteReceived(data);
+    }
+  }
+
+  voteReceived = ({option, socketId}) => {
+    const {votes = {}, votingRecords, id} = this.messageData;
+    this.messageData.votes = {
+      ...votes, 
+      [option]: (isNaN(votes[option]) ? 1 : votes[option] + 1),
+    };
+    this.messageData.votingRecords = {
+      ...votingRecords,
+      [socketId]: option,
+    };
+
+    $(`#ephemeralDetails-${id} .voteOption.${option} .voteCount`)
+      .text(this.messageData.votes[option]);
+  }
+  
+  voteRetracted = ({option, socketId}) => {
+    const {votes = {}, id} = this.messageData;
+    this.messageData.votes = {
+      ...votes, 
+      [option]: (isNaN(votes[option]) ? 1 : votes[option] - 1),
+    };
+
+    if (isPlainObject(delete this.messageData.votingRecords)) {
+      delete this.messageData.votingRecords[socketId];
+    }
+
+    $(`#ephemeralDetails-${id} .voteOption.${option} .voteCount`)
+      .text(this.messageData.votes[option]);
+  }
+  
+  voteChanged = ({option, socketId}) => {
+    const currentVote = this.messageData.votingRecords[socketId];
+    this.voteRetracted({option: currentVote, socketId});
+    this.voteReceived({option, socketId});
+  }
+
+  createPoll = () => {
+    const {roomId, id} = this.messageData;
+    this.pollCreated();
+    store.sendToPeers({
+      type: 'pollCreated',
+      data: {roomId, textRecordId: id},
+    });
+  }
+
+  pollCreated = () => {
+    this.messageData.canVote = true;
+    this.votes = {
+      'yes': 0,
+      'no': 0, 
+      'neutral': 0
+    }
+    if ($(`#ephemeralDetails-${this.messageData.id}`).is(":visible")) {
+      this.renderEphemeralMessageDetails();
+    }
+  }
+
+  initiateConsentToArchiveProcess = () => {
     const {roomId, id} = this.messageData;
     addSystemMessage('you have just asked for everyone\'s consent to archive the message');
     store.sendToPeers({
@@ -96,16 +164,18 @@ export default class EphemeralMessage {
     const {roomId} = this.messageData;
 
     this.$textRecord().addClass('inConsentProcess');
-    $(`#${roomId}`).find('#user').addClass('inConsentProcess');
+    $('#user .avatar').addClass('inConsentProcess');
     $(`#${roomId}`).find('.consentToArchiveOverlay').show();
     $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
     $(`#${roomId}`).on('keyup', this.consentToArchiveActions);
   }
 
   consentToArchiveActions = (e) => {
-    const {left, top} = $('#user').position();
-    const alignedWithMessage = left === this.messageData.left && top === this.messageData.top;
-    const alreadyGaveConsent = Boolean(this.messageData.consentToArchiveRecords[store.getCurrentUser().socketId]);
+    const {gridColumnStart, gridRowStart, consentToArchiveRecords} = this.messageData;
+    const userGridColumnStart = $('#user .shadow').css('grid-column-start');
+    const userGridRowStart = $('#user .shadow').css('grid-row-start');
+    const alignedWithMessage = String(gridColumnStart) === String(userGridColumnStart) && String(gridRowStart) === String(userGridRowStart);
+    const alreadyGaveConsent = isPlainObject(consentToArchiveRecords) && consentToArchiveRecords[store.getCurrentUser().socketId];
     
     if (alignedWithMessage) {
       if (e.key === 'y') {
@@ -117,14 +187,10 @@ export default class EphemeralMessage {
       }
     }
   }
-
   giveConsentToArchive = () => {
     this.consentToArchiveReceived(store.getCurrentUser());
     addSystemMessage('You\'ve given your consent to archive this message.\n\nwaiting for peers to give their consent...');
-
     const {id, roomId} = this.messageData;
-    const room = store.getRoom(roomId);
-
     store.sendToPeers({
       type: 'giveConsentToArchive', 
       data: {
@@ -132,36 +198,14 @@ export default class EphemeralMessage {
         messageId: id,
       }
     });
-
-    if (Object.keys(this.messageData.consentToArchiveRecords).length === Object.keys(room.memberships.members).length) {
-      createMessage(this.messageData).then(this.messageArchived());
-      store.sendToPeers({
-        type: 'messageArchived', 
-        data: {
-          roomId, 
-          messageId: id,
-        }
-      });
-    }
-  }
-
-  messageArchived = () => {
-    const consentColors = Object.values(this.messageData.consentToArchiveRecords).map(profile => profile.avatar);
-    this.$textRecord().find('.consentIndicator').remove();
-    Array.from({length: 25}).forEach(() => {
-      const color = sample(consentColors);    
-      const $consentIndicator = $('<div class="consentIndicator given"></div>');
-      $consentIndicator.css({backgroundColor: color});
-      $consentIndicator.appendTo(this.$textRecord());  
-    });
-
-    this.finishConsentToArchiveProcess();
   }
 
   consentToArchiveReceived = (user) => {
     const {socketId, avatar} = user.getProfile();
-    if (!this.messageData.consentToArchiveRecords[socketId]) {
-      this.messageData.consentToArchiveRecords[socketId] = user.getProfile();
+    const {consentToArchiveRecords = {}, roomId} = this.messageData;
+    const room = store.getRoom(roomId);
+    if (!consentToArchiveRecords[socketId]) {
+      this.messageData.consentToArchiveRecords = {...consentToArchiveRecords, [socketId]: user.getProfile()}
     }
 
     const size = Math.round(this.$textRecord().outerWidth() / (Math.floor(Math.sqrt(Object.keys(this.messageData.consentToArchiveRecords).length)) + 1));
@@ -176,6 +220,53 @@ export default class EphemeralMessage {
     });
 
     $consentIndicator.appendTo(this.$textRecord());
+
+    if (Object.keys(this.messageData.consentToArchiveRecords).length === Object.keys(room.memberships.members).length) {
+      this.archiveMessage();
+    }
+  }
+
+  archiveMessage = () => {
+    const {id, content, name, roomId, consentToArchiveRecords} = this.messageData;
+    fetch('/archive', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        author: name, 
+        content,
+        room_id: roomId,
+        participant_ids: Object.keys(consentToArchiveRecords),
+        participant_names: Object.values(consentToArchiveRecords).map(r => r.name),
+        message_type: 'text_message'
+      })
+    })
+      .then(response => response.json())
+      .then((archivedMessage) => {
+        this.messageArchived({archivedMessageId: archivedMessage.id});
+          store.sendToPeers({
+            type: 'messageArchived', 
+            data: {
+              roomId, 
+              messageId: id,
+              archivedMessageId: archivedMessage.id,
+            }
+          });
+      })
+      .catch(e => console.log(e))
+  }
+
+  messageArchived = ({archivedMessageId}) => {
+    this.messageData.archivedMessageId = archivedMessageId;
+    const consentColors = Object.values(this.messageData.consentToArchiveRecords).map(profile => profile.avatar);
+    this.$textRecord().find('.consentIndicator').remove();
+    Array.from({length: 25}).forEach(() => {
+      const color = sample(consentColors);    
+      const $consentIndicator = $('<div class="consentIndicator given"></div>');
+      $consentIndicator.css({backgroundColor: color});
+      $consentIndicator.appendTo(this.$textRecord());  
+    });
+
+    this.finishConsentToArchiveProcess();
   }
 
   blockConsentToArchive = () => {
@@ -204,190 +295,27 @@ export default class EphemeralMessage {
     const {roomId} = this.messageData;
 
     this.$textRecord().removeClass('inConsentProcess');
-    $(`#${roomId}`).find('#user').removeClass('inConsentProcess');
+    $(`#${roomId}`).find('#user .avatar').removeClass('inConsentProcess');
     $(`#${roomId}`).find('.consentToArchiveOverlay').hide();
     $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
   }
- 
-  proposeToArchiveButton = (onInitiateConsentToArchive) => {
-    const $proposeToArchiveContainer = $('<div class="longPressButton askConsentToArchive" style="display:none"><div class="shortLine"/></div>');
-    const $button = $('<button>propose to archive</button>');
-    $button.on('mouseup', onInitiateConsentToArchive);
-    $button.appendTo($proposeToArchiveContainer);
-    return $proposeToArchiveContainer;
-  };
-
-  renderVotingButtons = (template, votes) => {
-    const $votingButtons = $(document.getElementById(`${template}Template`).content.cloneNode(true));
-    $votingButtons.find('.votingButtons').children().each((_, el) => {
-      const option = $(el).data('value');
-      $(el).find('.voteCount').text(votes[option]);
-      $(el).on('click', this.castVote);
-    });
-  
-    return $votingButtons;
-  }
-
-  updateMessageData = (newState) => {
-    this.messageData = {
-      ...this.messageData,
-      ...newState
-    };
-  }
-
-  castVote = (e) => {
-    const $option = $(e.target).closest('.voteOption');
-    const option = $option.data('value');
-
-    const myProfile = store.getCurrentUser().getProfile();
-    const myCurrentVote = this.messageData.votingRecords[myProfile.socketId];
-    const data = {textRecordId: this.messageData.id, option, ...myProfile};
-  
-    if (myCurrentVote) {
-      if (myCurrentVote === option) {
-        store.sendToPeers({type: 'voteRetracted', data});
-        this.voteRetracted(data);
-        $option.removeClass('myVote');
-      } else {
-        store.sendToPeers({type: 'voteChanged', data});
-        this.voteChanged(data);
-        $option.closest('.votingButtons').find(`.voteOption[data-value="${myCurrentVote}"]`).removeClass('myVote');
-        $option.addClass('myVote');
-      }
-    } else {
-      store.sendToPeers({type: 'voteCasted', data});
-      this.voteReceived(data);
-      $option.addClass('myVote');
-    }
-  }
-
-  voteReceived = ({option, socketId}) => {
-    this.messageData.votes[option] += 1;
-    this.messageData.votingRecords[socketId] = option;
-    $(`#${this.messageData.id}`)
-      .find(`.voteOption[data-value="${option}"]`)
-      .find('span')
-      .text(this.messageData.votes[option]);
-  }
-  
-  voteRetracted = ({option, socketId}) => {  
-    this.messageData.votes[option] -= 1;
-    delete this.messageData.votingRecords[socketId];
-    $(`#${this.messageData.id}`)
-      .find(`.voteOption[data-value="${option}"]`)
-      .find('.voteCount')
-      .text(this.messageData.votes[option]);
-  }
-  
-  voteChanged = ({option, socketId}) => {
-    const currentVote = this.messageData.votingRecords[socketId];
-    this.voteRetracted({option: currentVote, socketId});
-    this.voteReceived({option, socketId});
-  }
-
-  getBaseTextRecord = () => {
-    const {id, left, top, avatar, messageType, votes, name, message, roomId} = this.messageData;
-
-    const room = store.getRoom(roomId);
-    const $textRecordTemplate = $(document.getElementById('textRecordTemplate').content.cloneNode(true));
-    const $textRecord = $textRecordTemplate.find('.textRecord');
-    const $textBubble = $textRecord.find('.textBubble');
-
-    $textRecord.attr('id', id);
-    $textRecord.css({left, top, backgroundColor: avatar});
-
-    $textBubble.addClass(messageType);
-    $textBubble.attr('id', `textBubble-${id}`);
-
-    $textBubble.find('.textContentContainer').attr('id', `textMessageContent-${id}`);
-    $textBubble.find('.name').text(name);
-    $textBubble.find('.content').text(message);
-
-
-    if (this.messageData.socketId === store.getCurrentUser().socketId) {
-      const $closeButton = $('<button class="close icon">x</button>');
-      $closeButton.on('click', this.purgeSelf);
-      $closeButton.appendTo($textBubble.find('.textBubbleButtons'));
-    }
-
-    if (room.mode === roomModes.directAction) {
-      this.renderVotingButtons('consentfulGestures', votes).appendTo($textBubble);
-    }
-
-    if (!this.messageData.threadEntryMessageId) {
-      this.proposeToArchiveButton(this.initiateConsentToArchiveProcess).appendTo($textRecord);
-      $textRecord.on('mousedown', () => {
-        if (!this.messageData.inConsentToArchiveProcess) {
-          $textRecord.find('.askConsentToArchive').show();
-        }
-      });
-    }
-
-    const size = Math.round(50 / (Math.floor(Math.sqrt(Object.values(this.messageData.consentToArchiveRecords).length)) + 1));
-    Object.values(this.messageData.consentToArchiveRecords).forEach(profile => {
-      const $consentIndicator = $('<div class="consentIndicator"></div>');
-      $consentIndicator.css({backgroundColor: profile.avatar});
-      $consentIndicator.width(size);
-      $consentIndicator.height(size);
-      $consentIndicator.appendTo($textRecord);
-    });
-
-    return $textRecord;
-  }
-
-  purgeSelf = () => {
-    if (this.messageData.threadNextMessageId || this.messageData.threadPreviousMessageId) {
-      this.handleRemoveMessageInThread();
-    } else {
-      this.handleRemoveSingleMessage();
-    }
-  }
-
-  handleRemoveSingleMessage = () => {
-    const room = store.getRoom(this.messageData.roomId);
-    const $textRecord = this.$textRecord();
-
-    $textRecord.finish().animate({opacity: 0}, {
-      complete: () => {
-        $textRecord.remove();
-        store.sendToPeers({
-          type: 'removeEphemeralMessage',
-          data: {
-            messageId: this.messageData.id,
-            roomId: this.messageData.roomId,
-          }
-        });
-        room.removeEphemeralHistory(this.messageData.id);
-      }
-    });  
-  }
-
-  handleRemoveMessageInThread = () => {
-    $(`#textMessageContent-${this.messageData.id}`).text('[removed]');
-  
-    store.sendToPeers({
-      type: 'removeMessageInThread',
-      data: {messageId: this.messageData.id}
-    });
-  }
- 
-  pollCreated = () => {
-    this.messageData.isPoll = true;
-    this.messageData.votes = {yes: 0, neutral: 0, no: 0};
-    const $textBubble = this.$textRecord().find('.textBubble');
-    $textBubble.addClass('poll');
-    this.renderVotingButtons('majorityRules', this.messageData.votes).appendTo($textBubble);
-  }
 
   render = () => {
-    const recordType = messageTypeToComponent[this.messageData.messageType];
-    
-    new recordType({
-      ...this.messageData,
-      getThreadTail: this.getThreadTail,
-      getBaseTextRecord: this.getBaseTextRecord,
-      renderVotingButtons: this.renderVotingButtons,
-      pollCreated: this.pollCreated,
-    }).render();
+    const $ephemeralRecord = $(
+      `<div \
+        class="ephemeralRecord" \ 
+        id=${this.messageData.id} \
+        style="grid-column-start:${this.messageData.gridColumnStart};grid-row-start:${this.messageData.gridRowStart};" \
+      />`
+    );
+
+    $ephemeralRecord
+      .on('mouseenter', this.renderEphemeralMessageDetails)
+      .on('mouseleave', () => $('.ephemeralMessageContainer').finish().fadeOut(500));
+
+    $ephemeralRecord.on('adjacent', this.renderEphemeralMessageDetails);
+
+    $ephemeralRecord.css({backgroundColor: this.messageData.avatar});
+    $ephemeralRecord.appendTo($(`#${this.messageData.roomId}`));
   }
 }

@@ -2,7 +2,7 @@ import io from 'socket.io-client';
 import store from '@js/store';
 import {getBrowserRTC} from './ensureWebRTC';
 import {handleData} from './dataReceiver';
-import {addSystemMessage} from '@js/Togethernet/systemMessage';
+import {addSystemMessage, clearSystemMessage} from '@js/Togethernet/systemMessage';
 import User from '@js/User';
 
 export default class PeerConnection {
@@ -14,7 +14,7 @@ export default class PeerConnection {
 
   connect = () => {
     this.socket.on('connect', () => {
-      // console.log('socket connected', new Date().toLocaleTimeString());
+      clearSystemMessage();
       new User(this.socket.id).initialize();
       store.getCurrentRoom().goToRoom();
     });
@@ -31,9 +31,8 @@ export default class PeerConnection {
   }
 
   initConnections = async ({peerId}) => {
-    // console.log('initing connections', new Date().toLocaleTimeString())
     const peerConnection = this.initPeerConnection(peerId, {initiator: true});
-    addSystemMessage('Searching for peers...');
+    clearSystemMessage();
     try {
       const offer = await peerConnection.createOffer({
         offerToReceiveAudio: true
@@ -58,7 +57,6 @@ export default class PeerConnection {
   }
 
   initPeerConnection = (peerId, {initiator}) => {
-    // console.log('create peer connection', new Date().toLocaleTimeString())
     const peerConnection = new this._wrtc.RTCPeerConnection({ 
       'iceServers': [{
         urls: [
@@ -88,15 +86,17 @@ export default class PeerConnection {
 
     peerConnection.oniceconnectionstatechange = () => {
       if (peerConnection.iceConnectionState === 'failed' || peerConnection.iceConnectionState === 'disconnected') {
-        // console.log('restart ice', new Date().toLocaleTimeString())
         peerConnection.restartIce();
+      } else if (peerConnection.iceConnectionState === 'connected') {
+        clearSystemMessage();
       }
     };    
 
     peerConnection.onconnectionstatechange = () => {
       if (peerConnection.connectionState === 'failed') {
-        // console.log('restart ice from connection state change', new Date().toLocaleTimeString())
         peerConnection.restartIce();
+      } else if (peerConnection.connectionState === 'connected') {
+        clearSystemMessage();
       }
     };
     
@@ -105,7 +105,6 @@ export default class PeerConnection {
 
   setUpDataChannel = ({dataChannel, peerId, initiator}) => {
     dataChannel.onclose = () => {
-      // console.log('data channel closed', new Date().toLocaleTimeString())
       this.handlePeerLeaveSocket({leavingUser: peerId});
     };
 
@@ -114,12 +113,13 @@ export default class PeerConnection {
     };
 
     dataChannel.onopen = () => {
-      // console.log('datachannel open', new Date().toLocaleTimeString())
+      clearSystemMessage();
       store.sendToPeer(dataChannel, {
         type: 'initPeer', 
         data: {
           room: store.getCurrentRoom(),
-          ...$('#user').position(),
+          columnStart: $('#user .shadow').css('grid-column-start'),
+          rowStart: $('#user .shadow').css('grid-row-start'),
         },
       });
       

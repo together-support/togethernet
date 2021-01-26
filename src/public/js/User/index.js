@@ -9,23 +9,23 @@ export default class User {
     this.socketId = socketId;
 
     this.state = {
-      currentRoomId: 'ephemeralSpace',
+      currentRoomId: 'sitting-at-the-park',
     };
   }
 
   initialize = async () => {
     store.set('currentUser', this);
-    $('#userAvatar').val(this.getRandomColor());
+    $('#changeUserAvatar').val(this.getRandomColor());
 
-    $('#userAvatar').on('change', (e) => {
+    $('#changeUserAvatar').on('change', (e) => {
       const avatar = e.target.value;
-      $('#user').css('background-color', avatar);
+      $('#user .avatar').css('background-color', avatar);
       $(`#participant-${store.getCurrentUser().socketId}`).css('background-color', avatar);
       store.sendToPeers({type: 'profileUpdated'});
     });
 
-    $('#userName').text('Anonymous');
-    $('#userName').on('click', this.setMyUserName);
+    $('#changeUserName span').text('Anonymous');
+    $('#changeUserName').on('click', this.setMyUserName);
     await this.render();
   }
 
@@ -41,9 +41,9 @@ export default class User {
     const $user = $('<div id="user"></div>');
     const $shadow = $('<div class="shadow"></div>');
 
-    const initials = $('#userName').text().slice(0, 2);
+    const initials = $('#changeUserName span').text().slice(0, 2);
     const $avatar = $(`<div class="avatar draggabble ui-widget-content"><span>${initials}<span></div>`);
-    $avatar.css('background-color', $('#userAvatar').val());
+    $avatar.css('background-color', $('#changeUserAvatar').val());
 
     $avatar.appendTo($user);
     $shadow.appendTo($user);
@@ -55,8 +55,8 @@ export default class User {
     return {
       socketId: this.socketId,
       roomId: this.state.currentRoomId,
-      name: $('#userName').text(),
-      avatar: $('#userAvatar').val(),
+      name: $('#changeUserName').text(),
+      avatar: $('#changeUserAvatar').val(),
     };
   }
 
@@ -66,14 +66,14 @@ export default class User {
   }
 
   getAdjacentMessages = () => {
-    const {left, top} = $('#user').position();
-    const avatarSize = $('#user').outerWidth();
+    const gridColumnStart = parseInt($('#user .shadow').css('grid-column-start'));
+    const gridRowStart = parseInt($('#user .shadow').css('grid-row-start'));
 
     return compact([
-      `${left}-${top + avatarSize}`,
-      `${left}-${top - avatarSize}`,
-      `${left - avatarSize}-${top}`,
-      `${left + avatarSize}-${top}`,
+      `${gridColumnStart}-${gridRowStart + 1}`,
+      `${gridColumnStart}-${gridRowStart - 1}`,
+      `${gridColumnStart - 1}-${gridRowStart}`,
+      `${gridColumnStart + 1}-${gridRowStart}`,
     ].map((position) => {
       return $(`#${this.state.currentRoomId}-${position}`)[0];
     }));
@@ -84,10 +84,11 @@ export default class User {
   }
   
   setMyUserName = () => {
-    const name = DOMPurify.sanitize(prompt('Please enter your name:'));
+    const name = DOMPurify.sanitize(prompt('Please enter your name (max 25 characters):'));
     if (name) {
-      $('#userName').text(name);
-      $('#user').find('span').text(name.slice(0,2));
+      $('#changeUserName span').text(name.substr(0, 25));
+      $("#changeUserName").fitText((name.length > 19 ? 2 : 1), {minFontSize: '12px', maxFontSize: '16px'});
+      $('#user').find('span').text(name.substr(0,2));
     }
     store.sendToPeers({type: 'profileUpdated'});
   };
@@ -103,7 +104,7 @@ export default class User {
   renderParticipantAvatar = () => {
     const $roomLink = store.getRoom(this.state.currentRoomId).$roomLink;
     const $avatar = $(`#participant-${this.socketId}`).length ? $(`#participant-${this.socketId}`) : $(`<div class="participant" id="participant-${this.socketId}"></div>`);
-    $avatar.css('background-color', $('#userAvatar').val());
+    $avatar.css('background-color', $('#changeUserAvatar').val());
     $avatar.appendTo($roomLink.find('.participantsContainer'));
   }
 
@@ -114,8 +115,6 @@ export default class User {
     if (room.constructor.isEphemeral) {
       $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
     }
-
-    makeDraggableUser();
     $avatar.appendTo(room.$room);
   }
 }

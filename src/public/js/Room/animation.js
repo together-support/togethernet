@@ -21,7 +21,10 @@ const animateUser = (eventKey) => {
   $('#user .avatar').animate({    
       'left': $shadow.position().left,
       'top': $shadow.position().top,
-  }, 200);
+  }, {
+    duration: 180,
+    complete: onAnimationComplete
+  });
 
   $('#user .shadow')[0].scrollIntoView();
 }
@@ -55,9 +58,7 @@ const animationEvents = {
 };
 
 export const hideEphemeralMessageText = () => {
-  store.getCurrentRoom().$room.find('.textBubble.message').each((_, el) => {
-    $(el).hide();
-  });
+  $('.ephemeralMessageContainer').finish().fadeOut(500);
 };
 
 export const onAnimationComplete = () => {
@@ -69,7 +70,7 @@ const showAdjacentMessages = () => {
   const adjacentMessages = store.getCurrentUser().getAdjacentMessages();
   adjacentMessages.forEach(messageRecord => $(messageRecord).trigger('adjacent'));
 
-  $('#messageType').trigger({
+  $('#writeMessage').trigger({
     type: 'messageThread', 
     threadPreviousMessage: adjacentMessages.length === 1 && adjacentMessages[0],
   });
@@ -78,6 +79,9 @@ const showAdjacentMessages = () => {
 const sendPositionToPeers = () => {
   store.sendToPeers({
     type: 'position', 
-    data: $('#user').position(),
+    data: {
+      columnStart: $('#user .shadow').css('grid-column-start'),
+      rowStart: $('#user .shadow').css('grid-row-start'),
+    },
   });
 };

@@ -6,211 +6,116 @@ button {
   display: grid;
   grid-template-rows: repeat(var(--cell-vertical-num), var(--cell-size));
   grid-template-columns: repeat(var(--cell-horizontal-num), var(--cell-size));
-  background: var(--bg-color);
+  background-color: var(--ephemeral-bg-color);  
 }
 
-.textRecord.ephemeral,
-.audioRecord.ephemeral {
-  position: absolute;
-}
-
-.textRecord.inConsentProcess {
-  z-index: 15;
-}
-
-.textBubble.inConsentProcess .textBubble {
-  z-index: 25;
-}
-
-.avatar {
-  position: absolute;
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
-  padding: 10px;
-}
-
-.avatar.facilitator {
-  font-weight: 800;
-  text-decoration: underline;
-}
-
-.avatar, .shadow {
+.ephemeralRecord {
   width: var(--cell-size);
   height: var(--cell-size);
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.avatar > span {
-  color: #efefef;
-  font-size: 1em;
-  text-shadow: 1px 1px 1px black;
-  user-select: none;
-}
-
-#user {
-  display: contents;
-  z-index: 10;
-}
-
-#user.inConsentProcess {
-  z-index: 20;
-}
-
-#user .avatar,
-#user .shadow {
-  grid-column-start: var(--avatar-x);
-  grid-row-start: var(--avatar-y);
-  margin: 0;
-}
-
-#user .shadow {
-  z-index: 0;
-  outline: 1px solid var(--avatar-outline-color);
-}
-
-.textBubble {
-  position: absolute;
-  top: -10px;
-  left: 52px;
-  width: auto;
-  min-width: 100px;
-  max-width: 300px;
-  padding: 5px;
-  border-radius: 5px;
-  text-align: left;
-  border: 1px solid transparent;
-  background-color: #f8f8f8;
+.ephemeralRecord.inConsentProcess {
   z-index: 15;
 }
 
-.textBubble.poll {
-  min-width: 200px;
-}
-
-.textBubble:after {
-  content: "";
+.ephemeralMessageContainer {
+  width: 300px;
+  min-height: 100px;
+  max-height: 80%;
+  background-color: rgba(0,0,0,0.7);
   position: absolute;
-  left: 0;
-  top: 65%;
-  width: 0;
-  height: 0;
-  border: 8px solid transparent;
-  border-left: 0;
-  border-bottom: 0;
-  margin-top: -4px;
-  margin-left: -8px;
-  z-index: 10;
-  border-right-color: #f8f8f8;
+  z-index: 5;
+  top: 10%;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
 }
 
-.textBubble p {
-  font: 16px nunito, monospace;
-  text-align: left;
-  color: #000;
-  padding: 1px;
+.ephemeralMessageContainer.right {
+  right: 35px;
 }
 
-.textBubble {
-  color: #000;
+.pinnedMessageContainer,
+.pinnedMessagesSummary {
+  border-bottom: 1px solid whitesmoke;
+}
+
+#pinnedMessageCount {
+  margin-left: 16px;
+}
+
+.ephemeralRecordDetails {
+  width: 100%;
+  padding: 16px;
+}
+
+.ephemeralRecordDetails .heading {
+  width: 100%;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
 
-.textBubble.agenda p {
-  font-size: 14px;
-  font-weight: 600;
+.ephemeralRecordDetails .heading .messageActions button {
+  width: 24px;
+  height: 24px;
+  border: 1px solid whitesmoke;
+  border-radius: 5px;
+  margin-left: 8px;
 }
 
-.textBubbleButtons {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  padding-bottom: 5px;
+.ephemeralRecordDetails .heading .messageActions button.checked {
+  background-color: whitesmoke;
+  color: black;
 }
 
-.textBubbleButtons button {
-  margin-left: 2px;
-  height: 15px;
-  font-size: 10px;
-  padding: 1px;
-  border: 1px solid #efefef;
+.ephemeralRecordDetails .content {
+  width: 100%;
+  padding-bottom: 16px;
 }
 
-.textBubbleButtons button.icon {
-  width: 15px;
-}
-
-#makeVote {
-  background-color: #c4c4c4;
-  padding: 2px 5px;
-  border-radius: 3px;
+.votingButtonsContainer {
+  width: 100%;
 }
 
 .votingButtons {
-  margin-top: 10px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
 }
 
-.votingButtons > button {
-  padding: 2px;
-  border-radius: 4px;
-  text-transform: capitalize;
-  font-size: 10px;
-  background: #eeeeee;
-  color: #919191;
-  width: calc((100% - 10px) / 3);
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-}
-
-.votingButtons img {
-  height: 10px;
-  width: 10px;
-}
-
-.votingButtons span {
-  font-size: 10px;
-}
-
-.votingButtons > button.myVote {
-  background-color: #c4c4c4;
-  color: #000;
-}
-
-.longPressButton {
-  position: absolute;
-  top: -30px;
-  width: 95px;
-  left: -20px;
-  z-index: 10;
-}
-
-.longPressButton > button {
-  padding: 5px 0;
+.voteOption {
+  background-color: whitesmoke;
   border-radius: 5px;
-  font-size: 10px;
-  width: 95px;
-  user-select: none;
+  display: flex;
+  flex-wrap: nowrap;
+  color: black;
+  width: 22%;
+  padding: 2px 5px;
+  justify-content: space-between;
 }
 
-.shortLine {
-  position: absolute;
-  height: 10px;
-  width: 1px;
-  background-color: black;
-  left: 42.5px;
-  bottom: -10px;
+.voteOption.myVote {
+  background-color: darkgray;
+}
+
+.voteOption img {
+  width: 16px;
+  height: 16px;
 }
 
 .consentToArchiveOverlay {
-  width: 100%;
-  height: calc(100% + 50px);
+  width: calc(var(--cell-size) * var(--cell-horizontal-num));
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.8);
   z-index: 9;
   position: absolute;
 }
 
 .consentIndicator.given {
-  width: 10px;
-  height: 10px;
+  width: calc(var(--cell-size) / 5);
+  height: calc(var(--cell-size) / 5);
+  z-index: 1;
 }
