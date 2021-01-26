@@ -18,7 +18,7 @@ class EphemeralMessageRenderer {
 
     const myId = store.getCurrentUser().socketId;
 
-    const {id, name, content, socketId, canVote} = this.message.messageData;
+    const {id, name, content, socketId, canVote, archivedMessageId, consentToArchiveRecords = {}} = this.message.messageData;
     const $ephemeralRecordDetails = $(document.getElementById('ephemeralRecordDetailsTemplate').content.cloneNode(true));
     const $messageDetails = $ephemeralRecordDetails.find('.ephemeralRecordDetails');
     $messageDetails.attr('id', `ephemeralDetails-${id}`);
@@ -46,8 +46,10 @@ class EphemeralMessageRenderer {
       $majorityRulesButtons.appendTo($messageDetails.find('.votingButtonsContainer'));
     }
 
-    const $consentToArchiveButton = this.renderConsentToArchiveButton();
-    $consentToArchiveButton.appendTo($messageDetails.find('.messageActions'));
+    if (!archivedMessageId || Object.keys(consentToArchiveRecords).includes(store.getCurrentUser().socketId)) {
+      const $consentToArchiveButton = this.renderConsentToArchiveButton();
+      $consentToArchiveButton.appendTo($messageDetails.find('.messageActions'));
+    }
 
     return $ephemeralRecordDetails;
   }
@@ -113,9 +115,9 @@ class EphemeralMessageRenderer {
   }
 
   renderConsentToArchiveButton = () => {
-    const {id, archivalMessageId} = this.message.messageData;
+    const {archivedMessageId, consentToArchiveRecords = {}} = this.message.messageData;
     const $consentToArchiveButton = $('<button class="initConsentToArchiveProcess"><i class="fas fa-align-justify"></i></button>');
-    if (archivalMessageId) {
+    if (archivedMessageId && Object.keys(consentToArchiveRecords).includes(store.getCurrentUser().socketId)) {
       $consentToArchiveButton.addClass('checked');
       $consentToArchiveButton.on('click', (e) => {
         // revoke consent

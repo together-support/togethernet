@@ -5,6 +5,7 @@ CREATE TABLE "messages"
   content TEXT NOT NULL,
   room_id VARCHAR(30) NOT NULL,
   participant_names VARCHAR(30)[],
+  participant_ids VARCHAR(30)[],
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   message_type message_type,
   position int,
