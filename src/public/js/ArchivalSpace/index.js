@@ -41,12 +41,12 @@ class ArchivalSpace {
     $('#pinMessage').hide();
     $('.roomLink').removeClass('currentRoom');
     this.$roomLink.addClass('currentRoom');
-    if (this.memberships.isEmpty()) {
+    if (this.memberships.isEmpty() || !this.editor || !store.getPeer(this.editor)) {
+      this.setEditor(store.getCurrentUser());
       addSystemMessage('You have landed in the archival channel and you are currently editing');
     } else {
       const editorProfile = store.getPeer(this.editor).getProfile();
       addSystemMessage(`You have landed in the archival channel and ${editorProfile.name} is currently editing`);
-
     }
     this.addMember(store.getCurrentUser());
     $('#downloadArchives').show();
@@ -84,7 +84,6 @@ class ArchivalSpace {
   }
 
   addMember = (user) => {
-    this.setEditor(user);
     this.memberships.addMember(user);
   }
 
