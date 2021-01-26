@@ -5,7 +5,7 @@ import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import groupBy from 'lodash/groupBy';
 import sortBy from 'lodash/sortBy';
 import filter from 'lodash/filter';
-import {updateMessage, addComment} from '@js/api';
+import {addComment} from '@js/api';
 import moment from 'moment';
 import {formatDateString, formatDateLabel} from '@js/utils';
 
@@ -180,16 +180,6 @@ class ArchivalSpace {
     });
 
     return groupedMessages;
-  }
-
-  markMessageDeleted = () => {
-    if (this.isEditingMessageId && store.getCurrentUser().socketId === this.editor) {
-      const content = `message deleted by ${store.getCurrentUser().getProfile().name}. ${moment().format('MMMM D h:mm')}`;
-      updateMessage({
-        messageId: this.isEditingMessageId,
-        content
-      });
-    }
   }
 
   renderArchivedMessages = () => {

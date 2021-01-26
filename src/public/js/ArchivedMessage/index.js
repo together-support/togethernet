@@ -1,6 +1,7 @@
-import sample from 'lodash/sample';
 import store from '@js/store';
 import {formatDateTimeString} from '@js/utils';
+import {updateMessage, addComment} from '@js/api';
+import moment from 'moment';
 
 class ArchivedMessage {
   constructor (props) {
@@ -39,8 +40,20 @@ class ArchivedMessage {
     const $messageDetailsTemplate = $(document.getElementById('archivalMessagesDetailsTemplate').content.cloneNode(true));
     const $messageDetails = $messageDetailsTemplate.find('.archivalMessagesDetails');
     $messageDetails.attr('id', `archivedMessageDetails-${id}`);
+
+    $messageDetails.find('.deleteArchivedMessage').on('click', this.markMessageDeleted);
   
     return $messageDetails;
+  }
+
+  markMessageDeleted = () => {
+    if (store.getCurrentUser().socketId === store.getRoom('archivalSpace').editor) {
+      const content = `message deleted by ${store.getCurrentUser().getProfile().name}. ${moment().format('MMMM D h:mm')}`;
+      updateMessage({
+        messageId: this.messageData.id,
+        content
+      });
+    }
   }
 
   renderMessageDetailsForTextRecord = () => {
