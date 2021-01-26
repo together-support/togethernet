@@ -27,6 +27,8 @@
   --cell-size: 5vh;
   --avatar-x: 1;
   --avatar-y: 1;
+  --interface-default-margin: 1vw;
+  --interface-highlight: #282828;
 }
 
 body,
