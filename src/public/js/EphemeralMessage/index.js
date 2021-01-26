@@ -1,5 +1,5 @@
 import store from '@js/store';
-import ephemeralMessageRenderer from '@js/ephemeralMessageRenderer';
+import ephemeralMessageRenderer from '@js/EphemeralMessageRenderer';
 import isPlainObject from 'lodash/isPlainObject';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import sample from 'lodash/sample';
