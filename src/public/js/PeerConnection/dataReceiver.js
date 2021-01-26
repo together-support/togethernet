@@ -103,13 +103,10 @@ const receiveRooms = ({rooms}) => {
   Object.keys(rooms).forEach(roomId => {
     store.updateOrInitializeRoom(roomId, rooms[roomId]);
   });
-
-  store.getCurrentRoom().goToRoom();
 };
 
 const addNewRoom = ({options}) => {
   store.updateOrInitializeRoom(options.roomId, options);
-  store.getCurrentRoom().goToRoom();
 };
 
 const initPeer = (data) => {

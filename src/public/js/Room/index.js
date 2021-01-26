@@ -81,9 +81,10 @@ export default class Room {
   renderSpace = () => {
     const $room = $(`
       <div \
-        class="room hidden ephemeralView" \
+        class="room ephemeralView" \
         id="${this.roomId}" \
-        tabindex="0"
+        tabindex="0" \
+        style="display:none" \
       > \
         <div 
           class="consentToArchiveOverlay" \

@@ -26,7 +26,7 @@ export default class EphemeralMessage {
     const {isPinned, id, roomId} = this.messageData;
 
     if (!isPinned) {
-      const $messageContent = ephemeralMessageRenderer.renderMessageDetails(roomId, id);
+      const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
       $messageContent.appendTo($('.nonPinnedMessages'));
     }
 

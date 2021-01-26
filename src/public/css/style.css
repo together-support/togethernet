@@ -89,23 +89,6 @@ body {
   width: 100%;
 }
 
-#archivalCommentInput {
-  flex-grow: 1;
-}
-
-.message {
-  display: flex;
-  padding-bottom: 8pt;
-  padding-left: 10pt;
-  padding-right: 10pt;
-}
-
-.listView {
-  float: left;
-  background-color: white;
-  z-index: 1;
-}
-
 .btn {
   margin: 0;
   height: 50px;

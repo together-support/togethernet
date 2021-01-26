@@ -7,7 +7,7 @@ class EphemeralMessageRenderer {
     this.message = null;
   }
 
-  renderMessageDetails = (roomId, messageId) => {
+  renderEphemeralDetails = (roomId, messageId) => {
     const room = store.getRoom(roomId);
     const message = room.ephemeralHistory[messageId];
     if (!message) { 
