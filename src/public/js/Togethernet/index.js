@@ -6,6 +6,7 @@ import {sendMessage} from '@js/EphemeralMessage/sendText';
 import store from '@js/store';
 import publicConfig from '@public/config';
 import {EGALITARIAN_MODE} from '@js/constants';
+import ephemeralMessageRenderer from '@js/EphemeralMessageRenderer';
 
 class Togethernet {
   initialize = async () => {
@@ -47,6 +48,17 @@ class Togethernet {
     this.detectThreadStart();
     this.hideInteractionButtonsOnMouseLeave();
     $('#pinMessage').on('click', () => $('#pinMessage').toggleClass('clicked'));
+    $('.pinnedMessagesSummary').on('click', () => {
+      $('.pinnedMessages').empty();
+      $('.pinnedMessagesSummary i').removeClass('collapsed');
+
+      const {ephemeralHistory, roomId} = store.getCurrentRoom();
+      const pinnedRecords = Object.values(ephemeralHistory).filter(record => record.messageData.isPinned);
+      pinnedRecords.forEach(({messageData: {id}}) => {
+        const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
+        $messageContent.appendTo('.pinnedMessages');
+      });
+    });
   }
 
   handleMessageSendingEvents = () => {

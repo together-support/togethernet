@@ -14,7 +14,7 @@ class EphemeralMessageRenderer {
       return;
     } else {
       this.message = message;
-    };
+    }
 
     const myId = store.getCurrentUser().socketId;
 
