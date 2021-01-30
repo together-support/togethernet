@@ -33,4 +33,5 @@ export const sendMessage = () => {
   ephemeralMessage.render();
 
   $messageInput.val('');
+  $('#pinMessage').removeClass('clicked');
 };

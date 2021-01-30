@@ -23,10 +23,14 @@ export default class EphemeralMessage {
 
   renderEphemeralMessageDetails = () => {
     $('.nonPinnedMessages').empty();
+    $('.pinnedMessages').empty();
     const {isPinned, id, roomId} = this.messageData;
 
-    if (!isPinned) {
-      const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
+    const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
+    if (isPinned) {
+      $messageContent.appendTo($('.pinnedMessages'));
+      $('.pinnedMessages').show();
+    }  else {
       $messageContent.appendTo($('.nonPinnedMessages'));
     }
 
@@ -133,8 +137,8 @@ export default class EphemeralMessage {
       'yes': 0,
       'no': 0, 
       'neutral': 0
-    }
-    if ($(`#ephemeralDetails-${this.messageData.id}`).is(":visible")) {
+    };
+    if ($(`#ephemeralDetails-${this.messageData.id}`).is(':visible')) {
       this.renderEphemeralMessageDetails();
     }
   }
@@ -239,20 +243,21 @@ export default class EphemeralMessage {
         participant_names: Object.values(consentToArchiveRecords).map(r => r.name),
         message_type: 'text_message'
       })
-    })
-      .then(response => response.json())
-      .then((archivedMessage) => {
-        this.messageArchived({archivedMessageId: archivedMessage.id});
-          store.sendToPeers({
-            type: 'messageArchived', 
-            data: {
-              roomId, 
-              messageId: id,
-              archivedMessageId: archivedMessage.id,
-            }
-          });
-      })
-      .catch(e => console.log(e))
+    }).then(response => 
+      response.json()
+    ).then((archivedMessage) => {
+      this.messageArchived({archivedMessageId: archivedMessage.id});
+      store.sendToPeers({
+        type: 'messageArchived', 
+        data: {
+          roomId, 
+          messageId: id,
+          archivedMessageId: archivedMessage.id,
+        }
+      });
+    }).catch(e => 
+      console.log(e)
+    );
   }
 
   messageArchived = ({archivedMessageId}) => {

@@ -188,8 +188,12 @@ export default class Room {
   }
 
   addEphemeralHistory = (textRecord) => {
-    const {id} = textRecord.messageData;
+    const {id, isPinned} = textRecord.messageData;
     this.ephemeralHistory[id] = textRecord;
+    if (isPinned) {
+      const pinnedMessagesCount = Object.values(this.ephemeralHistory).filter(record => record.messageData.isPinned).length;
+      $('#pinnedMessageCount').text(pinnedMessagesCount);
+    }
     return this.ephemeralHistory[id];
   }
 

@@ -119,3 +119,8 @@ button {
   height: calc(var(--cell-size) / 5);
   z-index: 1;
 }
+
+.pinnedMessagesSummary {
+  cursor: pointer;
+  padding: 16px;
+}
