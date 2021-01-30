@@ -12,12 +12,15 @@ export const sendMessage = () => {
   const gridColumnStart = $('#user .shadow').css('grid-column-start');
   const gridRowStart = $('#user .shadow').css('grid-row-start');
 
-  if ($(`#${store.getCurrentUser().currentRoomId}-${gridColumnStart}-${gridRowStart}`).length) {
+  const currentRoom = store.getCurrentRoom();
+  const currentUser = store.getCurrentUser();
+
+  if ($(`#${currentUser.currentRoomId}-${gridColumnStart}-${gridRowStart}`).length) {
     alert('move to an empty spot to write the msg');
   }
 
   const threadEntryMessageId = $('#writeMessage').attr('data-thread-entry-message');
-  const isPinned = $('#pinMessage').hasClass('clicked');
+  const isPinned = $('#pinMessage').hasClass('clicked') && currentRoom.hasFacilitator(currentUser.socketId);
   
   const ephemeralMessage = new EphemeralMessage({
     content, 
@@ -28,7 +31,7 @@ export const sendMessage = () => {
     ...store.getCurrentUser().getProfile()
   });
 
-  store.getCurrentRoom().addEphemeralHistory(ephemeralMessage);
+  currentRoom.addEphemeralHistory(ephemeralMessage);
   store.sendToPeers({type: 'text', data: ephemeralMessage.messageData});
   ephemeralMessage.render();
 
