@@ -50,6 +50,7 @@ class Togethernet {
     $('#pinMessage').on('click', () => $('#pinMessage').toggleClass('clicked'));
     $('.pinnedMessagesSummary').on('click', () => {
       $('.pinnedMessages').empty();
+      $('.pinnedMessagesSummary i').removeClass('collapsed');
 
       const {ephemeralHistory, roomId} = store.getCurrentRoom();
       const pinnedRecords = Object.values(ephemeralHistory).filter(record => record.messageData.isPinned);

@@ -124,3 +124,7 @@ button {
   cursor: pointer;
   padding: 16px;
 }
+
+.pinnedMessagesSummary i.collapsed {
+  transform: rotate(-45deg)
+}

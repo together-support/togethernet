@@ -24,6 +24,8 @@ export default class EphemeralMessage {
   renderEphemeralMessageDetails = () => {
     $('.nonPinnedMessages').empty();
     $('.pinnedMessages').empty();
+    $('.pinnedMessagesSummary i').addClass('collapsed');
+    
     const {isPinned, id, roomId} = this.messageData;
 
     const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
