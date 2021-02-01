@@ -117,7 +117,7 @@ const initPeer = (data) => {
 
   const newlyJoinedOutlineColor = getComputedStyle(document.documentElement).getPropertyValue('--newly-joined-avatar-outline-color');
   const defaultOutlineColor = getComputedStyle(document.documentElement).getPropertyValue('--avatar-outline-color');
-  $('#user .shadow').css({outlineColor: newlyJoinedOutlineColor}).delay(2000).animate({outlineColor: defaultOutlineColor}, {duration: 2000})
+  $('#user .shadow').css({outlineColor: newlyJoinedOutlineColor}).delay(2000).animate({outlineColor: defaultOutlineColor}, {duration: 2000});
 };
 
 const removeEphemeralPeerMessage = ({roomId, messageId}) => {

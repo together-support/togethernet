@@ -211,7 +211,7 @@ export default class EphemeralMessage {
     const {consentToArchiveRecords = {}, roomId} = this.messageData;
     const room = store.getRoom(roomId);
     if (!consentToArchiveRecords[socketId]) {
-      this.messageData.consentToArchiveRecords = {...consentToArchiveRecords, [socketId]: user.getProfile()}
+      this.messageData.consentToArchiveRecords = {...consentToArchiveRecords, [socketId]: user.getProfile()};
     }
 
     const size = Math.round(this.$textRecord().outerWidth() / (Math.floor(Math.sqrt(Object.keys(this.messageData.consentToArchiveRecords).length)) + 1));

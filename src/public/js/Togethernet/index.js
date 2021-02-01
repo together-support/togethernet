@@ -87,7 +87,7 @@ class Togethernet {
       if (e.key.length === 1 && document.activeElement.id !== 'writeMessage' && !e.shiftKey) {
         $('#writeMessage').delay(100).fadeOut(150).fadeIn(100);
       }
-    })
+    });
   }
 
   detectThreadStart = () => {

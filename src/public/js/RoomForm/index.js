@@ -112,9 +112,9 @@ export default class RoomForm {
   updateRoomId = (e) => {
     e.preventDefault();
     if (e.target.value.length < 26) {
-      $(e.target).removeClass('hasError')
+      $(e.target).removeClass('hasError');
     } else {
-      $(e.target).addClass('hasError')
+      $(e.target).addClass('hasError');
     }
 
     this.options.roomId = e.target.value;

@@ -19,15 +19,15 @@ const animateUser = (eventKey) => {
   $shadow[0].style.gridRowStart = newRowStart;
 
   $('#user .avatar').animate({    
-      'left': $shadow.position().left,
-      'top': $shadow.position().top,
+    'left': $shadow.position().left,
+    'top': $shadow.position().top,
   }, {
     duration: 180,
     complete: onAnimationComplete
   });
 
   $('#user .shadow')[0].scrollIntoView();
-}
+};
 
 const totalX = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cell-horizontal-num'));
 const totalY = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cell-vertical-num'));

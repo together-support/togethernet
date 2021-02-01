@@ -57,7 +57,7 @@ class EphemeralMessageRenderer {
   renderCloseButton = () => {
     const $removeMessageButton = $('<button>x</button>');
     $removeMessageButton.on('click', () => this.message.purgeSelf());
-    return $removeMessageButton
+    return $removeMessageButton;
   }
 
   renderConsentfulGestures = () => {
@@ -68,7 +68,7 @@ class EphemeralMessageRenderer {
       Object.keys(votes).forEach(option => {
         $consentfulGesturesTemplate.find(`.voteOption.${option} .voteCount`).text(votes[option]);
       });
-    };
+    }
 
     $consentfulGesturesTemplate.find('.voteOption').each((_, option) => {
       $(option).on('click', (e) => {
@@ -76,7 +76,7 @@ class EphemeralMessageRenderer {
         $('.voteOption').not(`.${$(option).data('value')}`).removeClass('myVote');
         this.message.castVote($(option).data('value'));
       });
-    })
+    });
    
     return $consentfulGesturesTemplate;
   }
@@ -101,7 +101,7 @@ class EphemeralMessageRenderer {
       Object.keys(votes).forEach(option => {
         $majorityRulesTemplate.find(`.voteOption.${option} .voteCount`).text(votes[option]);
       });
-    };
+    }
 
     $majorityRulesTemplate.find('.voteOption').each((_, option) => {
       $(option).on('click', (e) => {
@@ -109,7 +109,7 @@ class EphemeralMessageRenderer {
         $('.voteOption').not(`.${$(option).data('value')}`).removeClass('myVote');
         this.message.castVote($(option).data('value'));
       });
-    })
+    });
    
     return $majorityRulesTemplate;
   }
