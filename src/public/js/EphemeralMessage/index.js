@@ -15,8 +15,36 @@ export default class EphemeralMessage {
       const {consentToArchiveInitiator} = props;
       this.initConsentToArchiveReceived({consentToArchiveInitiator});
     }
+
+    if (props.threadEntryMessageId && (!props.threadPreviousMessageId) && (!props.threadNextMessageId)) {
+      this.setThreadInformation();
+    }
   }
-   
+
+  setThreadInformation = () => {
+    const {roomId, threadEntryMessageId} = this.messageData;
+    const room = store.getRoom(roomId);
+
+    const entryMessage = room.ephemeralHistory[threadEntryMessageId];
+    const threadTail = entryMessage.getThreadTail();
+
+    threadTail.messageData.threadNextMessageId = this.messageData.id;
+    this.messageData.threadPreviousMessageId = threadTail.messageData.id;
+  }
+
+  getThreadTail = () => {
+    const {roomId, threadNextMessageId} = this.messageData;
+    if (!threadNextMessageId) { return this; }
+
+    const ephemeralHistory = store.getRoom(roomId).ephemeralHistory;
+    let threadNextMessage = ephemeralHistory[threadNextMessageId];
+    while (threadNextMessage.messageData.threadNextMessageId) {
+      threadNextMessage = ephemeralHistory[threadNextMessage.messageData.threadNextMessageId];
+    }
+
+    return threadNextMessage;
+  }
+
   $textRecord = () => {
     return $(`#${this.messageData.id}`);
   }
@@ -309,6 +337,23 @@ export default class EphemeralMessage {
 
   indicateMessagesInThread = () => {
     this.$textRecord().find('.threadedRecordOverlay').show();
+
+    const {roomId, threadNextMessageId, threadPreviousMessageId} = this.messageData;
+    const ephemeralHistory = store.getRoom(roomId).ephemeralHistory;
+
+    let travelThreadNextMessageId = threadNextMessageId;
+    while (travelThreadNextMessageId) {
+      const record = ephemeralHistory[travelThreadNextMessageId];
+      record.$textRecord().finish().find('.threadedRecordOverlay').show();
+      travelThreadNextMessageId = record.messageData.threadNextMessageId;
+    }
+
+    let travelThreadPreviousMessageId = threadPreviousMessageId;
+    while (travelThreadPreviousMessageId) {
+      const record = ephemeralHistory[travelThreadPreviousMessageId];
+      record.$textRecord().finish().find('.threadedRecordOverlay').show();
+      travelThreadPreviousMessageId = record.messageData.threadPreviousMessageId;
+    }
   }
 
   render = () => {

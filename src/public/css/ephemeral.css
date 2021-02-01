@@ -22,9 +22,10 @@ button {
 }
 
 .threadedRecordOverlay {
-  background-color: blue;
-  opacity: 0.5;
+  background-color: rgba(0, 0, 255, 0.3);
+  border: 1px solid blue;
   position: absolute;
+  z-index: 10;
 }
 
 .ephemeralRecord.inConsentProcess {

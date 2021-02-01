@@ -60,6 +60,7 @@ const animationEvents = {
 export const hideEphemeralMessageDetailsAndOverlay = () => {
   $('.ephemeralMessageContainer').finish().fadeOut(500);
   $('.threadedRecordOverlay').finish().hide();
+  $('#writeMessage').finish().removeAttr('data-thread-entry-message');
 };
 
 export const onAnimationComplete = () => {
