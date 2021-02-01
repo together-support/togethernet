@@ -4,7 +4,7 @@ import difference from 'lodash/difference';
 import store from '@js/store';
 import { roomModes } from '@js/constants';
 
-import {keyboardEvent} from './animation';
+import {keyboardEvent, hideEphemeralMessageDetailsAndOverlay} from './animation';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import EphemeralMessage from '@js/EphemeralMessage';
 import RoomMembership from '@js/RoomMembership';
@@ -112,6 +112,7 @@ export default class Room {
     this.addMember(store.getCurrentUser());
     this.showRoom();
     $('#writeMessage').removeAttr('disabled');
+    hideEphemeralMessageDetailsAndOverlay();
 
     store.sendToPeers({
       type: 'joinedRoom',

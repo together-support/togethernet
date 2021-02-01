@@ -3,22 +3,16 @@ import {roomModes} from '@js/constants';
 import isPlainObject from 'lodash/isPlainObject';
 
 class EphemeralMessageRenderer {
-  constructor () {
-    this.message = null;
-  }
-
   renderEphemeralDetails = (roomId, messageId) => {
     const room = store.getRoom(roomId);
     const message = room.ephemeralHistory[messageId];
     if (!message) { 
       return;
-    } else {
-      this.message = message;
     }
 
     const myId = store.getCurrentUser().socketId;
 
-    const {id, name, content, socketId, canVote, archivedMessageId, consentToArchiveRecords = {}} = this.message.messageData;
+    const {id, name, content, socketId, canVote, archivedMessageId, consentToArchiveRecords = {}} = message.messageData;
     const $ephemeralRecordDetails = $(document.getElementById('ephemeralRecordDetailsTemplate').content.cloneNode(true));
     const $messageDetails = $ephemeralRecordDetails.find('.ephemeralRecordDetails');
     $messageDetails.attr('id', `ephemeralDetails-${id}`);
@@ -27,41 +21,43 @@ class EphemeralMessageRenderer {
     $messageDetails.find('.content').text(content);
   
     if (store.isMe(socketId)) {
-      const $removeMessageButton = this.renderCloseButton();
+      const $removeMessageButton = this.renderCloseButton(message);
       $removeMessageButton.appendTo($messageDetails.find('.messageActions'));
     }
   
     if (room.mode === roomModes.directAction) {
-      const $consentfulGestures = this.renderConsentfulGestures();
+      const $consentfulGestures = this.renderConsentfulGestures(message);
       $consentfulGestures.appendTo($messageDetails.find('.votingButtonsContainer'));
     }
 
     if (room.mode === roomModes.facilitated && room.facilitators.includes(myId) && !canVote) {
-      const $makeVoteButton = this.renderCreatePollButton();
+      const $makeVoteButton = this.renderCreatePollButton(message);
       $makeVoteButton.appendTo($messageDetails.find('.messageActions'));
     }
 
     if (room.mode === roomModes.facilitated && canVote) {
-      const $majorityRulesButtons = this.renderMajorityRulesButtons();
+      const $majorityRulesButtons = this.renderMajorityRulesButtons(message);
       $majorityRulesButtons.appendTo($messageDetails.find('.votingButtonsContainer'));
     }
 
     if (!archivedMessageId || Object.keys(consentToArchiveRecords).includes(store.getCurrentUser().socketId)) {
-      const $consentToArchiveButton = this.renderConsentToArchiveButton();
+      const $consentToArchiveButton = this.renderConsentToArchiveButton(message);
       $consentToArchiveButton.appendTo($messageDetails.find('.messageActions'));
     }
 
     return $ephemeralRecordDetails;
   }
 
-  renderCloseButton = () => {
+  renderCloseButton = (message) => {
     const $removeMessageButton = $('<button>x</button>');
-    $removeMessageButton.on('click', () => this.message.purgeSelf());
+    $removeMessageButton.on('click', () => {
+      message.purgeSelf();
+    });
     return $removeMessageButton;
   }
 
-  renderConsentfulGestures = () => {
-    const {votes} = this.message.messageData;
+  renderConsentfulGestures = (message) => {
+    const {votes} = message.messageData;
     
     const $consentfulGesturesTemplate = $(document.getElementById('consentfulGesturesTemplate').content.cloneNode(true));
     if (isPlainObject(votes)) {
@@ -71,29 +67,29 @@ class EphemeralMessageRenderer {
     }
 
     $consentfulGesturesTemplate.find('.voteOption').each((_, option) => {
-      $(option).on('click', (e) => {
+      $(option).on('click', () => {
         $(option).toggleClass('myVote');
         $('.voteOption').not(`.${$(option).data('value')}`).removeClass('myVote');
-        this.message.castVote($(option).data('value'));
+        message.castVote($(option).data('value'));
       });
     });
    
     return $consentfulGesturesTemplate;
   }
 
-  renderCreatePollButton = () => {
+  renderCreatePollButton = (message) => {
     const $makeVoteButton = $('<button class="makeVote"><i class="fas fa-check"></i></button>');
 
     $makeVoteButton.on('click', (e) => {
-      this.message.createPoll();
+      message.createPoll();
       (e.target).closest('.makeVote').remove();
     });
 
     return $makeVoteButton;
   }
 
-  renderMajorityRulesButtons = () => {
-    const {votes} = this.message.messageData;
+  renderMajorityRulesButtons = (message) => {
+    const {votes} = message.messageData;
     
     const $majorityRulesTemplate = $(document.getElementById('majorityRulesTemplate').content.cloneNode(true));
     if (isPlainObject(votes)) {
@@ -106,25 +102,25 @@ class EphemeralMessageRenderer {
       $(option).on('click', () => {
         $(option).toggleClass('myVote');
         $('.voteOption').not(`.${$(option).data('value')}`).removeClass('myVote');
-        this.message.castVote($(option).data('value'));
+        message.castVote($(option).data('value'));
       });
     });
    
     return $majorityRulesTemplate;
   }
 
-  renderConsentToArchiveButton = () => {
-    const {archivedMessageId, consentToArchiveRecords = {}} = this.message.messageData;
+  renderConsentToArchiveButton = (message) => {
+    const {archivedMessageId, consentToArchiveRecords = {}} = message.messageData;
     const $consentToArchiveButton = $('<button class="initConsentToArchiveProcess"><i class="fas fa-align-justify"></i></button>');
     if (archivedMessageId && Object.keys(consentToArchiveRecords).includes(store.getCurrentUser().socketId)) {
       $consentToArchiveButton.addClass('checked');
-      $consentToArchiveButton.on('click', (e) => {
+      $consentToArchiveButton.on('click', () => {
         // revoke consent
       });
     } else {
       $consentToArchiveButton.on('click', (e) => {
         e.stopPropagation();
-        this.message.initiateConsentToArchiveProcess();
+        message.initiateConsentToArchiveProcess();
       });
     }
 
