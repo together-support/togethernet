@@ -58,6 +58,11 @@ button {
   margin-left: 16px;
 }
 
+.pinnedMessagContainer,
+.nonPinnedMessageContainer {
+  overflow-y: scroll;
+}
+
 .ephemeralRecordDetails {
   width: 100%;
   padding: 16px;

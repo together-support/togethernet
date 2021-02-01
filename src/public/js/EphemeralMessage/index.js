@@ -53,7 +53,16 @@ export default class EphemeralMessage {
     $('.nonPinnedMessages').empty();
     $('.pinnedMessages').empty();
     $('.pinnedMessagesSummary i').addClass('collapsed');
-    
+
+    if (this.messageData.threadPreviousMessageId || this.messageData.threadNextMessageId) {
+      this.renderThreadedDetails();
+    } else {
+      this.renderSingleEphemeralDetail();
+    }
+    $('.ephemeralMessageContainer').finish().show();
+  }
+
+  renderSingleEphemeralDetail = () => {
     const {isPinned, id, roomId} = this.messageData;
 
     const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
@@ -63,8 +72,34 @@ export default class EphemeralMessage {
     }  else {
       $messageContent.appendTo($('.nonPinnedMessages'));
     }
+  }
 
-    $('.ephemeralMessageContainer').finish().show();
+  renderThreadedDetails = () => {
+    const {id, roomId, threadNextMessageId, threadPreviousMessageId} = this.messageData;
+    const {ephemeralHistory} = store.getRoom(roomId);
+
+    const $thisMessageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
+    $thisMessageContent.appendTo($('.nonPinnedMessages'));
+
+    let travelThreadNextMessageId = threadNextMessageId;
+    let travelCurrentThreadTail = id;
+    while (travelThreadNextMessageId) {
+      const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, travelThreadNextMessageId);
+      $messageContent.insertAfter(`#ephemeralDetails-${travelCurrentThreadTail}`);
+      travelCurrentThreadTail = travelThreadNextMessageId;
+      const record = ephemeralHistory[travelThreadNextMessageId];
+      travelThreadNextMessageId = record.messageData.threadNextMessageId;
+    }
+
+    let travelThreadPreviousMessageId = threadPreviousMessageId;
+    let travelCurrentThreadHead = id;
+    while (travelThreadPreviousMessageId) {
+      const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, travelThreadPreviousMessageId);
+      $messageContent.insertBefore(`#ephemeralDetails-${travelCurrentThreadHead}`);
+      travelCurrentThreadHead = travelThreadPreviousMessageId;
+      const record = ephemeralHistory[travelThreadPreviousMessageId];
+      travelThreadPreviousMessageId = record.messageData.threadPreviousMessageId;
+    }
   }
 
   purgeSelf = () => {
@@ -339,7 +374,7 @@ export default class EphemeralMessage {
     this.$textRecord().find('.threadedRecordOverlay').show();
 
     const {roomId, threadNextMessageId, threadPreviousMessageId} = this.messageData;
-    const ephemeralHistory = store.getRoom(roomId).ephemeralHistory;
+    const {ephemeralHistory} = store.getRoom(roomId);
 
     let travelThreadNextMessageId = threadNextMessageId;
     while (travelThreadNextMessageId) {
