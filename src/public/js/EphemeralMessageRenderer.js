@@ -82,7 +82,6 @@ class EphemeralMessageRenderer {
   }
 
   renderCreatePollButton = () => {
-    const {id} = this.message.messageData;
     const $makeVoteButton = $('<button class="makeVote"><i class="fas fa-check"></i></button>');
 
     $makeVoteButton.on('click', (e) => {

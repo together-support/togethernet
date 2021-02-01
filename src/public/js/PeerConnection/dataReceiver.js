@@ -29,8 +29,9 @@ export const handleData = ({event, peerId}) => {
   } else if (data.type === 'removeEphemeralMessage') {
     removeEphemeralPeerMessage(data.data);
   } else if (data.type === 'removeMessageInThread') {
-    const {messageId} = data.data;
-    $(`#textMessageContent-${messageId}`).text('[removed]');
+    const {messageId, roomId} = data.data;
+    const record = store.getRoom(roomId).ephemeralHistory[messageId];
+    record.clearMessageInThread();
   } else if (data.type === 'requestRooms') {
     sendRooms(peerId);
   } else if (data.type === 'shareRooms') {

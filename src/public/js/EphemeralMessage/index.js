@@ -131,6 +131,23 @@ export default class EphemeralMessage {
     }); 
   }
 
+  handleRemoveMessageInThread = () => {
+    store.sendToPeers({
+      type: 'removeMessageInThread',
+      data: {
+        roomId: this.messageData.roomId,
+        messageId: this.messageData.id
+      }
+    });
+    this.clearMessageInThread();
+  }
+
+  clearMessageInThread = () => {
+    this.messageData.content = '[message removed]';
+    this.messageData.name = '';
+    $(`#ephemeralDetails-${this.messageData.id}`).text('[message removed]');
+  }
+
   castVote = (option) => {
     const {votingRecords, id} = this.messageData;
     const myId = store.getCurrentUser().socketId;
