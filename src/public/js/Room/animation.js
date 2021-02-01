@@ -4,7 +4,7 @@ export const keyboardEvent = (event) => {
   event.preventDefault();
 
   if(['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(event.key)) {
-    hideEphemeralMessageText();
+    hideEphemeralMessageDetailsAndOverlay();
     animateUser(event.key);
   }
 };
@@ -19,15 +19,15 @@ const animateUser = (eventKey) => {
   $shadow[0].style.gridRowStart = newRowStart;
 
   $('#user .avatar').animate({    
-      'left': $shadow.position().left,
-      'top': $shadow.position().top,
+    'left': $shadow.position().left,
+    'top': $shadow.position().top,
   }, {
     duration: 180,
     complete: onAnimationComplete
   });
 
   $('#user .shadow')[0].scrollIntoView();
-}
+};
 
 const totalX = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cell-horizontal-num'));
 const totalY = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cell-vertical-num'));
@@ -57,8 +57,10 @@ const animationEvents = {
   'ArrowDown': moveDown
 };
 
-export const hideEphemeralMessageText = () => {
+export const hideEphemeralMessageDetailsAndOverlay = () => {
   $('.ephemeralMessageContainer').finish().fadeOut(500);
+  $('.threadedRecordOverlay').finish().hide();
+  $('#writeMessage').finish().removeAttr('data-thread-entry-message');
 };
 
 export const onAnimationComplete = () => {
@@ -70,10 +72,14 @@ const showAdjacentMessages = () => {
   const adjacentMessages = store.getCurrentUser().getAdjacentMessages();
   adjacentMessages.forEach(messageRecord => $(messageRecord).trigger('adjacent'));
 
-  $('#writeMessage').trigger({
-    type: 'messageThread', 
-    threadPreviousMessage: adjacentMessages.length === 1 && adjacentMessages[0],
-  });
+  if (adjacentMessages.length === 1) {
+    $('#writeMessage').trigger({
+      type: 'messageThread', 
+      threadPreviousMessage: adjacentMessages[0],
+    });
+
+    $(adjacentMessages[0]).trigger('indicateThread');
+  }
 };  
 
 const sendPositionToPeers = () => {

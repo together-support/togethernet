@@ -1,7 +1,6 @@
 import DOMPurify from 'dompurify';
 
 import store from '@js/store';
-import {makeDraggableUser} from './animation';
 import compact from 'lodash/compact';
 
 export default class User {
@@ -87,7 +86,7 @@ export default class User {
     const name = DOMPurify.sanitize(prompt('Please enter your name (max 25 characters):'));
     if (name) {
       $('#changeUserName span').text(name.substr(0, 25));
-      $("#changeUserName").fitText((name.length > 19 ? 2 : 1), {minFontSize: '12px', maxFontSize: '16px'});
+      $('#changeUserName').fitText((name.length > 19 ? 2 : 1), {minFontSize: '12px', maxFontSize: '16px'});
       $('#user').find('span').text(name.substr(0,2));
     }
     store.sendToPeers({type: 'profileUpdated'});

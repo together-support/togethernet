@@ -15,8 +15,36 @@ export default class EphemeralMessage {
       const {consentToArchiveInitiator} = props;
       this.initConsentToArchiveReceived({consentToArchiveInitiator});
     }
+
+    if (props.threadEntryMessageId && (!props.threadPreviousMessageId) && (!props.threadNextMessageId)) {
+      this.setThreadInformation();
+    }
   }
-   
+
+  setThreadInformation = () => {
+    const {roomId, threadEntryMessageId} = this.messageData;
+    const room = store.getRoom(roomId);
+
+    const entryMessage = room.ephemeralHistory[threadEntryMessageId];
+    const threadTail = entryMessage.getThreadTail();
+
+    threadTail.messageData.threadNextMessageId = this.messageData.id;
+    this.messageData.threadPreviousMessageId = threadTail.messageData.id;
+  }
+
+  getThreadTail = () => {
+    const {roomId, threadNextMessageId} = this.messageData;
+    if (!threadNextMessageId) { return this; }
+
+    const ephemeralHistory = store.getRoom(roomId).ephemeralHistory;
+    let threadNextMessage = ephemeralHistory[threadNextMessageId];
+    while (threadNextMessage.messageData.threadNextMessageId) {
+      threadNextMessage = ephemeralHistory[threadNextMessage.messageData.threadNextMessageId];
+    }
+
+    return threadNextMessage;
+  }
+
   $textRecord = () => {
     return $(`#${this.messageData.id}`);
   }
@@ -25,7 +53,16 @@ export default class EphemeralMessage {
     $('.nonPinnedMessages').empty();
     $('.pinnedMessages').empty();
     $('.pinnedMessagesSummary i').addClass('collapsed');
-    
+
+    if (this.messageData.threadPreviousMessageId || this.messageData.threadNextMessageId) {
+      this.renderThreadedDetails();
+    } else {
+      this.renderSingleEphemeralDetail();
+    }
+    $('.ephemeralMessageContainer').finish().show();
+  }
+
+  renderSingleEphemeralDetail = () => {
     const {isPinned, id, roomId} = this.messageData;
 
     const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
@@ -35,8 +72,34 @@ export default class EphemeralMessage {
     }  else {
       $messageContent.appendTo($('.nonPinnedMessages'));
     }
+  }
 
-    $('.ephemeralMessageContainer').finish().show();
+  renderThreadedDetails = () => {
+    const {id, roomId, threadNextMessageId, threadPreviousMessageId} = this.messageData;
+    const {ephemeralHistory} = store.getRoom(roomId);
+
+    const $thisMessageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
+    $thisMessageContent.appendTo($('.nonPinnedMessages'));
+
+    let travelThreadNextMessageId = threadNextMessageId;
+    let travelCurrentThreadTail = id;
+    while (travelThreadNextMessageId) {
+      const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, travelThreadNextMessageId);
+      $messageContent.insertAfter(`#ephemeralDetails-${travelCurrentThreadTail}`);
+      travelCurrentThreadTail = travelThreadNextMessageId;
+      const record = ephemeralHistory[travelThreadNextMessageId];
+      travelThreadNextMessageId = record.messageData.threadNextMessageId;
+    }
+
+    let travelThreadPreviousMessageId = threadPreviousMessageId;
+    let travelCurrentThreadHead = id;
+    while (travelThreadPreviousMessageId) {
+      const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, travelThreadPreviousMessageId);
+      $messageContent.insertBefore(`#ephemeralDetails-${travelCurrentThreadHead}`);
+      travelCurrentThreadHead = travelThreadPreviousMessageId;
+      const record = ephemeralHistory[travelThreadPreviousMessageId];
+      travelThreadPreviousMessageId = record.messageData.threadPreviousMessageId;
+    }
   }
 
   purgeSelf = () => {
@@ -66,6 +129,23 @@ export default class EphemeralMessage {
         room.removeEphemeralHistory(this.messageData.id);
       }
     }); 
+  }
+
+  handleRemoveMessageInThread = () => {
+    store.sendToPeers({
+      type: 'removeMessageInThread',
+      data: {
+        roomId: this.messageData.roomId,
+        messageId: this.messageData.id
+      }
+    });
+    this.clearMessageInThread();
+  }
+
+  clearMessageInThread = () => {
+    this.messageData.content = '[message removed]';
+    this.messageData.name = '';
+    $(`#ephemeralDetails-${this.messageData.id}`).text('[message removed]');
   }
 
   castVote = (option) => {
@@ -211,7 +291,7 @@ export default class EphemeralMessage {
     const {consentToArchiveRecords = {}, roomId} = this.messageData;
     const room = store.getRoom(roomId);
     if (!consentToArchiveRecords[socketId]) {
-      this.messageData.consentToArchiveRecords = {...consentToArchiveRecords, [socketId]: user.getProfile()}
+      this.messageData.consentToArchiveRecords = {...consentToArchiveRecords, [socketId]: user.getProfile()};
     }
 
     const size = Math.round(this.$textRecord().outerWidth() / (Math.floor(Math.sqrt(Object.keys(this.messageData.consentToArchiveRecords).length)) + 1));
@@ -307,22 +387,45 @@ export default class EphemeralMessage {
     $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
   }
 
+  indicateMessagesInThread = () => {
+    this.$textRecord().find('.threadedRecordOverlay').show();
+
+    const {roomId, threadNextMessageId, threadPreviousMessageId} = this.messageData;
+    const {ephemeralHistory} = store.getRoom(roomId);
+
+    let travelThreadNextMessageId = threadNextMessageId;
+    while (travelThreadNextMessageId) {
+      const record = ephemeralHistory[travelThreadNextMessageId];
+      record.$textRecord().finish().find('.threadedRecordOverlay').show();
+      travelThreadNextMessageId = record.messageData.threadNextMessageId;
+    }
+
+    let travelThreadPreviousMessageId = threadPreviousMessageId;
+    while (travelThreadPreviousMessageId) {
+      const record = ephemeralHistory[travelThreadPreviousMessageId];
+      record.$textRecord().finish().find('.threadedRecordOverlay').show();
+      travelThreadPreviousMessageId = record.messageData.threadPreviousMessageId;
+    }
+  }
+
   render = () => {
-    const $ephemeralRecord = $(
-      `<div \
-        class="ephemeralRecord" \ 
-        id=${this.messageData.id} \
-        style="grid-column-start:${this.messageData.gridColumnStart};grid-row-start:${this.messageData.gridRowStart};" \
-      />`
-    );
+    const {id, gridColumnStart, gridRowStart, avatar, roomId} = this.messageData;
+
+    const $ephemeralRecordTemplate = $(document.getElementById('ephemeralRecordTemplate').content.cloneNode(true));
+    const $ephemeralRecord = $ephemeralRecordTemplate.find('.ephemeralRecord');
+
+    $ephemeralRecord.attr('id', id);
+    $ephemeralRecord[0].style.gridColumnStart = gridColumnStart;
+    $ephemeralRecord[0].style.gridRowStart = gridRowStart;
 
     $ephemeralRecord
       .on('mouseenter', this.renderEphemeralMessageDetails)
       .on('mouseleave', () => $('.ephemeralMessageContainer').finish().fadeOut(500));
 
     $ephemeralRecord.on('adjacent', this.renderEphemeralMessageDetails);
+    $ephemeralRecord.on('indicateThread', this.indicateMessagesInThread);
 
-    $ephemeralRecord.css({backgroundColor: this.messageData.avatar});
-    $ephemeralRecord.appendTo($(`#${this.messageData.roomId}`));
+    $ephemeralRecord.css({backgroundColor: avatar});
+    $ephemeralRecord.appendTo($(`#${roomId}`));
   }
 }

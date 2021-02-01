@@ -9,11 +9,23 @@ button {
   background-color: var(--ephemeral-bg-color);  
 }
 
-.ephemeralRecord {
+.ephemeralRecord,
+.threadedRecordOverlay {
   width: var(--cell-size);
   height: var(--cell-size);
+}
+
+.ephemeralRecord {
   display: flex;
   flex-wrap: wrap;
+  position: relative;
+}
+
+.threadedRecordOverlay {
+  background-color: rgba(0, 0, 255, 0.3);
+  border: 1px solid blue;
+  position: absolute;
+  z-index: 10;
 }
 
 .ephemeralRecord.inConsentProcess {
@@ -44,6 +56,11 @@ button {
 
 #pinnedMessageCount {
   margin-left: 16px;
+}
+
+.pinnedMessages,
+.nonPinnedMessages {
+  overflow-y: scroll;
 }
 
 .ephemeralRecordDetails {

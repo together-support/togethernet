@@ -5,7 +5,7 @@ import moment from 'moment';
 
 class ArchivedMessage {
   constructor (props) {
-    const {messageData, index} = props
+    const {messageData, index} = props;
     this.messageData = messageData;
     this.index = index;
   }
