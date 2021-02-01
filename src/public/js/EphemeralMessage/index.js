@@ -307,22 +307,28 @@ export default class EphemeralMessage {
     $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
   }
 
+  indicateMessagesInThread = () => {
+    this.$textRecord().find('.threadedRecordOverlay').show();
+  }
+
   render = () => {
-    const $ephemeralRecord = $(
-      `<div \
-        class="ephemeralRecord" \ 
-        id=${this.messageData.id} \
-        style="grid-column-start:${this.messageData.gridColumnStart};grid-row-start:${this.messageData.gridRowStart};" \
-      />`
-    );
+    const {id, gridColumnStart, gridRowStart, avatar, roomId} = this.messageData;
+
+    const $ephemeralRecordTemplate = $(document.getElementById('ephemeralRecordTemplate').content.cloneNode(true));
+    const $ephemeralRecord = $ephemeralRecordTemplate.find('.ephemeralRecord');
+
+    $ephemeralRecord.attr('id', id);
+    $ephemeralRecord[0].style.gridColumnStart = gridColumnStart;
+    $ephemeralRecord[0].style.gridRowStart = gridRowStart;
 
     $ephemeralRecord
       .on('mouseenter', this.renderEphemeralMessageDetails)
       .on('mouseleave', () => $('.ephemeralMessageContainer').finish().fadeOut(500));
 
     $ephemeralRecord.on('adjacent', this.renderEphemeralMessageDetails);
+    $ephemeralRecord.on('indicateThread', this.indicateMessagesInThread);
 
-    $ephemeralRecord.css({backgroundColor: this.messageData.avatar});
-    $ephemeralRecord.appendTo($(`#${this.messageData.roomId}`));
+    $ephemeralRecord.css({backgroundColor: avatar});
+    $ephemeralRecord.appendTo($(`#${roomId}`));
   }
 }

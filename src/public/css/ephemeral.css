@@ -9,11 +9,22 @@ button {
   background-color: var(--ephemeral-bg-color);  
 }
 
-.ephemeralRecord {
+.ephemeralRecord,
+.threadedRecordOverlay {
   width: var(--cell-size);
   height: var(--cell-size);
+}
+
+.ephemeralRecord {
   display: flex;
   flex-wrap: wrap;
+  position: relative;
+}
+
+.threadedRecordOverlay {
+  background-color: blue;
+  opacity: 0.5;
+  position: absolute;
 }
 
 .ephemeralRecord.inConsentProcess {

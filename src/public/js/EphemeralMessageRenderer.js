@@ -104,7 +104,7 @@ class EphemeralMessageRenderer {
     }
 
     $majorityRulesTemplate.find('.voteOption').each((_, option) => {
-      $(option).on('click', (e) => {
+      $(option).on('click', () => {
         $(option).toggleClass('myVote');
         $('.voteOption').not(`.${$(option).data('value')}`).removeClass('myVote');
         this.message.castVote($(option).data('value'));

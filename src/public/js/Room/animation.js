@@ -4,7 +4,7 @@ export const keyboardEvent = (event) => {
   event.preventDefault();
 
   if(['ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(event.key)) {
-    hideEphemeralMessageText();
+    hideEphemeralMessageDetailsAndOverlay();
     animateUser(event.key);
   }
 };
@@ -57,8 +57,9 @@ const animationEvents = {
   'ArrowDown': moveDown
 };
 
-export const hideEphemeralMessageText = () => {
+export const hideEphemeralMessageDetailsAndOverlay = () => {
   $('.ephemeralMessageContainer').finish().fadeOut(500);
+  $('.threadedRecordOverlay').finish().hide();
 };
 
 export const onAnimationComplete = () => {
@@ -70,10 +71,14 @@ const showAdjacentMessages = () => {
   const adjacentMessages = store.getCurrentUser().getAdjacentMessages();
   adjacentMessages.forEach(messageRecord => $(messageRecord).trigger('adjacent'));
 
-  $('#writeMessage').trigger({
-    type: 'messageThread', 
-    threadPreviousMessage: adjacentMessages.length === 1 && adjacentMessages[0],
-  });
+  if (adjacentMessages.length === 1) {
+    $('#writeMessage').trigger({
+      type: 'messageThread', 
+      threadPreviousMessage: adjacentMessages[0],
+    });
+
+    $(adjacentMessages[0]).trigger('indicateThread');
+  }
 };  
 
 const sendPositionToPeers = () => {
