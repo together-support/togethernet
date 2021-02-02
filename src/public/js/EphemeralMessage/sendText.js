@@ -10,14 +10,30 @@ export const sendMessage = () => {
   }
 
   const currentRoom = store.getCurrentRoom();
+  const currentUser = store.getCurrentUser();
+
+  const {name} = currentUser.getProfile();
 
   if (currentRoom.constructor.name === 'ArchivalSpace') {
-    return;
+    fetch('/archive', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        author: name, 
+        content,
+        room_id: 'archivalSpace',
+        commentable_id: currentRoom.isCommentingOnId,
+        message_type: 'comment',
+      })
+    }).then(response => 
+      response.json()
+    ).then((archivedMessage) => {
+    }).catch(e => 
+      console.log(e)
+    );
   } else {
     const gridColumnStart = $('#user .shadow').css('grid-column-start');
     const gridRowStart = $('#user .shadow').css('grid-row-start');
-  
-    const currentUser = store.getCurrentUser();
   
     if ($(`#${currentUser.currentRoomId}-${gridColumnStart}-${gridRowStart}`).length) {
       alert('move to an empty spot to write the msg');
@@ -38,8 +54,8 @@ export const sendMessage = () => {
     currentRoom.addEphemeralHistory(ephemeralMessage);
     store.sendToPeers({type: 'text', data: ephemeralMessage.messageData});
     ephemeralMessage.render();
-  
-    $messageInput.val('');
     $('#pinMessage').removeClass('clicked');
   }
+  
+  $messageInput.val('');
 };

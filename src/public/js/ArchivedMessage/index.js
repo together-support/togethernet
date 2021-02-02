@@ -1,6 +1,6 @@
 import store from '@js/store';
 import {formatDateTimeString} from '@js/utils';
-import {updateMessage, addComment} from '@js/api';
+import {updateMessage} from '@js/api';
 import moment from 'moment';
 
 class ArchivedMessage {
@@ -43,22 +43,24 @@ class ArchivedMessage {
 
     $messageDetails.find('.deleteArchivedMessage').on('click', this.markMessageDeleted);
     $messageDetails.find('.commentArchivedMessage').on('click', () => {
-      $messageDetails.find('.commentArchivedMessage').toggleClass('clicked');
-      store.getCurrentRoom().isCommenting = !store.getCurrentRoom().isCommenting;
-      if (store.getCurrentRoom().isCommenting) {
-        $('#writeMessage').removeAttr('disabled');
-      } else {
+      if (store.getCurrentRoom().isCommentingOnId) {
+        $messageDetails.find('.commentArchivedMessage').removeClass('clicked');
+        store.getCurrentRoom().isCommentingOnId = null;
         $('#writeMessage').attr('disabled', 'disabled');
+      } else {
+        $messageDetails.find('.commentArchivedMessage').addClass('clicked');
+        store.getCurrentRoom().isCommentingOnId = id;
+        $('#writeMessage').removeAttr('disabled');
       }
     });
     $messageDetails
       .on('mouseenter', () => {
-        if (!store.getCurrentRoom().isCommenting) {
+        if (!store.getCurrentRoom().isCommentingOnId) {
           $messageDetails.find('.archivalMessageActions').show();
           $messageDetails.addClass('hovered');
         }
       }).on('mouseleave', () => {
-        if (!store.getCurrentRoom().isCommenting) {
+        if (!store.getCurrentRoom().isCommentingOnId) {
           $messageDetails.find('.archivalMessageActions').hide();
           $messageDetails.removeClass('hovered');
         }

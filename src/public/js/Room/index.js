@@ -113,6 +113,7 @@ export default class Room {
     this.showRoom();
     $('#writeMessage').removeAttr('disabled');
     $('#writeMessage').attr('placeholder', 'Type your message here');
+    $('#writeMessage').val('');
     hideEphemeralMessageDetailsAndOverlay();
 
     store.sendToPeers({
