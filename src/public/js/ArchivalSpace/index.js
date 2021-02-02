@@ -37,6 +37,8 @@ class ArchivalSpace {
   };
 
   goToRoom = () => {
+    $('#writeMessage').attr('disabled', 'disabled');
+    $('#writeMessage').attr('placeholder', 'Add comment');
     $('.ephemeralView').hide();
     $('#pinMessage').hide();
     $('.roomLink').removeClass('currentRoom');
@@ -91,7 +93,6 @@ class ArchivalSpace {
     if (this.memberships.isEmpty()) {
       const editorProfile = user.getProfile();
       this.editor = editorProfile.socketId;
-      $('#writeMessage').removeAttr('disabled');
       $('#editorOptions').find('.editorName').text(editorProfile.name);
       $('#editorOptions').find('.editorAvatar').css({backgroundColor: editorProfile.avatar});
     }
