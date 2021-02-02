@@ -75,7 +75,7 @@
       </div>
       <div class="sendMessageActions">
         <button class="btn icon" title="pin message" id="pinMessage" name="pinMessage">⚐</button>
-        <input type="text" id="writeMessage" name="text" placeholder=" Type your message here" />
+        <input type="text" id="writeMessage" name="text" placeholder="Type your message here" />
         <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives" style="display: none;">
           <i class="fa fa-download"></i>
         </a>
@@ -169,11 +169,12 @@
 
     <template id="archivalMessagesDetailsTemplate">
       <div class="archivalMessagesDetails">
-        <div class="archivalMessageActions">
+        <div class="archivalMessageActions" style="display:none;">
           <button class="commentArchivedMessage">C</button>
           <button class="deleteArchivedMessage">X</button>
         </div>
         <p class="content">
+          <span class="index"></span>
           <span class="message"></span>
           <span class="author"></i>
         </p>

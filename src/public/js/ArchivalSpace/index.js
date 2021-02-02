@@ -5,7 +5,6 @@ import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import groupBy from 'lodash/groupBy';
 import sortBy from 'lodash/sortBy';
 import filter from 'lodash/filter';
-import {addComment} from '@js/api';
 import moment from 'moment';
 import {formatDateString, formatDateLabel} from '@js/utils';
 
@@ -17,7 +16,7 @@ class ArchivalSpace {
     this.memberships = new RoomMembership('archivalSpace');
 
     this.editor = null;
-    this.isEditingMessageId = null;
+    this.isCommentingOnId = null;
 
     this.$roomLink = $('#archivalSpaceLink');
   }
@@ -32,11 +31,12 @@ class ArchivalSpace {
   attachEvents = () => {
     this.$roomLink.on('click', this.goToRoom);
     $('#deleteArchivedMessage').on('click', this.markMessageDeleted);
-    $('#writeMessage').on('keyup', this.addComment);
     $('#downloadArchives').on('click', this.downloadArchives);
   };
 
   goToRoom = () => {
+    $('#writeMessage').attr('disabled', 'disabled');
+    $('#writeMessage').attr('placeholder', 'Add comment');
     $('.ephemeralView').hide();
     $('#pinMessage').hide();
     $('.roomLink').removeClass('currentRoom');
@@ -68,21 +68,6 @@ class ArchivalSpace {
     });
   }
 
-  addComment = (e) => {
-    if (e.key !== 'Enter') {
-      return;
-    }
-    const messageContent = $('#writeMessage').val();
-
-    if (this.isEditingMessageId && Boolean(messageContent) && store.getCurrentUser().socketId === this.editor) {
-      addComment({
-        ...store.getCurrentUser().getProfile(),
-        message: messageContent,
-        commentableId: this.isEditingMessageId,
-      });
-    }
-  }
-
   addMember = (user) => {
     this.memberships.addMember(user);
   }
@@ -91,7 +76,6 @@ class ArchivalSpace {
     if (this.memberships.isEmpty()) {
       const editorProfile = user.getProfile();
       this.editor = editorProfile.socketId;
-      $('#writeMessage').removeAttr('disabled');
       $('#editorOptions').find('.editorName').text(editorProfile.name);
       $('#editorOptions').find('.editorAvatar').css({backgroundColor: editorProfile.avatar});
     }
@@ -131,15 +115,30 @@ class ArchivalSpace {
     if (message_type === 'text_message') {
       $details.appendTo($(`#dateGroup-${formatDateLabel(created_at)} .roomGroup-${room_id}`));
     } else if (message_type === 'comment') {
-      $details.insertAfter($(`#archivedMessageDetails-${commentable_id}`));
+      $details.appendTo($(`#archivedMessageDetails-${commentable_id}`));
     }
   }
 
   getIndex = (messageData) => {
+    if (messageData.message_type === 'text_message') {
+      return this.getIndexForMessage(messageData);
+    } else {
+      return this.getIndexForMessageForComment(messageData);
+    }
+  }
+
+  getIndexForMessage = (messageData) => {
     const {room_id, created_at} = messageData;
     const dateString = formatDateLabel(created_at);
     const $dateRoomGroup = $(`#dateGroup-${dateString} .roomGroup-${room_id}`);
-    return $dateRoomGroup.find('.archivalMessagesDetails').length;
+    return $dateRoomGroup.find('.archivalMessagesDetails').length + 1;
+  }
+
+  getIndexForMessageForComment = (messageData) => {
+    const {commentable_id} = messageData;
+    const prefix = $(`#archivedMessageDetails-${commentable_id}`).find('.index').first().text();
+    const suffix = $(`#archivedMessageDetails-${commentable_id}`).find('.comment').length + 1;
+    return `${prefix}.${suffix}`;
   }
 
   appendDateGroup = (date) => {

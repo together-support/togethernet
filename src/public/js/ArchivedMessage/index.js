@@ -1,6 +1,6 @@
 import store from '@js/store';
 import {formatDateTimeString} from '@js/utils';
-import {updateMessage, addComment} from '@js/api';
+import {updateMessage} from '@js/api';
 import moment from 'moment';
 
 class ArchivedMessage {
@@ -42,6 +42,29 @@ class ArchivedMessage {
     $messageDetails.attr('id', `archivedMessageDetails-${id}`);
 
     $messageDetails.find('.deleteArchivedMessage').on('click', this.markMessageDeleted);
+    $messageDetails.find('.commentArchivedMessage').on('click', () => {
+      if (store.getCurrentRoom().isCommentingOnId) {
+        $messageDetails.find('.commentArchivedMessage').removeClass('clicked');
+        store.getCurrentRoom().isCommentingOnId = null;
+        $('#writeMessage').attr('disabled', 'disabled');
+      } else {
+        $messageDetails.find('.commentArchivedMessage').addClass('clicked');
+        store.getCurrentRoom().isCommentingOnId = id;
+        $('#writeMessage').removeAttr('disabled');
+      }
+    });
+    $messageDetails
+      .on('mouseenter', () => {
+        if (!store.getCurrentRoom().isCommentingOnId) {
+          $messageDetails.find('.archivalMessageActions').show();
+          $messageDetails.addClass('hovered');
+        }
+      }).on('mouseleave', () => {
+        if (!store.getCurrentRoom().isCommentingOnId) {
+          $messageDetails.find('.archivalMessageActions').hide();
+          $messageDetails.removeClass('hovered');
+        }
+      });
   
     return $messageDetails;
   }
@@ -61,7 +84,8 @@ class ArchivedMessage {
 
     const $messageDetails = this.renderBaseDetails();
     $messageDetails.find('.participantNames').text(`Participants: ${participant_names.join(', ')}`);
-    $messageDetails.find('.message').text(`${this.index}. ${content}`);
+    $messageDetails.find('.index').text(this.index);
+    $messageDetails.find('.message').text(`. ${content}`);
     $messageDetails.find('.author').text(author);
     return $messageDetails;
   }
@@ -69,8 +93,10 @@ class ArchivedMessage {
   renderMessageDetailsForComment = () => {
     const {author, content, created_at} = this.messageData;
     const $messageDetails = this.renderBaseDetails();
-    $messageDetails.find('.content').text(`${this.index}.${content}. Annotated by ${author}. ${formatDateTimeString(created_at)}`);
-
+    $messageDetails.addClass('comment');
+    $messageDetails.find('.index').text(this.index);
+    $messageDetails.find('.message').text(`. ${content}. Annotated by ${author}. ${formatDateTimeString(created_at)}`);
+    $messageDetails.find('.archivalMessageActions').remove();
     return $messageDetails;
   }
 }

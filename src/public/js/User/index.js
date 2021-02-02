@@ -78,6 +78,10 @@ export default class User {
     }));
   }
 
+  getAdjacentMessageIds = () => {
+    return this.getAdjacentMessages().map(el => el.id);
+  }
+
   joinedRoom = (joinedRoomId) => {
     store.getRoom(joinedRoomId).goToRoom();
   }
