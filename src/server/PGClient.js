@@ -40,6 +40,12 @@ class PGClient {
       callback(results.rows, error);
     });
   }
+
+  delete ({resource, id, callback}) {
+    this.pool.query(`DELETE FROM ${resource} WHERE id = ${id} RETURNING *`, (error, results) => {
+      callback({result: results.rows[0], error});
+    });
+  }
 }
 
 export default PGClient;

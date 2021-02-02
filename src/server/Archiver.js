@@ -16,6 +16,10 @@ class Archiver {
   readAll (resource, callback) {
     return this.archivalClient.readAll(resource, callback);
   }
+
+  delete ({resource, id, callback}) {
+    return this.archivalClient.delete({resource, id, callback});
+  }
 }
 
 export default Archiver;

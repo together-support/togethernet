@@ -26,6 +26,7 @@ export default class PeerConnection {
     this.socket.on('peerLeave', this.handlePeerLeaveSocket);
     this.socket.on('archivedMessage', store.getRoom('archivalSpace').appendArchivedMessage);
     this.socket.on('archivedMessageUpdated', store.getRoom('archivalSpace').archivedMessageUpdated);
+    this.socket.on('archivedMessageDeleted', store.getRoom('archivalSpace').archivedMessageDeleted);
     this.socket.on('error', this.handleSocketError);
     this.socket.on('disconnect', this.handleSocketDisconnect);
   }

@@ -44,6 +44,13 @@ export default class SignalingServer {
       this.sendConnection(connection, {type: 'archivedMessageUpdated', messageData});    
     });
   }
+
+  alertArchivedMessageDeleted = (messageData) => {
+    Object.keys(this.io.sockets.connected).forEach((socketId) => {
+      const connection = this.io.sockets.connected[socketId];
+      this.sendConnection(connection, {type: 'archivedMessageDeleted', messageData});    
+    });
+  }
   
   handleSendOffers = ({offer, peerId, fromSocket}) => {
     const connection = this.io.sockets.connected[peerId];

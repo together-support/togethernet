@@ -65,6 +65,18 @@ app.post('/archive/:id', (req, _) => {
   }});
 });
 
+app.delete('/archive/:id', (req, resp) => { 
+  archiver.delete({resource: 'messages', id: req.params.id, callback: ({result, error}) => {
+    if (error) {
+      console.log('error', error);
+    }
+    if (result) {
+      signalingServer.alertArchivedMessageDeleted(result);
+    }
+    resp.status(200);
+  }});
+});
+
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.get('/js/bundle.js',  browserify('src/public/js/index.js'));

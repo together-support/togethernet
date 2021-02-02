@@ -374,6 +374,10 @@ export default class EphemeralMessage {
     this.$textRecord().find('.consentIndicator').remove();
     this.finishConsentToArchiveProcess();
     this.messageData.consentToArchiveRecords = {};
+    this.messageData.archivedMessageId = null;
+    $(`#ephemeralDetails-${this.messageData.id}`)
+      .find('.initConsentToArchiveProcess')
+      .removeClass('checked');
   }
 
   finishConsentToArchiveProcess = () => {

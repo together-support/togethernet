@@ -115,7 +115,10 @@ class EphemeralMessageRenderer {
     if (archivedMessageId && Object.keys(consentToArchiveRecords).includes(store.getCurrentUser().socketId)) {
       $consentToArchiveButton.addClass('checked');
       $consentToArchiveButton.on('click', () => {
-        // revoke consent
+        fetch(`archive/${archivedMessageId}`, {
+          method: 'DELETE',
+          headers: {'Content-Type': 'application/json'},
+        }).catch(e => console.log(e));
       });
     } else {
       $consentToArchiveButton.on('click', (e) => {

@@ -100,6 +100,20 @@ class ArchivalSpace {
     }
   }
 
+  archivedMessageDeleted = ({messageData}) => {
+    const {id, room_id} = messageData;
+    $(`#archivedMessageDetails-${id}`).remove();
+
+    const room = store.getRoom(room_id);
+    if (room) {
+      const ephemeralMessage = Object.values(room.ephemeralHistory)
+        .find(message => message.messageData.archivedMessageId === id);
+      if (ephemeralMessage) {
+        ephemeralMessage.consentToArchiveBlocked();
+      }
+    }
+  }
+
   appendArchivedMessage = ({messageData}) => {
     const {message_type, commentable_id, room_id, created_at} = messageData;
     const message = new ArchivedMessage({messageData, index: this.getIndex(messageData)});
