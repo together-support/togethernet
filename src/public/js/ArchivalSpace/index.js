@@ -17,7 +17,7 @@ class ArchivalSpace {
     this.memberships = new RoomMembership('archivalSpace');
 
     this.editor = null;
-    this.isEditingMessageId = null;
+    this.isCommenting = false;
 
     this.$roomLink = $('#archivalSpaceLink');
   }

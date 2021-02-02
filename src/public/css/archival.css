@@ -105,7 +105,7 @@
   margin: 0 16px;
 }
 
-.archivalMessagesDetails:hover {
+.archivalMessagesDetails.hovered {
   background-color: var(--interface-highlight);
 }
 
@@ -127,4 +127,10 @@
 
 #writeMessage:disabled {
   background-color: rgba(255, 255, 255, 0.15);
+}
+
+.commentArchivedMessage.clicked {
+  background-color: whitesmoke;
+  color: black;
+  border: 1px solid black;
 }

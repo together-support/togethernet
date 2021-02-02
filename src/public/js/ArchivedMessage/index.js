@@ -42,11 +42,26 @@ class ArchivedMessage {
     $messageDetails.attr('id', `archivedMessageDetails-${id}`);
 
     $messageDetails.find('.deleteArchivedMessage').on('click', this.markMessageDeleted);
+    $messageDetails.find('.commentArchivedMessage').on('click', () => {
+      $messageDetails.find('.commentArchivedMessage').toggleClass('clicked');
+      store.getCurrentRoom().isCommenting = !store.getCurrentRoom().isCommenting;
+      if (store.getCurrentRoom().isCommenting) {
+        $('#writeMessage').removeAttr('disabled');
+      } else {
+        $('#writeMessage').attr('disabled', 'disabled');
+      }
+    });
     $messageDetails
       .on('mouseenter', () => {
-        $messageDetails.find('.archivalMessageActions').show();
+        if (!store.getCurrentRoom().isCommenting) {
+          $messageDetails.find('.archivalMessageActions').show();
+          $messageDetails.addClass('hovered');
+        }
       }).on('mouseleave', () => {
-        $messageDetails.find('.archivalMessageActions').hide();
+        if (!store.getCurrentRoom().isCommenting) {
+          $messageDetails.find('.archivalMessageActions').hide();
+          $messageDetails.removeClass('hovered');
+        }
       });
   
     return $messageDetails;
