@@ -25,12 +25,7 @@ export const sendMessage = () => {
         commentable_id: currentRoom.isCommentingOnId,
         message_type: 'comment',
       })
-    }).then(response => 
-      response.json()
-    ).then((archivedMessage) => {
-    }).catch(e => 
-      console.log(e)
-    );
+    }).catch(e => console.log(e));
   } else {
     const gridColumnStart = $('#user .shadow').css('grid-column-start');
     const gridRowStart = $('#user .shadow').css('grid-row-start');
@@ -56,6 +51,6 @@ export const sendMessage = () => {
     ephemeralMessage.render();
     $('#pinMessage').removeClass('clicked');
   }
-  
+
   $messageInput.val('');
 };

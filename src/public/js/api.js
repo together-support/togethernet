@@ -1,10 +1,3 @@
-export const addComment = async (commentData) => {
-
-};
-
-export const addThread = async (threadData) => {
-};
-
 export const updateMessage = async ({messageId, content, order}) => {
   await fetch(`/archive/${messageId}`, {
     method: 'POST',

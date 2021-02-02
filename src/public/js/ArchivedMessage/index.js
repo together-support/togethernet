@@ -84,7 +84,8 @@ class ArchivedMessage {
 
     const $messageDetails = this.renderBaseDetails();
     $messageDetails.find('.participantNames').text(`Participants: ${participant_names.join(', ')}`);
-    $messageDetails.find('.message').text(`${this.index}. ${content}`);
+    $messageDetails.find('.index').text(this.index);
+    $messageDetails.find('.message').text(`. ${content}`);
     $messageDetails.find('.author').text(author);
     return $messageDetails;
   }
@@ -92,8 +93,10 @@ class ArchivedMessage {
   renderMessageDetailsForComment = () => {
     const {author, content, created_at} = this.messageData;
     const $messageDetails = this.renderBaseDetails();
-    $messageDetails.find('.content').text(`${this.index}.${content}. Annotated by ${author}. ${formatDateTimeString(created_at)}`);
-
+    $messageDetails.addClass('comment');
+    $messageDetails.find('.index').text(this.index);
+    $messageDetails.find('.message').text(`. ${content}. Annotated by ${author}. ${formatDateTimeString(created_at)}`);
+    $messageDetails.find('.archivalMessageActions').remove();
     return $messageDetails;
   }
 }

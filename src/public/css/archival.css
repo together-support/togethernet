@@ -83,6 +83,10 @@
   flex-wrap: wrap;
 }
 
+.archivalMessagesDetails.comment {
+  padding-left: 16px;
+}
+
 #editorOptions {
   display: flex;
   align-items: center;
