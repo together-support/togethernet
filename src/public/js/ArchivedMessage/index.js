@@ -42,6 +42,12 @@ class ArchivedMessage {
     $messageDetails.attr('id', `archivedMessageDetails-${id}`);
 
     $messageDetails.find('.deleteArchivedMessage').on('click', this.markMessageDeleted);
+    $messageDetails
+      .on('mouseenter', () => {
+        $messageDetails.find('.archivalMessageActions').show();
+      }).on('mouseleave', () => {
+        $messageDetails.find('.archivalMessageActions').hide();
+      });
   
     return $messageDetails;
   }
