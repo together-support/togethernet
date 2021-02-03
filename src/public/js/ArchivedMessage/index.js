@@ -31,6 +31,8 @@ class ArchivedMessage {
       return this.renderMessageDetailsForTextRecord();
     } else if (this.messageData.message_type === 'comment') {
       return this.renderMessageDetailsForComment();
+    } else if (this.messageData.message_type === 'thread') {
+      return this.renderMessageDetailsForThread();
     }
   }
 
@@ -97,6 +99,31 @@ class ArchivedMessage {
     $messageDetails.find('.index').text(this.index);
     $messageDetails.find('.message').text(`. ${content}. Annotated by ${author}. ${formatDateTimeString(created_at)}`);
     $messageDetails.find('.archivalMessageActions').remove();
+    return $messageDetails;
+  }
+
+  renderMessageDetailsForThread = () => {
+    const {author, content, thread_data} = this.messageData;
+    const $messageDetails = this.renderBaseDetails();
+    $messageDetails.find('.index').text(`${this.index} .`);
+    if (thread_data && Object.keys(thread_data).length) {
+      $messageDetails.find('.message').text('Thread: ');      
+      
+      const threadHead = Object.keys(thread_data).find(threadItemId => !thread_data[threadItemId].threadPreviousMessageId);
+      let nextMessageId = threadHead;
+      while(nextMessageId) {
+        const {content, name, threadNextMessageId} = thread_data[nextMessageId];
+        const $contentContainerClone = $(document.getElementById('archivedThreadDetailsTemplate').content.cloneNode(true));
+        $contentContainerClone.find('.message').text(`${content}.`);
+        $contentContainerClone.find('.author').text(name);
+        $contentContainerClone.appendTo($messageDetails);
+        nextMessageId = threadNextMessageId;
+      }
+    } else {
+      $messageDetails.find('.index').text(this.index);
+      $messageDetails.find('.message').text(`. ${content}`);
+      $messageDetails.find('.author').text(author);
+    }
     return $messageDetails;
   }
 }

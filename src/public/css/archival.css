@@ -83,7 +83,8 @@
   flex-wrap: wrap;
 }
 
-.archivalMessagesDetails.comment {
+.archivalMessagesDetails.comment,
+.threadItem  {
   padding-left: 16px;
 }
 

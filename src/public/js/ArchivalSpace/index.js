@@ -3,7 +3,7 @@ import ArchivedMessage from '@js/ArchivedMessage';
 import store from '@js/store';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import groupBy from 'lodash/groupBy';
-import sortBy from 'lodash/sortBy';
+import orderBy from 'lodash/orderBy';
 import filter from 'lodash/filter';
 import moment from 'moment';
 import {formatDateString, formatDateLabel} from '@js/utils';
@@ -38,6 +38,7 @@ class ArchivalSpace {
     $('#writeMessage').attr('disabled', 'disabled');
     $('#writeMessage').attr('placeholder', 'Add comment');
     $('.ephemeralView').hide();
+    $('.ephemeralMessageContainer').hide();
     $('#pinMessage').hide();
     $('.roomLink').removeClass('currentRoom');
     this.$roomLink.addClass('currentRoom');
@@ -126,7 +127,7 @@ class ArchivalSpace {
       this.appendRoomGroup(room_id, created_at);
     }
 
-    if (message_type === 'text_message') {
+    if (['text_message', 'thread'].includes(message_type)) {
       $details.appendTo($(`#dateGroup-${formatDateLabel(created_at)} .roomGroup-${room_id}`));
     } else if (message_type === 'comment') {
       $details.appendTo($(`#archivedMessageDetails-${commentable_id}`));
@@ -134,7 +135,7 @@ class ArchivalSpace {
   }
 
   getIndex = (messageData) => {
-    if (messageData.message_type === 'text_message') {
+    if (['text_message', 'thread'].includes(messageData.message_type) ) {
       return this.getIndexForMessage(messageData);
     } else {
       return this.getIndexForMessageForComment(messageData);
@@ -182,12 +183,12 @@ class ArchivalSpace {
 
   groupedTextMessages = () => {
     const groupedMessages = {};
-    const textMessages = filter(this.messageRecords, (record) => record.message_type === 'text_message');
+    const textMessages = filter(this.messageRecords, (record) => ['text_message', 'thread'].includes(record.message_type));
     const dateGroupedMessages = groupBy(textMessages, (messageRecord) => {
       return formatDateString(messageRecord.created_at);
     });
 
-    sortBy(Object.keys(dateGroupedMessages), (date) => moment(date)).forEach(date => {
+    orderBy(Object.keys(dateGroupedMessages), (date) => moment(date), ['desc', 'asc']).forEach(date => {
       groupedMessages[date] = groupBy(dateGroupedMessages[date], 'room_id');
     });
 
