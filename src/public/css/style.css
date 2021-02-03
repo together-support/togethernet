@@ -11,24 +11,34 @@
 
 :root {
   --default-font-size: 16px;
+  --systemMsg-font-size: 20px;
   --primary-bg-color: black;
   --secondary-bg-color: #282828;
   --ephemeral-bg-color: midnightblue;
+  --archival-bg-color: midnightblue;
   --primary-font-color: whitesmoke;
   --secondary-font-color: gray;
   --interface-gray: Grey;
+  --interface-highlight: #282828;
+  --interface-border-width: 1px;
+  --interface-border: var(--interface-border-width) solid darkgray;
+  --interface-border-radius: 5px;
   --avatar-outline-color: whitesmoke;
   --newly-joined-avatar-outline-color: #0eb7da;
   --overlay-color: black;
   --overlay-opacity: 0.5;
-  --min-navbar-width: 17vw;
-  --cell-horizontal-num: 31;
+  --systemMsg-overlay-opacity: 0.8;
+  --min-navbar-width: 20vw;
+  --cell-horizontal-num: 30;
   --cell-vertical-num: 17;
   --cell-size: 5vh;
   --avatar-x: 1;
   --avatar-y: 1;
-  --interface-default-margin: 1vw;
+  --interface-horizontal-margin: 1vw;
+  --interface-vertical-margin: 1vh;
   --interface-highlight: #282828;
+  --ephemeral-msg-container-width: 25vw;
+  --sendmessage-height: 10vh;
 }
 
 body,
@@ -56,11 +66,26 @@ body {
 .container {
   position: relative;
   margin: auto;
-  outline: 1px solid gray;
   display: flex;
   flex-direction: row;
-  height: calc(var(--cell-size) * var(--cell-vertical-num) + 50px);
-  width: calc(280px + var(--cell-size) * var(--cell-horizontal-num));
+  height: calc(
+    var(--cell-size) * var(--cell-vertical-num) + var(--sendmessage-height)
+  );
+  width: calc(
+    var(--min-navbar-width) + var(--cell-size) * var(--cell-horizontal-num)
+  );
+}
+
+button {
+  cursor: pointer;
+}
+
+.shaded {
+  opacity: var(--overlay-opacity);
+}
+
+.shaded:hover {
+  opacity: 1;
 }
 
 #messages {
@@ -101,15 +126,17 @@ body {
 .participantsContainer {
   display: flex;
   height: 10px;
+  margin-top: 5px;
 }
 
 .participant {
   height: 10px;
   width: 10px;
+  margin-right: 4px;
 }
 
 .icon {
-  font-size: 20px;
+  font-size: var(--default-font-size);
 }
 
 .btn:hover {
@@ -139,19 +166,16 @@ input[type="color"] {
   z-index: 100;
   left: 0;
   top: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: auto;
-  background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.8); /* Black w/ opacity */
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+  background-color: var(--overlay-color);
+  opacity: var(--systemMsg-overlay-opacity);
 }
 
 .modalContent {
-  background-color: rgba(0, 0, 0, 0.8);
-  border: 1px solid #888;
-  margin: 2.5vh auto;
+  margin: auto;
   width: calc(var(--cell-size) * var(--cell-horizontal-num));
-  outline: 1px solid black;
 }
 
 .modalContent.long {
@@ -175,15 +199,17 @@ input[type="color"] {
 
 #systemMessage > .modalContent {
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
 #systemMessage span {
+  font: var(--systemMsg-font-size) nunito, monospace;
   color: white;
   margin: auto;
-  white-space: pre;
-  text-align: center;
+  width: 50%;
+  min-width: 500px;
+  padding-top: 5%;
+  color: white;
 }
 
 .modalContent .modalButtons {

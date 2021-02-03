@@ -1,12 +1,8 @@
-button {
-  cursor: pointer;
-}
-
 .ephemeralView {
   display: grid;
   grid-template-rows: repeat(var(--cell-vertical-num), var(--cell-size));
   grid-template-columns: repeat(var(--cell-horizontal-num), var(--cell-size));
-  background-color: var(--ephemeral-bg-color);  
+  background-color: var(--ephemeral-bg-color);
 }
 
 .ephemeralRecord,
@@ -22,10 +18,10 @@ button {
 }
 
 .threadedRecordOverlay {
-  background-color: rgba(0, 0, 255, 0.3);
-  border: 1px solid blue;
+  background-color: rgba(0, 0, 255, 0.5);
+  outline: blue solid 1px;
   position: absolute;
-  z-index: 10;
+  z-index: 3;
 }
 
 .ephemeralMessageContainer.inConsentProcess,
@@ -34,16 +30,21 @@ button {
 }
 
 .ephemeralMessageContainer {
-  width: 300px;
+  width: var(--ephemeral-msg-container-width);
+  min-width: 300px;
   min-height: 100px;
   max-height: 80%;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
   position: absolute;
   z-index: 5;
-  top: 10%;
+  padding-top: var(--interface-default-margin);
+  padding-bottom: var(--interface-default-margin);
+  margin-top: var(--cell-size);
   color: white;
-  font-size: 16px;
-  border-radius: 10px;
+  font-size: var(--default-font-size);
+  border-radius: var(--interface-border-radius);
+  border: var(--interface-border);
+  overflow-y: scroll;
 }
 
 .ephemeralMessageContainer.right {
@@ -69,19 +70,23 @@ button {
   padding: 16px;
 }
 
+.ephemeralRecordDetails:hover {
+  background-color: var(--interface-highlight);
+}
+
 .ephemeralRecordDetails .heading {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: var(--default-font-size);
 }
 
 .ephemeralRecordDetails .heading .messageActions button {
-  width: 24px;
-  height: 24px;
-  border: 1px solid whitesmoke;
-  border-radius: 5px;
-  margin-left: 8px;
+  width: calc(var(--default-font-size) * 1.5);
+  height: calc(var(--default-font-size) * 1.5);
+  border: var(--interface-border);
+  border-radius: var(--interface-border-radius);
+  margin-left: var(--interface-horizontal-margin);
 }
 
 .ephemeralRecordDetails .heading .messageActions button.checked {
@@ -144,5 +149,5 @@ button {
 }
 
 .pinnedMessagesSummary i.collapsed {
-  transform: rotate(-45deg)
+  transform: rotate(-45deg);
 }

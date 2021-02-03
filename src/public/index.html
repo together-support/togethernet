@@ -27,24 +27,34 @@
 <body scroll="no">
   <div class="container">
     <div class="navigation">
+      
+      <div class="basicInfo">
       <h1 class="title">Togethernet</h1>
-      <div class="roomsList">
-        <h2>Archive</h2>
-        <button type="button" class="roomLink" id="archivalSpaceLink">
-          <p>speaking-on-the-stage</p>
-          <div class="participantsContainer"></div>
-        </button>
+      <h2><a href="" title="Code of Conduct">Code of Conduct</a></h2>
+      <h2><a href="" title="Code of Consent">Code of Consent</a></h2>
+      <h2><a href="" title="Instructions">Instructions</a></h2>
       </div>
+
+      <div class ="roomList-container">
       <div class="roomsList ephemeral">
-        <h2>Rooms<button type="button" id="addRoom"><p>+</p></button></h2>
+        <h3>Sandbox<button class="shaded" type="button" id="addRoom" title="add a new channel"><h3>&#65291;</h3></button></h3>
         <button type="button" class="roomLink" id="sitting-at-the-parkLink">
-          <p>sitting-at-the-park</p>
+          <p>&#8983; sitting-at-the-park</p>
           <div class="participantsContainer"></div>
         </button>
       </div>
+
+      <div class="roomsList">
+        <h3>Archive</h3>
+        <button type="button" class="roomLink" id="archivalSpaceLink">
+          <p>&#9776; posting-on-a-bulletin-board</p>
+          <div class="participantsContainer"></div>
+        </button>
+      </div>
+</div>
       <div class="userInfo">
         <input type="color" id="changeUserAvatar" title="change avatar color" name="userAvatar">
-        <button id="changeUserName" title="change name"><span class="userName"></span><i class="fas fa-pencil-alt"></i></button>
+        <button id="changeUserName" title="change name"><span class="userName"></span><i class="fas fa-pencil-alt shaded"></i></button>
       </div>
       <div class="userInfo" style="display:none">
         <button id="editorOptions">
@@ -73,13 +83,15 @@
       <div class="archivalView room" id="archivalSpace" style="display:none;">
         <div id="archivalMessagesDetailsContainer"></div>
       </div>
+
       <div class="sendMessageActions">
-        <button class="btn icon" title="pin message" id="pinMessage" name="pinMessage">⚐</button>
+        <button class="btn icon" title="pin message" id="pinMessage" name="pinMessage"><i class="fas fa-thumbtack collapsed"></i></button>
         <input type="text" id="writeMessage" name="text" placeholder="Type your message here" />
         <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives" style="display: none;">
-          <i class="fa fa-download"></i>
+          <i class="fa fa-download shaded"></i>
         </a>
       </div>
+
       <div id="systemMessage" class="modalOverlay">
         <div class="modalContent long"><span></span></div>
       </div>
@@ -88,12 +100,12 @@
         <!-- Modal content -->
         <div class="modalContent long configureRoomView" id="configureRoom-1">
           <div class="section">
-            <h2>Create a room</h2>
+            <h2>Create a sandbox</h2>
           </div>
   
           <div class="section">
-            <h3>Room Title</h3>
-            <p>Customize the name of your room around a topic (max 25 characters).</p>
+            <h3>Sandbox Title</h3>
+            <p>Customize the name of your sandbox around a topic (max 25 characters).</p>
             <input id="newRoomId"type="text" placeholder="convening-on-the-beach"/>
           </div>
   
@@ -114,11 +126,11 @@
             </div>
           </div>
   
-          <div class="section" id="votingModuleInfo" style="display:none;">
+          <div class="section shaded" id="votingModuleInfo" style="display:none;">
             <h3>Voting Module</h3>
             <p>A voting module will be added to your room, favoring decisions made by more than half of the team members.</p>
           </div>
-          <div class="section" id="consentfulGestureInfo" style="display:none;">
+          <div class="section shaded" id="consentfulGestureInfo" style="display:none;">
             <h3>Consentful Gesture Module</h3>
             <p>The consentful gesture module includes "Agree", "Disagree", "Oppose", "Block", making it possible to express feedback and needs through non-verbal means.</p>
           </div>
@@ -133,6 +145,8 @@
           </div>
         </div>
       </div>  
+    </div>
+
     </div>
 
     <script src="/js/bundle.js"></script>

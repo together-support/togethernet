@@ -1,28 +1,51 @@
 .navigation {
-  width: 280px;
-  height: 100%;
+  width: var(--min-navbar-width);
+  height: calc(
+    var(--cell-vertical-num) * var(--cell-size) + var(--sendmessage-height)
+  );
+  outline: var(--interface-border);
   display: flex;
   flex-direction: column;
 }
 
-.navigation h1 {
-  width: 100%;
-  color: var(--primary-font-color);
-  padding: 10px 20px;
-  font-size: 16px;
-  border-bottom: 1px solid gray;
+.basicInfo {
+  border-bottom: var(--interface-border);
+  padding: var(--interface-horizontal-margin);
 }
 
-.navigation h2 {
+.basicInfo h1,
+.basicInfo h2 a {
+  width: 100%;
+  color: var(--primary-font-color);
+}
+
+.basicInfo h1 {
+  font: var(--default-font-size) nunito-bold, monospace;
+  padding-bottom: var(--interface-horizontal-margin);
+}
+
+.basicInfo h2 a {
+  font: var(--default-font-size) nunito, monospace;
+  text-decoration: none;
+}
+
+.navigation h3 {
+  font: var(--default-font-size) nunito, monospace;
   width: 100%;
   color: var(--secondary-font-color);
   justify-content: space-between;
-  font-size: 16px;
   display: flex;
 }
 
-.navigation h2 button {
+.navigation h3 button {
   color: var(--secondary-font-color);
+}
+
+.roomList-container {
+  flex-grow: 1;
+  overflow-y: scroll;
+  margin: 0;
+  padding: 0;
 }
 
 .roomsList {
@@ -30,12 +53,8 @@
   overflow-y: scroll;
 }
 
-.roomsList.ephemeral {
-  flex-grow: 1;
-}
-
 .roomsList > * {
-  padding: 10px 20px;
+  padding: var(--interface-horizontal-margin);
 }
 
 .roomsList h2 {
@@ -45,9 +64,11 @@
 .roomLink {
   background-color: var(--primary-bg-color);
   color: var(--primary-font-color);
-  margin: 0 2px 0 0;
+  margin: 0 2px 2px 0;
   width: 100%;
   min-height: 55px;
+  padding-top: calc(var(--interface-horizontal-margin) / 2);
+  padding-bottom: calc(var(--interface-horizontal-margin) / 2);
   display: flex;
   flex-direction: column;
 }
@@ -57,20 +78,19 @@
 }
 
 .userInfo {
-  height: 50px;
+  min-height: var(--sendmessage-height);
   display: flex;
   flex-direction: row;
   width: 100%;
   padding: 10px 16px;
-  justify-content: space-between;
   align-items: center;
-  border-top: 1px solid gray;
+  border-top: var(--interface-border);
 }
 
 #changeUserAvatar {
-  width: 16px;
-  height: 16px;
-  margin-right: 16px;
+  width: var(--default-font-size);
+  height: var(--default-font-size);
+  margin-right: var(--interface-horizontal-margin);
 }
 
 #changeUserName {
@@ -79,10 +99,9 @@
   display: flex;
   align-items: center;
   flex-grow: 1;
-  justify-content: space-evenly;
   width: 100%;
 }
 
 #changeUserName span {
-  margin-right: 16px;
+  margin-right: var(--interface-horizontal-margin);
 }

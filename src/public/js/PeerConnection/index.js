@@ -148,12 +148,12 @@ export default class PeerConnection {
   }
 
   handleSocketError = (e) => {
-    addSystemMessage('Error connecting to server');
+    addSystemMessage('There has been an error with your connection. Refresh the page to try again.');
     console.log('Socket connection error', e, new Date().toLocaleTimeString());
   }
 
   handleSocketDisconnect = (e) => {
-    addSystemMessage('Disconnected from server', new Date().toLocaleTimeString());
+    addSystemMessage('You have been disconnected. Refresh the page to reconnect.', new Date().toLocaleTimeString());
     console.log('Disconnected from server', e, new Date().toLocaleTimeString());
     $('.participant').remove();
   }

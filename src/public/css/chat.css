@@ -1,9 +1,12 @@
 .chat {
-  outline: 1px solid gray;
+  outline: var(--interface-border);
   width: calc(var(--cell-size) * var(--cell-horizontal-num));
-  height: calc(var(--cell-size) * var(--cell-vertical-num) + 50px);
+  height: calc(
+    var(--cell-size) * var(--cell-vertical-num) + var(--sendmessage-height)
+  );
   display: flex;
   flex-direction: column;
+  z-index: 1;
 }
 
 .room {
@@ -15,12 +18,14 @@
 }
 
 .sendMessageActions {
-  min-height: 50px;
+  height: var(--sendmessage-height);
   width: 100%;
-  padding: 5px;
+  padding-top: var(--interface-vertical-margin);
+  padding-left: var(--interface-vertical-margin);
+  padding-bottom: var(--interface-vertical-margin);
+  padding-right: 0;
   background-color: black;
-  justify-content: space-between;
-  border-top: 1px solid gray;
+  border-top: var(--interface-border);
   align-items: center;
 }
 
@@ -34,11 +39,15 @@
 }
 
 #writeMessage {
-  border-radius: 25px;
-  border: 1px solid gray;
-  flex-grow: 1;
-  padding-left: 10px;
+  width: calc(
+    var(--cell-size) * var(--cell-horizontal-num) - var(--min-navbar-width)
+  );
   height: 35px;
+  border-radius: 25px;
+  border: var(--interface-border);
+  padding-left: var(--interface-horizontal-margin);
+  padding-right: var(--interface-horizontal-margin);
+  margin-left: calc(var(--interface-horizontal-margin) / 2);
   background-color: var(--primary-bg-color);
   color: var(--primary-font-color);
 }

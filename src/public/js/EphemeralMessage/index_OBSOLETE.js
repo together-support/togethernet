@@ -73,7 +73,7 @@ export default class EphemeralMessage {
   initiateConsentToArchiveProcess = (e) => {
     e.stopPropagation();
     const {roomId, id} = this.messageData;
-    addSystemMessage('you have just asked for everyone\'s consent to archive the message');
+    addSystemMessage('You have just asked for everyone\'s consent to archive the message. \n\n Move your avatar so that it overalps with the message. \n\n Enter (y) to give your consent to archive and (s) to stop the process.');
     store.sendToPeers({
       type: 'initConsentToArchiveProcess', 
       data: {
@@ -86,7 +86,7 @@ export default class EphemeralMessage {
   }
 
   initConsentToArchiveReceived = ({consentToArchiveInitiator}) => {
-    addSystemMessage(`${consentToArchiveInitiator} has just asked for your consent to archive this message. \n\n move your avatar so that it overalps with the message. \n\n enter (y) for YES and (s) for STOP`);
+    addSystemMessage(`${consentToArchiveInitiator} has just asked for your consent to archive this message. \n\n Move your avatar so that it overalps with the message. \n\n Enter (y) to give your consent to archive and (s) to stop the process.`);
     this.messageData.consentToArchiveInitiator = consentToArchiveInitiator;
     this.performConsentToArchive();
   }

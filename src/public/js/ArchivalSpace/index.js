@@ -44,7 +44,7 @@ class ArchivalSpace {
     this.$roomLink.addClass('currentRoom');
     if (this.memberships.isEmpty() || !this.editor || !store.getPeer(this.editor)) {
       this.setEditor(store.getCurrentUser());
-      addSystemMessage('You have landed in the archival channel and you are currently editing');
+      addSystemMessage('Privacy Scenario: posting-on-a-bulletin-board \n\n You’ve posted a flyer on the bulletin board on your campus. Day in and day out, friends, acquaintances, and strangers pass by and pause to take a look at what you’ve posted. Some of them may even take a photo of the flyer on their phone to show it to other people.');
     } else {
       const editorProfile = store.getPeer(this.editor).getProfile();
       addSystemMessage(`You have landed in the archival channel and ${editorProfile.name} is currently editing`);

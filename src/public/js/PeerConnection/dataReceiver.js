@@ -64,7 +64,7 @@ export const handleData = ({event, peerId}) => {
     messageRecord.initConsentToArchiveReceived({consentToArchiveInitiator: name});
   } else if (data.type === 'blockConsentToArchive') {
     const {roomId, messageId, name} = data.data;
-    addSystemMessage(`Process stopped. \n\n ${name} would not prefer not to archive this message at the moment.`);
+    addSystemMessage(`Consent to archive process stopped. \n\n ${name} would not prefer not to archive this message at the moment.`);
     const room = store.getRoom(roomId);
     const messageRecord = room.ephemeralHistory[messageId];
     messageRecord.consentToArchiveBlocked();

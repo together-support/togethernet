@@ -1,6 +1,11 @@
+.avatar,
+.shadow {
+  width: var(--cell-size);
+  height: var(--cell-size);
+}
+
 .avatar {
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
-  padding: 10px;
+  text-align: center;
 }
 
 .avatar.facilitator {
@@ -15,14 +20,10 @@
   outline-style: solid;
 }
 
-.avatar, .shadow {
-  width: var(--cell-size);
-  height: var(--cell-size);
-}
-
 .avatar > span {
   color: #efefef;
   font-size: 1em;
+  line-height: 2em;
   text-shadow: 1px 1px 1px black;
   user-select: none;
   z-index: 5;
@@ -53,4 +54,5 @@
   outline-color: var(--avatar-outline-color);
   outline-width: 1px;
   outline-style: solid;
+  z-index: 4;
 }

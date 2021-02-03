@@ -5,7 +5,7 @@
   width: 100%;
   margin: 0;
   padding: 0;
-  z-index: 1;  
+  z-index: 1;
 }
 
 #archivalMessagesContainer {
@@ -55,9 +55,9 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
-  padding: calc(var(--interface-default-margin) * 6) calc(var(--interface-default-margin) * 8);
+  background-color: var(--archival-bg-color);
+  padding: calc(var(--interface-horizontal-margin) * 6)
+    calc(var(--interface-horizontal-margin) * 8);
   color: white;
   line-height: 1.5;
   overflow-y: scroll;
@@ -84,7 +84,7 @@
 }
 
 .archivalMessagesDetails.comment,
-.threadItem  {
+.threadItem {
   padding-left: 16px;
 }
 
@@ -121,7 +121,7 @@
   justify-content: flex-end;
 }
 
-.archivalMessageActions button{
+.archivalMessageActions button {
   width: 16px;
   border-radius: 5px;
   background-color: black;
