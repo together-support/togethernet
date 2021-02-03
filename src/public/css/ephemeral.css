@@ -28,6 +28,7 @@ button {
   z-index: 10;
 }
 
+.ephemeralMessageContainer.inConsentProcess,
 .ephemeralRecord.inConsentProcess {
   z-index: 15;
 }

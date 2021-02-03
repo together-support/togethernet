@@ -248,10 +248,11 @@ export default class EphemeralMessage {
 
   performConsentToArchive = () => {
     this.messageData.inConsentToArchiveProcess = true;
-    const {roomId, threadNextMessageId, threadPreviousMessageId} = this.messageData;
+    const {roomId} = this.messageData;
 
     this.$textRecord().addClass('inConsentProcess');
     $('#user .avatar').addClass('inConsentProcess');
+    $('.ephemeralMessageContainer').addClass('inConsentProcess');
     $(`#${roomId}`).find('.consentToArchiveOverlay').show();
     $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
     $(`#${roomId}`).on('keyup', this.consentToArchiveActions);
