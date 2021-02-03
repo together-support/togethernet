@@ -373,9 +373,6 @@ export default class EphemeralMessage {
     } else {
       body.message_type = 'text_message';
     }
-
-    console.log(body)
-
     return JSON.stringify(body);
   }
 
