@@ -401,14 +401,16 @@ export default class EphemeralMessage {
   }
 
   messageArchived = ({archivedMessageId}) => {
-    this.messageData.archivedMessageId = archivedMessageId;
     const consentColors = Object.values(this.messageData.consentToArchiveRecords).map(profile => profile.avatar);
-    this.$textRecord().find('.consentIndicator').remove();
-    Array.from({length: 25}).forEach(() => {
-      const color = sample(consentColors);    
-      const $consentIndicator = $('<div class="consentIndicator given"></div>');
-      $consentIndicator.css({backgroundColor: color});
-      $consentIndicator.appendTo(this.$textRecord());  
+    this.getMessagesInThread().forEach(record => {
+      record.messageData.archivedMessageId = archivedMessageId;
+      record.$textRecord().find('.consentIndicator').remove();
+      Array.from({length: 25}).forEach(() => {
+        const color = sample(consentColors);    
+        const $consentIndicator = $('<div class="consentIndicator given"></div>');
+        $consentIndicator.css({backgroundColor: color});
+        $consentIndicator.appendTo(record.$textRecord());  
+      });  
     });
 
     this.finishConsentToArchiveProcess();
@@ -443,7 +445,10 @@ export default class EphemeralMessage {
 
     const {roomId} = this.messageData;
 
-    this.$textRecord().removeClass('inConsentProcess');
+    this.getMessagesInThread().forEach(record => {
+      record.$textRecord().removeClass('inConsentProcess');
+    });
+
     $(`#${roomId}`).find('#user .avatar').removeClass('inConsentProcess');
     $(`#${roomId}`).find('.consentToArchiveOverlay').hide();
     $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
