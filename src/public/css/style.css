@@ -212,6 +212,85 @@ input[type="color"] {
   color: white;
 }
 
+/* temp begins */
+
+.systemMsgBg {
+  display: block;
+  width: inherit;
+  height: inherit;
+  position: fixed;
+  background-color: var(--overlay-color);
+  opacity: var(--systemMsg-overlay-opacity);
+  z-index: 50;
+  overflow: scroll;
+}
+
+.systemMsgContainer {
+  width: 50%;
+  min-width: 500px;
+  padding-top: 5%;
+  margin: auto;
+  color: white;
+}
+
+.systemMsgContainer p,
+#ephemera {
+  font-family: nunito-bold, monospace;
+  font-size: var(--systemMsg-font-size);
+}
+
+#ephemera {
+  min-height: 80px;
+}
+
+.systemMsgContainer h6 {
+  font-family: nunito, monospace;
+  font-size: var(--default-font-size);
+  opacity: var(--text-overlay-opacity);
+  padding: 0;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 5%;
+}
+
+.system-option {
+  display: inline-block;
+  width: 40%;
+  min-height: 150px;
+  text-align: center;
+  padding-right: 5%;
+}
+
+.system-option p {
+  font: var(--default-font-size) nunito, monospace;
+}
+
+button.consent {
+  font: var(--default-font-size) nunito, monospace;
+  height: 40px;
+  width: 95%;
+  color: white;
+  background: none;
+  display: inline-block;
+  font: 12px nunito, monospace;
+  color: whitesmoke;
+  text-align: center;
+  line-height: 0;
+  border: var(--interface-border);
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  opacity: var(--overlay-opacity);
+  overflow: hidden;
+}
+
+button.consent:hover {
+  opacity: 1;
+}
+
+/* temp ends */
+
 .modalContent .modalButtons {
   display: flex;
   justify-content: flex-end;

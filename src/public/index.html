@@ -26,6 +26,26 @@
 
 <body scroll="no">
   <div class="container">
+
+
+            <div class ="systemMsgBg">
+            
+
+            <div class="systemMsgContainer">
+            <p>Privacy Scenario: <b>&#8983; sitting-at-the-park</b></p>
+            <div id = "ephemera"></div>
+
+            <h6>In the ephemera channel, your conversations are encrypted by default. However your public IP address is exposed and it is possible for your geolocation and messages to be tracked. </h6>
+
+            <div class="system-option"><p>Sounds good to me, I'm ready to continue</p>
+            <button class ="consent" id="join">Join</button>
+            </div>
+            <div class="system-option"><p>Not sure, I'd like to learn more about the underlying protocol</p>
+            <button class ="consent" onclick="window.location.href='https://togethernet.app/';">Review Code of Consent</button>
+            </div>
+        </div>
+        </div>
+
     <div class="navigation">
       
       <div class="basicInfo">
@@ -126,11 +146,11 @@
             </div>
           </div>
   
-          <div class="section shaded" id="votingModuleInfo" style="display:none;">
+          <div class="section" id="votingModuleInfo" style="display:none;">
             <h3>Voting Module</h3>
             <p>A voting module will be added to your room, favoring decisions made by more than half of the team members.</p>
           </div>
-          <div class="section shaded" id="consentfulGestureInfo" style="display:none;">
+          <div class="section" id="consentfulGestureInfo" style="display:none;">
             <h3>Consentful Gesture Module</h3>
             <p>The consentful gesture module includes "Agree", "Disagree", "Oppose", "Block", making it possible to express feedback and needs through non-verbal means.</p>
           </div>
@@ -149,20 +169,50 @@
 
     </div>
 
+
+<script type="text/javascript"> 
+
+    // system msg typewriter effect
+
+let i = 0;
+let ephemera1 = 'You and a friend are sitting in your usual corner of the park on a picnic blanket speaking among each other.'; /* The text */
+let speed = 50; /* The speed/duration of the effect in milliseconds */
+
+window.onload = function exampleFunction() { 
+  
+    typeWriter();
+}
+
+function typeWriter() {
+  if (i < ephemera1.length) {
+    document.getElementById("ephemera").innerHTML += ephemera1.charAt(i);
+    i++;
+    setTimeout(typeWriter, speed);
+  }
+}
+
+// remove sys msg
+
+$("#join").click(function(){
+  $(".systemMsgBg").remove();
+});
+
+</script>
+
     <script src="/js/bundle.js"></script>
     <template id="consentfulGesturesTemplate">
       <div class="votingButtons">
-        <button class="consentfulGesture voteOption agree" data-value="agree"><img src="/svg/agree.svg"/><span class="voteCount">0</span></button>
-        <button class="consentfulGesture voteOption disagree" data-value="disagree"><img src="/svg/disagree.svg"/><span class="voteCount">0</span></button>
-        <button class="consentfulGesture voteOption stand" data-value="stand"><img src="/svg/stand.svg"/><span class="voteCount">0</span></button>
-        <button class="consentfulGesture voteOption block" data-value="block"><img src="/svg/block.svg"/><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption agree" data-value="agree" title="agree"><p>&#8648;</p><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption disagree" data-value="hesitant" title="hesitant"><p>&#8644;</p><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption stand" data-value="disagree" title="disagree"><p>&#8650;</p><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption block" data-value="block" title="block"><p>&#7413;</p><span class="voteCount">0</span></button>
       </div>
     </template>
     <template id="majorityRulesTemplate">
       <div class="votingButtons">
-        <button class="majorityRule voteOption yes" data-value="yes">Yes<span class="voteCount">0</span></button>
-        <button class="majorityRule voteOption neutral" data-value="neutral">Neutral<span class="voteCount">0</span></button>
-        <button class="majorityRule voteOption no" data-value="no">No<span class="voteCount">0</span></button>
+        <button class="majorityRule voteOption yes" data-value="yes" title="vote yes">Yes<span class="voteCount">0</span></button>
+        <button class="majorityRule voteOption neutral" data-value="neutral" title="vote neutral">Neutral<span class="voteCount">0</span></button>
+        <button class="majorityRule voteOption no" data-value="no" title="vote no">No<span class="voteCount">0</span></button>
       </div>
     </template>
     <template id="ephemeralRecordTemplate">

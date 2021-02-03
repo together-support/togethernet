@@ -57,7 +57,7 @@
 }
 
 #pinnedMessageCount {
-  margin-left: 16px;
+  margin-left: var(--default-font-size);
 }
 
 .pinnedMessages,
@@ -67,7 +67,7 @@
 
 .ephemeralRecordDetails {
   width: 100%;
-  padding: 16px;
+  padding: var(--default-font-size);
 }
 
 .ephemeralRecordDetails:hover {
@@ -111,13 +111,12 @@
 
 .voteOption {
   background-color: whitesmoke;
-  border-radius: 5px;
+  border-radius: var(--interface-border-radius);
   display: flex;
   flex-wrap: nowrap;
   color: black;
   width: 22%;
   padding: 2px 5px;
-  justify-content: space-between;
 }
 
 .voteOption.myVote {
