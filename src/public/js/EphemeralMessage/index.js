@@ -3,6 +3,7 @@ import ephemeralMessageRenderer from '@js/EphemeralMessageRenderer';
 import isPlainObject from 'lodash/isPlainObject';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import sample from 'lodash/sample';
+import {pick} from 'lodash';
 
 export default class EphemeralMessage {
   constructor (props) {
@@ -350,19 +351,35 @@ export default class EphemeralMessage {
     }
   }
 
+  getArchivedMessageBody = () => {
+    const {content, name, roomId, consentToArchiveRecords, threadNextMessageId, threadNextMessageId} = this.messageData;
+    let body = {
+      author: name, 
+      content: content,
+      room_id: roomId,
+      participant_ids: Object.keys(consentToArchiveRecords),
+      participant_names: Object.values(consentToArchiveRecords).map(r => r.name),
+    };
+    
+    if (threadNextMessageId || threadNextMessageId) {
+      body.message_type = 'thread'
+      body.thread_data = this.getMessagesInThread().map(record => {
+        return pick(record.messageData, ['author', 'content', 'threadNextMessageId', 'threadPreviousMessageId'])
+      })
+    } else {
+      body.message_type = 'text_message'
+    }
+
+    return JSON.stringify(body);
+  }
+
   archiveMessage = () => {
-    const {id, content, name, roomId, consentToArchiveRecords} = this.messageData;
+    const {id, roomId} = this.messageData;
+    const body = this.getArchivedMessageBody();
     fetch('/archive', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        author: name, 
-        content,
-        room_id: roomId,
-        participant_ids: Object.keys(consentToArchiveRecords),
-        participant_names: Object.values(consentToArchiveRecords).map(r => r.name),
-        message_type: 'text_message'
-      })
+      body, 
     }).then(response => 
       response.json()
     ).then((archivedMessage) => {
