@@ -352,7 +352,7 @@ export default class EphemeralMessage {
   }
 
   getArchivedMessageBody = () => {
-    const {content, name, roomId, consentToArchiveRecords, threadNextMessageId, threadNextMessageId} = this.messageData;
+    const {content, name, roomId, consentToArchiveRecords, threadNextMessageId, threadPreviousMessageId} = this.messageData;
     let body = {
       author: name, 
       content: content,
@@ -361,13 +361,14 @@ export default class EphemeralMessage {
       participant_names: Object.values(consentToArchiveRecords).map(r => r.name),
     };
     
-    if (threadNextMessageId || threadNextMessageId) {
-      body.message_type = 'thread'
+    if (threadNextMessageId || threadPreviousMessageId) {
+      body.message_type = 'thread';
       body.thread_data = this.getMessagesInThread().map(record => {
-        return pick(record.messageData, ['author', 'content', 'threadNextMessageId', 'threadPreviousMessageId'])
-      })
+        return pick(record.messageData, ['name', 'content', 'threadNextMessageId', 'threadPreviousMessageId']);
+      });
+      console.log(body.thread_data);
     } else {
-      body.message_type = 'text_message'
+      body.message_type = 'text_message';
     }
 
     return JSON.stringify(body);
