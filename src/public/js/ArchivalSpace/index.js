@@ -182,7 +182,7 @@ class ArchivalSpace {
 
   groupedTextMessages = () => {
     const groupedMessages = {};
-    const textMessages = filter(this.messageRecords, (record) => record.message_type === 'text_message');
+    const textMessages = filter(this.messageRecords, (record) => ['text_message', 'thread'].includes(record.message_type));
     const dateGroupedMessages = groupBy(textMessages, (messageRecord) => {
       return formatDateString(messageRecord.created_at);
     });

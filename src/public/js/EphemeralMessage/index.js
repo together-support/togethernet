@@ -3,7 +3,8 @@ import ephemeralMessageRenderer from '@js/EphemeralMessageRenderer';
 import isPlainObject from 'lodash/isPlainObject';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import sample from 'lodash/sample';
-import {pick} from 'lodash';
+import transform from 'lodash/transform';
+import pick from 'lodash/pick';
 
 export default class EphemeralMessage {
   constructor (props) {
@@ -363,13 +364,17 @@ export default class EphemeralMessage {
     
     if (threadNextMessageId || threadPreviousMessageId) {
       body.message_type = 'thread';
-      body.thread_data = this.getMessagesInThread().map(record => {
-        return pick(record.messageData, ['name', 'content', 'threadNextMessageId', 'threadPreviousMessageId']);
-      });
-      console.log(body.thread_data);
+      body.thread_data = transform(
+        this.getMessagesInThread(),
+        (result, record) => {
+          result[record.messageData.id] = pick(record.messageData, ['name', 'content', 'threadNextMessageId', 'threadPreviousMessageId']);
+        },
+        {});
     } else {
       body.message_type = 'text_message';
     }
+
+    console.log(body)
 
     return JSON.stringify(body);
   }
