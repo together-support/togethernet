@@ -70,6 +70,7 @@
   padding-top: calc(var(--interface-horizontal-margin) / 2);
   padding-bottom: calc(var(--interface-horizontal-margin) / 2);
   display: flex;
+  text-align: left;
   flex-direction: column;
 }
 
