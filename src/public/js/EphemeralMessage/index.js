@@ -83,6 +83,7 @@ export default class EphemeralMessage {
 
     let travelThreadNextMessageId = threadNextMessageId;
     let travelCurrentThreadTail = id;
+
     while (travelThreadNextMessageId) {
       const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, travelThreadNextMessageId);
       $messageContent.insertAfter(`#ephemeralDetails-${travelCurrentThreadTail}`);
@@ -247,13 +248,49 @@ export default class EphemeralMessage {
 
   performConsentToArchive = () => {
     this.messageData.inConsentToArchiveProcess = true;
-    const {roomId} = this.messageData;
+    const {roomId, threadNextMessageId, threadPreviousMessageId} = this.messageData;
 
     this.$textRecord().addClass('inConsentProcess');
     $('#user .avatar').addClass('inConsentProcess');
     $(`#${roomId}`).find('.consentToArchiveOverlay').show();
     $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
     $(`#${roomId}`).on('keyup', this.consentToArchiveActions);
+
+    this.getMessagesInThread().forEach(message => message.$textRecord().addClass('inConsentProcess'));
+  }
+
+  getNextMessage = () => {
+    const {roomId, threadNextMessageId} = this.messageData;
+    if (threadNextMessageId) {
+      const {ephemeralHistory} = store.getRoom(roomId);
+      return ephemeralHistory[threadNextMessageId];
+    }
+  }
+
+  getPreviousMessage = () => {
+    const {roomId, threadPreviousMessageId} = this.messageData;
+    if (threadPreviousMessageId) {
+      const {ephemeralHistory} = store.getRoom(roomId);
+      return ephemeralHistory[threadPreviousMessageId];
+    }
+  }
+
+  getMessagesInThread = () => {
+    const messagesInThread = [this];
+
+    let travelThreadNextMessage = this.getNextMessage();
+    while(travelThreadNextMessage) {
+      messagesInThread.push(travelThreadNextMessage);
+      travelThreadNextMessage = travelThreadNextMessage.getNextMessage();
+    }
+
+    let travelThreadPreviousMessage =  this.getPreviousMessage();
+    while(travelThreadPreviousMessage) {
+      messagesInThread.push(travelThreadPreviousMessage);
+      travelThreadPreviousMessage = travelThreadPreviousMessage.getPreviousMessage();
+    }
+
+    return messagesInThread;
   }
 
   consentToArchiveActions = (e) => {
@@ -392,24 +429,7 @@ export default class EphemeralMessage {
   }
 
   indicateMessagesInThread = () => {
-    this.$textRecord().find('.threadedRecordOverlay').show();
-
-    const {roomId, threadNextMessageId, threadPreviousMessageId} = this.messageData;
-    const {ephemeralHistory} = store.getRoom(roomId);
-
-    let travelThreadNextMessageId = threadNextMessageId;
-    while (travelThreadNextMessageId) {
-      const record = ephemeralHistory[travelThreadNextMessageId];
-      record.$textRecord().finish().find('.threadedRecordOverlay').show();
-      travelThreadNextMessageId = record.messageData.threadNextMessageId;
-    }
-
-    let travelThreadPreviousMessageId = threadPreviousMessageId;
-    while (travelThreadPreviousMessageId) {
-      const record = ephemeralHistory[travelThreadPreviousMessageId];
-      record.$textRecord().finish().find('.threadedRecordOverlay').show();
-      travelThreadPreviousMessageId = record.messageData.threadPreviousMessageId;
-    }
+    this.getMessagesInThread().forEach(record => record.$textRecord().finish().find('.threadedRecordOverlay').show());
   }
 
   render = () => {
