@@ -5,6 +5,10 @@
   background-color: var(--ephemeral-bg-color);
 }
 
+.author {
+  font: var(--default-font-size) nunito-bold, monospace;
+}
+
 .ephemeralRecord,
 .threadedRecordOverlay {
   width: var(--cell-size);
@@ -37,9 +41,8 @@
   background-color: rgba(0, 0, 0, 0.7);
   position: absolute;
   z-index: 5;
-  padding-top: var(--interface-default-margin);
-  padding-bottom: var(--interface-default-margin);
-  margin-top: var(--cell-size);
+  margin-top: var(--interface-horizontal-margin);
+  margin-bottom: var(--interface-horizontal-margin);
   color: white;
   font-size: var(--default-font-size);
   border-radius: var(--interface-border-radius);
@@ -48,16 +51,15 @@
 }
 
 .ephemeralMessageContainer.right {
-  right: 35px;
+  right: var(--interface-horizontal-margin);
 }
 
-.pinnedMessageContainer,
-.pinnedMessagesSummary {
-  border-bottom: 1px solid whitesmoke;
+.pinnedMessageContainer {
+  border-bottom: var(--interface-border);
 }
 
 #pinnedMessageCount {
-  margin-left: 16px;
+  margin-left: var(--default-font-size);
 }
 
 .pinnedMessages,

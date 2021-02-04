@@ -14,7 +14,7 @@
   --systemMsg-font-size: 20px;
   --primary-bg-color: black;
   --secondary-bg-color: #282828;
-  --ephemeral-bg-color: midnightblue;
+  --ephemeral-bg-color: Peru;
   --archival-bg-color: midnightblue;
   --primary-font-color: whitesmoke;
   --secondary-font-color: gray;
@@ -78,13 +78,12 @@ body {
 
 button {
   cursor: pointer;
-}
-
-.shaded {
+  background-color: transparent;
   opacity: var(--overlay-opacity);
 }
 
-.shaded:hover {
+button:hover,
+button > span {
   opacity: 1;
 }
 

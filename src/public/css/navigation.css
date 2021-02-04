@@ -64,6 +64,7 @@
 .roomLink {
   background-color: var(--primary-bg-color);
   color: var(--primary-font-color);
+  opacity: 1;
   margin: 0 2px 2px 0;
   width: 100%;
   min-height: 55px;
@@ -95,7 +96,7 @@
 }
 
 #changeUserName {
-  font-size: 16px;
+  font-size: var(--default-font-size);
   color: var(--primary-font-color);
   display: flex;
   align-items: center;
