@@ -42,17 +42,16 @@ class ArchivalSpace {
     $('#pinMessage').hide();
     $('.roomLink').removeClass('currentRoom');
     this.$roomLink.addClass('currentRoom');
-    if (this.memberships.isEmpty() || !this.editor || !store.getPeer(this.editor)) {
-      this.setEditor(store.getCurrentUser());
+    this.addMember(store.getCurrentUser());
+
+    $('#archivalSpace').show();
+    $('#downloadArchives').show();
+    if (this.iAmEditor()) {
       addSystemMessage('Privacy Scenario: posting-on-a-bulletin-board \n\n You’ve posted a flyer on the bulletin board on your campus. Day in and day out, friends, acquaintances, and strangers pass by and pause to take a look at what you’ve posted. Some of them may even take a photo of the flyer on their phone to show it to other people.');
     } else {
       const editorProfile = store.getPeer(this.editor).getProfile();
       addSystemMessage(`You have landed in the archival channel and ${editorProfile.name} is currently editing`);
     }
-    this.addMember(store.getCurrentUser());
-    $('#downloadArchives').show();
-    $('#archivalSpace').show();
-
     store.sendToPeers({
       type: 'joinedRoom',
       data: {
@@ -71,15 +70,20 @@ class ArchivalSpace {
 
   addMember = (user) => {
     this.memberships.addMember(user);
+    if (this.memberships.isEmpty() || !this.editor || !store.getPeer(this.editor)) {
+      this.setEditor(user);
+    }
+  }
+
+  iAmEditor = () => {
+    return this.editor === store.getCurrentUser().socketId;
   }
 
   setEditor = (user) => {
-    if (this.memberships.isEmpty()) {
-      const editorProfile = user.getProfile();
-      this.editor = editorProfile.socketId;
-      $('#editorOptions').find('.editorName').text(editorProfile.name);
-      $('#editorOptions').find('.editorAvatar').css({backgroundColor: editorProfile.avatar});
-    }
+    const editorProfile = user.getProfile();
+    this.editor = editorProfile.socketId;
+    $('#editorOptions').find('.editorName').text(editorProfile.name);
+    $('#editorOptions').find('.editorAvatar').css({backgroundColor: editorProfile.avatar});
   }
 
   fetchArchivedMessages = async () => {

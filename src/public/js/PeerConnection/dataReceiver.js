@@ -23,7 +23,8 @@ export const handleData = ({event, peerId}) => {
     addNewRoom(data.data);
   } else if (data.type === 'joinedRoom') {
     const {socketId, joinedRoomId} = data.data;
-    store.getPeer(socketId).joinedRoom(joinedRoomId);
+    const peer = store.getPeer(socketId);
+    peer && peer.joinedRoom(joinedRoomId);
   } else if (data.type === 'profileUpdated') {
     updatePeerProfile({...data.data});
   } else if (data.type === 'removeEphemeralMessage') {
