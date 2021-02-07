@@ -156,7 +156,7 @@ export default class RoomForm {
     } else if (this.options.roomId.length > 25) {
       alert('room names must be max 25 characters');
       isValid = false;
-    } else if (store.getRoom(this.options.roomId.toLowerCase().replaceAll(' ', '-'))) {
+    } else if (Object.keys(store.rooms).map(roomId => roomId.toLowerCase()).includes(this.options.roomId.toLowerCase().replaceAll(' ', '-'))) {
       alert('room names must be unique');
       isValid = false;
     }
