@@ -45,6 +45,10 @@ class ArchivedMessage {
 
     $messageDetails.find('.deleteArchivedMessage').on('click', this.markMessageDeleted);
     $messageDetails.find('.commentArchivedMessage').on('click', () => {
+      if (store.getCurrentRoom().editor !== store.getCurrentUser().socketId) {
+        return;
+      }
+
       if (store.getCurrentRoom().isCommentingOnId) {
         $messageDetails.find('.commentArchivedMessage').removeClass('clicked');
         store.getCurrentRoom().isCommentingOnId = null;
