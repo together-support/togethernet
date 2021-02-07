@@ -1,5 +1,5 @@
 import store from '@js/store';
-import ephemeralMessageRenderer from '@js/EphemeralMessageRenderer';
+import {renderEphemeralDetails} from '@js/EphemeralMessageRenderer';
 import isPlainObject from 'lodash/isPlainObject';
 import {addSystemMessage} from '@js/Togethernet/systemMessage';
 import sample from 'lodash/sample';
@@ -67,7 +67,7 @@ export default class EphemeralMessage {
   renderSingleEphemeralDetail = () => {
     const {isPinned, id, roomId} = this.messageData;
 
-    const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
+    const $messageContent = renderEphemeralDetails(roomId, id);
     if (isPinned) {
       $messageContent.appendTo($('.pinnedMessages'));
       $('.pinnedMessages').show();
@@ -80,14 +80,14 @@ export default class EphemeralMessage {
     const {id, roomId, threadNextMessageId, threadPreviousMessageId} = this.messageData;
     const {ephemeralHistory} = store.getRoom(roomId);
 
-    const $thisMessageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
+    const $thisMessageContent = renderEphemeralDetails(roomId, id);
     $thisMessageContent.appendTo($('.nonPinnedMessages'));
 
     let travelThreadNextMessageId = threadNextMessageId;
     let travelCurrentThreadTail = id;
 
     while (travelThreadNextMessageId) {
-      const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, travelThreadNextMessageId);
+      const $messageContent = renderEphemeralDetails(roomId, travelThreadNextMessageId);
       $messageContent.insertAfter(`#ephemeralDetails-${travelCurrentThreadTail}`);
       travelCurrentThreadTail = travelThreadNextMessageId;
       const record = ephemeralHistory[travelThreadNextMessageId];
@@ -97,7 +97,7 @@ export default class EphemeralMessage {
     let travelThreadPreviousMessageId = threadPreviousMessageId;
     let travelCurrentThreadHead = id;
     while (travelThreadPreviousMessageId) {
-      const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, travelThreadPreviousMessageId);
+      const $messageContent = renderEphemeralDetails(roomId, travelThreadPreviousMessageId);
       $messageContent.insertBefore(`#ephemeralDetails-${travelCurrentThreadHead}`);
       travelCurrentThreadHead = travelThreadPreviousMessageId;
       const record = ephemeralHistory[travelThreadPreviousMessageId];
