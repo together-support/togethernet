@@ -9,20 +9,15 @@ export const sendMessage = () => {
     return;
   }
 
-  const currentRoom = store.getCurrentRoom();
-  const currentUser = store.getCurrentUser();
-
-  const {name} = currentUser.getProfile();
-
-  if (currentRoom.constructor.name === 'ArchivalSpace') {
+  if (store.getCurrentRoom().constructor.name === 'ArchivalSpace') {
     fetch('/archive', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        author: name, 
+        author: store.getCurrentUser().getProfile().name, 
         content,
         room_id: 'archivalSpace',
-        commentable_id: currentRoom.isCommentingOnId,
+        commentable_id: store.getCurrentRoom().isCommentingOnId,
         message_type: 'comment',
       })
     }).catch(e => console.log(e));
@@ -30,12 +25,12 @@ export const sendMessage = () => {
     const gridColumnStart = $('#user .shadow').css('grid-column-start');
     const gridRowStart = $('#user .shadow').css('grid-row-start');
   
-    if ($(`#${currentUser.currentRoomId}-${gridColumnStart}-${gridRowStart}`).length) {
+    if ($(`#${store.getCurrentUser().currentRoomId}-${gridColumnStart}-${gridRowStart}`).length) {
       alert('move to an empty spot to write the msg');
     }
   
     const threadEntryMessageId = $('#writeMessage').attr('data-thread-entry-message');
-    const isPinned = $('#pinMessage').hasClass('clicked') && currentRoom.hasFacilitator(currentUser.socketId);
+    const isPinned = $('#pinMessage').hasClass('clicked') && store.getCurrentRoom().hasFacilitator(store.getCurrentUser().socketId);
     
     const ephemeralMessage = new EphemeralMessage({
       content, 
@@ -46,7 +41,7 @@ export const sendMessage = () => {
       ...store.getCurrentUser().getProfile()
     });
   
-    currentRoom.addEphemeralHistory(ephemeralMessage);
+    store.getCurrentRoom().addEphemeralHistory(ephemeralMessage);
     store.sendToPeers({type: 'text', data: ephemeralMessage.messageData});
     ephemeralMessage.render();
     $('#pinMessage').removeClass('clicked');
