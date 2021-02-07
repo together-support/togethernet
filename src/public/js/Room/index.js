@@ -202,10 +202,15 @@ export default class Room {
   }
 
   addEphemeralHistory = (textRecord) => {
-    const {id, isPinned} = textRecord.messageData;
+    const {id, isPinned, threadPreviousMessageId} = textRecord.messageData;
     this.ephemeralHistory[id] = textRecord;
     if (isPinned) {
       this.setPinnedMessagesCount();
+    }
+
+    if (threadPreviousMessageId) {
+      const previousMessage = this.ephemeralHistory[threadPreviousMessageId];
+      previousMessage.messageData.threadNextMessageId = id;
     }
     return this.ephemeralHistory[id];
   }
