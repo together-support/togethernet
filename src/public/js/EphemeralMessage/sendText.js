@@ -9,19 +9,7 @@ export const sendMessage = () => {
     return;
   }
 
-  if (store.getCurrentRoom().constructor.name === 'ArchivalSpace') {
-    fetch('/archive', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        author: store.getCurrentUser().getProfile().name, 
-        content,
-        room_id: 'archivalSpace',
-        commentable_id: store.getCurrentRoom().isCommentingOnId,
-        message_type: 'comment',
-      })
-    }).catch(e => console.log(e));
-  } else {
+  if (store.getCurrentRoom().constructor.isEphemeral) {
     const gridColumnStart = $('#user .shadow').css('grid-column-start');
     const gridRowStart = $('#user .shadow').css('grid-row-start');
   
@@ -45,6 +33,18 @@ export const sendMessage = () => {
     store.sendToPeers({type: 'text', data: ephemeralMessage.messageData});
     ephemeralMessage.render();
     $('#pinMessage').removeClass('clicked');
+  } else {
+    fetch('/archive', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        author: store.getCurrentUser().getProfile().name, 
+        content,
+        room_id: 'archivalSpace',
+        commentable_id: store.getCurrentRoom().isCommentingOnId,
+        message_type: 'comment',
+      })
+    }).catch(e => console.log(e));
   }
 
   $messageInput.val('');
