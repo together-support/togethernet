@@ -83,6 +83,11 @@ export const handleData = ({event, peerId}) => {
     const {removedRoom} = data.data;
     const room = store.rooms[removedRoom];
     room.purgeSelf();
+  } else if (data.type === 'editorUpdated') {
+    const {editorId} = data.data;
+    const archivalSpace = store.getRoom('archivalSpace');
+    const newEditor = archivalSpace.memberships.members[editorId];
+    archivalSpace.setEditor(newEditor);
   }
 };
 

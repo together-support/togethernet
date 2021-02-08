@@ -72,10 +72,10 @@ class ArchivalSpace {
   }
 
   addMember = (user) => {
-    this.memberships.addMember(user);
-    if (this.memberships.isEmpty() || !this.editor || !store.getPeer(this.editor)) {
+    if (this.memberships.isEmpty() || !this.editor) {
       this.setEditor(user);
     }
+    this.memberships.addMember(user);
   }
 
   iAmEditor = () => {
@@ -95,11 +95,15 @@ class ArchivalSpace {
     } else {
       $('.editorOptions').empty();
       Object.values(this.memberships.members).forEach(user => {
-        const {avatar, name} = user.getProfile();
+        const {avatar, socketId, name} = user.getProfile();
         const $editorOption = $(`<button class="editorOption"><p>${name}</p><div class="editorAvatar"></div></button>`);
         $editorOption.find('.editorAvatar').css({backgroundColor: avatar});
         $editorOption.on('click', () => {
           this.setEditor(user);
+          store.sendToPeers({
+            type: 'editorUpdated',
+            data: {editorId: socketId}
+          });
           $('.editorOptions').hide();
         });
         $editorOption.appendTo($('.editorOptions'));
