@@ -11,7 +11,7 @@ class RoomMembership {
     Object.values(store.get('rooms')).forEach(room => {
       room.memberships.removeMember(socketId);
       if (!room.constructor.isEphemeral && room.editor === socketId) {
-        room.setEditor(Object.values(this.members)[0]);  
+        room.setEditor(Object.values(room.memberships.members)[0]);  
       }
     });
     member.state.currentRoomId = this.roomId;
