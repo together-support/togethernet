@@ -104,12 +104,12 @@ export default class Peer {
   joinedRoom = (joinedRoomId) => {
     $(`#peer-${this.socketId}`).finish().animate({opacity: 0}, {
       complete: () => {
-        store.getRoom(joinedRoomId).addMember(this);
         $(`#peer-${this.socketId}`).css({opacity: 1});
         $(`#peer-${this.socketId}`)[0].style.gridColumnStart = 1;
         $(`#peer-${this.socketId}`)[0].style.gridRowStart = 1;
       }
     });
+    store.getRoom(joinedRoomId).addMember(this);
   }
 
   render = () => {

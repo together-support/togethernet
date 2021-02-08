@@ -83,6 +83,7 @@ class ArchivalSpace {
   }
 
   setEditor = (user) => {
+    if (!user) { return; }
     const editorProfile = user.getProfile();
     this.editor = editorProfile.socketId;
     $('#displayEditorOptions').find('.editorName').text(editorProfile.name);
