@@ -90,7 +90,22 @@ class ArchivalSpace {
   }
 
   toggleEditorOptionsVisible = () => {
-    $('.editorOptions').toggleClass('hidden');
+    if ($('.editorOptions').is(':visible')) {
+      $('.editorOptions').hide();
+    } else {
+      $('.editorOptions').empty();
+      Object.values(this.memberships.members).forEach(user => {
+        const {avatar, name} = user.getProfile();
+        const $editorOption = $(`<button class="editorOption"><p>${name}</p><div class="editorAvatar"></div></button>`);
+        $editorOption.find('.editorAvatar').css({backgroundColor: avatar});
+        $editorOption.on('click', () => {
+          this.setEditor(user);
+          $('.editorOptions').hide();
+        });
+        $editorOption.appendTo($('.editorOptions'));
+      });
+      $('.editorOptions').show();
+    }
   }
 
   fetchArchivedMessages = async () => {
