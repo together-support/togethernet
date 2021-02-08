@@ -24,7 +24,7 @@
   padding-left: var(--interface-vertical-margin);
   padding-bottom: var(--interface-vertical-margin);
   padding-right: 0;
-  background-color: black;
+  background-color: var(--primary-bg-color);
   border-top: var(--interface-border);
   align-items: center;
 }

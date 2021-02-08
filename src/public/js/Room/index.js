@@ -2,10 +2,13 @@ import pull from 'lodash/pull';
 import difference from 'lodash/difference';
 
 import store from '@js/store';
-import { roomModes } from '@js/constants';
+import {roomModes} from '@js/constants';
 
-import {keyboardEvent, hideEphemeralMessageDetailsAndOverlay} from './animation';
-import {addSystemMessage} from '@js/Togethernet/systemMessage';
+import {
+  keyboardEvent,
+  hideEphemeralMessageDetailsAndOverlay,
+} from './animation';
+import {addSystemConfirmMessage} from '@js/Togethernet/systemMessage';
 import EphemeralMessage from '@js/EphemeralMessage';
 import RoomMembership from '@js/RoomMembership';
 
@@ -23,18 +26,20 @@ export default class Room {
 
     this.inConsentToArchiveProcess = false;
 
-    this.ephemeralHistory = {...this.createMessageRecords(options.ephemeralHistory)};
+    this.ephemeralHistory = {
+      ...this.createMessageRecords(options.ephemeralHistory),
+    };
   }
 
   initialize = () => {
     this.render();
     this.attachEvents();
-  }
+  };
 
   render = () => {
     this.renderMenuButton();
     this.renderSpace();
-  }
+  };
 
   renderMenuButton = () => {
     const $roomLink = $('<button type="button" class="roomLink"></button>');
@@ -46,12 +51,14 @@ export default class Room {
       this.renderRemoveRoomButton().appendTo($roomTitle);
     }
 
-    const $participantsContainer = $('<div class="participantsContainer"></div>');
+    const $participantsContainer = $(
+      '<div class="participantsContainer"></div>'
+    );
     $participantsContainer.appendTo($roomLink);
 
     $roomLink.appendTo($('.roomsList.ephemeral'));
     this.$roomLink = $roomLink;
-  }
+  };
 
   renderRemoveRoomButton = () => {
     const $removeRoomButton = $('<button class="removeRoom">x</button>');
@@ -59,24 +66,24 @@ export default class Room {
       if (this.facilitators.includes(store.getCurrentUser().socketId)) {
         this.purgeSelf();
         store.sendToPeers({
-          type: 'deleteRoom', 
+          type: 'deleteRoom',
           data: {removedRoom: this.roomId},
         });
       }
     });
 
     return $removeRoomButton;
-  }
+  };
 
   purgeSelf = () => {
-    Object.values(this.memberships.members).forEach(member => {
+    Object.values(this.memberships.members).forEach((member) => {
       member.joinedRoom('sitting-at-the-park');
     });
 
     this.$roomLink.remove();
     this.$room.remove();
     delete store.rooms[this.roomId];
-  }
+  };
 
   renderSpace = () => {
     const $room = $(`
@@ -93,13 +100,13 @@ export default class Room {
       </div>`);
     $room.insertBefore('.sendMessageActions');
     this.$room = $room;
-  }
+  };
 
   attachEvents = () => {
     this.$roomLink.on('click', this.goToRoom);
     this.$room.on('hideRoom', this.hideRoom);
     this.$room.on('keydown', keyboardEvent);
-  }
+  };
 
   goToRoom = () => {
     $('.userInfo.ephemeral').show();
@@ -121,14 +128,14 @@ export default class Room {
     store.sendToPeers({
       type: 'joinedRoom',
       data: {
-        joinedRoomId: this.roomId
-      }
+        joinedRoomId: this.roomId,
+      },
     });
-  }
+  };
 
   addMember = (user) => {
     this.memberships.addMember(user);
-  }
+  };
 
   showRoom = () => {
     store.getCurrentUser().updateState({currentRoomId: this.roomId});
@@ -140,21 +147,24 @@ export default class Room {
     } else {
       $('#pinMessage').hide();
     }
-    
+
     this.memberships.renderAvatars();
 
     this.renderHistory();
-  }
+  };
 
   hasFeature = (feature) => {
     if (feature === 'facilitators') {
-      return this.mode === roomModes.directAction || this.mode === roomModes.facilitated;
+      return (
+        this.mode === roomModes.directAction ||
+        this.mode === roomModes.facilitated
+      );
     }
-  }
+  };
 
   hasFacilitator = (socketId) => {
     return this.facilitators.includes(socketId);
-  }
+  };
 
   onTransferFacilitator = (e) => {
     const newFacilitators = [...this.facilitators];
@@ -169,39 +179,45 @@ export default class Room {
       data: {
         roomId: this.roomId,
         facilitators: newFacilitators,
-      }
+      },
     });
 
     this.updateFacilitators(newFacilitators);
-  }
+  };
 
   updateFacilitators = (currentFacilitators) => {
     const currentUser = store.getCurrentUser();
     const newFacilitators = difference(currentFacilitators, this.facilitators);
 
-    newFacilitators.forEach(facilitatorId => {
-      const facilitator = currentUser.isMe(facilitatorId) ? currentUser : store.getPeer(facilitatorId);
+    newFacilitators.forEach((facilitatorId) => {
+      const facilitator = currentUser.isMe(facilitatorId)
+        ? currentUser
+        : store.getPeer(facilitatorId);
       const name = facilitator.getProfile().name;
-      addSystemMessage(`${name} stepped in as the new facilitator`);
+      addNotifySystemMessage(`${name} stepped in as the new facilitator`);
     });
 
     this.facilitators = currentFacilitators;
     this.updateCloseButtons();
     this.updateMessageTypes();
     this.memberships.renderAvatars();
-  }
-  
+  };
+
   renderHistory = () => {
     if (this.ephemeral) {
-      Object.values(this.ephemeralHistory).forEach((messageRecord) => messageRecord.render());
+      Object.values(this.ephemeralHistory).forEach((messageRecord) =>
+        messageRecord.render()
+      );
     }
     this.setPinnedMessagesCount();
   };
 
   setPinnedMessagesCount = () => {
-    const pinnedMessagesCount = Object.values(this.ephemeralHistory).filter(record => record.messageData.isPinned).length;
+    const pinnedMessagesCount = Object.values(this.ephemeralHistory).filter(
+      (record) => record.messageData.isPinned
+    ).length;
     $('#pinnedMessageCount').text(pinnedMessagesCount);
-  }
+  };
 
   addEphemeralHistory = (textRecord) => {
     const {id, isPinned, threadPreviousMessageId} = textRecord.messageData;
@@ -215,28 +231,31 @@ export default class Room {
       previousMessage.messageData.threadNextMessageId = id;
     }
     return this.ephemeralHistory[id];
-  }
+  };
 
   removeEphemeralHistory = (messageId) => {
     delete this.ephemeralHistory[messageId];
-  }
+  };
 
   hideRoom = () => {
     this.$room.hide();
     $('#user').remove();
-  }
+  };
 
   updateSelf = ({mode, ephemeral, roomId, ephemeralHistory}) => {
     this.mode = mode;
     this.ephemeral = ephemeral;
     this.roomId = roomId;
     this.updateEphemeralHistory(ephemeralHistory);
-  }
+  };
 
   updateEphemeralHistory = (ephemeralHistoryData = {}) => {
-    this.ephemeralHistory = {...this.ephemeralHistory, ...this.createMessageRecords(ephemeralHistoryData)};
+    this.ephemeralHistory = {
+      ...this.ephemeralHistory,
+      ...this.createMessageRecords(ephemeralHistoryData),
+    };
     this.renderHistory();
-  }
+  };
 
   createMessageRecords = (ephemeralHistoryData = {}) => {
     let ephemeralHistory = {};
@@ -245,7 +264,7 @@ export default class Room {
       ephemeralHistory[newMessageRecord.messageData.id] = newMessageRecord;
     });
     return ephemeralHistory;
-  }
+  };
 
   updateCloseButtons = () => {
     if (this.facilitators.includes(store.getCurrentUser().socketId)) {
@@ -253,12 +272,12 @@ export default class Room {
     } else {
       this.$roomLink.find('.removeRoom').remove();
     }
-  }
+  };
 
   updateMessageTypes = () => {
     $('#messageType').removeAttr('data-thread-entry-message');
     if (this.hasFacilitator(store.getCurrentUser().socketId)) {
       $('#pinMessage').show();
     }
-  }
+  };
 }

@@ -11,7 +11,7 @@
 .avatar.facilitator {
   font-weight: 800;
   text-decoration: underline;
-  color: white;
+  color: var(--primary-font-color);
 }
 
 .avatar.newlyJoined {
@@ -21,9 +21,12 @@
 }
 
 .avatar > span {
-  color: #efefef;
-  font-size: 1em;
-  line-height: 2em;
+  display: table-cell;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  vertical-align: middle;
+  color: var(--primary-font-color);
+  font-size: var(--default-font-size);
   text-shadow: 1px 1px 1px black;
   user-select: none;
   z-index: 5;

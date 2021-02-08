@@ -1,5 +1,7 @@
 import store from '@js/store';
-import {addSystemMessage} from '@js/Togethernet/systemMessage';
+import {addSystemConfirmMessage} from '@js/Togethernet/systemMessage';
+import {addSystemNotifyMessage} from '@js/Togethernet/systemMessage';
+import {systemNotifyMsg_consentToArchiveBlocked} from '@js/constants.js';
 import EphemeralMessage from '@js/EphemeralMessage';
 
 export const handleData = ({event, peerId}) => {
@@ -46,7 +48,7 @@ export const handleData = ({event, peerId}) => {
   } else if (data.type === 'voteCasted') {
     const {roomId, textRecordId, option, socketId} = data.data;
     const pollRecord = store.getRoom(roomId).ephemeralHistory[textRecordId];
-    pollRecord.voteReceived({option, socketId});  
+    pollRecord.voteReceived({option, socketId});
   } else if (data.type === 'voteRetracted') {
     const {roomId, textRecordId, option, socketId} = data.data;
     const pollRecord = store.getRoom(roomId).ephemeralHistory[textRecordId];
@@ -62,10 +64,20 @@ export const handleData = ({event, peerId}) => {
     const {roomId, messageId, name} = data.data;
     const room = store.getRoom(roomId);
     const messageRecord = room.ephemeralHistory[messageId];
-    messageRecord.initConsentToArchiveReceived({consentToArchiveInitiator: name});
+    messageRecord.initConsentToArchiveReceived({
+      consentToArchiveInitiator: name,
+    });
   } else if (data.type === 'blockConsentToArchive') {
     const {roomId, messageId, name} = data.data;
-    addSystemMessage(`Consent to archive process stopped. \n\n ${name} would not prefer not to archive this message at the moment.`);
+
+    addSystemNotifyMessage({
+      msgHeader: systemNotifyMsg_consentToArchiveBlocked.msgHeader,
+      msgBody: `${name} ${systemNotifyMsg_consentToArchiveBlocked.msgBody}`,
+      confirmText: systemNotifyMsg_consentToArchiveBlocked.confirmText,
+      confirmBtn: systemNotifyMsg_consentToArchiveBlocked.confirmBtn,
+      confirmBtnTitle: systemNotifyMsg_consentToArchiveBlocked.confirmBtnTitle,
+    });
+
     const room = store.getRoom(roomId);
     const messageRecord = room.ephemeralHistory[messageId];
     messageRecord.consentToArchiveBlocked();
@@ -102,12 +114,12 @@ const sendRooms = (peerId) => {
     type: 'shareRooms',
     data: {
       rooms: store.get('rooms'),
-    }
+    },
   });
 };
 
 const receiveRooms = ({rooms}) => {
-  Object.keys(rooms).forEach(roomId => {
+  Object.keys(rooms).forEach((roomId) => {
     store.updateOrInitializeRoom(roomId, rooms[roomId]);
   });
 };
@@ -119,22 +131,40 @@ const addNewRoom = ({options}) => {
 const initPeer = (data) => {
   const {socketId, avatar, name, roomId, room, columnStart, rowStart} = data;
   const peer = store.getPeer(socketId);
-  peer.updateState({avatar, name, currentRoomId: roomId, columnStart, rowStart});
+  peer.updateState({
+    avatar,
+    name,
+    currentRoomId: roomId,
+    columnStart,
+    rowStart,
+  });
   store.updateOrInitializeRoom(roomId, room).addMember(peer);
 
-  const newlyJoinedOutlineColor = getComputedStyle(document.documentElement).getPropertyValue('--newly-joined-avatar-outline-color');
-  const defaultOutlineColor = getComputedStyle(document.documentElement).getPropertyValue('--avatar-outline-color');
-  $('#user .shadow').css({outlineColor: newlyJoinedOutlineColor}).delay(2000).animate({outlineColor: defaultOutlineColor}, {duration: 2000});
+  const newlyJoinedOutlineColor = getComputedStyle(
+    document.documentElement
+  ).getPropertyValue('--newly-joined-avatar-outline-color');
+  const defaultOutlineColor = getComputedStyle(
+    document.documentElement
+  ).getPropertyValue('--avatar-outline-color');
+  $('#user .shadow')
+    .css({outlineColor: newlyJoinedOutlineColor})
+    .delay(2000)
+    .animate({outlineColor: defaultOutlineColor}, {duration: 2000});
 };
 
 const removeEphemeralPeerMessage = ({roomId, messageId}) => {
-  $(`.ephemeralRecord#${messageId}`).finish().animate({opacity: 0}, {
-    complete: () => {
-      $(`.ephemeralRecord#${messageId}`).remove();
-      $(`#ephemeralDetails-${messageId}`).text('[message removed]');
-      store.getRoom(roomId).removeEphemeralHistory(messageId);
-    }
-  });
+  $(`.ephemeralRecord#${messageId}`)
+    .finish()
+    .animate(
+      {opacity: 0},
+      {
+        complete: () => {
+          $(`.ephemeralRecord#${messageId}`).remove();
+          $(`#ephemeralDetails-${messageId}`).text('[message removed]');
+          store.getRoom(roomId).removeEphemeralHistory(messageId);
+        },
+      }
+    );
 };
 
 const setAgendaHidden = ({agendaId, shouldHide}) => {

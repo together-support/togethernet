@@ -10,7 +10,8 @@
 }
 
 .ephemeralRecord,
-.threadedRecordOverlay {
+.threadedRecordOverlay,
+.threadedRecordForbiddenOverlay {
   width: var(--cell-size);
   height: var(--cell-size);
 }
@@ -19,13 +20,29 @@
   display: flex;
   flex-wrap: wrap;
   position: relative;
+  opacity: var(--ephemeral-record-opacity);
+}
+
+.threadedRecordOverlay,
+.threadedRecordForbiddenOverlay {
+  position: absolute;
+  z-index: 3;
 }
 
 .threadedRecordOverlay {
   background-color: rgba(0, 0, 255, 0.5);
   outline: blue solid 1px;
-  position: absolute;
-  z-index: 3;
+}
+
+.threadedRecordForbiddenOverlay {
+  background-color: rgba(255, 0, 0, 0.5);
+  outline: red solid 1px;
+}
+
+.ephemeral button.roomLink p::before,
+.archiveGroup h2::before {
+  font: var(--default-font-size) nunito, monospace;
+  content: "⌗ ";
 }
 
 .ephemeralMessageContainer.inConsentProcess,
@@ -69,7 +86,7 @@
 
 .ephemeralRecordDetails {
   width: 100%;
-  padding: 16px;
+  padding: var(--default-font-size);
 }
 
 .ephemeralRecordDetails:hover {
@@ -98,7 +115,7 @@
 
 .ephemeralRecordDetails .content {
   width: 100%;
-  padding-bottom: 16px;
+  padding-bottom: var(--default-font-size);
 }
 
 .votingButtonsContainer {
@@ -127,8 +144,8 @@
 }
 
 .voteOption img {
-  width: 16px;
-  height: 16px;
+  width: var(--default-font-size);
+  height: var(--default-font-size);
 }
 
 .consentToArchiveOverlay {
@@ -147,7 +164,7 @@
 
 .pinnedMessagesSummary {
   cursor: pointer;
-  padding: 16px;
+  padding: var(--default-font-size);
 }
 
 .pinnedMessagesSummary i.collapsed {
