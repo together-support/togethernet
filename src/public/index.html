@@ -34,12 +34,17 @@
         <h2><a href="" title="Code of Consent">Code of Consent</a></h2>
         <h2><a href="" title="Instructions">Instructions</a></h2>
       </div>
+<!-- 
+      <div class="broadcastMessage">
+        <p>test</p>
+      </div> -->
+
 
       <div class ="roomList-container">
         <div class="roomsList ephemeral">
           <h3>Sandbox<button class="" type="button" id="addRoom" title="add a new channel"><h3>&#65291;</h3></button></h3>
           <button type="button" class="roomLink" id="sitting-at-the-parkLink">
-            <p>&#8983; sitting-at-the-park</p>
+            <p>sitting-at-the-park</p>
             <div class="participantsContainer"></div>
           </button>
         </div>
@@ -47,7 +52,7 @@
         <div class="roomsList">
           <h3>Archive</h3>
           <button type="button" class="roomLink" id="archivalSpaceLink">
-            <p>&#9776; posting-on-a-bulletin-board</p>
+            <p>posting-on-a-bulletin-board</p>
             <div class="participantsContainer"></div>
           </button>
         </div>
@@ -80,6 +85,7 @@
           </div>
         </div>
       </div>
+      
       <div class="ephemeralView room" id="sitting-at-the-park" tabindex="0">
         <div class="consentToArchiveOverlay" style="display: none;"></div>
       </div>
@@ -95,8 +101,43 @@
         </a>
       </div>
 
-      <div id="systemMessage" class="modalOverlay">
-        <div class="modalContent long"><span></span></div>
+      <div id="systemNotifyMessage" class="modalOverlay">
+        <div class="modalContent long">
+          <h1></h1>
+          <p></p>
+
+          <div class = "button-container">
+          
+          <div class = "confirm-container">
+            <button class="confirm"></button>
+          </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <div id="systemConfirmMessage" class="modalOverlay">
+        <div class="modalContent long">
+          <h1></h1>
+          <p></p>
+          <h6></h6>
+
+          <div class = "button-container">
+          
+          <div class = "yay-container">
+            <p></p>
+            <button class="yay"></button>
+          </div>
+
+          <div class = "nay-container">
+            <p></p>
+            <button class="nay"></button>
+          </div>
+
+          </div>
+
+        </div>
       </div>
   
       <div id="configureRoom" class="modalOverlay">
@@ -171,6 +212,7 @@
     <template id="ephemeralRecordTemplate">
       <div class="ephemeralRecord">
         <div class="threadedRecordOverlay" style="display: none"></div>
+        <div class="threadedRecordForbiddenOverlay" style="display: none"></div>
       </div>
     </template>
     <template id="ephemeralRecordDetailsTemplate">

@@ -12,16 +12,20 @@ const defaultOptions = {
 };
 
 export default class RoomForm {
-  constructor () {
+  constructor() {
     this.options = {...defaultOptions};
 
     Object.values(roomModes).forEach((mode) => {
-      $('#meetingMode').append($(`\
+      $('#meetingMode').append(
+        $(`\
         <div>\
-          <input type="radio" id="roomMode-${mode}" name="roomMode" value="${mode}" ${mode === publicConfig.defaultMode && 'checked="checked"'}></input>\
+          <input type="radio" id="roomMode-${mode}" name="roomMode" value="${mode}" ${
+          mode === publicConfig.defaultMode && 'checked="checked"'
+        }></input>\
           <label for="${mode}">${mode}</label>\
         </div>\
-      `));
+      `)
+      );
     });
   }
 
@@ -34,7 +38,7 @@ export default class RoomForm {
       this.listFacilitatorOptions();
       this.goToPage(2);
     });
-    
+
     $('.modalOverlay').on('click', () => {
       $('#configureRoom').hide();
       this.resetForm();
@@ -44,24 +48,31 @@ export default class RoomForm {
     $('#addRoom').on('click', () => {
       $('#configureRoom').show();
     });
-  }
+  };
 
   listFacilitatorOptions = () => {
     $('#configureRoom-2').find('.facilitatorOption').remove();
-    const profiles = [store.getCurrentUser().getProfile(), ...Object.values(store.get('peers')).map(peer => peer.getProfile())];
+    const profiles = [
+      store.getCurrentUser().getProfile(),
+      ...Object.values(store.get('peers')).map((peer) => peer.getProfile()),
+    ];
     profiles.forEach((profile) => {
       this.renderFacilitatorOption({
-        profile, 
+        profile,
         onClick: (e) => this.toggleFacilitator(e, profile),
-        selected: this.options.facilitators.includes(profile.socketId)
+        selected: this.options.facilitators.includes(profile.socketId),
       }).insertBefore($('#configureRoom-2 .modalButtons'));
     });
   };
 
   renderFacilitatorOption = ({profile, onClick, selected}) => {
     const {avatar, name} = profile;
-    const option = $(`<button class="facilitatorOption"><div style="background-color:${avatar}"></div><span>${name}</span></button>`);
-    if (selected) { option.addClass('selected'); }
+    const option = $(
+      `<button class="facilitatorOption"><div style="background-color:${avatar}"></div><span>${name}</span></button>`
+    );
+    if (selected) {
+      option.addClass('selected');
+    }
     option.on('click', onClick);
     return option;
   };
@@ -71,18 +82,22 @@ export default class RoomForm {
     if (this.options.facilitators.includes(socketId)) {
       $(e.target).closest('.facilitatorOption').toggleClass('selected');
       pull(this.options.facilitators, socketId);
-      $('#currentFacilitators').find(`div[data-socketId="${socketId}"]`).remove();
+      $('#currentFacilitators')
+        .find(`div[data-socketId="${socketId}"]`)
+        .remove();
     } else if (this.options.facilitators.length < 3) {
       $(e.target).closest('.facilitatorOption').toggleClass('selected');
       this.renderFacilitator(profile).appendTo($('#currentFacilitators'));
-      this.options.facilitators.push(socketId);        
-    } 
-  }
+      this.options.facilitators.push(socketId);
+    }
+  };
 
   renderFacilitator = ({avatar, name, socketId}) => {
-    return $(`<div class="facilitatorOption" data-socketId="${socketId}"><div style="background-color:${avatar}"></div><span>${name}</span></div>`);
+    return $(
+      `<div class="facilitatorOption" data-socketId="${socketId}"><div style="background-color:${avatar}"></div><span>${name}</span></div>`
+    );
   };
-  
+
   changeMeetingMode = (e) => {
     this.options.mode = e.target.value;
     if (this.options.mode === roomModes.egalitarian) {
@@ -92,14 +107,16 @@ export default class RoomForm {
       $('#consentfulGestureInfo').hide();
     } else if (this.options.mode === roomModes.facilitated) {
       $('#currentFacilitators').html('');
-      this.renderFacilitator(store.getCurrentUser().getProfile()).appendTo($('#currentFacilitators'));
+      this.renderFacilitator(store.getCurrentUser().getProfile()).appendTo(
+        $('#currentFacilitators')
+      );
       this.options.facilitators = [store.getCurrentUser().socketId];
       $('#configureFacilitatorsDA').hide();
       $('#configureFacilitatorsFac').show();
       $('#configureFacilitators').show();
       $('#consentfulGestureInfo').hide();
       $('#votingModuleInfo').show();
-    } else if (this.options.mode === roomModes.directAction){
+    } else if (this.options.mode === roomModes.directAction) {
       this.clearFacilitators();
       $('#configureFacilitatorsFac').hide();
       $('#configureFacilitatorsDA').show();
@@ -107,7 +124,7 @@ export default class RoomForm {
       $('#votingModuleInfo').hide();
       $('#consentfulGestureInfo').show();
     }
-  }
+  };
 
   updateRoomId = (e) => {
     e.preventDefault();
@@ -123,7 +140,7 @@ export default class RoomForm {
   goToPage = (pageNumber) => {
     $('.configureRoomView').hide();
     $(`#configureRoom-${pageNumber}`).show();
-  }
+  };
 
   createNewRoom = (e) => {
     e.preventDefault();
@@ -137,8 +154,8 @@ export default class RoomForm {
       store.sendToPeers({
         type: 'newRoom',
         data: {
-          options: newRoom
-        }
+          options: newRoom,
+        },
       });
 
       newRoom.initialize();
@@ -146,7 +163,7 @@ export default class RoomForm {
       $('#configureRoom').hide();
       this.resetForm();
     }
-  }
+  };
 
   validateOptions = () => {
     let isValid = true;
@@ -156,17 +173,23 @@ export default class RoomForm {
     } else if (this.options.roomId.length > 25) {
       alert('room names must be max 25 characters');
       isValid = false;
-    } else if (Object.keys(store.rooms).map(roomId => roomId.toLowerCase()).includes(this.options.roomId.toLowerCase().replaceAll(' ', '-'))) {
+    } else if (
+      Object.keys(store.rooms)
+        .map((roomId) => roomId.toLowerCase())
+        .includes(this.options.roomId.toLowerCase().replaceAll(' ', '-'))
+    ) {
       alert('room names must be unique');
       isValid = false;
     }
 
     return isValid;
-  }
+  };
 
   resetForm = () => {
     this.options = {...defaultOptions};
-    $(`#roomMode-${defaultOptions.mode}`).prop('checked', true).trigger('click');
+    $(`#roomMode-${defaultOptions.mode}`)
+      .prop('checked', true)
+      .trigger('click');
 
     $('#configureFacilitators').hide();
     $('#newRoomId').val(defaultOptions.roomId);
@@ -174,11 +197,11 @@ export default class RoomForm {
     this.clearFacilitators();
 
     this.goToPage(1);
-  }
+  };
 
   clearFacilitators = () => {
     this.options.facilitators = [];
     $('.facilitatorOption').removeClass('selected');
     $('#currentFacilitators').find('.facilitatorOption').remove();
-  }
+  };
 }

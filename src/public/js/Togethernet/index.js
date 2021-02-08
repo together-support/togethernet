@@ -14,7 +14,7 @@ class Togethernet {
     this.attachUIEvents();
     new RoomForm().initialize();
     new PeerConnection().connect();
-  }
+  };
 
   initDefaultRooms = async () => {
     const archivalSpace = await this.initArchivalSpace();
@@ -24,13 +24,13 @@ class Togethernet {
       'sitting-at-the-park': defaultEphemeralRoom,
       archivalSpace: archivalSpace,
     };
-  }
+  };
 
   initArchivalSpace = async () => {
     const archivalSpace = new ArchivalSpace();
     await archivalSpace.initialize();
     return archivalSpace;
-  }
+  };
 
   initDefaultEphemeralRoom = () => {
     const defaultEphemeralRoom = new Room({
@@ -40,8 +40,8 @@ class Togethernet {
     });
     defaultEphemeralRoom.attachEvents();
     return defaultEphemeralRoom;
-  }
- 
+  };
+
   attachUIEvents = () => {
     this.handleMessageSendingEvents();
     this.addKeyboardCues();
@@ -53,13 +53,18 @@ class Togethernet {
       $('.pinnedMessagesSummary i').removeClass('collapsed');
 
       const {ephemeralHistory, roomId} = store.getCurrentRoom();
-      const pinnedRecords = Object.values(ephemeralHistory).filter(record => record.messageData.isPinned);
+      const pinnedRecords = Object.values(ephemeralHistory).filter(
+        (record) => record.messageData.isPinned
+      );
       pinnedRecords.forEach(({messageData: {id}}) => {
-        const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(roomId, id);
+        const $messageContent = ephemeralMessageRenderer.renderEphemeralDetails(
+          roomId,
+          id
+        );
         $messageContent.appendTo('.pinnedMessages');
       });
     });
-  }
+  };
 
   handleMessageSendingEvents = () => {
     $('#writeMessage').on('keyup', (e) => {
@@ -68,10 +73,10 @@ class Togethernet {
         sendMessage();
       }
     });
-  }
+  };
 
   addKeyboardCues = () => {
-    document.addEventListener('keyup', e => {
+    document.addEventListener('keyup', (e) => {
       if (e.shiftKey && e.key === ' ') {
         e.preventDefault();
         const $visibleEphmeralRoom = $('.room:visible').get(0);
@@ -84,25 +89,32 @@ class Togethernet {
         }
       }
 
-      if (e.key.length === 1 && document.activeElement.id !== 'writeMessage' && !e.shiftKey) {
+      if (
+        e.key.length === 1 &&
+        document.activeElement.id !== 'writeMessage' &&
+        !e.shiftKey
+      ) {
         $('#writeMessage').delay(100).fadeOut(150).fadeIn(100);
       }
     });
-  }
+  };
 
   detectThreadStart = () => {
     $('#writeMessage').on('messageThread', (e) => {
       if (e.threadPreviousMessage) {
-        $(e.target).attr('data-thread-entry-message', e.threadPreviousMessage.id);
+        $(e.target).attr(
+          'data-thread-entry-message',
+          e.threadPreviousMessage.id
+        );
       } else {
         $(e.target).removeAttr('data-thread-entry-message');
       }
     });
-  }
+  };
 
   hideInteractionButtonsOnMouseLeave = () => {
     $(document).on('mouseup', () => $('.longPressButton').hide());
-  }
+  };
 }
 
 export default Togethernet;
