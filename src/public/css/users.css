@@ -8,12 +8,6 @@
   text-align: center;
 }
 
-.avatar.facilitator {
-  font-weight: 800;
-  text-decoration: underline;
-  color: var(--primary-font-color);
-}
-
 .avatar.newlyJoined {
   outline-color: var(--newly-joined-avatar-outline-color);
   outline-width: 2px;
@@ -46,6 +40,15 @@
 #user .avatar {
   position: absolute;
   z-index: 10;
+}
+
+.avatar.facilitator,
+#user.facilitator {
+  position: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  border-radius: var(--btn-border-radius);
+  color: var(--primary-font-color);
 }
 
 #user .avatar.inConsentProcess {

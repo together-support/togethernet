@@ -61,7 +61,7 @@ export default class Room {
   };
 
   renderRemoveRoomButton = () => {
-    const $removeRoomButton = $('<button class="removeRoom">x</button>');
+    const $removeRoomButton = $('<button class="removeRoom">✕</button>');
     $removeRoomButton.on('click', () => {
       if (this.facilitators.includes(store.getCurrentUser().socketId)) {
         this.purgeSelf();

@@ -42,7 +42,7 @@
 
       <div class ="roomList-container">
         <div class="roomsList ephemeral">
-          <h3>Sandbox<button class="" type="button" id="addRoom" title="add a new channel"><h3>&#65291;</h3></button></h3>
+          <h3>Ephemeral Channel<button class="" type="button" id="addRoom" title="add a new ephemeral channel"><h3>＋</h3></button></h3>
           <button type="button" class="roomLink" id="sitting-at-the-parkLink">
             <p>sitting-at-the-park</p>
             <div class="participantsContainer"></div>
@@ -50,7 +50,7 @@
         </div>
 
         <div class="roomsList">
-          <h3>Archive</h3>
+          <h3>Archival Channel</h3>
           <button type="button" class="roomLink" id="archivalSpaceLink">
             <p>posting-on-a-bulletin-board</p>
             <div class="participantsContainer"></div>
@@ -59,15 +59,28 @@
       </div>
 
       <div class="userInfo ephemeral">
-        <input type="color" id="changeUserAvatar" title="change avatar color" name="userAvatar">
-        <button id="changeUserName" title="change name"><span class="userName"></span><i class="fas fa-pencil-alt "></i></button>
+
+        <h3>
+          <div class = "flex-start" id ="updateUserName">
+          <input type="color" id="changeUserAvatar" title="change avatar color" name="userAvatar">
+          <span class="userName"></span>
+          </div>
+          <button class="" type="button" id="changeUserName" title="change name">
+            <h3>✎</h3>
+          </button>
+        </h3>
+
+        <!-- <h3><input type="color" id="changeUserAvatar" title="change avatar color" name="userAvatar"></h3>        
+        <h3><span class="userName"></span></h3>
+        <h3><button id="changeUserName" title="change name"><h3 title="pencil icon">✎</h3></button></h3> -->
       </div>
+
       <div class="userInfo editorInfo" style="display:none">
         <div class="editorOptions" style="display:none;">
         </div>
         <button id="displayEditorOptions">
-          <p class="editorName"><p>
           <div class="editorAvatar"></div>
+          <p class="editorName"><p>
         </button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 #archivalSpaceLink p::before {
   font: var(--default-font-size) nunito, monospace;
-  content: "☰ ";
+  content: '☰';
+  margin-right: calc(var(--interface-horizontal-margin) / 2);
 }
 
 #archivalSpace {
@@ -72,7 +73,7 @@
 
 .archivalMessagesDetails {
   width: 100%;
-  padding: var(--default-font-size) 0;
+  padding: 0;
 }
 
 .archiveGroup h1,
@@ -97,8 +98,10 @@ p.participantNames,
 }
 
 p.participantNames,
-.archivalMessagesDetails.comment {
+.archivalMessagesDetails.comment,
+.threadItem {
   color: var(--secondary-font-color);
+  padding-left: var(--default-font-size);
 }
 
 .archivalMessagesDetails .author {
@@ -111,20 +114,25 @@ p.participantNames,
   flex-wrap: wrap;
 }
 
-.archivalMessagesDetails.comment,
-.threadItem {
-  padding-left: 16px;
-}
-
 #displayEditorOptions {
   display: flex;
   align-items: center;
 }
 
 .editorAvatar {
-  width: 10px;
-  height: 10px;
-  margin-left: 10px;
+  width: var(--default-font-size);
+  height: var(--default-font-size);
+  margin-right: calc(var(--interface-horizontal-margin) / 1.5);
+}
+
+.editorName {
+  color: var(--primary-font-color);
+}
+
+.editorName::after {
+  content: ' is editing';
+  font-style: italic;
+  color: var(--secondary-font-color);
 }
 
 #downloadArchives {

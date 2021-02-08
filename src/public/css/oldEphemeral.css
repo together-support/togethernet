@@ -46,7 +46,7 @@ button {
 
 .avatar > span {
   color: #efefef;
-  font-size: 1em;
+  font-size: var(--default-font-size);
   text-shadow: 1px 1px 1px black;
   user-select: none;
 }
@@ -114,7 +114,7 @@ button {
 }
 
 .textBubble p {
-  font: 16px nunito, monospace;
+  font: var(--default-font-size) nunito, monospace;
   text-align: left;
   color: #000;
   padding: 1px;

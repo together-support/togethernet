@@ -54,7 +54,8 @@ class ArchivalSpace {
       addSystemConfirmMessage(systemConfirmMsg_archivalRoom);
     } else {
       const editorProfile = store.getPeer(this.editor).getProfile();
-      addSystemConfirmMessage(`${editorProfile.name} is currently editing`);
+      addSystemConfirmMessage(systemConfirmMsg_archivalRoom);
+      // addSystemConfirmMessage(`${editorProfile.name} is currently editing`);
     }
     store.sendToPeers({
       type: 'joinedRoom',

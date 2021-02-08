@@ -26,7 +26,7 @@ export default class User {
       store.sendToPeers({type: 'profileUpdated'});
     });
 
-    $('#changeUserName span').text('Anonymous');
+    $('.userInfo h3 span').text('anonymous');
     $('#changeUserName').on('click', this.setMyUserName);
     await this.render();
   };
@@ -43,7 +43,7 @@ export default class User {
     const $user = $('<div id="user"></div>');
     const $shadow = $('<div class="shadow"></div>');
 
-    const initials = $('#changeUserName span').text().slice(0, 2);
+    const initials = $('.userName').text().slice(0, 2);
     const $avatar = $(
       `<div class="avatar draggabble ui-widget-content"><span>${initials}<span></div>`
     );
@@ -59,7 +59,7 @@ export default class User {
     return {
       socketId: this.socketId,
       roomId: this.state.currentRoomId,
-      name: $('#changeUserName').text(),
+      name: $('.userName').text(),
       avatar: $('#changeUserAvatar').val(),
     };
   };
@@ -99,11 +99,11 @@ export default class User {
 
   setMyUserName = () => {
     const name = DOMPurify.sanitize(
-      prompt('Please enter your name (max 25 characters):')
+      prompt('Please enter your name or initials (max 25 characters):')
     );
     if (name) {
-      $('#changeUserName span').text(name.substr(0, 25));
-      $('#changeUserName').fitText(name.length > 19 ? 2 : 1, {
+      $('.userName').text(name.substr(0, 25));
+      $('.userName').fitText(name.length > 19 ? 2 : 1, {
         minFontSize: '12px',
         maxFontSize: 'var(--default-font-size)',
       });
