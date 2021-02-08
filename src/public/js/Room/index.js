@@ -102,6 +102,8 @@ export default class Room {
   }
 
   goToRoom = () => {
+    $('.userInfo.ephemeral').show();
+    $('.userInfo.editorInfo').hide();
     $('#archivalSpace').hide();
     $('#downloadArchives').hide();
     $('.ephemeralMessageContainer').finish().hide();

@@ -32,9 +32,12 @@ class ArchivalSpace {
     this.$roomLink.on('click', this.goToRoom);
     $('#deleteArchivedMessage').on('click', this.markMessageDeleted);
     $('#downloadArchives').on('click', this.downloadArchives);
+    $('#displayEditorOptions').on('click', this.toggleEditorOptionsVisible);
   };
 
   goToRoom = () => {
+    $('.userInfo.ephemeral').hide();
+    $('.userInfo.editorInfo').show();
     $('#writeMessage').attr('disabled', 'disabled');
     $('#writeMessage').attr('placeholder', 'Add comment');
     $('.ephemeralView').hide();
@@ -82,8 +85,12 @@ class ArchivalSpace {
   setEditor = (user) => {
     const editorProfile = user.getProfile();
     this.editor = editorProfile.socketId;
-    $('#editorOptions').find('.editorName').text(editorProfile.name);
-    $('#editorOptions').find('.editorAvatar').css({backgroundColor: editorProfile.avatar});
+    $('#displayEditorOptions').find('.editorName').text(editorProfile.name);
+    $('#displayEditorOptions').find('.editorAvatar').css({backgroundColor: editorProfile.avatar});
+  }
+
+  toggleEditorOptionsVisible = () => {
+    $('.editorOptions').toggleClass('hidden');
   }
 
   fetchArchivedMessages = async () => {
