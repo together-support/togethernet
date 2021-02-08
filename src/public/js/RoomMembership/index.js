@@ -8,7 +8,12 @@ class RoomMembership {
 
   addMember = (member) => {
     const {socketId} = member;
-    Object.values(store.get('rooms')).forEach(room => room.memberships.removeMember(socketId));
+    Object.values(store.get('rooms')).forEach(room => {
+      room.memberships.removeMember(socketId);
+      if (!room.constructor.isEphemeral && room.editor === socketId) {
+        room.setEditor(Object.values(room.memberships.members)[0]);  
+      }
+    });
     member.state.currentRoomId = this.roomId;
     this.members[socketId] = member;
     member.render();

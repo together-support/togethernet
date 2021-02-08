@@ -62,7 +62,9 @@ class ArchivedMessage {
     $messageDetails
       .on('mouseenter', () => {
         if (!store.getCurrentRoom().isCommentingOnId) {
-          $messageDetails.find('.archivalMessageActions').show();
+          if (store.getCurrentRoom().editor === store.getCurrentUser().socketId) {
+            $messageDetails.find('.archivalMessageActions').show();
+          }
           $messageDetails.addClass('hovered');
         }
       }).on('mouseleave', () => {

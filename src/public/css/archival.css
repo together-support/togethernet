@@ -88,7 +88,7 @@
   padding-left: 16px;
 }
 
-#editorOptions {
+#displayEditorOptions {
   display: flex;
   align-items: center;
 }
@@ -138,4 +138,26 @@
   background-color: whitesmoke;
   color: black;
   border: 1px solid black;
+}
+
+.editorInfo {
+  position: relative;
+}
+
+.editorOptions {
+  width: var(--min-navbar-width);
+  position: absolute;
+  border: 1px solid whitesmoke;
+  bottom: 100%;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.editorOption {
+  padding: 16px;
+  border-bottom: 1px solid whitesmoke;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }

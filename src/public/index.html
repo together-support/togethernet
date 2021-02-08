@@ -29,35 +29,38 @@
     <div class="navigation">
       
       <div class="basicInfo">
-      <h1 class="title">Togethernet</h1>
-      <h2><a href="" title="Code of Conduct">Code of Conduct</a></h2>
-      <h2><a href="" title="Code of Consent">Code of Consent</a></h2>
-      <h2><a href="" title="Instructions">Instructions</a></h2>
+        <h1 class="title">Togethernet</h1>
+        <h2><a href="" title="Code of Conduct">Code of Conduct</a></h2>
+        <h2><a href="" title="Code of Consent">Code of Consent</a></h2>
+        <h2><a href="" title="Instructions">Instructions</a></h2>
       </div>
 
       <div class ="roomList-container">
-      <div class="roomsList ephemeral">
-        <h3>Sandbox<button class="" type="button" id="addRoom" title="add a new channel"><h3>&#65291;</h3></button></h3>
-        <button type="button" class="roomLink" id="sitting-at-the-parkLink">
-          <p>&#8983; sitting-at-the-park</p>
-          <div class="participantsContainer"></div>
-        </button>
+        <div class="roomsList ephemeral">
+          <h3>Sandbox<button class="" type="button" id="addRoom" title="add a new channel"><h3>&#65291;</h3></button></h3>
+          <button type="button" class="roomLink" id="sitting-at-the-parkLink">
+            <p>&#8983; sitting-at-the-park</p>
+            <div class="participantsContainer"></div>
+          </button>
+        </div>
+
+        <div class="roomsList">
+          <h3>Archive</h3>
+          <button type="button" class="roomLink" id="archivalSpaceLink">
+            <p>&#9776; posting-on-a-bulletin-board</p>
+            <div class="participantsContainer"></div>
+          </button>
+        </div>
       </div>
 
-      <div class="roomsList">
-        <h3>Archive</h3>
-        <button type="button" class="roomLink" id="archivalSpaceLink">
-          <p>&#9776; posting-on-a-bulletin-board</p>
-          <div class="participantsContainer"></div>
-        </button>
-      </div>
-</div>
-      <div class="userInfo">
+      <div class="userInfo ephemeral">
         <input type="color" id="changeUserAvatar" title="change avatar color" name="userAvatar">
         <button id="changeUserName" title="change name"><span class="userName"></span><i class="fas fa-pencil-alt "></i></button>
       </div>
-      <div class="userInfo" style="display:none">
-        <button id="editorOptions">
+      <div class="userInfo editorInfo" style="display:none">
+        <div class="editorOptions" style="display:none;">
+        </div>
+        <button id="displayEditorOptions">
           <p class="editorName"><p>
           <div class="editorAvatar"></div>
         </button>
