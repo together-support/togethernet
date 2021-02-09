@@ -1,16 +1,19 @@
-import store from "@js/store";
-import { renderEphemeralDetails } from "@js/EphemeralMessageRenderer";
-import isPlainObject from "lodash/isPlainObject";
-import { addSystemConfirmMessage } from "@js/Togethernet/systemMessage";
-import { addSystemNotifyMessage } from "@js/Togethernet/systemMessage";
-import { systemConfirmMsgConsentToArchive } from "@js/constants.js";
-import { systemConfirmMsgInitiateConsentToArchiveProcess } from "@js/constants.js";
-import { systemNotifyMsgBlockConsentToArchive } from "@js/constants.js";
-import { systemNotifyMsgGiveConsentToArchive } from "@js/constants.js";
-import { systemConfirmMsgConfirmConsentToArchive } from "@js/constants.js";
-import sample from "lodash/sample";
-import transform from "lodash/transform";
-import pick from "lodash/pick";
+import store from '@js/store';
+import { renderEphemeralDetails } from '@js/EphemeralMessageRenderer';
+import isPlainObject from 'lodash/isPlainObject';
+import {
+  addSystemConfirmMessage,
+  addSystemNotifyMessage,
+} from '@js/Togethernet/systemMessage';
+import {
+  systemConfirmMsgConsentToArchive,
+  systemConfirmMsgInitiateConsentToArchiveProcess,
+  systemNotifyMsgBlockConsentToArchive,
+  systemNotifyMsgGiveConsentToArchive,
+} from '@js/constants.js';
+import sample from 'lodash/sample';
+import transform from 'lodash/transform';
+import pick from 'lodash/pick';
 
 export default class EphemeralMessage {
   constructor(props) {
@@ -65,9 +68,9 @@ export default class EphemeralMessage {
   };
 
   renderEphemeralMessageDetails = () => {
-    $(".nonPinnedMessages").empty();
-    $(".pinnedMessages").empty();
-    $(".pinnedMessagesSummary i").addClass("collapsed");
+    $('.nonPinnedMessages').empty();
+    $('.pinnedMessages').empty();
+    $('.pinnedMessagesSummary i').addClass('collapsed');
 
     if (
       this.messageData.threadPreviousMessageId ||
@@ -77,7 +80,7 @@ export default class EphemeralMessage {
     } else {
       this.renderSingleEphemeralDetail();
     }
-    $(".ephemeralMessageContainer").finish().show();
+    $('.ephemeralMessageContainer').finish().show();
   };
 
   renderSingleEphemeralDetail = () => {
@@ -85,10 +88,10 @@ export default class EphemeralMessage {
 
     const $messageContent = renderEphemeralDetails(roomId, id);
     if (isPinned) {
-      $messageContent.appendTo($(".pinnedMessages"));
-      $(".pinnedMessages").show();
+      $messageContent.appendTo($('.pinnedMessages'));
+      $('.pinnedMessages').show();
     } else {
-      $messageContent.appendTo($(".nonPinnedMessages"));
+      $messageContent.appendTo($('.nonPinnedMessages'));
     }
   };
 
@@ -102,7 +105,7 @@ export default class EphemeralMessage {
     const { ephemeralHistory } = store.getRoom(roomId);
 
     const $thisMessageContent = renderEphemeralDetails(roomId, id);
-    $thisMessageContent.appendTo($(".nonPinnedMessages"));
+    $thisMessageContent.appendTo($('.nonPinnedMessages'));
 
     let travelThreadNextMessageId = threadNextMessageId;
     let travelCurrentThreadTail = id;
@@ -152,15 +155,15 @@ export default class EphemeralMessage {
     const room = store.getRoom(this.messageData.roomId);
     const $textRecord = this.$textRecord();
 
-    $(".nonPinnedMessages").empty();
-    $(".ephemeralMessageContainer").hide();
+    $('.nonPinnedMessages').empty();
+    $('.ephemeralMessageContainer').hide();
     $textRecord.finish().animate(
       { opacity: 0 },
       {
         complete: () => {
           $textRecord.remove();
           store.sendToPeers({
-            type: "removeEphemeralMessage",
+            type: 'removeEphemeralMessage',
             data: {
               messageId: this.messageData.id,
               roomId: this.messageData.roomId,
@@ -174,7 +177,7 @@ export default class EphemeralMessage {
 
   handleRemoveMessageInThread = () => {
     store.sendToPeers({
-      type: "removeMessageInThread",
+      type: 'removeMessageInThread',
       data: {
         roomId: this.messageData.roomId,
         messageId: this.messageData.id,
@@ -184,9 +187,9 @@ export default class EphemeralMessage {
   };
 
   clearMessageInThread = () => {
-    this.messageData.content = "[message removed]";
-    this.messageData.name = "";
-    $(`#ephemeralDetails-${this.messageData.id}`).text("[message removed]");
+    this.messageData.content = '[message removed]';
+    this.messageData.name = '';
+    $(`#ephemeralDetails-${this.messageData.id}`).text('[message removed]');
   };
 
   castVote = (option) => {
@@ -201,14 +204,14 @@ export default class EphemeralMessage {
 
     if (myCurrentVote) {
       if (myCurrentVote === option) {
-        store.sendToPeers({ type: "voteRetracted", data });
+        store.sendToPeers({ type: 'voteRetracted', data });
         this.voteRetracted(data);
       } else {
-        store.sendToPeers({ type: "voteChanged", data });
+        store.sendToPeers({ type: 'voteChanged', data });
         this.voteChanged(data);
       }
     } else {
-      store.sendToPeers({ type: "voteCasted", data });
+      store.sendToPeers({ type: 'voteCasted', data });
       this.voteReceived(data);
     }
   };
@@ -255,7 +258,7 @@ export default class EphemeralMessage {
     const { roomId, id } = this.messageData;
     this.pollCreated();
     store.sendToPeers({
-      type: "pollCreated",
+      type: 'pollCreated',
       data: { roomId, textRecordId: id },
     });
   };
@@ -267,7 +270,7 @@ export default class EphemeralMessage {
       no: 0,
       neutral: 0,
     };
-    if ($(`#ephemeralDetails-${this.messageData.id}`).is(":visible")) {
+    if ($(`#ephemeralDetails-${this.messageData.id}`).is(':visible')) {
       this.renderEphemeralMessageDetails();
     }
   };
@@ -276,7 +279,7 @@ export default class EphemeralMessage {
     const { roomId, id } = this.messageData;
     addSystemConfirmMessage(systemConfirmMsgInitiateConsentToArchiveProcess);
     store.sendToPeers({
-      type: "initConsentToArchiveProcess",
+      type: 'initConsentToArchiveProcess',
       data: {
         roomId,
         messageId: id,
@@ -317,7 +320,7 @@ export default class EphemeralMessage {
     $('.initConsentToArchiveProcess').hide();
 
     this.getMessagesInThread().forEach((message) =>
-      message.$textRecord().addClass("inConsentProcess")
+      message.$textRecord().addClass('inConsentProcess')
     );
   };
 
@@ -361,8 +364,8 @@ export default class EphemeralMessage {
       gridRowStart,
       consentToArchiveRecords,
     } = this.messageData;
-    const userGridColumnStart = $("#user .shadow").css("grid-column-start");
-    const userGridRowStart = $("#user .shadow").css("grid-row-start");
+    const userGridColumnStart = $('#user .shadow').css('grid-column-start');
+    const userGridRowStart = $('#user .shadow').css('grid-row-start');
     const alignedWithMessage =
       String(gridColumnStart) === String(userGridColumnStart) &&
       String(gridRowStart) === String(userGridRowStart);
@@ -371,11 +374,11 @@ export default class EphemeralMessage {
       consentToArchiveRecords[store.getCurrentUser().socketId];
 
     if (alignedWithMessage) {
-      if (e.key === "y") {
+      if (e.key === 'y') {
         if (!alreadyGaveConsent) {
           this.giveConsentToArchive();
         }
-      } else if (e.key === "s") {
+      } else if (e.key === 's') {
         this.blockConsentToArchive();
       }
     }
@@ -385,7 +388,7 @@ export default class EphemeralMessage {
     addSystemNotifyMessage(systemNotifyMsgGiveConsentToArchive);
     const { id, roomId } = this.messageData;
     store.sendToPeers({
-      type: "giveConsentToArchive",
+      type: 'giveConsentToArchive',
       data: {
         roomId,
         messageId: id,
@@ -422,7 +425,7 @@ export default class EphemeralMessage {
     $consentIndicator.height(size);
 
     this.$textRecord()
-      .find(".consentIndicator")
+      .find('.consentIndicator')
       .each((_, el) => {
         $(el).width(size);
         $(el).height(size);
@@ -451,21 +454,21 @@ export default class EphemeralMessage {
     };
 
     if (threadNextMessageId || threadPreviousMessageId) {
-      body.message_type = "thread";
+      body.message_type = 'thread';
       body.thread_data = transform(
         this.getMessagesInThread(),
         (result, record) => {
           result[record.messageData.id] = pick(record.messageData, [
-            "name",
-            "content",
-            "threadNextMessageId",
-            "threadPreviousMessageId",
+            'name',
+            'content',
+            'threadNextMessageId',
+            'threadPreviousMessageId',
           ]);
         },
         {}
       );
     } else {
-      body.message_type = "text_message";
+      body.message_type = 'text_message';
     }
     return JSON.stringify(body);
   };
@@ -473,16 +476,16 @@ export default class EphemeralMessage {
   archiveMessage = () => {
     const { id, roomId } = this.messageData;
     const body = this.getArchivedMessageBody();
-    fetch("/archive", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    fetch('/archive', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body,
     })
       .then((response) => response.json())
       .then((archivedMessage) => {
         this.messageArchived({ archivedMessageId: archivedMessage.id });
         store.sendToPeers({
-          type: "messageArchived",
+          type: 'messageArchived',
           data: {
             roomId,
             messageId: id,
@@ -499,7 +502,7 @@ export default class EphemeralMessage {
     ).map((profile) => profile.avatar);
     this.getMessagesInThread().forEach((record) => {
       record.messageData.archivedMessageId = archivedMessageId;
-      record.$textRecord().find(".consentIndicator").remove();
+      record.$textRecord().find('.consentIndicator').remove();
       Array.from({ length: 25 }).forEach(() => {
         const color = sample(consentColors);
         const $consentIndicator = $(
@@ -519,7 +522,7 @@ export default class EphemeralMessage {
 
     const { id, roomId } = this.messageData;
     store.sendToPeers({
-      type: "blockConsentToArchive",
+      type: 'blockConsentToArchive',
       data: {
         roomId,
         messageId: id,
@@ -528,13 +531,13 @@ export default class EphemeralMessage {
   };
 
   consentToArchiveBlocked = () => {
-    this.$textRecord().find(".consentIndicator").remove();
+    this.$textRecord().find('.consentIndicator').remove();
     this.finishConsentToArchiveProcess();
     this.messageData.consentToArchiveRecords = {};
     this.messageData.archivedMessageId = null;
     $(`#ephemeralDetails-${this.messageData.id}`)
-      .find(".initConsentToArchiveProcess")
-      .removeClass("checked");
+      .find('.initConsentToArchiveProcess')
+      .removeClass('checked');
   };
 
   finishConsentToArchiveProcess = () => {
@@ -543,17 +546,17 @@ export default class EphemeralMessage {
     const { roomId } = this.messageData;
 
     this.getMessagesInThread().forEach((record) => {
-      record.$textRecord().removeClass("inConsentProcess");
+      record.$textRecord().removeClass('inConsentProcess');
     });
 
-    $(`#${roomId}`).find("#user .avatar").removeClass("inConsentProcess");
-    $(`#${roomId}`).find(".consentToArchiveOverlay").hide();
-    $(`#${roomId}`).off("keyup", this.consentToArchiveActions);
+    $(`#${roomId}`).find('#user .avatar').removeClass('inConsentProcess');
+    $(`#${roomId}`).find('.consentToArchiveOverlay').hide();
+    $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
   };
 
   indicateMessagesInThread = () => {
     this.getMessagesInThread().forEach((record) =>
-      record.$textRecord().finish().find(".threadedRecordOverlay").show()
+      record.$textRecord().finish().find('.threadedRecordOverlay').show()
     );
   };
 
@@ -562,7 +565,7 @@ export default class EphemeralMessage {
       record
         .$textRecord()
         .finish()
-        .find(".threadedRecordForbiddenOverlay")
+        .find('.threadedRecordForbiddenOverlay')
         .show()
     );
   };
@@ -577,26 +580,26 @@ export default class EphemeralMessage {
     } = this.messageData;
 
     const $ephemeralRecordTemplate = $(
-      document.getElementById("ephemeralRecordTemplate").content.cloneNode(true)
+      document.getElementById('ephemeralRecordTemplate').content.cloneNode(true)
     );
-    const $ephemeralRecord = $ephemeralRecordTemplate.find(".ephemeralRecord");
+    const $ephemeralRecord = $ephemeralRecordTemplate.find('.ephemeralRecord');
 
-    $ephemeralRecord.attr("id", id);
+    $ephemeralRecord.attr('id', id);
     $ephemeralRecord[0].style.gridColumnStart = gridColumnStart;
     $ephemeralRecord[0].style.gridRowStart = gridRowStart;
 
     $ephemeralRecord
-      .on("mouseenter", this.renderEphemeralMessageDetails)
-      .on("mouseleave", () => {
+      .on('mouseenter', this.renderEphemeralMessageDetails)
+      .on('mouseleave', () => {
         if (!store.getCurrentUser().getAdjacentMessageIds().includes(id)) {
-          $(".ephemeralMessageContainer").finish().fadeOut(500);
+          $('.ephemeralMessageContainer').finish().fadeOut(500);
         }
       });
 
-    $ephemeralRecord.on("adjacent", this.renderEphemeralMessageDetails);
-    $ephemeralRecord.on("indicateThread", this.indicateMessagesInThread);
+    $ephemeralRecord.on('adjacent', this.renderEphemeralMessageDetails);
+    $ephemeralRecord.on('indicateThread', this.indicateMessagesInThread);
     $ephemeralRecord.on(
-      "indicateThreadForbidden",
+      'indicateThreadForbidden',
       this.indicateThreadForbidden
     );
 
