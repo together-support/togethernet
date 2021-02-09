@@ -1,13 +1,13 @@
 import store from '@js/store';
-import {renderEphemeralDetails} from '@js/EphemeralMessageRenderer';
+import { renderEphemeralDetails } from '@js/EphemeralMessageRenderer';
 import isPlainObject from 'lodash/isPlainObject';
-import {addSystemConfirmMessage} from '@js/Togethernet/systemMessage';
-import {addSystemNotifyMessage} from '@js/Togethernet/systemMessage';
-import {systemConfirmMsg_consentToArchive} from '@js/constants.js';
-import {systemConfirmMsg_initiateConsentToArchiveProcess} from '@js/constants.js';
-import {systemNotifyMsg_blockConsentToArchive} from '@js/constants.js';
-import {systemNotifyMsg_giveConsentToArchive} from '@js/constants.js';
-import {systemConfirmMsg_confirmConsentToArchive} from '@js/constants.js';
+import { addSystemConfirmMessage } from '@js/Togethernet/systemMessage';
+import { addSystemNotifyMessage } from '@js/Togethernet/systemMessage';
+import { systemConfirmMsg_consentToArchive } from '@js/constants.js';
+import { systemConfirmMsg_initiateConsentToArchiveProcess } from '@js/constants.js';
+import { systemNotifyMsg_blockConsentToArchive } from '@js/constants.js';
+import { systemNotifyMsg_giveConsentToArchive } from '@js/constants.js';
+import { systemConfirmMsg_confirmConsentToArchive } from '@js/constants.js';
 import sample from 'lodash/sample';
 import transform from 'lodash/transform';
 import pick from 'lodash/pick';
@@ -20,8 +20,8 @@ export default class EphemeralMessage {
     };
 
     if (props.inConsentToArchiveProcess) {
-      const {consentToArchiveInitiator} = props;
-      this.initConsentToArchiveReceived({consentToArchiveInitiator});
+      const { consentToArchiveInitiator } = props;
+      this.initConsentToArchiveReceived({ consentToArchiveInitiator });
     }
 
     if (
@@ -34,7 +34,7 @@ export default class EphemeralMessage {
   }
 
   setThreadInformation = () => {
-    const {roomId, threadEntryMessageId} = this.messageData;
+    const { roomId, threadEntryMessageId } = this.messageData;
     const room = store.getRoom(roomId);
 
     const entryMessage = room.ephemeralHistory[threadEntryMessageId];
@@ -45,7 +45,7 @@ export default class EphemeralMessage {
   };
 
   getThreadTail = () => {
-    const {roomId, threadNextMessageId} = this.messageData;
+    const { roomId, threadNextMessageId } = this.messageData;
     if (!threadNextMessageId) {
       return this;
     }
@@ -81,7 +81,7 @@ export default class EphemeralMessage {
   };
 
   renderSingleEphemeralDetail = () => {
-    const {isPinned, id, roomId} = this.messageData;
+    const { isPinned, id, roomId } = this.messageData;
 
     const $messageContent = renderEphemeralDetails(roomId, id);
     if (isPinned) {
@@ -99,7 +99,7 @@ export default class EphemeralMessage {
       threadNextMessageId,
       threadPreviousMessageId,
     } = this.messageData;
-    const {ephemeralHistory} = store.getRoom(roomId);
+    const { ephemeralHistory } = store.getRoom(roomId);
 
     const $thisMessageContent = renderEphemeralDetails(roomId, id);
     $thisMessageContent.appendTo($('.nonPinnedMessages'));
@@ -155,7 +155,7 @@ export default class EphemeralMessage {
     $('.nonPinnedMessages').empty();
     $('.ephemeralMessageContainer').hide();
     $textRecord.finish().animate(
-      {opacity: 0},
+      { opacity: 0 },
       {
         complete: () => {
           $textRecord.remove();
@@ -190,7 +190,7 @@ export default class EphemeralMessage {
   };
 
   castVote = (option) => {
-    const {votingRecords, id} = this.messageData;
+    const { votingRecords, id } = this.messageData;
     const myId = store.getCurrentUser().socketId;
     const myCurrentVote = isPlainObject(votingRecords) && votingRecords[myId];
     const data = {
@@ -201,20 +201,20 @@ export default class EphemeralMessage {
 
     if (myCurrentVote) {
       if (myCurrentVote === option) {
-        store.sendToPeers({type: 'voteRetracted', data});
+        store.sendToPeers({ type: 'voteRetracted', data });
         this.voteRetracted(data);
       } else {
-        store.sendToPeers({type: 'voteChanged', data});
+        store.sendToPeers({ type: 'voteChanged', data });
         this.voteChanged(data);
       }
     } else {
-      store.sendToPeers({type: 'voteCasted', data});
+      store.sendToPeers({ type: 'voteCasted', data });
       this.voteReceived(data);
     }
   };
 
-  voteReceived = ({option, socketId}) => {
-    const {votes = {}, votingRecords, id} = this.messageData;
+  voteReceived = ({ option, socketId }) => {
+    const { votes = {}, votingRecords, id } = this.messageData;
     this.messageData.votes = {
       ...votes,
       [option]: isNaN(votes[option]) ? 1 : votes[option] + 1,
@@ -229,8 +229,8 @@ export default class EphemeralMessage {
     );
   };
 
-  voteRetracted = ({option, socketId}) => {
-    const {votes = {}, id} = this.messageData;
+  voteRetracted = ({ option, socketId }) => {
+    const { votes = {}, id } = this.messageData;
     this.messageData.votes = {
       ...votes,
       [option]: isNaN(votes[option]) ? 1 : votes[option] - 1,
@@ -245,18 +245,18 @@ export default class EphemeralMessage {
     );
   };
 
-  voteChanged = ({option, socketId}) => {
+  voteChanged = ({ option, socketId }) => {
     const currentVote = this.messageData.votingRecords[socketId];
-    this.voteRetracted({option: currentVote, socketId});
-    this.voteReceived({option, socketId});
+    this.voteRetracted({ option: currentVote, socketId });
+    this.voteReceived({ option, socketId });
   };
 
   createPoll = () => {
-    const {roomId, id} = this.messageData;
+    const { roomId, id } = this.messageData;
     this.pollCreated();
     store.sendToPeers({
       type: 'pollCreated',
-      data: {roomId, textRecordId: id},
+      data: { roomId, textRecordId: id },
     });
   };
 
@@ -273,7 +273,7 @@ export default class EphemeralMessage {
   };
 
   initiateConsentToArchiveProcess = () => {
-    const {roomId, id} = this.messageData;
+    const { roomId, id } = this.messageData;
     addSystemConfirmMessage(systemConfirmMsg_initiateConsentToArchiveProcess);
     store.sendToPeers({
       type: 'initConsentToArchiveProcess',
@@ -286,7 +286,7 @@ export default class EphemeralMessage {
     this.performConsentToArchive();
   };
 
-  initConsentToArchiveReceived = ({consentToArchiveInitiator}) => {
+  initConsentToArchiveReceived = ({ consentToArchiveInitiator }) => {
     if (consentToArchiveInitiator != null) {
       addSystemConfirmMessage({
         msgHeader: systemConfirmMsg_consentToArchive.msgHeader,
@@ -306,7 +306,7 @@ export default class EphemeralMessage {
 
   performConsentToArchive = () => {
     this.messageData.inConsentToArchiveProcess = true;
-    const {roomId} = this.messageData;
+    const { roomId } = this.messageData;
 
     this.$textRecord().addClass('inConsentProcess');
     $('#user .avatar').addClass('inConsentProcess');
@@ -322,17 +322,17 @@ export default class EphemeralMessage {
   };
 
   getNextMessage = () => {
-    const {roomId, threadNextMessageId} = this.messageData;
+    const { roomId, threadNextMessageId } = this.messageData;
     if (threadNextMessageId) {
-      const {ephemeralHistory} = store.getRoom(roomId);
+      const { ephemeralHistory } = store.getRoom(roomId);
       return ephemeralHistory[threadNextMessageId];
     }
   };
 
   getPreviousMessage = () => {
-    const {roomId, threadPreviousMessageId} = this.messageData;
+    const { roomId, threadPreviousMessageId } = this.messageData;
     if (threadPreviousMessageId) {
-      const {ephemeralHistory} = store.getRoom(roomId);
+      const { ephemeralHistory } = store.getRoom(roomId);
       return ephemeralHistory[threadPreviousMessageId];
     }
   };
@@ -419,7 +419,7 @@ export default class EphemeralMessage {
           1)
     );
     const $consentIndicator = $('<div class="consentIndicator"></div>');
-    $consentIndicator.css({backgroundColor: avatar});
+    $consentIndicator.css({ backgroundColor: avatar });
     $consentIndicator.width(size);
     $consentIndicator.height(size);
 
@@ -473,16 +473,16 @@ export default class EphemeralMessage {
   };
 
   archiveMessage = () => {
-    const {id, roomId} = this.messageData;
+    const { id, roomId } = this.messageData;
     const body = this.getArchivedMessageBody();
     fetch('/archive', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body,
     })
       .then((response) => response.json())
       .then((archivedMessage) => {
-        this.messageArchived({archivedMessageId: archivedMessage.id});
+        this.messageArchived({ archivedMessageId: archivedMessage.id });
         store.sendToPeers({
           type: 'messageArchived',
           data: {
@@ -495,19 +495,19 @@ export default class EphemeralMessage {
       .catch((e) => console.log(e));
   };
 
-  messageArchived = ({archivedMessageId}) => {
+  messageArchived = ({ archivedMessageId }) => {
     const consentColors = Object.values(
       this.messageData.consentToArchiveRecords
     ).map((profile) => profile.avatar);
     this.getMessagesInThread().forEach((record) => {
       record.messageData.archivedMessageId = archivedMessageId;
       record.$textRecord().find('.consentIndicator').remove();
-      Array.from({length: 25}).forEach(() => {
+      Array.from({ length: 25 }).forEach(() => {
         const color = sample(consentColors);
         const $consentIndicator = $(
           '<div class="consentIndicator given"></div>'
         );
-        $consentIndicator.css({backgroundColor: color});
+        $consentIndicator.css({ backgroundColor: color });
         $consentIndicator.appendTo(record.$textRecord());
       });
     });
@@ -519,7 +519,7 @@ export default class EphemeralMessage {
     this.consentToArchiveBlocked();
     addSystemNotifyMessage(systemNotifyMsg_blockConsentToArchive);
 
-    const {id, roomId} = this.messageData;
+    const { id, roomId } = this.messageData;
     store.sendToPeers({
       type: 'blockConsentToArchive',
       data: {
@@ -542,7 +542,7 @@ export default class EphemeralMessage {
   finishConsentToArchiveProcess = () => {
     this.messageData.inConsentToArchiveProcess = false;
 
-    const {roomId} = this.messageData;
+    const { roomId } = this.messageData;
 
     this.getMessagesInThread().forEach((record) => {
       record.$textRecord().removeClass('inConsentProcess');
@@ -602,7 +602,7 @@ export default class EphemeralMessage {
       this.indicateThreadForbidden
     );
 
-    $ephemeralRecord.css({backgroundColor: avatar});
+    $ephemeralRecord.css({ backgroundColor: avatar });
     $ephemeralRecord.appendTo($(`#${roomId}`));
   };
 }

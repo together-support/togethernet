@@ -20,8 +20,8 @@ export default class RoomForm {
         $(`\
         <div>\
           <input type="radio" id="roomMode-${mode}" name="roomMode" value="${mode}" ${
-          mode === publicConfig.defaultMode && 'checked="checked"'
-        }></input>\
+  mode === publicConfig.defaultMode && 'checked="checked"'
+}></input>\
           <label for="${mode}">${mode}</label>\
         </div>\
       `)

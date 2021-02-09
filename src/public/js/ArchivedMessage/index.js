@@ -1,17 +1,17 @@
 import store from '@js/store';
-import {formatDateTimeString} from '@js/utils';
-import {updateMessage} from '@js/api';
+import { formatDateTimeString } from '@js/utils';
+import { updateMessage } from '@js/api';
 import moment from 'moment';
 
 class ArchivedMessage {
   constructor(props) {
-    const {messageData, index} = props;
+    const { messageData, index } = props;
     this.messageData = messageData;
     this.index = index;
   }
 
   $messageRecord = () => {
-    const {id} = this.messageData;
+    const { id } = this.messageData;
     return $(`#archivedMessageRecord-${id}`);
   };
 
@@ -39,7 +39,7 @@ class ArchivedMessage {
   };
 
   renderBaseDetails = () => {
-    const {id} = this.messageData;
+    const { id } = this.messageData;
 
     const $messageDetailsTemplate = $(
       document
@@ -105,7 +105,7 @@ class ArchivedMessage {
   };
 
   renderMessageDetailsForTextRecord = () => {
-    const {participant_names, content, author} = this.messageData;
+    const { participant_names, content, author } = this.messageData;
 
     const $messageDetails = this.renderBaseDetails();
     $messageDetails
@@ -118,7 +118,7 @@ class ArchivedMessage {
   };
 
   renderMessageDetailsForComment = () => {
-    const {author, content, created_at} = this.messageData;
+    const { author, content, created_at } = this.messageData;
     const $messageDetails = this.renderBaseDetails();
     $messageDetails.addClass('comment');
     $messageDetails.find('.index').text(this.index);
@@ -134,7 +134,7 @@ class ArchivedMessage {
   };
 
   renderMessageDetailsForThread = () => {
-    const {author, content, thread_data} = this.messageData;
+    const { author, content, thread_data } = this.messageData;
     const $messageDetails = this.renderBaseDetails();
     $messageDetails.find('.index').text(`${this.index} .`);
     if (thread_data && Object.keys(thread_data).length) {
@@ -145,7 +145,9 @@ class ArchivedMessage {
       );
       let nextMessageId = threadHead;
       while (nextMessageId) {
-        const {content, name, threadNextMessageId} = thread_data[nextMessageId];
+        const { content, name, threadNextMessageId } = thread_data[
+          nextMessageId
+        ];
         const $contentContainerClone = $(
           document
             .getElementById('archivedThreadDetailsTemplate')

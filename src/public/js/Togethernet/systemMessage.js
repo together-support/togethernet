@@ -8,7 +8,7 @@ export const addSystemConfirmMessage = ({
   yayBtnTitle = 'Continue',
   nayBtn = 'Stop',
   nayBtnTitle = 'Stop',
-  nayLink = "parent.open('https://togethernet.app')",
+  nayLink = 'parent.open(\'https://togethernet.app\')',
 }) => {
   $('#systemConfirmMessage').find('h1').text(msgHeader);
   $('#systemConfirmMessage').find('p').text(msgBody);
