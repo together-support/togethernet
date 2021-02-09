@@ -101,7 +101,7 @@ const showAdjacentMessages = () => {
 
     $(adjacentMessages[0]).trigger('indicateThread');
   } else if (adjacentMessages.length > 1) {
-    $(adjacentMessages[0]).trigger('indicateThreadForbidden');
+    adjacentMessages.forEach(adjacentMessageId => $(adjacentMessageId).trigger('indicateThreadForbidden'));
   }
 };
 
