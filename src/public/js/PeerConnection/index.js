@@ -1,13 +1,13 @@
-import io from 'socket.io-client';
-import store from '@js/store';
-import {getBrowserRTC} from './ensureWebRTC';
-import {handleData} from './dataReceiver';
+import io from "socket.io-client";
+import store from "@js/store";
+import { getBrowserRTC } from "./ensureWebRTC";
+import { handleData } from "./dataReceiver";
 import {
   addSystemConfirmMessage,
   clearSystemMessage,
-} from '@js/Togethernet/systemMessage';
-import {systemConfirmMsg_disconnect} from '@js/constants.js';
-import User from '@js/User';
+} from "@js/Togethernet/systemMessage";
+import { systemConfirmMsgDisconnect } from "@js/constants.js";
+import User from "@js/User";
 
 export default class PeerConnection {
   constructor() {
@@ -17,48 +17,48 @@ export default class PeerConnection {
   }
 
   connect = () => {
-    this.socket.on('connect', () => {
+    this.socket.on("connect", () => {
       clearSystemMessage();
       new User(this.socket.id).initialize();
       store.getCurrentRoom().goToRoom();
     });
 
-    this.socket.on('initConnections', this.initConnections);
-    this.socket.on('offer', this.handleReceivedOffer);
-    this.socket.on('answer', this.handleReceivedAnswer);
-    this.socket.on('candidate', this.addCandidate);
-    this.socket.on('peerLeave', this.handlePeerLeaveSocket);
+    this.socket.on("initConnections", this.initConnections);
+    this.socket.on("offer", this.handleReceivedOffer);
+    this.socket.on("answer", this.handleReceivedAnswer);
+    this.socket.on("candidate", this.addCandidate);
+    this.socket.on("peerLeave", this.handlePeerLeaveSocket);
     this.socket.on(
-      'archivedMessage',
-      store.getRoom('archivalSpace').appendArchivedMessage
+      "archivedMessage",
+      store.getRoom("archivalSpace").appendArchivedMessage
     );
     this.socket.on(
-      'archivedMessageUpdated',
-      store.getRoom('archivalSpace').archivedMessageUpdated
+      "archivedMessageUpdated",
+      store.getRoom("archivalSpace").archivedMessageUpdated
     );
     this.socket.on(
-      'archivedMessageDeleted',
-      store.getRoom('archivalSpace').archivedMessageDeleted
+      "archivedMessageDeleted",
+      store.getRoom("archivalSpace").archivedMessageDeleted
     );
-    this.socket.on('error', this.handleSocketError);
-    this.socket.on('disconnect', this.handleSocketDisconnect);
+    this.socket.on("error", this.handleSocketError);
+    this.socket.on("disconnect", this.handleSocketDisconnect);
   };
 
-  initConnections = async ({peerId}) => {
-    const peerConnection = this.initPeerConnection(peerId, {initiator: true});
+  initConnections = async ({ peerId }) => {
+    const peerConnection = this.initPeerConnection(peerId, { initiator: true });
     clearSystemMessage();
     try {
       const offer = await peerConnection.createOffer({
         offerToReceiveAudio: true,
       });
       await peerConnection.setLocalDescription(offer);
-      this.send({type: 'sendOffers', offer, peerId});
+      this.send({ type: "sendOffers", offer, peerId });
     } catch (e) {
-      console.log('error creating offer to connect to peers', e);
+      console.log("error creating offer to connect to peers", e);
     }
   };
 
-  handleReceivedOffer = async ({offer, offerInitiator}) => {
+  handleReceivedOffer = async ({ offer, offerInitiator }) => {
     try {
       const peerConnection = this.initPeerConnection(offerInitiator, {
         initiator: false,
@@ -68,23 +68,23 @@ export default class PeerConnection {
       );
       const answer = await peerConnection.createAnswer();
       await peerConnection.setLocalDescription(answer);
-      this.send({type: 'sendAnswer', answer, offerInitiator});
+      this.send({ type: "sendAnswer", answer, offerInitiator });
     } catch (err) {
-      console.log('error receiving offer', err);
+      console.log("error receiving offer", err);
     }
   };
 
-  initPeerConnection = (peerId, {initiator}) => {
+  initPeerConnection = (peerId, { initiator }) => {
     const peerConnection = new this._wrtc.RTCPeerConnection({
       iceServers: [
         {
           urls: [
-            'stun:stun.l.google.com:19302',
-            'stun:global.stun.twilio.com:3478',
+            "stun:stun.l.google.com:19302",
+            "stun:global.stun.twilio.com:3478",
           ],
         },
       ],
-      sdpSemantics: 'unified-plan',
+      sdpSemantics: "unified-plan",
     });
 
     const peer = store.addPeer(peerId, peerConnection);
@@ -92,14 +92,14 @@ export default class PeerConnection {
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         this.send({
-          type: 'trickleCandidate',
+          type: "trickleCandidate",
           candidate: new this._wrtc.RTCIceCandidate(event.candidate),
         });
       }
     };
 
     if (initiator) {
-      const dataChannel = peerConnection.createDataChannel('tn', {
+      const dataChannel = peerConnection.createDataChannel("tn", {
         reliable: true,
       });
       peer.dataChannel = this.setUpDataChannel({
@@ -118,19 +118,19 @@ export default class PeerConnection {
 
     peerConnection.oniceconnectionstatechange = () => {
       if (
-        peerConnection.iceConnectionState === 'failed' ||
-        peerConnection.iceConnectionState === 'disconnected'
+        peerConnection.iceConnectionState === "failed" ||
+        peerConnection.iceConnectionState === "disconnected"
       ) {
         peerConnection.restartIce();
-      } else if (peerConnection.iceConnectionState === 'connected') {
+      } else if (peerConnection.iceConnectionState === "connected") {
         clearSystemMessage();
       }
     };
 
     peerConnection.onconnectionstatechange = () => {
-      if (peerConnection.connectionState === 'failed') {
+      if (peerConnection.connectionState === "failed") {
         peerConnection.restartIce();
-      } else if (peerConnection.connectionState === 'connected') {
+      } else if (peerConnection.connectionState === "connected") {
         clearSystemMessage();
       }
     };
@@ -138,28 +138,28 @@ export default class PeerConnection {
     return peerConnection;
   };
 
-  setUpDataChannel = ({dataChannel, peerId, initiator}) => {
+  setUpDataChannel = ({ dataChannel, peerId, initiator }) => {
     dataChannel.onclose = () => {
-      this.handlePeerLeaveSocket({leavingUser: peerId});
+      this.handlePeerLeaveSocket({ leavingUser: peerId });
     };
 
     dataChannel.onmessage = (event) => {
-      handleData({event, peerId});
+      handleData({ event, peerId });
     };
 
     dataChannel.onopen = () => {
       clearSystemMessage();
       store.sendToPeer(dataChannel, {
-        type: 'initPeer',
+        type: "initPeer",
         data: {
           room: store.getCurrentRoom(),
-          columnStart: $('#user .shadow').css('grid-column-start'),
-          rowStart: $('#user .shadow').css('grid-row-start'),
+          columnStart: $("#user .shadow").css("grid-column-start"),
+          rowStart: $("#user .shadow").css("grid-row-start"),
         },
       });
 
-      if (initiator && store.get('needRoomsInfo')) {
-        store.sendToPeer(dataChannel, {type: 'requestRooms'});
+      if (initiator && store.get("needRoomsInfo")) {
+        store.sendToPeer(dataChannel, { type: "requestRooms" });
       }
     };
 
@@ -168,7 +168,7 @@ export default class PeerConnection {
     return dataChannel;
   };
 
-  handleReceivedAnswer = async ({fromSocket, answer}) => {
+  handleReceivedAnswer = async ({ fromSocket, answer }) => {
     await store
       .getPeer(fromSocket)
       .peerConnection.setRemoteDescription(
@@ -176,37 +176,37 @@ export default class PeerConnection {
       );
   };
 
-  addCandidate = async ({candidate, fromSocket}) => {
+  addCandidate = async ({ candidate, fromSocket }) => {
     try {
       await store.getPeer(fromSocket).peerConnection.addIceCandidate(candidate);
     } catch (e) {
-      console.log('error adding received ice candidate', e);
+      console.log("error adding received ice candidate", e);
     }
   };
 
   handleSocketError = (e) => {
     addSystemConfirmMessage(
-      'There has been an error with your connection. Refresh the page to try again.'
+      "There has been an error with your connection. Refresh the page to try again."
     );
-    console.log('Socket connection error', e, new Date().toLocaleTimeString());
+    console.log("Socket connection error", e, new Date().toLocaleTimeString());
   };
 
   handleSocketDisconnect = (e) => {
-    addSystemConfirmMessage(systemConfirmMsg_disconnect);
-    console.log('Disconnected from server', e, new Date().toLocaleTimeString());
-    $('.participant').remove();
+    addSystemConfirmMessage(systemConfirmMsgDisconnect);
+    console.log("Disconnected from server", e, new Date().toLocaleTimeString());
+    $(".participant").remove();
   };
 
-  handlePeerLeaveSocket = ({leavingUser}) => {
+  handlePeerLeaveSocket = ({ leavingUser }) => {
     $(`#peer-${leavingUser}`)
       .finish()
       .animate(
-        {opacity: 0},
+        { opacity: 0 },
         {
           complete: () => {
             $(`#peer-${leavingUser}`).remove();
             $(`#participant-${leavingUser}`).animate(
-              {opacity: 0},
+              { opacity: 0 },
               {
                 complete: () => $(`#participant-${leavingUser}`).remove(),
               }
