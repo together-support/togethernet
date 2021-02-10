@@ -12,15 +12,17 @@ export const sendMessage = () => {
   if (store.getCurrentRoom().constructor.isEphemeral) {
     const gridColumnStart = $('#user .shadow').css('grid-column-start');
     const gridRowStart = $('#user .shadow').css('grid-row-start');
-
+    const adjacentMessages = store.getCurrentUser().getAdjacentMessages();
+    
     if (
       $(
         `#${
           store.getCurrentUser().currentRoomId
         }-${gridColumnStart}-${gridRowStart}`
-      ).length
+      ).length || adjacentMessages.length > 1
     ) {
-      alert('move to an empty spot to write the msg');
+      alert('move to an available spot to write the msg');
+      return;
     }
 
     const threadEntryMessageId = $('#writeMessage').attr(

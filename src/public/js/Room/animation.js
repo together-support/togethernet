@@ -87,7 +87,7 @@ export const onAnimationComplete = () => {
   sendPositionToPeers();
 };
 
-const showAdjacentMessages = () => {
+export const showAdjacentMessages = () => {
   const adjacentMessages = store.getCurrentUser().getAdjacentMessages();
   adjacentMessages.forEach((messageRecord) =>
     $(messageRecord).trigger('adjacent')
