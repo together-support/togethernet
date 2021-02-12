@@ -3,10 +3,11 @@ import store from '@js/store';
 import { getBrowserRTC } from './ensureWebRTC';
 import { handleData } from './dataReceiver';
 import {
+  addSystemConfirmMessage,
   addSystemNotifyMessage,
   clearSystemMessage,
 } from '@js/Togethernet/systemMessage';
-import { systemNotifyMsgDisconnect, systemNotifyMsgError } from '@js/constants.js';
+import { systemConfirmMsgEphemeralRoom, systemNotifyMsgDisconnect, systemNotifyMsgError } from '@js/constants.js';
 import User from '@js/User';
 
 export default class PeerConnection {
@@ -17,7 +18,9 @@ export default class PeerConnection {
   }
 
   connect = () => {
+
     this.socket.on('connect', () => {
+      addSystemConfirmMessage(systemConfirmMsgEphemeralRoom);
       clearSystemMessage();
       new User(this.socket.id).initialize();
       store.getCurrentRoom().goToRoom();
