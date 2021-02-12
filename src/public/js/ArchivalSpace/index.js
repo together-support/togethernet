@@ -37,6 +37,8 @@ class ArchivalSpace {
   };
 
   goToRoom = () => {
+    addSystemConfirmMessage(systemConfirmMsgArchivalRoom);
+
     $('.userInfo.ephemeral').hide();
     $('.userInfo.editorInfo').show();
     $('#writeMessage').attr('disabled', 'disabled');
@@ -50,17 +52,12 @@ class ArchivalSpace {
 
     $('#archivalSpace').show();
     $('#downloadArchives').show();
-    if (this.iAmEditor()) {
-      addSystemConfirmMessage(systemConfirmMsgArchivalRoom);
-    } else {
-      const editorProfile = store.getPeer(this.editor).getProfile();
-      addSystemConfirmMessage(`${editorProfile.name} is currently editing`);
-    }
+
     store.sendToPeers({
       type: 'joinedRoom',
       data: {
         joinedRoomId: 'archivalSpace',
-      },
+      }
     });
   };
 

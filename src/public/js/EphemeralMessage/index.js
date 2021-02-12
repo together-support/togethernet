@@ -292,6 +292,7 @@ export default class EphemeralMessage {
   initConsentToArchiveReceived = ({ consentToArchiveInitiator }) => {
     if (consentToArchiveInitiator != null) {
       addSystemConfirmMessage({
+        msgType: systemConfirmMsgConsentToArchive.msgType,
         msgHeader: systemConfirmMsgConsentToArchive.msgHeader,
         msgBody: `${consentToArchiveInitiator} ${systemConfirmMsgConsentToArchive.msgBody}`,
         msgFooter: systemConfirmMsgConsentToArchive.msgFooter,
@@ -299,7 +300,6 @@ export default class EphemeralMessage {
         nayText: systemConfirmMsgConsentToArchive.nayText,
         yayBtn: systemConfirmMsgConsentToArchive.yayBtn,
         nayBtn: systemConfirmMsgConsentToArchive.nayBtn,
-        nayLink: systemConfirmMsgConsentToArchive.nayLink,
       });
     }
 

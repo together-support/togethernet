@@ -104,7 +104,10 @@
           <div class = "button-container">
           
           <div class = "confirm-container">
-            <button class="confirm"></button>
+            <button class="confirm" style="display: none"></button>
+            <a class="confirm" id="systemNotifyMsgDisconnect" href="." style="display: none">Refresh</a>
+            <a class="confirm" id="systemNotifyMsgError" href="." style="display: none">Refresh</a>
+
           </div>
 
           </div>
@@ -119,15 +122,21 @@
           <h6></h6>
 
           <div class = "button-container">
+
+          <div class="nay-container">
+            <p></p>
+          <button class="nay" style="display: none"></button>
+          <a class="nay" id="systemConfirmMsgArchivalRoom" href="https://togethernet.app" target="_blank" style="display: none">Read Documentation</a>
+          <a class="nay" id="systemConfirmMsgDisconnect" href="https://togethernet.app" target="_blank" style="display: none">Refresh</a>
+          <a class="nay" id="systemConfirmMsgInitiateConsentToArchiveProcess" href="https://togethernet.app" target="_blank" style="display: none">Read Documentation</a>
+          <a class="nay" id="systemConfirmMsgConsentToArchive" href="https://togethernet.app" target="_blank" style="display: none">Read Documentation</a>
+
+        </div>
           
           <div class = "yay-container">
             <p></p>
-            <button class="yay"></button>
-          </div>
-
-          <div class = "nay-container">
-            <p></p>
-            <button class="nay"></button>
+            <button class="yay" style="display: none"></button>
+            <a class="yay" href="" style="display: none">test</a>
           </div>
 
           </div>
@@ -185,7 +194,7 @@
         </div>
       </div>  
     </div>
-
+    
     </div>
 
     <script src="/js/bundle.js"></script>

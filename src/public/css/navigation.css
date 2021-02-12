@@ -4,7 +4,10 @@
   height: calc(
     var(--cell-vertical-num) * var(--cell-size) + var(--sendmessage-height)
   );
-  outline: var(--interface-border);
+  border-top: var(--interface-border);
+  border-bottom: var(--interface-border);
+  border-left: var(--interface-border);
+  border-right: none;
   display: flex;
   flex-direction: column;
 }

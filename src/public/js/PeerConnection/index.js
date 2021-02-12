@@ -3,10 +3,10 @@ import store from '@js/store';
 import { getBrowserRTC } from './ensureWebRTC';
 import { handleData } from './dataReceiver';
 import {
-  addSystemConfirmMessage,
+  addSystemNotifyMessage,
   clearSystemMessage,
 } from '@js/Togethernet/systemMessage';
-import { systemConfirmMsgDisconnect } from '@js/constants.js';
+import { systemNotifyMsgDisconnect, systemNotifyMsgError } from '@js/constants.js';
 import User from '@js/User';
 
 export default class PeerConnection {
@@ -185,14 +185,12 @@ export default class PeerConnection {
   };
 
   handleSocketError = (e) => {
-    addSystemConfirmMessage(
-      'There has been an error with your connection. Refresh the page to try again.'
-    );
+    addSystemNotifyMessage(systemNotifyMsgError);
     console.log('Socket connection error', e, new Date().toLocaleTimeString());
   };
 
   handleSocketDisconnect = (e) => {
-    addSystemConfirmMessage(systemConfirmMsgDisconnect);
+    addSystemNotifyMessage(systemNotifyMsgDisconnect);
     console.log('Disconnected from server', e, new Date().toLocaleTimeString());
     $('.participant').remove();
   };

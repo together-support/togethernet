@@ -79,14 +79,20 @@ body {
 	);
 }
 
-button {
+button,
+a.nay,
+a.yay,
+a.confirm {
 	cursor: pointer;
 	background-color: transparent;
 	opacity: var(--overlay-opacity);
 }
 
 button:hover,
-button > span {
+button > span,
+a.nay:hover,
+a.yay:hover,
+a.confirm {
 	opacity: 1;
 }
 
@@ -296,9 +302,15 @@ input[type='color'] {
 
 #systemConfirmMessage button.yay,
 #systemConfirmMessage button.nay,
-#systemNotifyMessage button.confirm {
+#systemConfirmMessage a.yay,
+#systemConfirmMessage a.nay,
+#systemNotifyMessage button.confirm,
+#systemNotifyMessage a.confirm {
+	display: block;
 	width: 90%;
 	text-align: center;
+	color: var(--primary-font-color);
+	text-decoration: none;
 	font: var(--systemMsg-font-size) nunito, monospace;
 	border: var(--interface-border);
 	padding: var(--interface-vertical-margin);
