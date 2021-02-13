@@ -37,7 +37,7 @@
 
       <div class ="roomList-container">
         <div class="roomsList ephemeral">
-          <h3>Sandbox<button class="" type="button" id="addRoom" title="add a new channel"><h3>&#65291;</h3></button></h3>
+          <h3>Ephemeral Channels<button class="" type="button" id="addRoom" title="add a new channel"><h3>&#65291;</h3></button></h3>
           <button type="button" class="roomLink" id="sitting-at-the-parkLink">
             <p>sitting-at-the-park</p>
             <div class="participantsContainer"></div>
@@ -45,7 +45,7 @@
         </div>
 
         <div class="roomsList">
-          <h3>Archive</h3>
+          <h3>Archival Channel</h3>
           <button type="button" class="roomLink" id="archivalSpaceLink">
             <p>posting-on-a-bulletin-board</p>
             <div class="participantsContainer"></div>
@@ -96,7 +96,7 @@
         </a>
       </div>
 
-      <div id="systemNotifyMessage" class="modalOverlay">
+      <div id="systemNotifyMessage" style="display: none" class="modalOverlay">
         <div class="modalContent long">
           <h1></h1>
           <p></p>
@@ -114,7 +114,7 @@
         </div>
       </div>
 
-      <div id="systemConfirmMessage" class="modalOverlay">
+      <div id="systemConfirmMessage" style="display: none" class="modalOverlay">
         <div class="modalContent long">
           <h1></h1>
           <p></p>
@@ -126,11 +126,11 @@
             <p></p>
           <button class="nay" style="display: none"></button>
           <a class="nay" id="systemConfirmMsgEphemeralRoom" href="https://togethernet.app" target="_blank"
-                      style="display: none">Read Documentation</a>
-          <a class="nay" id="systemConfirmMsgArchivalRoom" href="https://togethernet.app" target="_blank" style="display: none">Read Documentation</a>
+                      style="display: none">Dig Deeper</a>
+          <a class="nay" id="systemConfirmMsgArchivalRoom" href="https://togethernet.app" target="_blank" style="display: none">Dig Deeper</a>
           <a class="nay" id="systemConfirmMsgDisconnect" href="https://togethernet.app" target="_blank" style="display: none">Refresh</a>
-          <a class="nay" id="systemConfirmMsgInitiateConsentToArchiveProcess" href="https://togethernet.app" target="_blank" style="display: none">Read Documentation</a>
-          <a class="nay" id="systemConfirmMsgConsentToArchive" href="https://togethernet.app" target="_blank" style="display: none">Read Documentation</a>
+          <a class="nay" id="systemConfirmMsgInitiateConsentToArchiveProcess" href="https://togethernet.app" target="_blank" style="display: none">Dig Deeper</a>
+          <a class="nay" id="systemConfirmMsgConsentToArchive" href="https://togethernet.app" target="_blank" style="display: none">Dig Deeper</a>
 
         </div>
           
@@ -149,11 +149,11 @@
         <!-- Modal content -->
         <div class="modalContent long configureRoomView" id="configureRoom-1">
           <div class="section">
-            <h2>Create a sandbox</h2>
+            <h2>Create an ephemeral channel</h2>
           </div>
   
           <div class="section">
-            <h3>Sandbox Title</h3>
+            <h3>Ephemeral Channel Title</h3>
             <p>Customize the name of your sandbox around a topic (max 25 characters).</p>
             <input id="newRoomId"type="text" placeholder="convening-on-the-beach"/>
           </div>

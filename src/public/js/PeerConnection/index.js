@@ -4,8 +4,7 @@ import { getBrowserRTC } from './ensureWebRTC';
 import { handleData } from './dataReceiver';
 import {
   addSystemConfirmMessage,
-  addSystemNotifyMessage,
-  clearSystemMessage,
+  addSystemNotifyMessage
 } from '@js/Togethernet/systemMessage';
 import { systemConfirmMsgEphemeralRoom, systemNotifyMsgDisconnect, systemNotifyMsgError } from '@js/constants.js';
 import User from '@js/User';
@@ -21,7 +20,7 @@ export default class PeerConnection {
 
     this.socket.on('connect', () => {
       addSystemConfirmMessage(systemConfirmMsgEphemeralRoom);
-      clearSystemMessage();
+      // clearSystemMessage();
       new User(this.socket.id).initialize();
       store.getCurrentRoom().goToRoom();
     });
@@ -49,7 +48,7 @@ export default class PeerConnection {
 
   initConnections = async ({ peerId }) => {
     const peerConnection = this.initPeerConnection(peerId, { initiator: true });
-    clearSystemMessage();
+    // clearSystemMessage();
     try {
       const offer = await peerConnection.createOffer({
         offerToReceiveAudio: true,
@@ -126,7 +125,7 @@ export default class PeerConnection {
       ) {
         peerConnection.restartIce();
       } else if (peerConnection.iceConnectionState === 'connected') {
-        clearSystemMessage();
+        // clearSystemMessage();
       }
     };
 
@@ -134,7 +133,7 @@ export default class PeerConnection {
       if (peerConnection.connectionState === 'failed') {
         peerConnection.restartIce();
       } else if (peerConnection.connectionState === 'connected') {
-        clearSystemMessage();
+        // clearSystemMessage();
       }
     };
 
@@ -151,7 +150,7 @@ export default class PeerConnection {
     };
 
     dataChannel.onopen = () => {
-      clearSystemMessage();
+      // clearSystemMessage();
       store.sendToPeer(dataChannel, {
         type: 'initPeer',
         data: {

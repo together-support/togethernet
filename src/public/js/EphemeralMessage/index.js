@@ -4,12 +4,14 @@ import isPlainObject from 'lodash/isPlainObject';
 import {
   addSystemConfirmMessage,
   addSystemNotifyMessage,
+  clearSystemMessage
 } from '@js/Togethernet/systemMessage';
 import {
+  systemConfirmMsgConfirmConsentToArchive,
   systemConfirmMsgConsentToArchive,
   systemConfirmMsgInitiateConsentToArchiveProcess,
   systemNotifyMsgBlockConsentToArchive,
-  systemNotifyMsgGiveConsentToArchive,
+  systemNotifyMsgGiveConsentToArchive
 } from '@js/constants.js';
 import sample from 'lodash/sample';
 import transform from 'lodash/transform';
@@ -273,6 +275,10 @@ export default class EphemeralMessage {
     if ($(`#ephemeralDetails-${this.messageData.id}`).is(':visible')) {
       this.renderEphemeralMessageDetails();
     }
+  };
+
+  consentToArchiveButtonClicked = () => {
+    addSystemConfirmMessage(systemConfirmMsgConfirmConsentToArchive);
   };
 
   initiateConsentToArchiveProcess = () => {

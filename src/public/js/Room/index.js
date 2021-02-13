@@ -2,13 +2,13 @@ import pull from 'lodash/pull';
 import difference from 'lodash/difference';
 
 import store from '@js/store';
-import {roomModes} from '@js/constants';
+import { roomModes, systemNotifyNewFacilitator} from '@js/constants';
 
 import {
   keyboardEvent,
   hideEphemeralMessageDetailsAndOverlay,
 } from './animation';
-import {addSystemConfirmMessage} from '@js/Togethernet/systemMessage';
+import {addSystemNotifyMessage} from '@js/Togethernet/systemMessage';
 import EphemeralMessage from '@js/EphemeralMessage';
 import RoomMembership from '@js/RoomMembership';
 
@@ -194,7 +194,12 @@ export default class Room {
         ? currentUser
         : store.getPeer(facilitatorId);
       const name = facilitator.getProfile().name;
-      addNotifySystemMessage(`${name} stepped in as the new facilitator`);
+      addSystemNotifyMessage({
+        msgType: systemNotifyNewFacilitator.msgType,
+        msgHeader: systemNotifyNewFacilitator.msgHeader,
+        msgBody: `${name} ${systemNotifyNewFacilitator}`,
+        confirmBtn: systemNotifyNewFacilitator.confirmBtn,
+        confirmBtnTitle: systemNotifyNewFacilitator.confirmBtnTitle
     });
 
     this.facilitators = currentFacilitators;

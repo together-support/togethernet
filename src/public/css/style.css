@@ -11,6 +11,7 @@
 
 :root {
 	--default-font-size: 18px;
+	--systemMsg-header-font-size: 24px;
 	--systemMsg-font-size: 20px;
 	--font-to-margin-width-ratio: 35;
 	--body-bg-color: black;
@@ -24,6 +25,7 @@
 	--interface-highlight: #282828;
 	--interface-border-width: 1px;
 	--interface-border: var(--interface-border-width) solid dimgrey;
+	--button-border: var(--interface-border-width) solid dimgrey;
 	--interface-border-radius: 5px;
 	--newly-joined-avatar-outline-color: DeepSkyBlue;
 	--overlay-color: black;
@@ -94,6 +96,12 @@ a.nay:hover,
 a.yay:hover,
 a.confirm {
 	opacity: 1;
+}
+
+
+a[target="_blank"]::after{
+  content: ' 🔗';
+  margin: 0 0px 0 0px;
 }
 
 #messages {
@@ -254,11 +262,8 @@ input[type='color'] {
 }
 
 #systemConfirmMessage h1,
-#systemConfirmMessage p,
-#systemNotifyMessage h1,
-#systemNotifyMessage p,
-.confirm-container p {
-	font-size: var(--systemMsg-font-size);
+#systemNotifyMessage h1 {
+	font-size: var(--systemMsg-header-font-size);
 	color: var(--primary-font-color);
 }
 
@@ -268,13 +273,14 @@ input[type='color'] {
 }
 
 #systemConfirmMessage p,
-#systemNotifyMessage p {
-	font: var(--systemMsg-font-size) nunito, monospace;
+#systemNotifyMessage p,
+.confirm-container p {
+	font-size: var(--systemMsg-header-font-size) nunito, monospace;
+	color: var(--primary-font-color);
 }
 
 #systemConfirmMessage h6 {
-	font-size: var(--default-font-size);
-	font: var(--systemMsg-font-size) nunito, monospace;
+	font: var(--default-font-size) nunito, monospace;
 	color: var(--secondary-font-color);
 }
 
@@ -282,11 +288,15 @@ input[type='color'] {
 #systemConfirmMessage .nay-container {
 	display: block;
 	float: left;
-	width: 45%;
+	width: 48%;
 	margin-top: 2%;
 	margin-bottom: 2%;
-	margin-right: 2%;
-	padding: var(--interface-vertical-margin);
+	padding: var(--default-font-size);
+	border: var(--interface-border);
+}
+
+#systemConfirmMessage .yay-container {
+	float: right;
 }
 
 .confirm-container {
@@ -297,7 +307,8 @@ input[type='color'] {
 #systemConfirmMessage .nay-container p,
 #systemNotifyMessage .confirm-container p {
 	width: 100%;
-	min-height: calc(var(--default-font-size) * 6);
+	min-height: calc(var(--default-font-size) * 5);
+	margin: auto;
 }
 
 #systemConfirmMessage button.yay,
@@ -312,7 +323,9 @@ input[type='color'] {
 	color: var(--primary-font-color);
 	text-decoration: none;
 	font: var(--systemMsg-font-size) nunito, monospace;
-	border: var(--interface-border);
+	border: var(--button-border);
+	border-radius: var(--interface-border-radius);
+	margin: auto;
 	padding: var(--interface-vertical-margin);
 }
 

@@ -1,7 +1,6 @@
 import store from '@js/store';
 import {roomModes} from '@js/constants';
 import isPlainObject from 'lodash/isPlainObject';
-import {addSystemConfirmMessage} from './Togethernet/systemMessage';
 
 export const renderEphemeralDetails = (roomId, messageId) => {
   const room = store.getRoom(roomId);
@@ -164,7 +163,7 @@ const renderConsentToArchiveButton = (message) => {
   } else {
     $consentToArchiveButton.on('click', (e) => {
       e.stopPropagation();
-      message.initiateConsentToArchiveProcess();
+      message.consentToArchiveButtonClicked();
     });
   }
 
