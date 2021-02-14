@@ -44,6 +44,7 @@ export const addSystemConfirmMessage = ({
     $('#systemConfirmMessage').find('button.yay').mouseup(()=> {
       ephemeralMessage.initiateConsentToArchiveProcess();
     });
+    $('#systemConfirmMessage').find('button.nay').mouseup(clearSystemMessage);
   } 
   else {
     $('#systemConfirmMessage')

@@ -1,5 +1,4 @@
 .chat {
-  outline: var(--interface-border);
   width: calc(var(--cell-size) * var(--cell-horizontal-num));
   height: calc(
     var(--cell-size) * var(--cell-vertical-num) + var(--sendmessage-height)
@@ -11,10 +10,12 @@
 
 .room {
   height: calc(var(--cell-vertical-num) * var(--cell-size));
+  border: var(--interface-border);
 }
 
 .room:focus {
-  outline: 2px solid blue;
+  outline: none;
+  border: var(--input-focus-border);
 }
 
 .sendMessageActions {
@@ -25,7 +26,9 @@
   padding-bottom: var(--interface-vertical-margin);
   padding-right: 0;
   background-color: var(--primary-bg-color);
-  border-top: var(--interface-border);
+  border-bottom: var(--interface-border);
+  border-right: var(--interface-border);
+  border-left: var(--interface-border);
   align-items: center;
   display: flex;
 	z-index: 1;
@@ -52,6 +55,11 @@
   margin-left: calc(var(--interface-horizontal-margin) / 2);
   background-color: var(--primary-bg-color);
   color: var(--primary-font-color);
+}
+
+#writeMessage:focus{
+  outline: none;
+  border: var(--input-focus-border);
 }
 
 #pinMessage::after, p.pinnedMessagesSummary::before {

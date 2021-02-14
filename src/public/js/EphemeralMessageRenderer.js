@@ -67,7 +67,7 @@ export const renderEphemeralDetails = (roomId, messageId) => {
 const renderConsentToArchiveButton = (message) => {
   const { archivedMessageId, consentToArchiveRecords = {} } = message.messageData;
   const $consentToArchiveButton = $(
-    '<button class="initConsentToArchiveProcess" title="ask for consent to archive">☰</button>'
+    '<button class="initConsentToArchiveProcess" title="consent to archive">☰</button>'
   );
 
   if (

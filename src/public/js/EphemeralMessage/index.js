@@ -366,27 +366,18 @@ export default class EphemeralMessage {
 
   consentToArchiveActions = (e) => {
     const {
-      gridColumnStart,
-      gridRowStart,
-      consentToArchiveRecords,
+      consentToArchiveRecords
     } = this.messageData;
-    const userGridColumnStart = $('#user .shadow').css('grid-column-start');
-    const userGridRowStart = $('#user .shadow').css('grid-row-start');
-    const alignedWithMessage =
-      String(gridColumnStart) === String(userGridColumnStart) &&
-      String(gridRowStart) === String(userGridRowStart);
     const alreadyGaveConsent =
       isPlainObject(consentToArchiveRecords) &&
       consentToArchiveRecords[store.getCurrentUser().socketId];
 
-    if (alignedWithMessage) {
-      if (e.key === 'y') {
-        if (!alreadyGaveConsent) {
-          this.giveConsentToArchive();
-        }
-      } else if (e.key === 's') {
-        this.blockConsentToArchive();
+    if (e.key === 'y') {
+      if (!alreadyGaveConsent) {
+        this.giveConsentToArchive();
       }
+    } else if (e.key === 's') {
+      this.blockConsentToArchive();
     }
   };
   giveConsentToArchive = () => {

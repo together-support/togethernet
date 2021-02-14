@@ -43,6 +43,9 @@
 	--btn-small-size: 22px;
 	--btn-border-radius: 50%;
 	--btn-overlay-opacity: 0.8;
+	--btn-inverted-color: whitesmoke;
+	--btn-inverted-font-color: black;
+	--input-focus-border: 2px solid blue;
 	--avatar-x: 1;
 	--avatar-y: 1;
 	--avatar-outline-color: white;
@@ -106,7 +109,6 @@ a.yay:hover,
 a.confirm {
 	opacity: 1;
 }
-
 
 a[target="_blank"]::after{
   content: ' 🔗';
@@ -237,7 +239,8 @@ input[type='color'] {
 }
 
 #systemConfirmMessage,
-#systemNotifyMessage {
+#systemNotifyMessage, 
+#systemPopupMessage {
 	z-index: 100;
 }
 
@@ -273,6 +276,7 @@ input[type='color'] {
 
 #systemConfirmMessage p,
 #systemNotifyMessage p,
+#systemPopupMessage p,
 .confirm-container p {
 	font-size: var(--systemMsg-header-font-size) nunito, monospace;
 	color: var(--primary-font-color);
@@ -328,6 +332,17 @@ input[type='color'] {
 	padding: var(--interface-vertical-margin);
 }
 
+#systemPopupMessage{
+	width: 600px;
+	margin: auto;
+	padding: var(--interface-horizontal-margin);
+	background-color: var(--systemMsg-bg-color);
+}
+
+#systemPopupMessage p{
+	display: inline;
+}
+
 .modalContent .modalButtons {
 	display: flex;
 	justify-content: flex-end;
@@ -373,4 +388,16 @@ input[type='color'] {
 
 .hasError:focus {
 	outline: 2 px solid red;
+}
+
+p.keyIcon{
+	font: var(--default-font-size) nunito-bold, monospace;
+	display: inline-block;
+	padding:0 5px;
+	margin:0;
+	margin-block-start: 0;
+    margin-block-end: 0;
+	line-height: 0;
+	border: var(--interface-border);
+	border-radius: var(--interface-border-radius);
 }
