@@ -2,20 +2,17 @@ import pull from 'lodash/pull';
 import difference from 'lodash/difference';
 
 import store from '@js/store';
-import { roomModes, systemNotifyNewFacilitator} from '@js/constants';
+import { roomModes } from '@js/constants';
 
-import {
-  keyboardEvent,
-  hideEphemeralMessageDetailsAndOverlay,
-} from './animation';
-import {addSystemNotifyMessage} from '@js/Togethernet/systemMessage';
+import { keyboardEvent, hideEphemeralMessageDetailsAndOverlay } from './animation';
+import { addSystemMessage } from '@js/Togethernet/systemMessage';
 import EphemeralMessage from '@js/EphemeralMessage';
 import RoomMembership from '@js/RoomMembership';
 
 export default class Room {
   static isEphemeral = true;
 
-  constructor(options) {
+  constructor (options) {
     this.mode = options.mode;
     this.roomId = options.roomId.replaceAll(' ', '-');
     this.ephemeral = options.ephemeral;
@@ -26,9 +23,7 @@ export default class Room {
 
     this.inConsentToArchiveProcess = false;
 
-    this.ephemeralHistory = {
-      ...this.createMessageRecords(options.ephemeralHistory),
-    };
+    this.ephemeralHistory = { ...this.createMessageRecords(options.ephemeralHistory) };
   }
 
   initialize = () => {
@@ -51,9 +46,7 @@ export default class Room {
       this.renderRemoveRoomButton().appendTo($roomTitle);
     }
 
-    const $participantsContainer = $(
-      '<div class="participantsContainer"></div>'
-    );
+    const $participantsContainer = $('<div class="participantsContainer"></div>');
     $participantsContainer.appendTo($roomLink);
 
     $roomLink.appendTo($('.roomsList.ephemeral'));
@@ -67,7 +60,7 @@ export default class Room {
         this.purgeSelf();
         store.sendToPeers({
           type: 'deleteRoom',
-          data: {removedRoom: this.roomId},
+          data: { removedRoom: this.roomId },
         });
       }
     });
@@ -76,7 +69,7 @@ export default class Room {
   };
 
   purgeSelf = () => {
-    Object.values(this.memberships.members).forEach((member) => {
+    Object.values(this.memberships.members).forEach(member => {
       member.joinedRoom('sitting-at-the-park');
     });
 
@@ -128,8 +121,8 @@ export default class Room {
     store.sendToPeers({
       type: 'joinedRoom',
       data: {
-        joinedRoomId: this.roomId,
-      },
+        joinedRoomId: this.roomId
+      }
     });
   };
 
@@ -138,7 +131,7 @@ export default class Room {
   };
 
   showRoom = () => {
-    store.getCurrentUser().updateState({currentRoomId: this.roomId});
+    store.getCurrentUser().updateState({ currentRoomId: this.roomId });
     this.$room.show();
     this.$room.focus();
 
@@ -155,10 +148,7 @@ export default class Room {
 
   hasFeature = (feature) => {
     if (feature === 'facilitators') {
-      return (
-        this.mode === roomModes.directAction ||
-        this.mode === roomModes.facilitated
-      );
+      return this.mode === roomModes.directAction || this.mode === roomModes.facilitated;
     }
   };
 
@@ -179,7 +169,7 @@ export default class Room {
       data: {
         roomId: this.roomId,
         facilitators: newFacilitators,
-      },
+      }
     });
 
     this.updateFacilitators(newFacilitators);
@@ -189,17 +179,10 @@ export default class Room {
     const currentUser = store.getCurrentUser();
     const newFacilitators = difference(currentFacilitators, this.facilitators);
 
-    newFacilitators.forEach((facilitatorId) => {
-      const facilitator = currentUser.isMe(facilitatorId)
-        ? currentUser
-        : store.getPeer(facilitatorId);
+    newFacilitators.forEach(facilitatorId => {
+      const facilitator = currentUser.isMe(facilitatorId) ? currentUser : store.getPeer(facilitatorId);
       const name = facilitator.getProfile().name;
-      addSystemNotifyMessage({
-        msgType: systemNotifyNewFacilitator.msgType,
-        msgHeader: systemNotifyNewFacilitator.msgHeader,
-        msgBody: `${name} ${systemNotifyNewFacilitator}`,
-        confirmBtn: systemNotifyNewFacilitator.confirmBtn,
-        confirmBtnTitle: systemNotifyNewFacilitator.confirmBtnTitle
+      addSystemMessage(`${name} stepped in as the new facilitator`);
     });
 
     this.facilitators = currentFacilitators;
@@ -210,22 +193,18 @@ export default class Room {
 
   renderHistory = () => {
     if (this.ephemeral) {
-      Object.values(this.ephemeralHistory).forEach((messageRecord) =>
-        messageRecord.render()
-      );
+      Object.values(this.ephemeralHistory).forEach((messageRecord) => messageRecord.render());
     }
     this.setPinnedMessagesCount();
   };
 
   setPinnedMessagesCount = () => {
-    const pinnedMessagesCount = Object.values(this.ephemeralHistory).filter(
-      (record) => record.messageData.isPinned
-    ).length;
+    const pinnedMessagesCount = Object.values(this.ephemeralHistory).filter(record => record.messageData.isPinned).length;
     $('#pinnedMessageCount').text(pinnedMessagesCount);
   };
 
   addEphemeralHistory = (textRecord) => {
-    const {id, isPinned, threadPreviousMessageId} = textRecord.messageData;
+    const { id, isPinned, threadPreviousMessageId } = textRecord.messageData;
     this.ephemeralHistory[id] = textRecord;
     if (isPinned) {
       this.setPinnedMessagesCount();
@@ -247,7 +226,7 @@ export default class Room {
     $('#user').remove();
   };
 
-  updateSelf = ({mode, ephemeral, roomId, ephemeralHistory}) => {
+  updateSelf = ({ mode, ephemeral, roomId, ephemeralHistory }) => {
     this.mode = mode;
     this.ephemeral = ephemeral;
     this.roomId = roomId;
@@ -255,16 +234,13 @@ export default class Room {
   };
 
   updateEphemeralHistory = (ephemeralHistoryData = {}) => {
-    this.ephemeralHistory = {
-      ...this.ephemeralHistory,
-      ...this.createMessageRecords(ephemeralHistoryData),
-    };
+    this.ephemeralHistory = { ...this.ephemeralHistory, ...this.createMessageRecords(ephemeralHistoryData) };
     this.renderHistory();
   };
 
   createMessageRecords = (ephemeralHistoryData = {}) => {
     let ephemeralHistory = {};
-    Object.values(ephemeralHistoryData).forEach(({messageData}) => {
+    Object.values(ephemeralHistoryData).forEach(({ messageData }) => {
       const newMessageRecord = new EphemeralMessage(messageData);
       ephemeralHistory[newMessageRecord.messageData.id] = newMessageRecord;
     });

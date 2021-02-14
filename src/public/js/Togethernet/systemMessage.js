@@ -9,7 +9,7 @@ export const addSystemConfirmMessage = ({
   yayBtnTitle = 'continue',
   nayBtn = 'Stop',
   nayBtnTitle = 'stop',
-}) => {
+}, ephemeralMessage) => {
 
   if (document.getElementById('systemConfirmMessage').style.display == 'none'){
 
@@ -41,7 +41,9 @@ export const addSystemConfirmMessage = ({
   }
 
   if (msgType === 'systemConfirmMsgConfirmConsentToArchive') {
-    $('#systemConfirmMessage').find('button.yay').mouseup(console.log('how to trigger initiateConsentToArchiveProcess from here?'));
+    $('#systemConfirmMessage').find('button.yay').mouseup(()=> {
+      ephemeralMessage.initiateConsentToArchiveProcess();
+    });
   } 
   else {
     $('#systemConfirmMessage')

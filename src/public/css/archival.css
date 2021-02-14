@@ -1,16 +1,16 @@
 #archivalSpaceLink p::before {
   font: var(--default-font-size) nunito, monospace;
-  content: "☰ ";
+  content: "☰";
+  margin-right: calc(var(--interface-horizontal-margin) / 2);
 }
 
 #archivalSpace {
   background-color: var(--primary-bg-color);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
-  margin: 0;
+  border-bottom: var(--interface-border);
   padding: 0;
-  z-index: 1;
 }
 
 #archivalMessagesContainer {
@@ -29,11 +29,12 @@
 }
 
 .roomGroup {
-  width: 100%;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-content: start;
+  flex-direction: column;
+  padding: calc(var(--interface-horizontal-margin) * 2) calc(var(--interface-horizontal-margin) * 2);
+  color: var(--primary-font-color);
+  line-height: 1.5;
+  overflow-y: scroll;
 }
 
 .textRecord.archival {
@@ -72,7 +73,7 @@
 
 .archivalMessagesDetails {
   width: 100%;
-  padding: var(--default-font-size) 0;
+  padding: 0;
 }
 
 .archiveGroup h1,
@@ -80,6 +81,13 @@
 p.participantNames,
 .archivalMessagesDetails.comment {
   margin: var(--interface-vertical-margin);
+}
+
+button.deleteArchivedMessage{
+  width: var(--btn-small-size);
+  height: var(--btn-small-size);
+  background-color: transparent;
+  border-radius: var(--btn-border-radius);
 }
 
 .archivalMessagesDetails,
@@ -97,8 +105,10 @@ p.participantNames,
 }
 
 p.participantNames,
-.archivalMessagesDetails.comment {
+.archivalMessagesDetails.comment,
+.threadItem {
   color: var(--secondary-font-color);
+  padding-left: var(--default-font-size);
 }
 
 .archivalMessagesDetails .author {
@@ -122,9 +132,19 @@ p.participantNames,
 }
 
 .editorAvatar {
-  width: 10px;
-  height: 10px;
-  margin-left: 10px;
+   width: var(--default-font-size);
+  height: var(--default-font-size);
+  margin-right: calc(var(--interface-horizontal-margin) / 1.5);
+}
+
+.editorName {
+  color: var(--primary-font-color);
+}
+
+.editorName::after {
+  content: ' is editing';
+  font-style: italic;
+  color: var(--secondary-font-color);
 }
 
 #downloadArchives {
@@ -139,6 +159,7 @@ p.participantNames,
 }
 
 .archivalMessagesDetails.hovered {
+  height: inherit;
   background-color: var(--interface-highlight);
 }
 

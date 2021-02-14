@@ -15,12 +15,12 @@
 	--systemMsg-font-size: 20px;
 	--font-to-margin-width-ratio: 35;
 	--body-bg-color: black;
-	--primary-bg-color: black;
+	--primary-bg-color: rgba(75, 0, 130, 0.3);
 	--secondary-bg-color: #282828;
 	--ephemeral-bg-color: Peru;
 	--archival-bg-color: midnightblue;
 	--primary-font-color: white;
-	--secondary-font-color: LavenderBlush;
+	--secondary-font-color: darkSalmon;
 	--interface-gray: Grey;
 	--interface-highlight: #282828;
 	--interface-border-width: 1px;
@@ -37,6 +37,12 @@
 	--cell-horizontal-num: 30;
 	--cell-vertical-num: 17;
 	--cell-size: 5vh;
+	--btn-large-font-size: 30px;
+	--btn-large-size: 35px;
+	--btn-small-font-size: 15px;
+	--btn-small-size: 22px;
+	--btn-border-radius: 50%;
+	--btn-overlay-opacity: 0.8;
 	--avatar-x: 1;
 	--avatar-y: 1;
 	--avatar-outline-color: white;
@@ -80,17 +86,20 @@ body {
 		var(--min-navbar-width) + var(--cell-size) * var(--cell-horizontal-num)
 	);
 }
+button, 
+a.nay,
+a.yay,
+a.confirm{
+	cursor: pointer;
+}
 
-button,
 a.nay,
 a.yay,
 a.confirm {
-	cursor: pointer;
 	background-color: transparent;
 	opacity: var(--overlay-opacity);
 }
 
-button:hover,
 button > span,
 a.nay:hover,
 a.yay:hover,
@@ -121,12 +130,10 @@ a[target="_blank"]::after{
 	background-color: rgba(0, 0, 0, 0.7);
 	position: absolute;
 	z-index: 5;
-	/* margin-top: calc(var(--interface-vertical-margin) / 2); */
 	margin-left: calc(
 		var(--cell-size) * var(--cell-horizontal-num) -
 			var(--ephemeral-msg-container-width) - var(--interface-vertical-margin)
 	);
-	/* margin-bottom: var(--interface-vertical-margin); */
 	color: var(--primary-font-color);
 	font-size: var(--default-font-size);
 	border-radius: var(--interface-border-radius);
@@ -150,14 +157,6 @@ a[target="_blank"]::after{
 	display: flex;
 	flex-direction: column;
 	z-index: 1;
-}
-
-.sendMessageActions {
-	padding: 0px;
-	background-color: #ffffff;
-	z-index: 1;
-	display: flex;
-	width: 100%;
 }
 
 .btn {
@@ -352,9 +351,12 @@ input[type='color'] {
 }
 
 .removeRoom {
-	margin-left: 10px;
-	border-radius: 50%;
-	border: 1px solid darkgray;
+	margin-left: var(--interface-horizontal-margin);
+	font: var(--btn-small-font-size) nunito, monospace;
+	width: var(--btn-small-size);
+	height: var(--btn-small-size);
+	border-radius: var(--btn-border-radius);
+	border: var(--interface-border);
 }
 
 #newRoomId {

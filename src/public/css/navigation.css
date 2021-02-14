@@ -38,11 +38,40 @@
   width: 100%;
   color: var(--secondary-font-color);
   justify-content: space-between;
+  align-items: center;
   display: flex;
 }
 
-.navigation h3 button {
+.navigation button {
+  opacity: var(--btn-overlay-opacity);
+}
+
+.navigation button:hover{
+  opacity: 1;
+}
+
+#addRoom {
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}
+
+#addRoom h2{
+  display: flex;
+  font: var(--default-font-size) nunito, monospace;
   color: var(--secondary-font-color);
+}
+
+#addRoom h3,
+#changeUserName h3 {
+  display: flex;
+  font: var(--btn-large-font-size) nunito, monospace;
+  width: var(--btn-large-font-size);
+  height: var(--btn-large-font-size);
+  margin: 0;
+  padding: 0;
 }
 
 .roomList-container {
@@ -89,24 +118,46 @@
   width: 100%;
   padding: 10px var(--default-font-size);
   align-items: center;
+  width: 100%;
+  min-height: var(--sendmessage-height);
+  padding: var(--interface-vertical-margin) var(--interface-horizontal-margin);
   border-top: var(--interface-border);
 }
 
 #changeUserAvatar {
+  display: flex;
+  order: 1;
   width: var(--default-font-size);
   height: var(--default-font-size);
-  margin-right: var(--interface-horizontal-margin);
+  margin-right: calc(var(--interface-horizontal-margin) / 1.5);
+}
+
+input[type='color'],
+input[type='color' i] {
+  width: inherit;
+  height: inherit;
+  background-color: transparent;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+
+.userName {
+  display: flex;
+  order: 2;
 }
 
 #changeUserName {
-  font-size: var(--default-font-size);
-  color: var(--primary-font-color);
   display: flex;
-  align-items: center;
-  flex-grow: 1;
-  width: 100%;
+  order: 3;
 }
 
 #changeUserName span {
-  margin-right: var(--interface-horizontal-margin);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0;
+  padding: 0;
 }

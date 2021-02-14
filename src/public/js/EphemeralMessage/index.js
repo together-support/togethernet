@@ -278,7 +278,7 @@ export default class EphemeralMessage {
   };
 
   consentToArchiveButtonClicked = () => {
-    addSystemConfirmMessage(systemConfirmMsgConfirmConsentToArchive);
+    addSystemConfirmMessage(systemConfirmMsgConfirmConsentToArchive, this);
   };
 
   initiateConsentToArchiveProcess = () => {

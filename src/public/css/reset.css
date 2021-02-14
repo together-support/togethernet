@@ -131,8 +131,8 @@ button {
   text-decoration: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-color: var(--primary-bg-color);
-  color: var(--primary-font-color);
+  background-color: inherit;
+  color: inherit;
   padding: 0;
 }
 

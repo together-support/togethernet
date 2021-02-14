@@ -42,7 +42,8 @@
 .ephemeral button.roomLink p::before,
 .archiveGroup h2::before {
   font: var(--default-font-size) nunito, monospace;
-  content: "⌗ ";
+  content: "⌗";
+  margin-right: calc(var(--interface-horizontal-margin) / 2);
 }
 
 .ephemeralMessageContainer.inConsentProcess,

@@ -27,6 +27,8 @@
   background-color: var(--primary-bg-color);
   border-top: var(--interface-border);
   align-items: center;
+  display: flex;
+	z-index: 1;
 }
 
 .sendMessageActions button {
