@@ -64,12 +64,33 @@ export const renderEphemeralDetails = (roomId, messageId) => {
   return $ephemeralRecordDetails;
 };
 
-const renderCloseButton = (message) => {
-  const $removeMessageButton = $('<button>x</button>');
-  $removeMessageButton.on('click', () => {
-    message.purgeSelf();
-  });
-  return $removeMessageButton;
+const renderConsentToArchiveButton = (message) => {
+  const { archivedMessageId, consentToArchiveRecords = {} } = message.messageData;
+  const $consentToArchiveButton = $(
+    '<button class="initConsentToArchiveProcess" title="ask for consent to archive">☰</button>'
+  );
+
+  if (
+    archivedMessageId &&
+    Object.keys(consentToArchiveRecords).includes(
+      store.getCurrentUser().socketId
+    )
+  ) {
+    $consentToArchiveButton.addClass('checked');
+    $consentToArchiveButton.on('click', () => {
+      fetch(`archive/${archivedMessageId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      }).catch((e) => console.log(e));
+    });
+  } else {
+    $consentToArchiveButton.on('click', (e) => {
+      e.stopPropagation();
+      message.consentToArchiveButtonClicked();
+    });
+  }
+
+  return $consentToArchiveButton;
 };
 
 const renderConsentfulGestures = (message) => {
@@ -103,7 +124,7 @@ const renderConsentfulGestures = (message) => {
 
 const renderCreatePollButton = (message) => {
   const $makeVoteButton = $(
-    '<button class="makeVote"><i class="fas fa-check"></i></button>'
+    '<button class="makeVote">✓</button>'
   );
 
   $makeVoteButton.on('click', (e) => {
@@ -141,31 +162,10 @@ const renderMajorityRulesButtons = (message) => {
   return $majorityRulesTemplate;
 };
 
-const renderConsentToArchiveButton = (message) => {
-  const {archivedMessageId, consentToArchiveRecords = {}} = message.messageData;
-  const $consentToArchiveButton = $(
-    '<button class="initConsentToArchiveProcess" title="ask for consent to archive"><i class="fas fa-align-justify"></i></button>'
-  );
-
-  if (
-    archivedMessageId &&
-    Object.keys(consentToArchiveRecords).includes(
-      store.getCurrentUser().socketId
-    )
-  ) {
-    $consentToArchiveButton.addClass('checked');
-    $consentToArchiveButton.on('click', () => {
-      fetch(`archive/${archivedMessageId}`, {
-        method: 'DELETE',
-        headers: {'Content-Type': 'application/json'},
-      }).catch((e) => console.log(e));
-    });
-  } else {
-    $consentToArchiveButton.on('click', (e) => {
-      e.stopPropagation();
-      message.consentToArchiveButtonClicked();
-    });
-  }
-
-  return $consentToArchiveButton;
+const renderCloseButton = (message) => {
+  const $removeMessageButton = $('<button>✕</button>');
+  $removeMessageButton.on('click', () => {
+    message.purgeSelf();
+  });
+  return $removeMessageButton;
 };

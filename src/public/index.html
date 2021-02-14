@@ -70,7 +70,7 @@
     <div class="chat" id="rooms">
       <div class="ephemeralMessageContainer right" style="display: none;">
         <div class="pinnedMessageContainer">
-          <p class="pinnedMessagesSummary"><i class="fas fa-thumbtack collapsed"></i><span id="pinnedMessageCount"></span></p>
+          <p class="pinnedMessagesSummary"><span id="pinnedMessageCount"></span></p>
           <div class="pinnedMessages" style="display: none;">
           </div>
         </div>
@@ -89,7 +89,7 @@
       </div>
 
       <div class="sendMessageActions">
-        <button class="btn icon" title="pin message" id="pinMessage" name="pinMessage"><i class="fas fa-thumbtack collapsed"></i></button>
+        <button class="btn icon" title="amplify a message" id="pinMessage" name="pinMessage"></button>
         <input type="text" id="writeMessage" name="text" placeholder="Type your message here" />
         <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives" style="display: none;">
           <i class="fa fa-download "></i>
@@ -137,7 +137,7 @@
           <div class = "yay-container">
             <p></p>
             <button class="yay" style="display: none"></button>
-            <a class="yay" href="" style="display: none">test</a>
+            <a class="yay" href="" style="display: none"></a>
           </div>
 
           </div>
@@ -149,39 +149,45 @@
         <!-- Modal content -->
         <div class="modalContent long configureRoomView" id="configureRoom-1">
           <div class="section">
-            <h2>Create an ephemeral channel</h2>
+            <h2>Create an Ephemeral Channel</h2>
           </div>
   
           <div class="section">
-            <h3>Ephemeral Channel Title</h3>
-            <p>Customize the name of your sandbox around a topic (max 25 characters).</p>
-            <input id="newRoomId"type="text" placeholder="convening-on-the-beach"/>
+            <h3>Name</h3>
+            <p>Set the name of your channel around a discussion topic (max 25 characters).</p>
+            <input id="newRoomId"type="text" placeholder="⌗ e.g. resources"/>
           </div>
   
           <div class="section" id="configureMeetingMode">
-            <h3>Select a mode of Communication</h3>
+            <h3>Meeting Modes</h3>
             <div name="meetingMode" id="meetingMode"></div>
           </div>
   
-          <p>Learn more about the modes of communication&nbsp;<a href="#">here</a>.</p>
-  
           <div class="section" id="configureFacilitators" style="display:none;">
-            <h3>Facilitator Module</h3>
-            <p id="configureFacilitatorsDA">You have the option to add 0-3 facilitattors for your room. You may hand the facilitator role to someone else at a later point.</p>
-            <p id="configureFacilitatorsFac">You have the option to add 1-3 facilitattors for your room. You may hand the facilitator role to someone else at a later point.</p>
+            <h3>Facilitated Mode</h3>
+            <p id="configureFacilitatorsDA">The channel creator can appoint 0~3 facilitator(s) in this mode. If a facilitator is appointed, they can use the amplify feature to outline agendas, ask questions and guide conversations. Participants in the room also have access to the
+            consentful gesture feature, which enables participants to provide secondary feedback, such as “agree”, “hesitant”,
+            “disagree”, “block” on a message.</p>
+            <p id="configureFacilitatorsFac">The channel creator can appoint 1~3 facilitator(s) in this mode. The facilitators may use the amplify feature to outline agendas, ask questions and guide conversations.</p>
+            
             <div class="facilitatorsContainer">
-              <button id="addFacilitator">Set facilitators</button>
+              <button id="addFacilitator">Set Facilitator(s)</button>
               <div id="currentFacilitators"></div>
             </div>
+          </div>
+
+          <div class="section " id="amplifyModuleInfo" style="display:none;">
+            <h3>Amplify Module</h3>
+            <p>Enables facilitator(s) to amplify agendas and leading questions to guide conversations in the channel.</p>
           </div>
   
           <div class="section " id="votingModuleInfo" style="display:none;">
             <h3>Voting Module</h3>
-            <p>A voting module will be added to your room, favoring decisions made by more than half of the team members.</p>
+            <p>Enables participants to turn any message into a voting poll.</p>
           </div>
           <div class="section " id="consentfulGestureInfo" style="display:none;">
             <h3>Consentful Gesture Module</h3>
-            <p>The consentful gesture module includes "Agree", "Disagree", "Oppose", "Block", making it possible to express feedback and needs through non-verbal means.</p>
+            <p>Enables participants to provide secondary feedback, such as “agree”, “hesitant”, “disagree”, or “block” on a message.</p>
           </div>
           <div class="section modalButtons">
             <button id="createNewRoom">Create</button>
@@ -201,10 +207,10 @@
     <script src="/js/bundle.js"></script>
     <template id="consentfulGesturesTemplate">
       <div class="votingButtons">
-        <button class="consentfulGesture voteOption agree" data-value="agree"><img src="/svg/agree.svg"/><span class="voteCount">0</span></button>
-        <button class="consentfulGesture voteOption disagree" data-value="disagree"><img src="/svg/disagree.svg"/><span class="voteCount">0</span></button>
-        <button class="consentfulGesture voteOption stand" data-value="stand"><img src="/svg/stand.svg"/><span class="voteCount">0</span></button>
-        <button class="consentfulGesture voteOption block" data-value="block"><img src="/svg/block.svg"/><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption agree" data-value="agree" title="agree"><h3>⇈</h3><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption stand" data-value="stand" title="hesitant"><h3>⇄</h3><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption disagree" data-value="disagree" title="disagree"><h3>⇊</h3><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption block" data-value="block" title="block"><h3>ᳵ</h3><span class="voteCount">0</span></button>
       </div>
     </template>
     <template id="majorityRulesTemplate">
@@ -234,8 +240,8 @@
     <template id="archivalMessagesDetailsTemplate">
       <div class="archivalMessagesDetails">
         <div class="archivalMessageActions" style="display:none;">
-          <button class="commentArchivedMessage" title="add a comment">C</button>
-          <button class="deleteArchivedMessage" title="delete this message">X</button>
+          <button class="commentArchivedMessage" title="add a comment">Comment</button>
+          <button class="deleteArchivedMessage" title="delete this message">✕</button>
         </div>
         <p class="content">
           <span class="index"></span>

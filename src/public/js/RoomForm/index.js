@@ -103,6 +103,7 @@ export default class RoomForm {
     if (this.options.mode === roomModes.egalitarian) {
       this.clearFacilitators();
       $('#configureFacilitators').hide();
+      $('#amplifyModuleInfo').hide();
       $('#votingModuleInfo').hide();
       $('#consentfulGestureInfo').hide();
     } else if (this.options.mode === roomModes.facilitated) {
@@ -115,12 +116,14 @@ export default class RoomForm {
       $('#configureFacilitatorsFac').show();
       $('#configureFacilitators').show();
       $('#consentfulGestureInfo').hide();
+      $('#amplifyModuleInfo').show();
       $('#votingModuleInfo').show();
     } else if (this.options.mode === roomModes.directAction) {
       this.clearFacilitators();
       $('#configureFacilitatorsFac').hide();
       $('#configureFacilitatorsDA').show();
       $('#configureFacilitators').show();
+      $('#amplifyModuleInfo').show();
       $('#votingModuleInfo').hide();
       $('#consentfulGestureInfo').show();
     }
