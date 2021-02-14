@@ -45,7 +45,15 @@ export const addSystemConfirmMessage = ({
       ephemeralMessage.initiateConsentToArchiveProcess();
     });
     $('#systemConfirmMessage').find('button.nay').mouseup(clearSystemMessage);
-  } 
+  } else if (msgType === 'systemConfirmMsgConfirmRevokeConsentToArchive'){
+    $('#systemConfirmMessage').find('button.yay').mouseup(() => {
+      fetch(`archive/${ephemeralMessage.archivedMessageId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      }).catch((e) => console.log(e));
+    });
+    $('#systemConfirmMessage').find('button.nay').mouseup(clearSystemMessage);
+  }
   else {
     $('#systemConfirmMessage')
       .find('button.yay')

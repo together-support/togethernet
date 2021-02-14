@@ -1,7 +1,10 @@
 import store from '@js/store';
 import {roomModes} from '@js/constants';
 import isPlainObject from 'lodash/isPlainObject';
-
+import {
+  addSystemConfirmMessage,
+} from '@js/Togethernet/systemMessage';
+import { systemConfirmMsgConfirmRevokeConsentToArchive } from '@js/constants.js';
 export const renderEphemeralDetails = (roomId, messageId) => {
   const room = store.getRoom(roomId);
   const message = room.ephemeralHistory[messageId];
@@ -78,10 +81,7 @@ const renderConsentToArchiveButton = (message) => {
   ) {
     $consentToArchiveButton.addClass('checked');
     $consentToArchiveButton.on('click', () => {
-      fetch(`archive/${archivedMessageId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-      }).catch((e) => console.log(e));
+      addSystemConfirmMessage(systemConfirmMsgConfirmRevokeConsentToArchive, message.messageData);
     });
   } else {
     $consentToArchiveButton.on('click', (e) => {

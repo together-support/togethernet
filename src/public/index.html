@@ -37,7 +37,7 @@
 
       <div class ="roomList-container">
         <div class="roomsList ephemeral">
-          <button class="" type="button" id="addRoom" title="add a new ephemeral channel"><h2>Ephemeral Channels</h2><h3>&#65291;</h3></button>
+          <button type="button" id="addRoom" title="add a new ephemeral channel"><h2>Ephemeral Channels</h2><h3>&#65291;</h3></button>
           <button type="button" class="roomLink" id="sitting-at-the-parkLink">
             <p>sitting-at-the-park</p>
             <div class="participantsContainer"></div>
@@ -53,9 +53,16 @@
         </div>
       </div>
 
+                <!-- <button class="" type="button" id="addRoom" title="add a new ephemeral channel">
+                  <h2>Ephemeral Channels</h2>
+                  <h3>&#65291;</h3>
+                </button>
+ -->
+
       <div class="userInfo ephemeral">
-        <input type="color" id="changeUserAvatar" title="change avatar color" name="userAvatar">
-        <button id="changeUserName" title="change name"><span class="userName"></span><i class="fas fa-pencil-alt "></i></button>
+        <div><input type="color" id="changeUserAvatar" title="change avatar color" name="userAvatar"></div>
+        <div><button id="changeUserName" title="change name"><span class="userName"></span></button></div>
+        <!-- <div><h3>✎</h3></div> -->
       </div>
       <div class="userInfo editorInfo" style="display:none">
         <div class="editorOptions" style="display:none;">
@@ -84,7 +91,7 @@
       <div class="ephemeralView room" id="sitting-at-the-park" tabindex="0">
         <div class="consentToArchiveOverlay" style="display: none;">
           <div id="systemPopupMessage">
-            <p>Read the floating message to decide if you'd like for it to be archived.<br /><br />Then on your keyboard, enter – <br/><br /></p> <p class = "keyIcon">S</p> <p> to stop the process, or </p><p class="keyIcon">Y</p> <p>to give your consent.</p>
+            <p>Review the highlighted message to decide if you'd like for it to be archived.<br /><br />Once you have come to a decision, enter – <br/><br /></p> <p class = "keyIcon">S</p> <p> to stop the process, or </p><p class="keyIcon">Y</p> <p>to give your consent.</p>
           </div>
         </div>
       </div>

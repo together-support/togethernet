@@ -335,8 +335,9 @@ input[type='color'] {
 #systemPopupMessage{
 	width: 600px;
 	margin: auto;
-	padding: var(--interface-horizontal-margin);
+	padding: calc(var(--interface-horizontal-margin)*4);
 	background-color: var(--systemMsg-bg-color);
+	border-radius: var(--interface-border-radius);
 }
 
 #systemPopupMessage p{

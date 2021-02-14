@@ -14,7 +14,7 @@ export const systemConfirmMsgEphemeralRoom = {
   msgBody:
     'You and a friend are sitting in your usual corner of the park on a picnic blanket speaking among each other.',
   msgFooter:
-    'In the ephemeral channel your conversations are private and encrypted by default. However the underlying webRTC protocol does expose your public IP address and there is still a possibility for your geolocation and messages to be tracked.',
+    'In the ephemeral channel your conversations are private and encrypted by default. However the underlying webRTC protocol does leave some exposure. If you\'d like to learn more about this, we invite you to dig deeper.',
   yayText: 'Sounds good, I\'m enthusiastic to participate!',
   nayText: 'I\'d like to review how the ephemeral channel works.',
   yayBtn: 'Continue',
@@ -45,9 +45,9 @@ export const systemConfirmMsgConfirmConsentToArchive = {
   msgHeader: 'Consent to Archive',
   msgBody:
     'Consent to archive is a feature that publishes a single message or a thread to the archival channel. When the consent to archive process is initiated, all activities in the space are paused and participants are asked to give their consent for the selected message to be archived.',
-  msgFooter: 'This feature requires consent from every participants. The message will not be archived if a participant decides to stop the process. Once a message has been archived, participants also have the ability to revoke their consent and bring the archived message back to the ephemeral channel. ',
+  msgFooter: 'This feature requires consent from each participant. The message will not be archived if a participant decides to stop the process. Once a message has been archived, participants also have the ability to revoke their consent and bring the archived message back to the ephemeral channel. ',
   yayText: 'I would like to ask for everyone\'s consent to archive the selected message.',
-  nayText: 'I don\'t think I want to do this right now.',
+  nayText: 'I would prefer not to start this process.',
   yayBtn: 'Initiate Consent to Archive',
   yayBtnTitle: 'initiate consent to archive',
   nayBtn: 'Return to the Channel',
@@ -59,7 +59,7 @@ export const systemConfirmMsgInitiateConsentToArchiveProcess = {
   msgHeader: 'Requested Consent to Archive',
   msgBody: 'You have just initiated the consent to archive process.',
   msgFooter:
-    'Consent to archive is a feature that publishes a chosen message or thread to the database. All participants, including the requester will have to give their consent for the message to be archived.',
+    'Consent to archive is a feature that publishes a chosen message or thread to the database. The consent of each participant, including the requester, is required in order for this message to be archived.',
   yayText: 'I understand, and I\'m enthusiastic to participate!',
   nayText: 'Wait. I\'d like to learn more before participating.',
   yayBtn: 'Continue',
@@ -73,13 +73,26 @@ export const systemConfirmMsgConsentToArchive = {
   msgHeader: 'Consent to Archive Requested',
   msgBody: 'has just initiated the consent to archive process.',
   msgFooter:
-    'Consent to archive is a feature that publishes a chosen message or thread to the database. The consent of all participants is required in order for the message to be archived.',
+    'Consent to archive is a feature that publishes a chosen message or thread to the database. The consent of each participant is required in order for this message to be archived.',
   yayText: 'I understand the process and feel comfortable moving forward.',
   nayText: 'I do not fully understand and would like to learn more before participating.',
   yayBtn: 'Continue',
   yayBtnTitle: 'continue to the next step',
   nayBtn: { href: true },
   nayBtnTitle: 'open external link to dig deeper on consent to archive'
+};
+
+export const systemConfirmMsgConfirmRevokeConsentToArchive = {
+  msgType: 'systemConfirmMsgConfirmRevokeConsentToArchive',
+  msgHeader: 'Revoke Consent to Archive',
+  msgBody: 'Revoking your consent will reverse the consent to archive process and bring this message from the archival channel back to the ephemeral channel. It is recommended that you discuss with your group before proceeding.',
+  msgFooter: 'The selected message will be deleted from the database if you revoke your consent. However, this doesn\'t prevent participants from archiving the message again during the remaining session.',
+  yayText: 'I understand and would like to revoke my consent.',
+  nayText: 'I feel comfortable with this message remaining in the archive.',
+  yayBtn: 'Revoke Consent',
+  yayBtnTitle: 'revoke consent',
+  nayBtn: 'Return to Channel',
+  nayBtnTitle: 'return to channel'
 };
 
 export const systemNotifyMsgDisconnect = {

@@ -42,11 +42,11 @@
   display: flex;
 }
 
-.navigation button {
+.navigation button, .userInfo button  {
   opacity: var(--btn-overlay-opacity);
 }
 
-.navigation button:hover{
+.navigation button:hover, .userInfo button:hover{
   opacity: 1;
 }
 
@@ -112,14 +112,12 @@
 }
 
 .userInfo {
-  min-height: var(--sendmessage-height);
   display: flex;
   flex-direction: row;
   width: 100%;
-  padding: 10px var(--default-font-size);
-  align-items: center;
-  width: 100%;
   min-height: var(--sendmessage-height);
+  /* justify-content: space-between; */
+  align-items: center;
   padding: var(--interface-vertical-margin) var(--interface-horizontal-margin);
   border-top: var(--interface-border);
 }
@@ -147,17 +145,10 @@ input[type='color' i] {
 .userName {
   display: flex;
   order: 2;
+  color: var(--primary-font-color);
 }
 
-#changeUserName {
+#changeUserName h3 {
   display: flex;
   order: 3;
-}
-
-#changeUserName span {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin: 0;
-  padding: 0;
 }
