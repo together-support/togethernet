@@ -49,7 +49,6 @@
 	--btn-small-size: 22px;
 	--btn-border-radius: 50%;
 	--btn-overlay-opacity: 0.8;
-	--btn-inactive-opacity: 0.3;
 	--btn-inverted-color: whitesmoke;
 	--btn-inverted-font-color: black;
 	--input-focus-border: 2px solid blue;
@@ -215,6 +214,12 @@ input[type='color'] {
 	color: white;
 }
 
+#systemConfirmMessage,
+#systemNotifyMessage, 
+#systemPopupMessage {
+	z-index: 100;
+}
+
 #systemConfirmMessage > .modalContent,
 #systemNotifyMessage > .modalContent {
 	display: flex;
@@ -311,15 +316,32 @@ input[type='color'] {
 }
 
 #systemPopupMessage{
+	/* position: absolute;
+	display: flex;
+	flex-direction: column;
+	width: 600px;
+	height: 150px;
+	top: calc(var(--cell-size) * var(--cell-vertical-num) - 150px - var(--interface-horizontal-margin));
+	margin-left: var(--interface-horizontal-margin);
+	/* background-color: var(--systemMsg-bg-color); */
+	/* width: 600px;
+	height: 50%;
+	background-color: indigo;
+	border-radius: var(--interface-border-radius);
+	overflow-y: scroll;
+	right: calc(var(--interface-vertical-margin) / 2); */
+
+
 	display: flex;
 	flex-direction: column;
   	width: var(--ephemeral-msg-container-width);
 	height: 23%;;
 	min-width: 300px;
 	min-height: 100px;
+	/* background-color: rgba(0, 0, 0, 0.7); */
 	background-color: black;
 	position: absolute;
-	z-index: 10;
+	z-index: 5;
 	top: calc(var(--cell-size) * var(--cell-vertical-num) - 23% - var(--interface-horizontal-margin));
 	margin-left: calc(
 		var(--cell-size) * var(--cell-horizontal-num) - var(--ephemeral-msg-container-width) - (var(--interface-vertical-margin)*2)
@@ -332,10 +354,27 @@ input[type='color'] {
 	overflow-y: scroll;
 }
 
-#systemConfirmMessage,
-#systemNotifyMessage, 
-#systemPopupMessage {
-	z-index: 100;
+.ephemeralMessageContainer {
+  width: 300px;
+  min-width: 300px;
+  min-height: 100px;
+  max-height: var(--ephemeral-msg-container-height);
+  background-color: rgba(0, 0, 0, 0.7);
+  position: absolute;
+  z-index: 5;
+  margin-top: var(--interface-horizontal-margin);
+  margin-bottom: var(--interface-horizontal-margin);
+	margin-left: calc(
+		var(--cell-size) * var(--cell-horizontal-num) -
+			var(--ephemeral-msg-container-width) - var(--interface-vertical-margin)
+	);
+  color: var(--primary-font-color);
+  font-size: var(--default-font-size);
+  border-radius: var(--interface-border-radius);
+  border: var(--interface-border);
+  overflow-y: scroll;
+  display:flex;
+  flex-direction: column;
 }
 
 .modalContent .modalButtons {

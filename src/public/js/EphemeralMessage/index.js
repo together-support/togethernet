@@ -329,10 +329,10 @@ export default class EphemeralMessage {
     $('.initConsentToArchiveProcess').hide();
     $('#writeMessage').attr('disabled', 'disabled');
     $('#writeMessage').attr('placeholder', 'Messaging currently unavailable');
+
     this.getMessagesInThread().forEach((message) =>
       message.$textRecord().addClass('inConsentProcess')
     );
-  }
   };
 
   getNextMessage = () => {
