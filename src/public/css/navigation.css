@@ -1,6 +1,6 @@
 .navigation {
   background-color: var(--primary-bg-color);
-  width: var(--min-navbar-width);
+  width: var(--navbar-width);
   height: calc(
     var(--cell-vertical-num) * var(--cell-size) + var(--sendmessage-height)
   );

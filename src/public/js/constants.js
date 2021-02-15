@@ -125,6 +125,16 @@ export const systemNotifyNewFacilitator = {
     'continue'
 };
 
+export const systemNotifyMsgRevokedConsent = {
+  msgType: 'systemNotifyMsgRevokedConsent',
+  msgHeader: 'Revoked Consent',
+  msgBody:
+    'You have revoked your consent to archive and the selected message has been removed from the database.',
+  confirmBtn: 'Return to Channel',
+  confirmBtnTitle:
+    'return to channel'
+};
+
 export const systemNotifyMsgGiveConsentToArchive = {
   msgType: 'systemNotifyMsgGiveConsentToArchive',
   msgHeader: 'Consent Received',
@@ -149,4 +159,9 @@ export const systemNotifyMsgConsentToArchiveBlocked = {
   msgBody: 'has stopped the consent to archive process. It is encouraged that you discuss the rationales for whether a message should be archived with your group.',
   confirmBtn: 'Return to Channel',
   confirmBtnTitle: 'return to the channel'
+};
+
+export const systemPopupMsgConsentToArchive = {
+  msgType: 'systemPopupMsgConsentToArchive',
+  msgBody: 'Review the highlighted message to decide if you\'d like for it to be archived. Once you have come to a decision, enter – "S" to stop the process, "Y" to give your consent.'
 };

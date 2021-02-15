@@ -4,6 +4,8 @@ import isPlainObject from 'lodash/isPlainObject';
 import {
   addSystemConfirmMessage,
   addSystemNotifyMessage,
+  addSystemPopupMessage,
+  clearSystemPopupMessage,
   clearSystemMessage
 } from '@js/Togethernet/systemMessage';
 import {
@@ -11,7 +13,8 @@ import {
   systemConfirmMsgConsentToArchive,
   systemConfirmMsgInitiateConsentToArchiveProcess,
   systemNotifyMsgBlockConsentToArchive,
-  systemNotifyMsgGiveConsentToArchive
+  systemNotifyMsgGiveConsentToArchive,
+  systemPopupMsgConsentToArchive
 } from '@js/constants.js';
 import sample from 'lodash/sample';
 import transform from 'lodash/transform';
@@ -316,7 +319,7 @@ export default class EphemeralMessage {
   performConsentToArchive = () => {
     this.messageData.inConsentToArchiveProcess = true;
     const { roomId } = this.messageData;
-
+    addSystemPopupMessage(systemPopupMsgConsentToArchive);
     this.$textRecord().addClass('inConsentProcess');
     $('#user .avatar').addClass('inConsentProcess');
     $('.ephemeralMessageContainer').addClass('inConsentProcess');
@@ -324,6 +327,8 @@ export default class EphemeralMessage {
     $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
     $(`#${roomId}`).on('keyup', this.consentToArchiveActions);
     $('.initConsentToArchiveProcess').hide();
+    $('#writeMessage').attr('disabled', 'disabled');
+    $('#writeMessage').attr('placeholder', 'Messaging currently unavailable');
 
     this.getMessagesInThread().forEach((message) =>
       message.$textRecord().addClass('inConsentProcess')
@@ -549,6 +554,9 @@ export default class EphemeralMessage {
     $(`#${roomId}`).find('#user .avatar').removeClass('inConsentProcess');
     $(`#${roomId}`).find('.consentToArchiveOverlay').hide();
     $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
+    clearSystemPopupMessage();
+    $('#writeMessage').removeAttr('disabled');
+    $('#writeMessage').attr('placeholder', 'Type your message here');
   };
 
   indicateMessagesInThread = () => {

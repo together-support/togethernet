@@ -1,3 +1,5 @@
+import {systemNotifyMsgRevokedConsent} from '@js/constants.js';
+
 export const addSystemConfirmMessage = ({
   msgType = '',
   msgHeader = '',
@@ -51,6 +53,7 @@ export const addSystemConfirmMessage = ({
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       }).catch((e) => console.log(e));
+      addSystemNotifyMessage(systemNotifyMsgRevokedConsent);
     });
     $('#systemConfirmMessage').find('button.nay').mouseup(clearSystemMessage);
   }
@@ -88,9 +91,24 @@ export const addSystemNotifyMessage = ({
 
       $('#systemNotifyMessage').show();
     }
+
     $('#systemNotifyMessage')
       .find('button.confirm')
       .mouseup('mouseup', clearSystemMessage);
+  }
+};
+
+export const addSystemPopupMessage = ({
+  msgType = '',
+  msgBody = '',
+}) => {
+
+  if (document.getElementById('systemPopupMessage').style.display == 'none') {
+    $('#systemPopupMessage').find('p').text(msgBody);
+    $('#systemPopupMessage').show();
+    $('#systemPopupMessage')
+      .find('button.deletePopupMessage')
+      .mouseup('mouseup', clearSystemPopupMessage);
   }
 };
 
@@ -100,6 +118,12 @@ export const clearSystemMessage = () => {
   $('.yay').hide();
   $('.nay').hide();
   $('.confirm').hide();
+  const $visibleEphmeralRoom = $('.room:visible').get(0);
+  $visibleEphmeralRoom && $visibleEphmeralRoom.focus();
+};
+
+export const clearSystemPopupMessage = () => {
+  $('#systemPopupMessage').hide();
   const $visibleEphmeralRoom = $('.room:visible').get(0);
   $visibleEphmeralRoom && $visibleEphmeralRoom.focus();
 };

@@ -51,16 +51,24 @@
   z-index: 15;
 }
 
+.ephemeralRecord.inConsentProcess{
+  opacity: 1;
+}
+
 .ephemeralMessageContainer {
-  width: 300px;
-  min-width: 300px;
+  width: var(--ephemeral-msg-container-width);
+  height: var(--ephemeral-msg-container-height);
+  min-width: 200px;
   min-height: 100px;
-  max-height: 80%;
   background-color: rgba(0, 0, 0, 0.7);
   position: absolute;
   z-index: 5;
   margin-top: var(--interface-horizontal-margin);
   margin-bottom: var(--interface-horizontal-margin);
+	margin-left: calc(
+		var(--cell-size) * var(--cell-horizontal-num) -
+			var(--ephemeral-msg-container-width) - (var(--interface-vertical-margin) * 2)
+	);
   color: var(--primary-font-color);
   font-size: var(--default-font-size);
   border-radius: var(--interface-border-radius);
@@ -68,10 +76,6 @@
   overflow-y: scroll;
   display:flex;
   flex-direction: column;
-}
-
-.ephemeralMessageContainer.right {
-  right: var(--interface-horizontal-margin);
 }
 
 .pinnedMessageContainer {
@@ -120,7 +124,8 @@
 
 .ephemeralRecordDetails p {
   display: inline-block;
-  width: 30px;
+  width: 100%;
+  word-break: break-word;
 }
 
 .votingButtonsContainer {
@@ -158,9 +163,9 @@
 }
 
 .consentToArchiveOverlay {
-  width: calc(var(--cell-size) * var(--cell-horizontal-num));
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  width: calc(var(--cell-size) * var(--cell-horizontal-num) - 4px);
+  height: calc(var(--cell-size) * var(--cell-vertical-num) - 4px);
+  background-color: var(--consentToArchiveOverlay-bg-color);
   z-index: 9;
   position: absolute;
 }

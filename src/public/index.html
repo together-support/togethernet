@@ -53,12 +53,6 @@
         </div>
       </div>
 
-                <!-- <button class="" type="button" id="addRoom" title="add a new ephemeral channel">
-                  <h2>Ephemeral Channels</h2>
-                  <h3>&#65291;</h3>
-                </button>
- -->
-
       <div class="userInfo ephemeral">
         <div><input type="color" id="changeUserAvatar" title="change avatar color" name="userAvatar"></div>
         <div><button id="changeUserName" title="change name"><span class="userName"></span></button></div>
@@ -75,24 +69,26 @@
     </div>
 
     <div class="chat" id="rooms">
-      <div class="ephemeralMessageContainer right" style="display: none;">
+
+      <div class="ephemeralMessageContainer" style="display: none;">
         <div class="pinnedMessageContainer">
           <p class="pinnedMessagesSummary"><span id="pinnedMessageCount"></span></p>
           <div class="pinnedMessages" style="display: none;">
           </div>
         </div>
-
         <div class="nonPinnedMessageContainer">
           <div class="nonPinnedMessages">
           </div>
         </div>
       </div>
+
+      <div id="systemPopupMessage" style="display: none;">
+        <button class="deletePopupMessage" title="remove notification">✕</button>
+        <p class="inline"></p>
+      </div>
       
       <div class="ephemeralView room" id="sitting-at-the-park" tabindex="0">
         <div class="consentToArchiveOverlay" style="display: none;">
-          <div id="systemPopupMessage">
-            <p>Review the highlighted message to decide if you'd like for it to be archived.<br /><br />Once you have come to a decision, enter – <br/><br /></p> <p class = "keyIcon">S</p> <p> to stop the process, or </p><p class="keyIcon">Y</p> <p>to give your consent.</p>
-          </div>
         </div>
       </div>
       <div class="archivalView room" id="archivalSpace" style="display:none;">
@@ -161,6 +157,7 @@
         <div class="modalContent long configureRoomView" id="configureRoom-1">
           <div class="section">
             <h2>Create an Ephemeral Channel</h2>
+            <p></p>
           </div>
   
           <div class="section">
@@ -176,8 +173,7 @@
   
           <div class="section" id="configureFacilitators" style="display:none;">
             <h3>Facilitated Mode</h3>
-            <p id="configureFacilitatorsDA">The channel creator can appoint 0~3 facilitator(s) in this mode. If a facilitator is appointed, they can use the amplify feature to outline agendas, ask questions and guide conversations. Participants in the room also have access to the
-            consentful gesture feature, which enables participants to provide secondary feedback, such as “agree”, “hesitant”,
+            <p class="inline" id="configureFacilitatorsDA">The channel creator can appoint 0~3 facilitator(s) in this mode. If a facilitator is appointed, they can use the <p class="inline circleIcon feature">✦</p> <p class="inline feature"> amplify feature</p><p class="inline">to outline agendas, ask questions and guide conversations. Participants in the room also have access to the consentful gesture feature, which enables participants to provide secondary feedback, such as “agree”, “hesitant”,
             “disagree”, “block” on a message.</p>
             <p id="configureFacilitatorsFac">The channel creator can appoint 1~3 facilitator(s) in this mode. The facilitators may use the amplify feature to outline agendas, ask questions and guide conversations.</p>
             
@@ -188,8 +184,8 @@
           </div>
 
           <div class="section " id="amplifyModuleInfo" style="display:none;">
-            <h3>Amplify Module</h3>
-            <p>Enables facilitator(s) to amplify agendas and leading questions to guide conversations in the channel.</p>
+           <h3 class="inline circleIcon feature">✦</h3><h3>Amplify Module</h3>
+            <p>Enables facilitator(s) to amplify messages. This feature may be useful for creating agendas and leading questions to guide conversations in the space.</p>
           </div>
   
           <div class="section " id="votingModuleInfo" style="display:none;">

@@ -22,18 +22,24 @@
 	--primary-font-color: white;
 	--secondary-font-color: darkSalmon;
 	--interface-gray: Grey;
-	--interface-highlight: #282828;
 	--interface-border-width: 1px;
 	--interface-border: var(--interface-border-width) solid dimgrey;
-	--button-border: var(--interface-border-width) solid dimgrey;
+	--interface-horizontal-margin: 1vw;
+	--interface-vertical-margin: 1vh;
+	--interface-highlight: #282828;
 	--interface-border-radius: 5px;
+	--ephemeral-msg-container-width: 25vw;
+	--ephemeral-msg-container-height: 60%;
+	--button-border: var(--interface-border-width) solid dimgrey;
+	--button-clicked-border: var(--interface-border-width) solid LightGray;
 	--newly-joined-avatar-outline-color: DeepSkyBlue;
 	--overlay-color: black;
 	--overlay-opacity: 0.5;
+	--consentToArchiveOverlay-bg-color:rgb(160, 82, 45, 0.8);
 	--ephemeral-record-opacity: 0.6;
 	--systemMsg-bg-color: black;
 	--systemMsg-overlay-opacity: 1;
-	--min-navbar-width: 20vw;
+	--navbar-width: 20vw;
 	--cell-horizontal-num: 30;
 	--cell-vertical-num: 17;
 	--cell-size: 5vh;
@@ -49,10 +55,6 @@
 	--avatar-x: 1;
 	--avatar-y: 1;
 	--avatar-outline-color: white;
-	--interface-horizontal-margin: 1vw;
-	--interface-vertical-margin: 1vh;
-	--interface-highlight: #282828;
-	--ephemeral-msg-container-width: 25vw;
 	--sendmessage-height: 10vh;
 }
 
@@ -86,7 +88,7 @@ body {
 		var(--cell-size) * var(--cell-vertical-num) + var(--sendmessage-height)
 	);
 	width: calc(
-		var(--min-navbar-width) + var(--cell-size) * var(--cell-horizontal-num)
+		var(--navbar-width) + var(--cell-size) * var(--cell-horizontal-num)
 	);
 }
 button, 
@@ -119,32 +121,6 @@ a[target="_blank"]::after{
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-}
-
-.ephemeralMessageContainer {
-	width: var(--ephemeral-msg-container-width);
-	min-width: 300px;
-	min-height: 100px;
-	max-height: calc(
-		var(--cell-size) * var(--cell-vertical-num) -
-			var(--interface-vertical-margin)
-	);
-	background-color: rgba(0, 0, 0, 0.7);
-	position: absolute;
-	z-index: 5;
-	margin-left: calc(
-		var(--cell-size) * var(--cell-horizontal-num) -
-			var(--ephemeral-msg-container-width) - var(--interface-vertical-margin)
-	);
-	color: var(--primary-font-color);
-	font-size: var(--default-font-size);
-	border-radius: var(--interface-border-radius);
-	border: var(--interface-border);
-	overflow-y: scroll;
-}
-
-.ephemeralMessageContainer.right {
-	/* right: calc(var(--interface-vertical-margin) / 2); */
 }
 
 #messages li {
@@ -287,6 +263,13 @@ input[type='color'] {
 	color: var(--secondary-font-color);
 }
 
+.deletePopupMessage{
+	align-self: flex-end;
+	font-size: var(--btn-small-font-size);
+	color: var(--btn-inverted-color);
+	padding: var(--interface-vertical-margin);
+}
+
 #systemConfirmMessage .yay-container,
 #systemConfirmMessage .nay-container {
 	display: block;
@@ -333,15 +316,65 @@ input[type='color'] {
 }
 
 #systemPopupMessage{
+	/* position: absolute;
+	display: flex;
+	flex-direction: column;
 	width: 600px;
-	margin: auto;
-	padding: calc(var(--interface-horizontal-margin)*4);
-	background-color: var(--systemMsg-bg-color);
+	height: 150px;
+	top: calc(var(--cell-size) * var(--cell-vertical-num) - 150px - var(--interface-horizontal-margin));
+	margin-left: var(--interface-horizontal-margin);
+	/* background-color: var(--systemMsg-bg-color); */
+	/* width: 600px;
+	height: 50%;
+	background-color: indigo;
 	border-radius: var(--interface-border-radius);
+	overflow-y: scroll;
+	right: calc(var(--interface-vertical-margin) / 2); */
+
+
+	display: flex;
+	flex-direction: column;
+  	width: var(--ephemeral-msg-container-width);
+	height: 23%;;
+	min-width: 300px;
+	min-height: 100px;
+	/* background-color: rgba(0, 0, 0, 0.7); */
+	background-color: black;
+	position: absolute;
+	z-index: 5;
+	top: calc(var(--cell-size) * var(--cell-vertical-num) - 23% - var(--interface-horizontal-margin));
+	margin-left: calc(
+		var(--cell-size) * var(--cell-horizontal-num) - var(--ephemeral-msg-container-width) - (var(--interface-vertical-margin)*2)
+	);
+	padding: var(--interface-horizontal-margin);
+	color: var(--primary-font-color);
+	font-size: var(--default-font-size);
+	border-radius: var(--interface-border-radius);
+	border: var(--interface-border);
+	overflow-y: scroll;
 }
 
-#systemPopupMessage p{
-	display: inline;
+.ephemeralMessageContainer {
+  width: 300px;
+  min-width: 300px;
+  min-height: 100px;
+  max-height: var(--ephemeral-msg-container-height);
+  background-color: rgba(0, 0, 0, 0.7);
+  position: absolute;
+  z-index: 5;
+  margin-top: var(--interface-horizontal-margin);
+  margin-bottom: var(--interface-horizontal-margin);
+	margin-left: calc(
+		var(--cell-size) * var(--cell-horizontal-num) -
+			var(--ephemeral-msg-container-width) - var(--interface-vertical-margin)
+	);
+  color: var(--primary-font-color);
+  font-size: var(--default-font-size);
+  border-radius: var(--interface-border-radius);
+  border: var(--interface-border);
+  overflow-y: scroll;
+  display:flex;
+  flex-direction: column;
 }
 
 .modalContent .modalButtons {
@@ -389,6 +422,10 @@ input[type='color'] {
 
 .hasError:focus {
 	outline: 2 px solid red;
+}
+
+p.inline{
+	display: inline;
 }
 
 p.keyIcon{

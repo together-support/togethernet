@@ -45,7 +45,7 @@
 
 #writeMessage {
   width: calc(
-    var(--cell-size) * var(--cell-horizontal-num) - var(--min-navbar-width)
+    var(--cell-size) * var(--cell-horizontal-num) - var(--navbar-width)
   );
   height: 35px;
   border-radius: 25px;
@@ -62,10 +62,27 @@
   border: var(--input-focus-border);
 }
 
+#pinMessage{
+  margin-left: var(--interface-horizontal-margin);
+}
+
+#pinMessage:hover{
+  opacity: 1;
+}
+
+#pinMessage:focus {
+  outline: none;
+}
+
 #pinMessage::after, p.pinnedMessagesSummary::before {
-  content: '☆';
+  content: '✧';
+  opacity: var(--btn-overlay-opacity);
+}
+
+#pinMessage.clicked {
+  border: var(--button-clicked-border);
 }
 
 #pinMessage.clicked::after {
-  content: '★'; 
+  content: '✦';
 }

@@ -194,7 +194,7 @@ p.participantNames,
 }
 
 .editorOptions {
-  width: var(--min-navbar-width);
+  width: var(--navbar-width);
   position: absolute;
   border: var(--interface-border);
   bottom: 100%;
