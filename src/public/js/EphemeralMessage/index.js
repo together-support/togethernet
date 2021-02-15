@@ -317,6 +317,8 @@ export default class EphemeralMessage {
     this.consentToArchiveReceived(store.getCurrentUser());
     addSystemMessage('You\'ve given your consent to archive this message.\n\nClick on the screen to wait for other peers to give their consent.');
     const {id, roomId} = this.messageData;
+    const room = store.getRoom(roomId);
+
     store.sendToPeers({
       type: 'giveConsentToArchive', 
       data: {
@@ -324,12 +326,15 @@ export default class EphemeralMessage {
         messageId: id,
       }
     });
+
+    if (Object.keys(this.messageData.consentToArchiveRecords).length === Object.keys(room.memberships.members).length) {
+      this.archiveMessage();
+    }
   }
 
   consentToArchiveReceived = (user) => {
     const {socketId, avatar} = user.getProfile();
-    const {consentToArchiveRecords = {}, roomId} = this.messageData;
-    const room = store.getRoom(roomId);
+    const {consentToArchiveRecords = {}} = this.messageData;
     if (!consentToArchiveRecords[socketId]) {
       this.messageData.consentToArchiveRecords = {...consentToArchiveRecords, [socketId]: user.getProfile()};
     }
@@ -346,10 +351,6 @@ export default class EphemeralMessage {
     });
 
     $consentIndicator.appendTo(this.$textRecord());
-
-    if (Object.keys(this.messageData.consentToArchiveRecords).length === Object.keys(room.memberships.members).length) {
-      this.archiveMessage();
-    }
   }
 
   getArchivedMessageBody = () => {
