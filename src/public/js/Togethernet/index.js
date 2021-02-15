@@ -3,6 +3,10 @@ import Room from '@js/Room';
 import ArchivalSpace from '@js/ArchivalSpace';
 import RoomForm from '@js/RoomForm';
 import {sendMessage} from '@js/EphemeralMessage/sendText';
+import {
+  addSystemConfirmMessage
+} from '@js/Togethernet/systemMessage';
+import { systemConfirmMsgEphemeralRoom } from '@js/constants.js';
 import store from '@js/store';
 import publicConfig from '@public/config';
 import {EGALITARIAN_MODE} from '@js/constants';
@@ -39,6 +43,7 @@ class Togethernet {
       roomId: 'sitting-at-the-park',
     });
     defaultEphemeralRoom.attachEvents();
+    addSystemConfirmMessage(systemConfirmMsgEphemeralRoom);
     return defaultEphemeralRoom;
   };
 
