@@ -1,44 +1,61 @@
 @font-face {
-  font-family: nunito;
-  src: url(../font/nunito/Nunito-Regular.ttf);
+	font-family: nunito;
+	src: url(../font/nunito/Nunito-Regular.ttf);
 }
 
 @font-face {
-  font-family: nunito-bold;
-  src: url(../font/nunito/Nunito-Bold.ttf);
-  font-weight: bold;
+	font-family: nunito-bold;
+	src: url(../font/nunito/Nunito-Bold.ttf);
+	font-weight: bold;
 }
 
 :root {
-  --default-font-size: 16px;
-  --systemMsg-font-size: 20px;
-  --primary-bg-color: black;
-  --secondary-bg-color: #282828;
-  --ephemeral-bg-color: Peru;
-  --archival-bg-color: midnightblue;
-  --primary-font-color: whitesmoke;
-  --secondary-font-color: gray;
-  --interface-gray: Grey;
-  --interface-highlight: #282828;
-  --interface-border-width: 1px;
-  --interface-border: var(--interface-border-width) solid darkgray;
-  --interface-border-radius: 5px;
-  --avatar-outline-color: whitesmoke;
-  --newly-joined-avatar-outline-color: #0eb7da;
-  --overlay-color: black;
-  --overlay-opacity: 0.5;
-  --systemMsg-overlay-opacity: 0.8;
-  --min-navbar-width: 20vw;
-  --cell-horizontal-num: 30;
-  --cell-vertical-num: 17;
-  --cell-size: 5vh;
-  --avatar-x: 1;
-  --avatar-y: 1;
-  --interface-horizontal-margin: 1vw;
-  --interface-vertical-margin: 1vh;
-  --interface-highlight: #282828;
-  --ephemeral-msg-container-width: 25vw;
-  --sendmessage-height: 10vh;
+	--default-font-size: 18px;
+	--systemMsg-header-font-size: 24px;
+	--systemMsg-font-size: 20px;
+	--font-to-margin-width-ratio: 35;
+	--body-bg-color: black;
+	--primary-bg-color: rgba(75, 0, 130, 0.3);
+	--secondary-bg-color: #282828;
+	--ephemeral-bg-color: Peru;
+	--archival-bg-color: midnightblue;
+	--primary-font-color: white;
+	--secondary-font-color: darkSalmon;
+	--interface-gray: Grey;
+	--interface-border-width: 1px;
+	--interface-border: var(--interface-border-width) solid dimgrey;
+	--interface-horizontal-margin: 1vw;
+	--interface-vertical-margin: 1vh;
+	--interface-highlight: #282828;
+	--interface-border-radius: 5px;
+	--ephemeral-msg-container-width: 25vw;
+	--ephemeral-msg-container-height: 60%;
+	--button-border: var(--interface-border-width) solid dimgrey;
+	--button-clicked-border: var(--interface-border-width) solid LightGray;
+	--newly-joined-avatar-outline-color: DeepSkyBlue;
+	--overlay-color: black;
+	--overlay-opacity: 0.5;
+	--consentToArchiveOverlay-bg-color:rgb(160, 82, 45, 0.8);
+	--ephemeral-record-opacity: 0.6;
+	--systemMsg-bg-color: black;
+	--systemMsg-overlay-opacity: 1;
+	--navbar-width: 20vw;
+	--cell-horizontal-num: 30;
+	--cell-vertical-num: 17;
+	--cell-size: 5vh;
+	--btn-large-font-size: 30px;
+	--btn-large-size: 35px;
+	--btn-small-font-size: 15px;
+	--btn-small-size: 22px;
+	--btn-border-radius: 50%;
+	--btn-overlay-opacity: 0.8;
+	--btn-inverted-color: whitesmoke;
+	--btn-inverted-font-color: black;
+	--input-focus-border: 2px solid blue;
+	--avatar-x: 1;
+	--avatar-y: 1;
+	--avatar-outline-color: white;
+	--sendmessage-height: 10vh;
 }
 
 body,
@@ -52,204 +69,333 @@ button p,
 #writeMessage,
 #_privateSendBtn,
 #messageType,
-#systemMessage span,
+#systemConfirmMessage span,
 .textBubble p {
-  font: 16px nunito, monospace;
+	font: var(--default-font-size) nunito, monospace;
 }
 
 body {
-  background-color: var(--primary-bg-color);
-  padding: 2.5vh;
+	background-color: var(--body-bg-color);
+	padding: 2.5vh;
 }
 
 .container {
-  position: relative;
-  margin: auto;
-  display: flex;
-  flex-direction: row;
-  height: calc(
-    var(--cell-size) * var(--cell-vertical-num) + var(--sendmessage-height)
-  );
-  width: calc(
-    var(--min-navbar-width) + var(--cell-size) * var(--cell-horizontal-num)
-  );
+	position: relative;
+	margin: auto;
+	display: flex;
+	flex-direction: row;
+	height: calc(
+		var(--cell-size) * var(--cell-vertical-num) + var(--sendmessage-height)
+	);
+	width: calc(
+		var(--navbar-width) + var(--cell-size) * var(--cell-horizontal-num)
+	);
+}
+button, 
+a.nay,
+a.yay,
+a.confirm{
+	cursor: pointer;
 }
 
-button {
-  cursor: pointer;
-  background-color: transparent;
-  opacity: var(--overlay-opacity);
+a.nay,
+a.yay,
+a.confirm {
+	background-color: transparent;
+	opacity: var(--overlay-opacity);
 }
 
-button:hover,
-button > span {
-  opacity: 1;
+button > span,
+a.nay:hover,
+a.yay:hover,
+a.confirm {
+	opacity: 1;
+}
+
+a[target="_blank"]::after{
+  content: ' 🔗';
+  margin: 0 0px 0 0px;
 }
 
 #messages {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
 }
 
 #messages li {
-  padding: 5px 10px;
+	padding: 5px 10px;
 }
 
 #messages li:nth-child(odd) {
-  background: #eee;
+	background: #eee;
 }
 
 .col {
-  display: flex;
-  flex-direction: column;
-  z-index: 1;
-}
-
-.sendMessageActions {
-  padding: 0px;
-  background-color: #ffffff;
-  z-index: 1;
-  display: flex;
-  width: 100%;
+	display: flex;
+	flex-direction: column;
+	z-index: 1;
 }
 
 .btn {
-  margin: 0;
-  height: 50px;
-  border: 0.5px solid gray;
-  background-color: #efefef;
+	margin: 0;
+	height: 50px;
+	border: 0.5px solid gray;
+	background-color: #efefef;
 }
 
 .participantsContainer {
-  display: flex;
-  height: 10px;
-  margin-top: 5px;
+	display: flex;
+	height: 10px;
+	margin-top: 5px;
 }
 
 .participant {
-  height: 10px;
-  width: 10px;
-  margin-right: 4px;
+	height: 10px;
+	width: 10px;
+	margin-right: 4px;
 }
 
 .icon {
-  font-size: var(--default-font-size);
+	font-size: var(--default-font-size);
 }
 
 .btn:hover {
-  cursor: pointer;
+	cursor: pointer;
 }
 
-input[type="color"]::-webkit-color-swatch-wrapper {
-  padding: 0;
+input[type='color']::-webkit-color-swatch-wrapper {
+	padding: 0;
 }
 
-input[type="color"]::-webkit-color-swatch {
-  border: none;
+input[type='color']::-webkit-color-swatch {
+	border: none;
 }
 
-input[type="color"] {
-  -webkit-appearance: none;
-  border: none;
+input[type='color'] {
+	-webkit-appearance: none;
+	border: none;
 }
 
 .hidden {
-  display: none;
+	display: none;
 }
 
 .modalOverlay {
-  display: none;
-  position: fixed;
-  z-index: 100;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: scroll;
-  background-color: var(--overlay-color);
-  opacity: var(--systemMsg-overlay-opacity);
+	display: none;
+	position: fixed;
+	z-index: 100;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: scroll;
+	background-color: var(--systemMsg-bg-color);
+	opacity: var(--systemMsg-overlay-opacity);
 }
 
 .modalContent {
-  margin: auto;
-  width: calc(var(--cell-size) * var(--cell-horizontal-num));
+	margin: auto;
+	width: calc(var(--cell-size) * var(--cell-horizontal-num));
 }
 
 .modalContent.long {
-  height: calc(var(--cell-size) * var(--cell-vertical-num) + 50px);
+	padding: 5% 0;
 }
 
 .modalContent.short {
-  height: calc(var(--cell-size) * var(--cell-vertical-num));
+	height: calc(var(--cell-size) * var(--cell-vertical-num));
 }
 
 .configureRoomView {
-  padding: 55px;
-  background-color: rgba(0, 0, 0, 0.8);
-  line-height: 2;
-  color: white;
+	padding: 55px;
+	background-color: rgba(0, 0, 0, 0.8);
+	line-height: 2;
+	color: white;
 }
 
-#systemMessage {
-  z-index: 100;
+#systemConfirmMessage > .modalContent,
+#systemNotifyMessage > .modalContent {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
-#systemMessage > .modalContent {
-  display: flex;
-  justify-content: center;
+#systemConfirmMessage h1,
+#systemConfirmMessage p,
+#systemConfirmMessage h6,
+#systemConfirmMessage .button-container,
+#systemNotifyMessage h1,
+#systemNotifyMessage p,
+#systemNotifyMessage .button-container {
+	margin: auto;
+	width: calc(var(--default-font-size) * var(--font-to-margin-width-ratio));
+	padding-top: 3%;
 }
 
-#systemMessage span {
-  font: var(--systemMsg-font-size) nunito, monospace;
-  color: white;
-  margin: auto;
-  width: 50%;
-  min-width: 500px;
-  padding-top: 5%;
-  color: white;
+#systemConfirmMessage h1,
+#systemNotifyMessage h1 {
+	font-size: var(--systemMsg-header-font-size);
+	color: var(--primary-font-color);
+}
+
+#systemConfirmMessage h1,
+#systemNotifyMessage h1 {
+	font-family: nunito-bold, monospace;
+}
+
+#systemConfirmMessage p,
+#systemNotifyMessage p,
+#systemPopupMessage p,
+.confirm-container p {
+	font-size: var(--systemMsg-header-font-size) nunito, monospace;
+	color: var(--primary-font-color);
+}
+
+#systemConfirmMessage h6 {
+	font: var(--default-font-size) nunito, monospace;
+	color: var(--secondary-font-color);
+}
+
+.deletePopupMessage{
+	align-self: flex-end;
+	font-size: var(--btn-small-font-size);
+	color: var(--btn-inverted-color);
+	padding: var(--interface-vertical-margin);
+}
+
+#systemConfirmMessage .yay-container,
+#systemConfirmMessage .nay-container {
+	display: block;
+	float: left;
+	width: 48%;
+	margin-top: 2%;
+	margin-bottom: 2%;
+	padding: var(--default-font-size);
+	border: var(--interface-border);
+}
+
+#systemConfirmMessage .yay-container {
+	float: right;
+}
+
+.confirm-container {
+	width: 100%;
+}
+
+#systemConfirmMessage .yay-container p,
+#systemConfirmMessage .nay-container p,
+#systemNotifyMessage .confirm-container p {
+	width: 100%;
+	min-height: calc(var(--default-font-size) * 5);
+	margin: auto;
+}
+
+#systemConfirmMessage button.yay,
+#systemConfirmMessage button.nay,
+#systemConfirmMessage a.yay,
+#systemConfirmMessage a.nay,
+#systemNotifyMessage button.confirm,
+#systemNotifyMessage a.confirm {
+	display: block;
+	width: 90%;
+	text-align: center;
+	color: var(--primary-font-color);
+	text-decoration: none;
+	font: var(--systemMsg-font-size) nunito, monospace;
+	border: var(--button-border);
+	border-radius: var(--interface-border-radius);
+	margin: auto;
+	padding: var(--interface-vertical-margin);
+}
+
+#systemPopupMessage{
+	display: flex;
+	flex-direction: column;
+  	width: var(--ephemeral-msg-container-width);
+	height: 23%;;
+	min-width: 300px;
+	min-height: 100px;
+	background-color: black;
+	position: absolute;
+	z-index: 5;
+	top: calc(var(--cell-size) * var(--cell-vertical-num) - 23% - var(--interface-horizontal-margin));
+	margin-left: calc(
+		var(--cell-size) * var(--cell-horizontal-num) - var(--ephemeral-msg-container-width) - (var(--interface-vertical-margin)*2)
+	);
+	padding: var(--interface-horizontal-margin);
+	color: var(--primary-font-color);
+	font-size: var(--default-font-size);
+	border-radius: var(--interface-border-radius);
+	border: var(--interface-border);
+	overflow-y: scroll;
 }
 
 .modalContent .modalButtons {
-  display: flex;
-  justify-content: flex-end;
+	display: flex;
+	justify-content: flex-end;
 }
 
 .modalContent .modalButtons button {
-  padding: 5px 10px;
-  margin-left: 20px;
-  background-color: #919191;
-  color: #ffffff;
+	padding: 5px 10px;
+	margin-left: 20px;
+	background-color: #919191;
+	color: #ffffff;
 }
 
 .modalContent .section {
-  padding: 0 0 10px 0;
+	padding: 0 0 10px 0;
 }
 
 #messageType {
-  background-color: #efefef;
-  padding: 0 10px;
-  border-top: 0px solid transparent;
+	background-color: #efefef;
+	padding: 0 10px;
+	border-top: 0px solid transparent;
 }
 
 .removeRoom {
-  margin-left: 10px;
-  border-radius: 50%;
-  border: 1px solid darkgray;
+	margin-left: var(--interface-horizontal-margin);
+	font: var(--btn-small-font-size) nunito, monospace;
+	width: var(--btn-small-size);
+	height: var(--btn-small-size);
+	border-radius: var(--btn-border-radius);
+	border: var(--interface-border);
 }
 
 #newRoomId {
-  font-size: 16px;
-  width: 300px;
-  padding: 5px 8px;
-  margin-top: 10px;
-  border-radius: 5px;
+	font-size: var(--default-font-size);
+	width: 300px;
+	padding: 5px 8px;
+	margin-top: 10px;
+	border-radius: 5px;
 }
 
 .hasError {
-  border: 2px solid red;
+	border: 2px solid red;
 }
 
 .hasError:focus {
-  outline: 2 px solid red;
+	outline: 2 px solid red;
+}
+
+p.inline{
+	display: inline;
+}
+
+p.keyIcon{
+	font: var(--default-font-size) nunito-bold, monospace;
+	display: inline-block;
+	padding:0 5px;
+	margin:0;
+	margin-block-start: 0;
+    margin-block-end: 0;
+	line-height: 0;
+	border: var(--interface-border);
+	border-radius: var(--interface-border-radius);
+}
+
+#systemConfirmMessage,
+#systemNotifyMessage, 
+#systemPopupMessage {
+	z-index: 100;
 }

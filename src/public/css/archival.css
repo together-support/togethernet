@@ -1,11 +1,16 @@
+#archivalSpaceLink p::before {
+  font: var(--default-font-size) nunito, monospace;
+  content: "☰";
+  margin-right: calc(var(--interface-horizontal-margin) / 2);
+}
+
 #archivalSpace {
   background-color: var(--primary-bg-color);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
-  margin: 0;
+  border-bottom: var(--interface-border);
   padding: 0;
-  z-index: 1;
 }
 
 #archivalMessagesContainer {
@@ -19,14 +24,17 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  border-bottom: var(--interface-border);
+  padding: 5%;
 }
 
 .roomGroup {
-  width: 100%;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-content: start;
+  flex-direction: column;
+  padding: calc(var(--interface-horizontal-margin) * 2) calc(var(--interface-horizontal-margin) * 2);
+  color: var(--primary-font-color);
+  line-height: 1.5;
+  overflow-y: scroll;
 }
 
 .textRecord.archival {
@@ -56,21 +64,51 @@
   display: flex;
   flex-direction: column;
   background-color: var(--archival-bg-color);
-  padding: calc(var(--interface-horizontal-margin) * 6)
-    calc(var(--interface-horizontal-margin) * 8);
-  color: white;
+  padding: calc(var(--interface-horizontal-margin) * 2)
+    calc(var(--interface-horizontal-margin) * 2);
+  color: var(--primary-font-color);
   line-height: 1.5;
   overflow-y: scroll;
 }
 
 .archivalMessagesDetails {
   width: 100%;
-  padding: 16px 0;
+  padding: 0;
 }
 
-.archiveGroup h3 {
-  font-size: 18px;
-  margin-bottom: 25px;
+.archiveGroup h1,
+.archiveGroup h2,
+p.participantNames,
+.archivalMessagesDetails.comment {
+  margin: var(--interface-vertical-margin);
+}
+
+button.deleteArchivedMessage{
+  width: var(--btn-small-size);
+  height: var(--btn-small-size);
+  background-color: transparent;
+  border-radius: var(--btn-border-radius);
+}
+
+.archivalMessagesDetails,
+.threadItem {
+  margin: var(--interface-vertical-margin)
+    calc(var(--interface-vertical-margin) * 4);
+}
+
+.archiveGroup h1 {
+  font: var(--systemMsg-font-size) nunito-bold, monospace;
+}
+
+.archiveGroup h2 {
+  font: var(--default-font-size) nunito, monospace;
+}
+
+p.participantNames,
+.archivalMessagesDetails.comment,
+.threadItem {
+  color: var(--secondary-font-color);
+  padding-left: var(--default-font-size);
 }
 
 .archivalMessagesDetails .author {
@@ -94,23 +132,34 @@
 }
 
 .editorAvatar {
-  width: 10px;
-  height: 10px;
-  margin-left: 10px;
+   width: var(--default-font-size);
+  height: var(--default-font-size);
+  margin-right: calc(var(--interface-horizontal-margin) / 1.5);
+}
+
+.editorName {
+  color: var(--primary-font-color);
+}
+
+.editorName::after {
+  content: ' is editing';
+  font-style: italic;
+  color: var(--secondary-font-color);
 }
 
 #downloadArchives {
   width: 24px;
   height: 24px;
-  border: 1px solid whitesmoke;
+  border: var(--interface-border);
   border-radius: 5px;
   margin-left: 8px;
   background-color: black;
-  color: whitesmoke;
-  margin: 0 16px;
+  color: var(--primary-font-color);
+  margin: 0 var(--default-font-size);
 }
 
 .archivalMessagesDetails.hovered {
+  height: inherit;
   background-color: var(--interface-highlight);
 }
 
@@ -122,11 +171,11 @@
 }
 
 .archivalMessageActions button {
-  width: 16px;
+  width: var(--default-font-size);
   border-radius: 5px;
   background-color: black;
-  color: whitesmoke;
-  border: 1px solid whitesmoke;
+  color: var(--primary-font-color);
+  border: var(--interface-border);
   margin-left: 8px;
 }
 
@@ -145,9 +194,9 @@
 }
 
 .editorOptions {
-  width: var(--min-navbar-width);
+  width: var(--navbar-width);
   position: absolute;
-  border: 1px solid whitesmoke;
+  border: var(--interface-border);
   bottom: 100%;
   left: 0;
   display: flex;
@@ -155,8 +204,8 @@
 }
 
 .editorOption {
-  padding: 16px;
-  border-bottom: 1px solid whitesmoke;
+  padding: var(--default-font-size);
+  border: var(--interface-border);
   display: flex;
   flex-direction: row;
   align-items: center;

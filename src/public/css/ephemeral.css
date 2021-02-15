@@ -2,7 +2,7 @@
   display: grid;
   grid-template-rows: repeat(var(--cell-vertical-num), var(--cell-size));
   grid-template-columns: repeat(var(--cell-horizontal-num), var(--cell-size));
-  background-color: var(--ephemeral-bg-color);
+  background: var(--ephemeral-bg-color);
 }
 
 .author {
@@ -10,7 +10,8 @@
 }
 
 .ephemeralRecord,
-.threadedRecordOverlay {
+.threadedRecordOverlay,
+.threadedRecordForbiddenOverlay {
   width: var(--cell-size);
   height: var(--cell-size);
 }
@@ -19,13 +20,30 @@
   display: flex;
   flex-wrap: wrap;
   position: relative;
+  opacity: var(--ephemeral-record-opacity);
+}
+
+.threadedRecordOverlay,
+.threadedRecordForbiddenOverlay {
+  position: absolute;
+  z-index: 3;
 }
 
 .threadedRecordOverlay {
   background-color: rgba(0, 0, 255, 0.5);
   outline: blue solid 1px;
-  position: absolute;
-  z-index: 3;
+}
+
+.threadedRecordForbiddenOverlay {
+  background-color: rgba(255, 0, 0, 0.5);
+  outline: red solid 1px;
+}
+
+.ephemeral button.roomLink p::before,
+.archiveGroup h2::before {
+  font: var(--default-font-size) nunito, monospace;
+  content: "⌗";
+  margin-right: calc(var(--interface-horizontal-margin) / 2);
 }
 
 .ephemeralMessageContainer.inConsentProcess,
@@ -33,25 +51,31 @@
   z-index: 15;
 }
 
+.ephemeralRecord.inConsentProcess{
+  opacity: 1;
+}
+
 .ephemeralMessageContainer {
   width: var(--ephemeral-msg-container-width);
-  min-width: 300px;
+  height: var(--ephemeral-msg-container-height);
+  min-width: 200px;
   min-height: 100px;
-  max-height: 80%;
   background-color: rgba(0, 0, 0, 0.7);
   position: absolute;
   z-index: 5;
   margin-top: var(--interface-horizontal-margin);
   margin-bottom: var(--interface-horizontal-margin);
-  color: white;
+	margin-left: calc(
+		var(--cell-size) * var(--cell-horizontal-num) -
+			var(--ephemeral-msg-container-width) - (var(--interface-vertical-margin) * 2)
+	);
+  color: var(--primary-font-color);
   font-size: var(--default-font-size);
   border-radius: var(--interface-border-radius);
   border: var(--interface-border);
   overflow-y: scroll;
-}
-
-.ephemeralMessageContainer.right {
-  right: var(--interface-horizontal-margin);
+  display:flex;
+  flex-direction: column;
 }
 
 .pinnedMessageContainer {
@@ -68,8 +92,10 @@
 }
 
 .ephemeralRecordDetails {
-  width: 100%;
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  width: inherit;
+  padding: var(--default-font-size);
 }
 
 .ephemeralRecordDetails:hover {
@@ -92,13 +118,14 @@
 }
 
 .ephemeralRecordDetails .heading .messageActions button.checked {
-  background-color: whitesmoke;
-  color: black;
+  background-color: var(--btn-inverted-color);
+  color: var(--btn-inverted-font-color);;
 }
 
-.ephemeralRecordDetails .content {
+.ephemeralRecordDetails p {
+  display: inline-block;
   width: 100%;
-  padding-bottom: 16px;
+  word-break: break-word;
 }
 
 .votingButtonsContainer {
@@ -118,23 +145,27 @@
   flex-wrap: nowrap;
   color: black;
   width: 22%;
-  padding: 2px 5px;
+  padding: 2px 10px;
   justify-content: space-between;
+  align-items: center;
+  opacity: var(--btn-overlay-opacity);
 }
 
 .voteOption.myVote {
-  background-color: darkgray;
+  opacity: 1;
 }
 
-.voteOption img {
-  width: 16px;
-  height: 16px;
+.voteOption h3 {
+  display: flex;
+  font: var(--default-font-size) nunito, monospace;
+  margin: 0;
+  padding: 0;
 }
 
 .consentToArchiveOverlay {
-  width: calc(var(--cell-size) * var(--cell-horizontal-num));
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  width: calc(var(--cell-size) * var(--cell-horizontal-num) - 4px);
+  height: calc(var(--cell-size) * var(--cell-vertical-num) - 4px);
+  background-color: var(--consentToArchiveOverlay-bg-color);
   z-index: 9;
   position: absolute;
 }
@@ -147,7 +178,7 @@
 
 .pinnedMessagesSummary {
   cursor: pointer;
-  padding: 16px;
+  padding: var(--default-font-size);
 }
 
 .pinnedMessagesSummary i.collapsed {

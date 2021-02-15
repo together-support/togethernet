@@ -1,7 +1,7 @@
 import store from '@js/store';
 
 export default class Peer {
-  constructor (socketId, peerConnection) {
+  constructor(socketId, peerConnection) {
     this.socketId = socketId;
     this.peerConnection = peerConnection;
 
@@ -21,7 +21,7 @@ export default class Peer {
       ...this.state,
       socketId: this.socketId,
     };
-  }
+  };
 
   $avatar = () => {
     if ($(`#peer-${this.socketId}`).length === 1) {
@@ -29,25 +29,30 @@ export default class Peer {
     } else {
       return this.initAvatar();
     }
-  }
+  };
 
-  initAvatar = () => {    
+  initAvatar = () => {
     const {name, rowStart, columnStart, avatar} = this.state;
     const displayName = name.slice(0, 2);
-    const $avatar = $(`<div class="avatar newlyJoined" id="peer-${this.socketId}"><span>${displayName}<span></div>`);
+    const $avatar = $(
+      `<div class="avatar newlyJoined" id="peer-${this.socketId}"><span>${displayName}<span></div>`
+    );
     $avatar.css({backgroundColor: avatar});
     $avatar[0].style.gridColumnStart = columnStart;
     $avatar[0].style.gridRowStart = rowStart;
 
     $avatar.on('mousedown', () => $avatar.find('.makeFacilitator').show());
 
-    $avatar.delay(1000).animate({outlineColor: 'transparent'}, {
-      duration: 2000,
-      complete: () => $avatar.removeClass('newlyJoined'),
-    });
+    $avatar.delay(1000).animate(
+      {outlineColor: 'transparent'},
+      {
+        duration: 2000,
+        complete: () => $avatar.removeClass('newlyJoined'),
+      }
+    );
 
     return $avatar;
-  }
+  };
 
   getParticipantAvatarEl = () => {
     if ($(`#participant-${this.socketId}`).length === 1) {
@@ -55,10 +60,12 @@ export default class Peer {
     } else {
       return this.initParticipantAvatar();
     }
-  }
+  };
 
   makeFacilitatorButton = (onTransferFacilitator) => {
-    const $makeFacilitatorContainer = $('<div class="longPressButton makeFacilitator" style="display:none"><div class="shortLine"/></div>');
+    const $makeFacilitatorContainer = $(
+      '<div class="longPressButton makeFacilitator" style="display:none"><div class="shortLine"/></div>'
+    );
     const $button = $('<button>Make Facilitator</button>');
     $button.on('mouseup', onTransferFacilitator);
     $button.appendTo($makeFacilitatorContainer);
@@ -67,7 +74,7 @@ export default class Peer {
 
   initialize = (state) => {
     this.state = state;
-  }
+  };
 
   updateState = (options) => {
     this.state = {
@@ -76,30 +83,38 @@ export default class Peer {
     };
 
     const {name, avatar} = this.state;
-    this.$avatar().finish().animate({backgroundColor: avatar}).find('span').text(String(name).slice(0, 2));
+    this.$avatar()
+      .finish()
+      .animate({backgroundColor: avatar})
+      .find('span')
+      .text(String(name).slice(0, 2));
     this.getParticipantAvatarEl().finish().animate({backgroundColor: avatar});
-  }
+  };
 
   updateDataChannel = (dataChannel) => {
     this.dataChannel = dataChannel;
-  }
+  };
 
   updatePosition = ({rowStart, columnStart}) => {
     this.state = {...this.state, rowStart, columnStart};
     this.$avatar()[0].style.gridColumnStart = columnStart;
     this.$avatar()[0].style.gridRowStart = rowStart;
-  }
+  };
 
   initParticipantAvatar = () => {
-    const $avatar = $(`<div class="participant" id="participant-${this.socketId}"></div>`);
+    const $avatar = $(
+      `<div class="participant" id="participant-${this.socketId}"></div>`
+    );
     $avatar.css('background-color', this.state.avatar);
     return $avatar;
-  }
+  };
 
   renderParticipantAvatar = () => {
     const $roomLink = store.getRoom(this.state.currentRoomId).$roomLink;
-    this.getParticipantAvatarEl().appendTo($roomLink.find('.participantsContainer'));
-  }
+    this.getParticipantAvatarEl().appendTo(
+      $roomLink.find('.participantsContainer')
+    );
+  };
 
   joinedRoom = (joinedRoomId) => {
     const $peerAvatar = $(`#peer-${this.socketId}`);
@@ -127,7 +142,7 @@ export default class Peer {
       }
       $avatar.toggleClass('facilitator', room.hasFacilitator(this.socketId));
     }
-    
+
     $avatar.appendTo(room.$room);
-  }
+  };
 }

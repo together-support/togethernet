@@ -37,105 +37,164 @@
 
       <div class ="roomList-container">
         <div class="roomsList ephemeral">
-          <h3>Sandbox<button class="" type="button" id="addRoom" title="add a new channel"><h3>&#65291;</h3></button></h3>
+          <button type="button" id="addRoom" title="add a new ephemeral channel"><h2>Ephemeral Channels</h2><h3>&#65291;</h3></button>
           <button type="button" class="roomLink" id="sitting-at-the-parkLink">
-            <p>&#8983; sitting-at-the-park</p>
+            <p>sitting-at-the-park</p>
             <div class="participantsContainer"></div>
           </button>
         </div>
 
         <div class="roomsList">
-          <h3>Archive</h3>
+          <h3>Archival Channel</h3>
           <button type="button" class="roomLink" id="archivalSpaceLink">
-            <p>&#9776; posting-on-a-bulletin-board</p>
+            <p>posting-on-a-bulletin-board</p>
             <div class="participantsContainer"></div>
           </button>
         </div>
       </div>
 
       <div class="userInfo ephemeral">
-        <input type="color" id="changeUserAvatar" title="change avatar color" name="userAvatar">
-        <button id="changeUserName" title="change name"><span class="userName"></span><i class="fas fa-pencil-alt "></i></button>
+        <div><input type="color" id="changeUserAvatar" title="change avatar color" name="userAvatar"></div>
+        <div><button id="changeUserName" title="change name"><span class="userName"></span></button></div>
+        <!-- <div><h3>✎</h3></div> -->
       </div>
       <div class="userInfo editorInfo" style="display:none">
         <div class="editorOptions" style="display:none;">
         </div>
         <button id="displayEditorOptions">
-          <p class="editorName"><p>
           <div class="editorAvatar"></div>
+          <p class="editorName"><p>
         </button>
       </div>
     </div>
 
     <div class="chat" id="rooms">
-      <div class="ephemeralMessageContainer right" style="display: none;">
+
+      <div class="ephemeralMessageContainer" style="display: none;">
         <div class="pinnedMessageContainer">
-          <p class="pinnedMessagesSummary"><i class="fas fa-thumbtack collapsed"></i><span id="pinnedMessageCount"></span></p>
+          <p class="pinnedMessagesSummary"><span id="pinnedMessageCount"></span></p>
           <div class="pinnedMessages" style="display: none;">
           </div>
         </div>
-
         <div class="nonPinnedMessageContainer">
           <div class="nonPinnedMessages">
           </div>
         </div>
       </div>
+
+      <div id="systemPopupMessage" style="display: none;">
+        <button class="deletePopupMessage" title="remove notification">✕</button>
+        <p class="inline"></p>
+      </div>
+      
       <div class="ephemeralView room" id="sitting-at-the-park" tabindex="0">
-        <div class="consentToArchiveOverlay" style="display: none;"></div>
+        <div class="consentToArchiveOverlay" style="display: none;">
+        </div>
       </div>
       <div class="archivalView room" id="archivalSpace" style="display:none;">
         <div id="archivalMessagesDetailsContainer"></div>
       </div>
 
       <div class="sendMessageActions">
-        <button class="btn icon" title="pin message" id="pinMessage" name="pinMessage"><i class="fas fa-thumbtack collapsed"></i></button>
+        <button class="btn icon" title="amplify a message" id="pinMessage" name="pinMessage"></button>
         <input type="text" id="writeMessage" name="text" placeholder="Type your message here" />
         <a type="button" class="btn icon" title="download archives" id="downloadArchives" name="downloadArchives" style="display: none;">
           <i class="fa fa-download "></i>
         </a>
       </div>
 
-      <div id="systemMessage" class="modalOverlay">
-        <div class="modalContent long"><span></span></div>
+      <div id="systemNotifyMessage" style="display: none" class="modalOverlay">
+        <div class="modalContent long">
+          <h1></h1>
+          <p></p>
+
+          <div class = "button-container">
+          
+          <div class = "confirm-container">
+            <button class="confirm" style="display: none"></button>
+            <a class="confirm" id="systemNotifyMsgDisconnect" href="." style="display: none">Refresh</a>
+            <a class="confirm" id="systemNotifyMsgError" href="." style="display: none">Refresh</a>
+          </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <div id="systemConfirmMessage" style="display: none" class="modalOverlay">
+        <div class="modalContent long">
+          <h1></h1>
+          <p></p>
+          <h6></h6>
+
+          <div class = "button-container">
+
+          <div class="nay-container">
+            <p></p>
+          <button class="nay" style="display: none"></button>
+          <a class="nay" id="systemConfirmMsgEphemeralRoom" href="https://togethernet.app" target="_blank"
+                      style="display: none">Dig Deeper</a>
+          <a class="nay" id="systemConfirmMsgArchivalRoom" href="https://togethernet.app" target="_blank" style="display: none">Dig Deeper</a>
+          <a class="nay" id="systemConfirmMsgDisconnect" href="https://togethernet.app" target="_blank" style="display: none">Refresh</a>
+          <a class="nay" id="systemConfirmMsgInitiateConsentToArchiveProcess" href="https://togethernet.app" target="_blank" style="display: none">Dig Deeper</a>
+          <a class="nay" id="systemConfirmMsgConsentToArchive" href="https://togethernet.app" target="_blank" style="display: none">Dig Deeper</a>
+
+        </div>
+          
+          <div class = "yay-container">
+            <p></p>
+            <button class="yay" style="display: none"></button>
+            <a class="yay" href="" style="display: none"></a>
+          </div>
+
+          </div>
+
+        </div>
       </div>
   
       <div id="configureRoom" class="modalOverlay">
         <!-- Modal content -->
         <div class="modalContent long configureRoomView" id="configureRoom-1">
           <div class="section">
-            <h2>Create a sandbox</h2>
+            <h2>Create an Ephemeral Channel</h2>
+            <p></p>
           </div>
   
           <div class="section">
-            <h3>Sandbox Title</h3>
-            <p>Customize the name of your sandbox around a topic (max 25 characters).</p>
-            <input id="newRoomId"type="text" placeholder="convening-on-the-beach"/>
+            <h3>Name</h3>
+            <p>Set the name of your channel around a discussion topic (max 25 characters).</p>
+            <input id="newRoomId"type="text" placeholder="⌗ e.g. resources"/>
           </div>
   
           <div class="section" id="configureMeetingMode">
-            <h3>Select a mode of Communication</h3>
+            <h3>Meeting Modes</h3>
             <div name="meetingMode" id="meetingMode"></div>
           </div>
   
-          <p>Learn more about the modes of communication&nbsp;<a href="#">here</a>.</p>
-  
           <div class="section" id="configureFacilitators" style="display:none;">
-            <h3>Facilitator Module</h3>
-            <p id="configureFacilitatorsDA">You have the option to add 0-3 facilitattors for your room. You may hand the facilitator role to someone else at a later point.</p>
-            <p id="configureFacilitatorsFac">You have the option to add 1-3 facilitattors for your room. You may hand the facilitator role to someone else at a later point.</p>
+            <h3>Facilitated Mode</h3>
+            <p class="inline" id="configureFacilitatorsDA">The channel creator can appoint 0~3 facilitator(s) in this mode. If a facilitator is appointed, they can use the <p class="inline circleIcon feature">✦</p> <p class="inline feature"> amplify feature</p><p class="inline">to outline agendas, ask questions and guide conversations. Participants in the room also have access to the consentful gesture feature, which enables participants to provide secondary feedback, such as “agree”, “hesitant”,
+            “disagree”, “block” on a message.</p>
+            <p id="configureFacilitatorsFac">The channel creator can appoint 1~3 facilitator(s) in this mode. The facilitators may use the amplify feature to outline agendas, ask questions and guide conversations.</p>
+            
             <div class="facilitatorsContainer">
-              <button id="addFacilitator">Set facilitators</button>
+              <button id="addFacilitator">Set Facilitator(s)</button>
               <div id="currentFacilitators"></div>
             </div>
+          </div>
+
+          <div class="section " id="amplifyModuleInfo" style="display:none;">
+           <h3 class="inline circleIcon feature">✦</h3><h3>Amplify Module</h3>
+            <p>Enables facilitator(s) to amplify messages. This feature may be useful for creating agendas and leading questions to guide conversations in the space.</p>
           </div>
   
           <div class="section " id="votingModuleInfo" style="display:none;">
             <h3>Voting Module</h3>
-            <p>A voting module will be added to your room, favoring decisions made by more than half of the team members.</p>
+            <p>Enables participants to turn any message into a voting poll.</p>
           </div>
           <div class="section " id="consentfulGestureInfo" style="display:none;">
             <h3>Consentful Gesture Module</h3>
-            <p>The consentful gesture module includes "Agree", "Disagree", "Oppose", "Block", making it possible to express feedback and needs through non-verbal means.</p>
+            <p>Enables participants to provide secondary feedback, such as “agree”, “hesitant”, “disagree”, or “block” on a message.</p>
           </div>
           <div class="section modalButtons">
             <button id="createNewRoom">Create</button>
@@ -149,16 +208,16 @@
         </div>
       </div>  
     </div>
-
+    
     </div>
 
     <script src="/js/bundle.js"></script>
     <template id="consentfulGesturesTemplate">
       <div class="votingButtons">
-        <button class="consentfulGesture voteOption agree" data-value="agree"><img src="/svg/agree.svg"/><span class="voteCount">0</span></button>
-        <button class="consentfulGesture voteOption disagree" data-value="disagree"><img src="/svg/disagree.svg"/><span class="voteCount">0</span></button>
-        <button class="consentfulGesture voteOption stand" data-value="stand"><img src="/svg/stand.svg"/><span class="voteCount">0</span></button>
-        <button class="consentfulGesture voteOption block" data-value="block"><img src="/svg/block.svg"/><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption agree" data-value="agree" title="agree"><h3>⇈</h3><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption stand" data-value="stand" title="hesitant"><h3>⇄</h3><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption disagree" data-value="disagree" title="disagree"><h3>⇊</h3><span class="voteCount">0</span></button>
+        <button class="consentfulGesture voteOption block" data-value="block" title="block"><h3>ᳵ</h3><span class="voteCount">0</span></button>
       </div>
     </template>
     <template id="majorityRulesTemplate">
@@ -171,6 +230,7 @@
     <template id="ephemeralRecordTemplate">
       <div class="ephemeralRecord">
         <div class="threadedRecordOverlay" style="display: none"></div>
+        <div class="threadedRecordForbiddenOverlay" style="display: none"></div>
       </div>
     </template>
     <template id="ephemeralRecordDetailsTemplate">
@@ -187,8 +247,8 @@
     <template id="archivalMessagesDetailsTemplate">
       <div class="archivalMessagesDetails">
         <div class="archivalMessageActions" style="display:none;">
-          <button class="commentArchivedMessage" title="add a comment">C</button>
-          <button class="deleteArchivedMessage" title="delete this message">X</button>
+          <button class="commentArchivedMessage" title="add a comment">Comment</button>
+          <button class="deleteArchivedMessage" title="delete this message">✕</button>
         </div>
         <p class="content">
           <span class="index"></span>

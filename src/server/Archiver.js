@@ -1,23 +1,23 @@
 import PGClient from './PGClient.js';
 
 class Archiver {
-  constructor () {
+  constructor() {
     this.archivalClient = new PGClient();
   }
 
-  write ({resource, values, callback}) {
+  write({resource, values, callback}) {
     return this.archivalClient.write({resource, values, callback});
   }
 
-  update ({resource, id, values, callback}) {
+  update({resource, id, values, callback}) {
     return this.archivalClient.update({resource, id, values, callback});
   }
 
-  readAll (resource, callback) {
+  readAll(resource, callback) {
     return this.archivalClient.readAll(resource, callback);
   }
 
-  delete ({resource, id, callback}) {
+  delete({resource, id, callback}) {
     return this.archivalClient.delete({resource, id, callback});
   }
 }

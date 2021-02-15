@@ -1,17 +1,18 @@
 import RoomMembership from '@js/RoomMembership';
 import ArchivedMessage from '@js/ArchivedMessage';
 import store from '@js/store';
-import {addSystemMessage} from '@js/Togethernet/systemMessage';
+import { addSystemConfirmMessage } from '@js/Togethernet/systemMessage';
+import { systemConfirmMsgArchivalRoom } from '@js/constants';
 import groupBy from 'lodash/groupBy';
 import orderBy from 'lodash/orderBy';
 import filter from 'lodash/filter';
 import moment from 'moment';
-import {formatDateString, formatDateLabel} from '@js/utils';
+import { formatDateString, formatDateLabel } from '@js/utils';
 
 class ArchivalSpace {
   static isEphemeral = false;
 
-  constructor () {
+  constructor() {
     this.messageRecords = [];
     this.memberships = new RoomMembership('archivalSpace');
 
@@ -36,10 +37,12 @@ class ArchivalSpace {
   };
 
   goToRoom = () => {
+    addSystemConfirmMessage(systemConfirmMsgArchivalRoom);
+
     $('.userInfo.ephemeral').hide();
     $('.userInfo.editorInfo').show();
     $('#writeMessage').attr('disabled', 'disabled');
-    $('#writeMessage').attr('placeholder', 'Add comment');
+    $('#writeMessage').attr('placeholder', 'Comment on an archived message');
     $('.ephemeralView').hide();
     $('.ephemeralMessageContainer').hide();
     $('#pinMessage').hide();
@@ -49,61 +52,63 @@ class ArchivalSpace {
 
     $('#archivalSpace').show();
     $('#downloadArchives').show();
-    if (this.iAmEditor()) {
-      addSystemMessage('Privacy Scenario: posting-on-a-bulletin-board \n\n You’ve posted a flyer on the bulletin board on your campus. Day in and day out, friends, acquaintances, and strangers pass by and pause to take a look at what you’ve posted. Some of them may even take a photo of the flyer on their phone to show it to other people.');
-    } else {
-      const editorProfile = store.getPeer(this.editor).getProfile();
-      addSystemMessage(`You have landed in the archival channel and ${editorProfile.name} is currently editing`);
-    }
+
     store.sendToPeers({
       type: 'joinedRoom',
       data: {
         joinedRoomId: 'archivalSpace',
       }
     });
-  }
+  };
 
   downloadArchives = () => {
     const archiveContent = $('#archivalMessagesDetailsContainer').html();
     $('#downloadArchives').attr({
-      'download': `togethernetArchives-${moment().format('MM dd YY')}.html`,
-      'href': 'data:text/plain;charset=utf-8,' + encodeURIComponent(archiveContent),
+      download: `togethernetArchives-${moment().format('MM dd YY')}.html`,
+      href:
+        'data:text/plain;charset=utf-8,' + encodeURIComponent(archiveContent),
     });
-  }
+  };
 
   addMember = (user) => {
     if (this.memberships.isEmpty() || !this.editor) {
       this.setEditor(user);
     }
     this.memberships.addMember(user);
-  }
+  };
 
   iAmEditor = () => {
     return this.editor === store.getCurrentUser().socketId;
-  }
+  };
 
   setEditor = (user) => {
-    if (!user) { return; }
+    if (!user) {
+      return;
+    }
     const editorProfile = user.getProfile();
     this.editor = editorProfile.socketId;
     $('#displayEditorOptions').find('.editorName').text(editorProfile.name);
-    $('#displayEditorOptions').find('.editorAvatar').css({backgroundColor: editorProfile.avatar});
-  }
+    $('#displayEditorOptions')
+      .find('.editorAvatar')
+      .css({ backgroundColor: editorProfile.avatar });
+  };
 
   toggleEditorOptionsVisible = () => {
     if ($('.editorOptions').is(':visible')) {
       $('.editorOptions').hide();
     } else {
       $('.editorOptions').empty();
-      Object.values(this.memberships.members).forEach(user => {
-        const {avatar, socketId, name} = user.getProfile();
-        const $editorOption = $(`<button class="editorOption"><p>${name}</p><div class="editorAvatar"></div></button>`);
-        $editorOption.find('.editorAvatar').css({backgroundColor: avatar});
+      Object.values(this.memberships.members).forEach((user) => {
+        const { avatar, socketId, name } = user.getProfile();
+        const $editorOption = $(
+          `<button class="editorOption"><p>${name}</p><div class="editorAvatar"></div></button>`
+        );
+        $editorOption.find('.editorAvatar').css({ backgroundColor: avatar });
         $editorOption.on('click', () => {
           this.setEditor(user);
           store.sendToPeers({
             type: 'editorUpdated',
-            data: {editorId: socketId}
+            data: { editorId: socketId },
           });
           $('.editorOptions').hide();
         });
@@ -111,144 +116,176 @@ class ArchivalSpace {
       });
       $('.editorOptions').show();
     }
-  }
+  };
 
   fetchArchivedMessages = async () => {
     const response = await fetch('/archive', {
       method: 'GET',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
     });
 
-    const messageRecords = await response.json(); 
+    const messageRecords = await response.json();
     this.messageRecords = messageRecords;
-  }
+  };
 
-  archivedMessageUpdated = ({messageData}) => {
-    const {id, content} = messageData;
+  archivedMessageUpdated = ({ messageData }) => {
+    const { id, content } = messageData;
     $(`#archivedMessageDetails-${id}`).find('.content').text(content);
     if (this.isEditingMessageId === id) {
       $(`#archivedMessageRecord-${id}`).removeClass('isEditing');
       this.isEditingMessageId = null;
     }
-  }
+  };
 
-  archivedMessageDeleted = ({messageData}) => {
-    const {id, room_id} = messageData;
+  archivedMessageDeleted = ({ messageData }) => {
+    const { id, room_id } = messageData;
     $(`#archivedMessageDetails-${id}`).remove();
 
     const room = store.getRoom(room_id);
     if (room) {
-      const ephemeralMessage = Object.values(room.ephemeralHistory)
-        .find(message => message.messageData.archivedMessageId === id);
+      const ephemeralMessage = Object.values(room.ephemeralHistory).find(
+        (message) => message.messageData.archivedMessageId === id
+      );
       if (ephemeralMessage) {
         ephemeralMessage.consentToArchiveBlocked();
       }
     }
-  }
+  };
 
-  appendArchivedMessage = ({messageData}) => {
-    const {message_type, commentable_id, room_id, created_at} = messageData;
-    const message = new ArchivedMessage({messageData, index: this.getIndex(messageData)});
+  appendArchivedMessage = ({ messageData }) => {
+    const { message_type, commentable_id, room_id, created_at } = messageData;
+    const message = new ArchivedMessage({
+      messageData,
+      index: this.getIndex(messageData),
+    });
     const $details = message.renderArchivedMessage();
     if (!$(`#dateGroup-${formatDateLabel(created_at)}`).length) {
       this.appendDateGroup(created_at);
     }
 
-    if (!$(`#dateGroup-${formatDateLabel(created_at)} .roomGroup-${room_id}`).length) {
+    if (
+      !$(`#dateGroup-${formatDateLabel(created_at)} .roomGroup-${room_id}`)
+        .length
+    ) {
       this.appendRoomGroup(room_id, created_at);
     }
 
     if (['text_message', 'thread'].includes(message_type)) {
-      $details.appendTo($(`#dateGroup-${formatDateLabel(created_at)} .roomGroup-${room_id}`));
+      $details.appendTo(
+        $(`#dateGroup-${formatDateLabel(created_at)} .roomGroup-${room_id}`)
+      );
     } else if (message_type === 'comment') {
       $details.appendTo($(`#archivedMessageDetails-${commentable_id}`));
     }
-  }
+  };
 
   getIndex = (messageData) => {
-    if (['text_message', 'thread'].includes(messageData.message_type) ) {
+    if (['text_message', 'thread'].includes(messageData.message_type)) {
       return this.getIndexForMessage(messageData);
     } else {
       return this.getIndexForMessageForComment(messageData);
     }
-  }
+  };
 
   getIndexForMessage = (messageData) => {
-    const {room_id, created_at} = messageData;
+    const { room_id, created_at } = messageData;
     const dateString = formatDateLabel(created_at);
     const $dateRoomGroup = $(`#dateGroup-${dateString} .roomGroup-${room_id}`);
     return $dateRoomGroup.find('.archivalMessagesDetails').length + 1;
-  }
+  };
 
   getIndexForMessageForComment = (messageData) => {
-    const {commentable_id} = messageData;
-    const prefix = $(`#archivedMessageDetails-${commentable_id}`).find('.index').first().text();
-    const suffix = $(`#archivedMessageDetails-${commentable_id}`).find('.comment').length + 1;
+    const { commentable_id } = messageData;
+    const prefix = $(`#archivedMessageDetails-${commentable_id}`)
+      .find('.index')
+      .first()
+      .text();
+    const suffix =
+      $(`#archivedMessageDetails-${commentable_id}`).find('.comment').length +
+      1;
     return `${prefix}.${suffix}`;
-  }
+  };
 
   appendDateGroup = (date) => {
-    const $dateGroupForMessageRecords = $(`<div class="archiveGroup dateGroup" id="dateGroup-${formatDateLabel(date)}"></div>`);
-    const $dateHeading = $('<h3></h3>');
+    const $dateGroupForMessageRecords = $(
+      `<div class="archiveGroup dateGroup" id="dateGroup-${formatDateLabel(
+        date
+      )}"></div>`
+    );
+    const $dateHeading = $('<h1></h1>');
     $dateHeading.text(formatDateString(date));
     $dateHeading.appendTo($dateGroupForMessageRecords);
-    $dateGroupForMessageRecords.appendTo($('#archivalMessagesDetailsContainer'));
-  }
+    $dateGroupForMessageRecords.appendTo(
+      $('#archivalMessagesDetailsContainer')
+    );
+  };
 
   appendRoomGroup = (room, date) => {
-    const $roomGroup = $(`<div class="archiveGroup roomGroup roomGroup-${room}"></div>`);
-    const $roomHeading = $('<h3></h3>');
+    const $roomGroup = $(
+      `<div class="archiveGroup roomGroup roomGroup-${room}"></div>`
+    );
+    const $roomHeading = $('<h2></h2>');
     $roomHeading.text(room);
     $roomHeading.appendTo($roomGroup);
 
     $roomGroup.appendTo($(`#dateGroup-${formatDateLabel(date)}`));
-  }
+  };
 
   updateSelf = (data) => {
-    const {editor, memberships} = data;
+    const { editor, memberships } = data;
     this.editor = editor;
-    Object.keys(memberships.members).forEach(memberId => {
+    Object.keys(memberships.members).forEach((memberId) => {
       this.addMember(store.getPeer(memberId));
     });
-  }
+  };
 
   groupedTextMessages = () => {
     const groupedMessages = {};
-    const textMessages = filter(this.messageRecords, (record) => ['text_message', 'thread'].includes(record.message_type));
+    const textMessages = filter(this.messageRecords, (record) =>
+      ['text_message', 'thread'].includes(record.message_type)
+    );
     const dateGroupedMessages = groupBy(textMessages, (messageRecord) => {
       return formatDateString(messageRecord.created_at);
     });
 
-    orderBy(Object.keys(dateGroupedMessages), (date) => moment(date), ['desc', 'asc']).forEach(date => {
+    orderBy(Object.keys(dateGroupedMessages), (date) => moment(date), [
+      'desc',
+      'asc',
+    ]).forEach((date) => {
       groupedMessages[date] = groupBy(dateGroupedMessages[date], 'room_id');
     });
 
     return groupedMessages;
-  }
+  };
 
   renderArchivedMessages = () => {
     const groupedMessages = this.groupedTextMessages();
-    Object.keys(groupedMessages).forEach(date => {
+    Object.keys(groupedMessages).forEach((date) => {
       this.appendDateGroup(date);
       const messagesByDate = groupedMessages[date];
-      Object.keys(messagesByDate).forEach(roomId => {
+      Object.keys(messagesByDate).forEach((roomId) => {
         this.appendRoomGroup(roomId, date);
         messagesByDate[roomId].forEach((messageData) => {
-          this.appendArchivedMessage({messageData});
+          this.appendArchivedMessage({ messageData });
         });
       });
     });
-  }
+  };
 
   renderComments = () => {
-    const comments = filter(this.messageRecords, (record) => record.message_type === 'comment');
-    comments.forEach(messageData => this.appendArchivedMessage({messageData}));
-  }
+    const comments = filter(
+      this.messageRecords,
+      (record) => record.message_type === 'comment'
+    );
+    comments.forEach((messageData) =>
+      this.appendArchivedMessage({ messageData })
+    );
+  };
 
   render = () => {
     this.renderArchivedMessages();
     this.renderComments();
-  }
+  };
 }
 
 export default ArchivalSpace;
