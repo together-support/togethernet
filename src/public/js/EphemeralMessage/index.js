@@ -258,6 +258,7 @@ export default class EphemeralMessage {
     $(`#${roomId}`).find('.consentToArchiveOverlay').show();
     $(`#${roomId}`).off('keyup', this.consentToArchiveActions);
     $(`#${roomId}`).on('keyup', this.consentToArchiveActions);
+    $('.initConsentToArchiveProcess').hide();
 
     this.getMessagesInThread().forEach(message => message.$textRecord().addClass('inConsentProcess'));
   }

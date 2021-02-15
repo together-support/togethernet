@@ -153,3 +153,7 @@
 .pinnedMessagesSummary i.collapsed {
   transform: rotate(-45deg);
 }
+
+.messageActions {
+  display: flex;
+}
