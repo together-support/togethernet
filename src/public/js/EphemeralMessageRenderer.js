@@ -14,7 +14,7 @@ export const renderEphemeralDetails = (roomId, messageId) => {
   } else {
     const myId = store.getCurrentUser().socketId;
   
-    const {id, name, content, socketId, canVote, archivedMessageId, consentToArchiveRecords = {}} = message.messageData;
+    const {id, name, content, socketId, canVote, archivedMessageId, inConsentToArchiveProcess, consentToArchiveRecords = {}} = message.messageData;
   
     $messageDetails.attr('id', `ephemeralDetails-${id}`);
   
@@ -41,7 +41,7 @@ export const renderEphemeralDetails = (roomId, messageId) => {
       $majorityRulesButtons.appendTo($messageDetails.find('.votingButtonsContainer'));
     }
   
-    if (!archivedMessageId || Object.keys(consentToArchiveRecords).includes(store.getCurrentUser().socketId)) {
+    if ((!archivedMessageId || Object.keys(consentToArchiveRecords).includes(store.getCurrentUser().socketId)) && !inConsentToArchiveProcess) {
       const $consentToArchiveButton = renderConsentToArchiveButton(message);
       $consentToArchiveButton.appendTo($messageDetails.find('.messageActions'));
     }
@@ -77,7 +77,7 @@ const renderConsentfulGestures = (message) => {
   });
   
   return $consentfulGesturesTemplate;
-}
+};
 
 const renderCreatePollButton = (message) => {
   const $makeVoteButton = $('<button class="makeVote"><i class="fas fa-check"></i></button>');
@@ -88,7 +88,7 @@ const renderCreatePollButton = (message) => {
   });
 
   return $makeVoteButton;
-}
+};
 
 const renderMajorityRulesButtons = (message) => {
   const {votes} = message.messageData;
@@ -109,7 +109,7 @@ const renderMajorityRulesButtons = (message) => {
   });
   
   return $majorityRulesTemplate;
-}
+};
 
 const renderConsentToArchiveButton = (message) => {
   const {archivedMessageId, consentToArchiveRecords = {}} = message.messageData;
@@ -130,4 +130,4 @@ const renderConsentToArchiveButton = (message) => {
   }
 
   return $consentToArchiveButton;
-}
+};

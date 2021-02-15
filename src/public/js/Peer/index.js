@@ -102,21 +102,26 @@ export default class Peer {
   }
 
   joinedRoom = (joinedRoomId) => {
-    $(`#peer-${this.socketId}`).finish().animate({opacity: 0}, {
-      complete: () => {
-        $(`#peer-${this.socketId}`).css({opacity: 1});
-        $(`#peer-${this.socketId}`)[0].style.gridColumnStart = 1;
-        $(`#peer-${this.socketId}`)[0].style.gridRowStart = 1;
-      }
-    });
-    store.getRoom(joinedRoomId).addMember(this);
+    const $peerAvatar = $(`#peer-${this.socketId}`);
+    const fadeIn = () => {
+      $peerAvatar[0].style.gridColumnStart = 1;
+      $peerAvatar[0].style.gridRowStart = 1;
+      store.getRoom(joinedRoomId).addMember(this);
+    };
+
+    if ($peerAvatar.length) {
+      $peerAvatar.finish().animate({opacity: 0}, {complete: fadeIn});
+    } else {
+      store.getRoom(joinedRoomId).addMember(this);
+    }
   }
 
   render = () => {
     const room = store.getRoom(this.state.currentRoomId);
     const $avatar = this.$avatar();
-
+    
     if (room.constructor.isEphemeral) {
+      $avatar.css({opacity: 1});
       if (room.hasFacilitator(store.getCurrentUser().socketId) && !room.hasFacilitator(this.socketId)) {
         this.makeFacilitatorButton(room.onTransferFacilitator).appendTo($avatar);
       }
