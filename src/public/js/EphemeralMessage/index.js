@@ -370,12 +370,12 @@ export default class EphemeralMessage {
   };
 
   consentToArchiveActions = (e) => {
-    const {
-      consentToArchiveRecords
-    } = this.messageData;
-    const alreadyGaveConsent =
-      isPlainObject(consentToArchiveRecords) &&
-      consentToArchiveRecords[store.getCurrentUser().socketId];
+    const {consentToArchiveRecords, inConsentToArchiveProcess} = this.messageData;
+    if (!inConsentToArchiveProcess) {
+      return;
+    }
+    
+    const alreadyGaveConsent = isPlainObject(consentToArchiveRecords) && consentToArchiveRecords[store.getCurrentUser().socketId];
 
     if (e.key === 'y') {
       if (!alreadyGaveConsent) {
@@ -385,6 +385,7 @@ export default class EphemeralMessage {
       this.blockConsentToArchive();
     }
   };
+
   giveConsentToArchive = () => {
     this.consentToArchiveReceived(store.getCurrentUser());
     addSystemNotifyMessage(systemNotifyMsgGiveConsentToArchive);
