@@ -389,6 +389,7 @@ export default class EphemeralMessage {
     this.consentToArchiveReceived(store.getCurrentUser());
     addSystemNotifyMessage(systemNotifyMsgGiveConsentToArchive);
     const { id, roomId } = this.messageData;
+    const room = store.getRoom(roomId);
     store.sendToPeers({
       type: 'giveConsentToArchive',
       data: {
