@@ -42,7 +42,9 @@ class PGClient {
 
   readAll(resource, callback) {
     this.pool.query(`SELECT * FROM ${resource}`, (error, results) => {
-      callback(results.rows, error);
+      console.log('results', results)
+      console.log('error', error)
+      results && callback(results.rows, error);
     });
   }
 
