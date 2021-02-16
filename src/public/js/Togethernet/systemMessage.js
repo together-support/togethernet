@@ -43,7 +43,7 @@ export const addSystemConfirmMessage = ({
   }
 
   if (msgType === 'systemConfirmMsgConfirmConsentToArchive') {
-    $('#systemConfirmMessage').find('button.yay').mouseup(()=> {
+    $('#systemConfirmMessage').find('button.yay').one('mouseup',()=> {
       ephemeralMessage.initiateConsentToArchiveProcess();
     });
     $('#systemConfirmMessage').find('button.nay').mouseup(clearSystemMessage);
