@@ -86,7 +86,6 @@ p.participantNames,
 button.deleteArchivedMessage{
   width: var(--btn-small-size);
   height: var(--btn-small-size);
-  background-color: transparent;
   border-radius: var(--btn-border-radius);
 }
 
@@ -148,19 +147,26 @@ p.participantNames,
 }
 
 #downloadArchives {
-  width: 24px;
-  height: 24px;
+  width: var(--btn-large-size);
+  height: var(--btn-large-size);
   border: var(--interface-border);
-  border-radius: 5px;
-  margin-left: 8px;
-  background-color: black;
+  border-radius: var(--interface-border-radius);
   color: var(--primary-font-color);
-  margin: 0 var(--default-font-size);
+  margin-left: var(--interface-horizontal-margin);
+  padding-top: calc(var(--btn-large-size)/6);
+  cursor: pointer;
+  text-align: center;
+  opacity: var(--btn-overlay-opacity);
 }
 
+#downloadArchives:hover{
+  opacity: 1;
+}
+
+
 .archivalMessagesDetails.hovered {
-  height: inherit;
   background-color: var(--interface-highlight);
+  cursor: pointer;
 }
 
 .archivalMessageActions {
@@ -171,12 +177,19 @@ p.participantNames,
 }
 
 .archivalMessageActions button {
-  width: var(--default-font-size);
-  border-radius: 5px;
-  background-color: black;
+  width: var(--btn-large-size);
+  height: var(--btn-large-size);
+  font: var(--default-font-size) nunito, monospace;
+  border-radius: var(--btn-border-radius);
   color: var(--primary-font-color);
   border: var(--interface-border);
-  margin-left: 8px;
+  margin-top: var(--interface-horizontal-margin);
+  margin-right: var(--interface-horizontal-margin);
+  opacity: var(--btn-overlay-opacity);
+}
+
+.archivalMessageActions button:hover{
+  opacity: 1;
 }
 
 #writeMessage:disabled {
