@@ -135,16 +135,17 @@
 .votingButtons {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
-.voteOption {
+.voteOption, 
+.feedbackOption {
   background-color: whitesmoke;
   border-radius: 5px;
   display: flex;
   flex-wrap: nowrap;
   color: black;
-  width: 22%;
+  width: 32%;
   padding: 2px 10px;
   justify-content: space-between;
   align-items: center;
