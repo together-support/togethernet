@@ -1,4 +1,4 @@
-export const EGALITARIAN_MODE = 'Egalitarian';
+export const EGALITARIAN_MODE = 'Egalitarian (default)';
 export const DIRECT_ACTION_MODE = 'Feedback';
 export const FACILITATED_MODE = 'Facilitated';
 
