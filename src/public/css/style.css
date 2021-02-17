@@ -102,7 +102,7 @@ a.nay,
 a.yay,
 a.confirm {
 	background-color: transparent;
-	opacity: var(--overlay-opacity);
+	opacity: 1;
 }
 
 button > span,
@@ -110,11 +110,6 @@ a.nay:hover,
 a.yay:hover,
 a.confirm {
 	opacity: 1;
-}
-
-a[target="_blank"]::after{
-  content: ' 🔗';
-  margin: 0 0px 0 0px;
 }
 
 #messages {
