@@ -1,23 +1,17 @@
----
-title: Togethernet Code of Consent v0.1
-created: '2021-02-17T14:53:19.419Z'
-modified: '2021-02-17T15:20:50.896Z'
----
-
 # Togethernet Code of Consent v0.1
 
 The Togethernet Code of Consent (CoC) is a specification that outlines the level of consent and protection that participants have while using the software. Consent is defined as the act of giving permission for something to occur, and we use that term in this document to refer to the permissions that are presented with regards to Togethernet’s users’ data.  
 
 As you read through this Code of Consent, please consider the following invitations: 
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We invite you to take your time. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We invite you to take your time.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We invite you to dig deeper. 
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We welcome your pace. 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We welcome your concerns. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We welcome your pace.   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We welcome your concerns.   
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We invite your enthusiasm.
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We invite your participation.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We invite your enthusiasm.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We invite your participation.  
 
 We acknowledge the trauma that accompanies surrendering information about ourselves in the digital realm without being given insight into how platforms work, and how they protect or expose us in the process.(1) In constructive resistance against that, we offer this document, intended to give you a clear understanding of the ethos and agreements behind this software and how they affect your privacy. 
 
@@ -145,10 +139,11 @@ If you feel you understand and agree to Togethernet’s Code of Consent, we invi
 ----------------------------------------------
 
 Endnote:
-(1) See Also: [Data Trauma](https://www.bitchmedia.org/article/digital-doulas-fixing-data-trauma) by Olivia M. Ross.
-(2) We also ask that a robust politics of citation be adhered to in the adaptation and use of this code and its embedded Code of Consent.
-(3) It is possible to increase the number of participants by changing the environment variable inside the source code, however we don’t recommend doing so without first gaining a good familiarity with how the application works. 
-(4) To learn more about the role of the signaling server, we invite you to visit [WebRTC.org](https://webrtc.org/getting-started/peer-connections). 
+
+(1) See Also: [Data Trauma](https://www.bitchmedia.org/article/digital-doulas-fixing-data-trauma) by Olivia M. Ross.  
+(2) We also ask that a robust politics of citation be adhered to in the adaptation and use of this code and its embedded Code of Consent.  
+(3) It is possible to increase the number of participants by changing the environment variable inside the source code, however we don’t recommend doing so without first gaining a good familiarity with how the application works.   
+(4) To learn more about the role of the signaling server, we invite you to visit [WebRTC.org](https://webrtc.org/getting-started/peer-connections).  
 (5) There can only be one editor at a time in the Archival Channel, and since users maintain default anonymity even in this mode, participants are encouraged to label themselves with a recognizable name (though this does not necessarily need to be a formal or ‘real’ name). 
 
 
