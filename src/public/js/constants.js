@@ -1,6 +1,6 @@
-export const EGALITARIAN_MODE = 'egalitarian';
-export const DIRECT_ACTION_MODE = 'direct-action';
-export const FACILITATED_MODE = 'facilitated';
+export const EGALITARIAN_MODE = 'Egalitarian';
+export const DIRECT_ACTION_MODE = 'Feedback';
+export const FACILITATED_MODE = 'Facilitated';
 
 export const roomModes = {
   egalitarian: EGALITARIAN_MODE,
