@@ -1,3 +1,3 @@
 # Togethernet
 
-Visit the [project website](https://togethernet.cargo.site/) for more info.
+Visit the [project website](https://togethernet-website.herokuapp.com/) for more info.
