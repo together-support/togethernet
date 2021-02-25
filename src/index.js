@@ -11,7 +11,9 @@ import {fileURLToPath} from 'url';
 import SignalingServer from './server/SignalingServer.js';
 import Archiver from './server/Archiver.js';
 
-dotenv.config();
+dotenv.config({path: '.env', silent: true});
+dotenv.config({path: '.dev.env', silent: true});
+
 const app = express();
 app.use(bodyParser.json());
 const server = http.Server(app);
