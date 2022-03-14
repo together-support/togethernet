@@ -1,6 +1,6 @@
 # Togethernet
 
-Visit the [project website](https://togethernet-website.herokuapp.com/) for more info.
+Visit the [project website](https://togethernet.org/) for more info.
 
 # Local Development
 Prepare your local development environment using the following steps:
