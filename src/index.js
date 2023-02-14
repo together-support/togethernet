@@ -67,15 +67,18 @@ app.post('/archive', (req, response) => {
 });
 
 app.get('/archive', (_, response) => {
-  archiver.readAll('messages', (messages, error) => {
+  archiver.readAll('messages', (results, error) => {
     if (error) {
-      console.log(error);
+      console.log('error loading archive:', error.message);
+      response.status(424).json({});
+    } else {
+      console.log('GET /archive: ok');
+      response.status(200).json(results.rows);
     }
-    response.status(200).json(messages);
   });
 });
 
-app.post('/archive/:id', (req, _) => {
+app.post('/archive/:id', (req) => {
   const values = pick(req.body, ['content', 'order']);
   archiver.update({
     resource: 'messages',

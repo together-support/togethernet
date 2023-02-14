@@ -23,9 +23,12 @@ class ArchivalSpace {
   }
 
   initialize = () => {
-    this.fetchArchivedMessages().then(() => {
-      this.attachEvents();
-      this.render();
+    this.fetchArchivedMessages().then((error) => {
+      if (!error) {
+        $('.roomsList.archival').removeClass('hidden');
+        this.attachEvents();
+        this.render();
+      }
     });
   };
 
@@ -119,13 +122,21 @@ class ArchivalSpace {
   };
 
   fetchArchivedMessages = async () => {
-    const response = await fetch('/archive', {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
+    try {
+      const response = await fetch('/archive', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-    const messageRecords = await response.json();
-    this.messageRecords = messageRecords;
+      if (response.ok) {
+        const messageRecords = await response.json();
+        this.messageRecords = messageRecords;
+      } else {
+        return new Error('Failed to fetch');
+      }
+    } catch (error) {
+      return error;
+    }
   };
 
   archivedMessageUpdated = ({ messageData }) => {
