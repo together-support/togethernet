@@ -25,7 +25,7 @@ class ArchivalSpace {
   initialize = () => {
     this.fetchArchivedMessages().then((error) => {
       if (!error) {
-        $('.roomsList archival').removeClass('hidden');
+        $('.roomsList.archival').removeClass('hidden');
         this.attachEvents();
         this.render();
       }

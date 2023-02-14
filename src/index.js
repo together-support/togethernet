@@ -72,6 +72,7 @@ app.get('/archive', (_, response) => {
       console.log('error loading archive:', error.message);
       response.status(424).json({});
     } else {
+      console.log('GET /archive: ok');
       response.status(200).json(results.rows);
     }
   });
