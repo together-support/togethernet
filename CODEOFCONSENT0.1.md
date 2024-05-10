@@ -134,7 +134,7 @@ Togethernet’s Code of Consent was compiled by Neema Githere and Xin Xin.
 -------------------------------------------- 
 
 
-If you feel you understand and agree to Togethernet’s Code of Consent, we invite you to continue onwards to the [orientation](https://togethernet-website.herokuapp.com/orientation.html). If you do not feel comfortable with the information that has been presented thus far, we invite you to stop to ask a question or present your concern. If you feel you fall somewhere in between, we encourage you to take your time digesting this information and return at your own pace. 
+If you feel you understand and agree to Togethernet’s Code of Consent, we invite you to continue onwards to the [orientation](https://togethernet.org/orientation.html). If you do not feel comfortable with the information that has been presented thus far, we invite you to stop to ask a question or present your concern. If you feel you fall somewhere in between, we encourage you to take your time digesting this information and return at your own pace. 
 
 ----------------------------------------------
 
