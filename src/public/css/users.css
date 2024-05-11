@@ -2,6 +2,9 @@
 .shadow {
   width: var(--cell-size);
   height: var(--cell-size);
+  /* Add avatar image */
+  /* background-image: url("https://upload.wikimedia.org/wikipedia/commons/e/e0/Alxira5_Avatar.svg");
+  background-size: var(--cell-size); */
 }
 
 .avatar {

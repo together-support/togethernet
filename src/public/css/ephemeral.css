@@ -2,7 +2,10 @@
   display: grid;
   grid-template-rows: repeat(var(--cell-vertical-num), var(--cell-size));
   grid-template-columns: repeat(var(--cell-horizontal-num), var(--cell-size));
-  background: var(--ephemeral-bg-color);
+  /* Add a background image to the ephemeral chanel */
+  /* background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/C%C3%A9vennes_France_night_sky_with_stars_02.jpg/640px-C%C3%A9vennes_France_night_sky_with_stars_02.jpg");
+  background-size: calc(var(--cell-horizontal-num) * var(--cell-size)) calc(var(--cell-vertical-num) * var(--cell-size)); */
+  background-color: var(--ephemeral-bg-color);
 }
 
 .author {
@@ -14,6 +17,10 @@
 .threadedRecordForbiddenOverlay {
   width: var(--cell-size);
   height: var(--cell-size);
+  /* Turn message records into leaves */
+  /* border-radius: 0 50px;*/
+  /* Rotate message records */
+  /* transform: rotate(10deg); */
 }
 
 .ephemeralRecord {
@@ -21,6 +28,9 @@
   flex-wrap: wrap;
   position: relative;
   opacity: var(--ephemeral-record-opacity);
+  /* Add message record image */
+  /* background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Leaf_texture_in_macro_%28Unsplash%29.jpg/320px-Leaf_texture_in_macro_%28Unsplash%29.jpg");
+  background-size: var(--cell-size); */
 }
 
 .threadedRecordOverlay,

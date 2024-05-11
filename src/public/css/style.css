@@ -1,3 +1,4 @@
+/* Import and name font files */
 @font-face {
 	font-family: nunito;
 	src: url(../font/nunito/Nunito-Regular.ttf);
@@ -9,6 +10,7 @@
 	font-weight: bold;
 }
 
+/* Set global CSS variables */
 :root {
 	--default-font-size: 18px;
 	--systemMsg-header-font-size: 24px;
@@ -40,9 +42,6 @@
 	--systemMsg-bg-color: black;
 	--systemMsg-overlay-opacity: 1;
 	--navbar-width: 20vw;
-	--cell-horizontal-num: 30;
-	--cell-vertical-num: 17;
-	--cell-size: 5vh;
 	--btn-large-font-size: 30px;
 	--btn-large-size: 35px;
 	--btn-small-font-size: 15px;
@@ -52,10 +51,14 @@
 	--btn-inverted-color: whitesmoke;
 	--btn-inverted-font-color: black;
 	--input-focus-border: 2px solid blue;
-	--avatar-x: 1;
-	--avatar-y: 1;
 	--avatar-outline-color: white;
 	--sendmessage-height: 10vh;
+/* Modify the variables below with caution. The default CSS grid is 30 rows x 17 cols. The default starting position for the user avatar is x = 1, y = 1 */
+	--cell-horizontal-num: 30;
+	--cell-vertical-num: 17;
+	--cell-size: 5vh;
+	--avatar-x: 1;
+	--avatar-y: 1;
 }
 
 body,
